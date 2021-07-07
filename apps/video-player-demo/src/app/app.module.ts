@@ -1,11 +1,15 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { VideoPlayerModule } from '@mintplayer/ng-video-player';
 
 import { AppComponent } from './app.component';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule],
+  imports: [
+    BrowserModule,
+    VideoPlayerModule
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })

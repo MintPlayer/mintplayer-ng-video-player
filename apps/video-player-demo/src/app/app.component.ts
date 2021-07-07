@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player'
 
 @Component({
   selector: 'mintplayer-ng-video-player-root',
@@ -7,4 +8,12 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'video-player-demo';
+
+  // npm start -- --open
+  // npm run nx run-many -- --target=build --projects=ng-youtube-player-demo --with-deps
+
+  @ViewChild('player1') player1!: VideoPlayerComponent;
+  playVideo() {
+    this.player1.playVideoById('jNQXAC9IVRw');
+  }
 }

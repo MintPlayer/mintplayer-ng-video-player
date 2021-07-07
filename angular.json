@@ -1,6 +1,47 @@
 {
   "version": 1,
   "projects": {
+    "mintplayer-ng-video-player": {
+      "projectType": "library",
+      "root": "libs/mintplayer-ng-video-player",
+      "sourceRoot": "libs/mintplayer-ng-video-player/src",
+      "prefix": "mintplayer-ng-video-player",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/angular:package",
+          "outputs": ["dist/libs/mintplayer-ng-video-player"],
+          "options": {
+            "project": "libs/mintplayer-ng-video-player/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/mintplayer-ng-video-player/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "libs/mintplayer-ng-video-player/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/mintplayer-ng-video-player"],
+          "options": {
+            "jestConfig": "libs/mintplayer-ng-video-player/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/mintplayer-ng-video-player/src/**/*.ts",
+              "libs/mintplayer-ng-video-player/src/**/*.html"
+            ]
+          }
+        }
+      }
+    },
     "video-player-demo": {
       "projectType": "application",
       "root": "apps/video-player-demo",
