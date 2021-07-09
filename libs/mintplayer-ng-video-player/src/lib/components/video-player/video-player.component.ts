@@ -59,51 +59,85 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
             break;
         }
       });
-    
+
+    let setHtml = () => {
+      this.domId = `player${VideoPlayerComponent.playerCounter++}`;
+      this.container.nativeElement.innerHTML = `<div id="${this.domId}"></div>`;
+    };
+
     this.isApiReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((value) => {
-        this.domId = `player${VideoPlayerComponent.playerCounter++}`;
-        this.container.nativeElement.innerHTML = `<div id="${this.domId}"></div>`;
-        setTimeout(() => {
-          switch (this.videoRequest$.value?.playerType) {
-            case PlayerType.youtube:
-              this.player = new YT.Player(this.domId, {
-                width: this.width,
-                height: this.height,
-                events: {
-                  onReady: (ev: YT.PlayerEvent) => {
-                    this.isPlayerReady$.next(true);
+        let videoRequest = this.videoRequest$.value;
+        switch (videoRequest?.playerType) {
+          case PlayerType.youtube:
+            if (this.playerInfo?.type === PlayerType.youtube) {
+              (<YT.Player>this.playerInfo.player).loadVideoById(videoRequest.id);
+            } else {
+              setHtml();
+              this.playerInfo = {
+                type: PlayerType.youtube,
+                player: new YT.Player(this.domId, {
+                  width: this.width,
+                  height: this.height,
+                  playerVars: {
+                    autoplay: <any>this.autoplay,
+                  },
+                  events: {
+                    onReady: (ev: YT.PlayerEvent) => {
+                      this.isPlayerReady$.next(true);
+                    }
                   }
-                }
-              });
-              break;
-            case PlayerType.dailymotion:
-              this.player = DM.player(this.container.nativeElement.getElementsByTagName('div')[0], {
-                width: String(this.width),
-                height: String(this.height),
-                events: {
-                  apiready: () => {
-                    this.isPlayerReady$.next(true);
+                })
+              };
+            }
+            break;
+          case PlayerType.dailymotion:
+            if (this.playerInfo?.type === PlayerType.dailymotion) {
+              (<DM.Player>this.playerInfo.player).load({ video: videoRequest.id });
+            } else {
+              setHtml();
+              this.playerInfo = {
+                type: PlayerType.dailymotion,
+                player: DM.player(this.container.nativeElement.getElementsByTagName('div')[0], {
+                  width: String(this.width),
+                  height: String(this.height),
+                  params: {
+                    autoplay: this.autoplay,
+                  },
+                  events: {
+                    apiready: () => {
+                      this.isPlayerReady$.next(true);
+                    }
                   }
-                }
-              });
-              break;
-            case PlayerType.vimeo:
-              let videoId = this.videoRequest$.value.id;
-              this.player = new Vimeo.Player(this.domId, {
+                })
+              };
+            }
+            break;
+          case PlayerType.vimeo:
+            if (this.playerInfo?.type === PlayerType.vimeo) {
+              (<Vimeo.Player>this.playerInfo.player).loadVideo(videoRequest.id);
+            } else {
+              setHtml();
+              let videoId = videoRequest.id;
+              let vimeoPlayer = new Vimeo.Player(this.domId, {
                 id: videoId,
                 width: this.width,
-                height: this.height
+                height: this.height,
+                autoplay: this.autoplay,
               });
-              this.player.ready().then(() => {
+              this.playerInfo = {
+                type: PlayerType.vimeo,
+                player: vimeoPlayer
+              };
+              vimeoPlayer.ready().then(() => {
                 this.isPlayerReady$.next(true);
               });
               break;
-          }
-        }, 20);
+            }
+        }
       });
-    
+
     this.isPlayerReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((ready) => {
@@ -111,11 +145,11 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         if (videoRequest !== null) {
           if (typeof videoRequest.id !== 'undefined') {
             if (videoRequest.playerType === PlayerType.youtube) {
-              (<YT.Player>this.player).loadVideoById(videoRequest.id)
+              (<YT.Player>this.playerInfo?.player).loadVideoById(videoRequest.id)
             } else if (videoRequest.playerType === PlayerType.dailymotion) {
-              (<DM.Player>this.player).load({ video: videoRequest.id });
+              (<DM.Player>this.playerInfo?.player).load({ video: videoRequest.id });
             } else if (videoRequest.playerType === PlayerType.vimeo) {
-              (<Vimeo.Player>this.player).loadVideo(videoRequest.id);
+              (<Vimeo.Player>this.playerInfo?.player).loadVideo(videoRequest.id);
             }
           }
         }
@@ -124,6 +158,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() public width: number = 800;
   @Input() public height: number = 600;
+  @Input() public autoplay: boolean = true;
   //#region url
   @Input() public set url(value: string) {
 
@@ -164,14 +199,11 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       };
     }).filter(p => (p !== null));
 
-    // debugger;
     if (platformIds.length === 0) {
       throw `No player found for url ${value}`;
     }
 
-    //debugger;
     if (!!platformIds[0]) {
-      console.log('Next video', platformIds[0].platform, platformIds[0].id);
       this.videoRequest$.next({ playerType: platformIds[0].platform, id: platformIds[0].id });
     }
   }
@@ -180,14 +212,14 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private static playerCounter: number = 1;
   domId: string = 'player';
- 
+
   private destroyed$ = new Subject();
   private isViewInited$ = new BehaviorSubject<boolean>(false);
   private videoRequest$ = new BehaviorSubject<VideoRequest | null>(null);
   private isApiReady$ = new Subject();
   private isPlayerReady$ = new BehaviorSubject<boolean>(false);
-  
-  private player: YT.Player | DM.Player | Vimeo.Player | null = null;
+
+  private playerInfo: { type: PlayerType, player: YT.Player | DM.Player | Vimeo.Player } | null = null;
 
   ngOnInit() {
   }
