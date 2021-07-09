@@ -20,7 +20,7 @@ declare namespace Vimeo {
         requestPictureInPicture(): Promise<any>;
         exitPictureInPicture(): Promise<any>;
 
-        getVolume(): number;
+        getVolume(): Promise<number>;
         setVolume(volume: number): void;
 
         getTextTracks(): any[];
@@ -32,7 +32,7 @@ declare namespace Vimeo {
 
         getBuffered(): boolean;
 
-        getCurrentTime(): number;
+        getCurrentTime(): Promise<number>;
         setCurrentTime(time: number): void;
 
         getDuration(): number;
@@ -41,7 +41,7 @@ declare namespace Vimeo {
         getLoop(): boolean;
         setLoop(loop: boolean): void;
 
-        getMuted(): boolean;
+        getMuted(): Promise<boolean>;
         setMuted(muted: boolean): void;
 
         on(e: PlayerEvents, t: (...parms: any[]) => void): void;

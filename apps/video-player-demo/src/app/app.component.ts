@@ -34,6 +34,12 @@ export class AppComponent {
     this.width = 400;
     this.height = 300;
   }
+  currentTime = 0;
+  volume = 0;
+  isMuted = false;
+  setMuted(event: Event) {
+    this.isMuted = (<any>event.target).checked;
+  }
 
   constructor() {
   }

@@ -1,11 +1,21 @@
 <body>
   <h1>Welcome to ng-youtube-player-demo!</h1>
-  <video-player [width]="width" [height]="height" [url]="url" #player1></video-player>
+  <video-player [width]="width" [height]="height" [(currentTime)]="currentTime" [(volume)]="volume" [(mute)]="isMuted" [url]="url" #player1></video-player>
+  <br>
+  <label>{{ currentTime }}</label>
   <br>
   <ng-container *ngFor="let video of videos">
     <a href (click)="playVideo(video)">{{ video }}</a>
     <br>
   </ng-container>
-
+  
   <button (click)="setSize()">Set size</button>
+  <br>
+  <label>
+    <input type="checkbox" [checked]="isMuted" (change)="setMuted($event)">
+    Mute
+  </label>
+  <br>
+  <label>{{ volume | number: '0.0' }}</label>
+  <input type="range" min="0" max="100" [(ngModel)]="volume">
 </body>
