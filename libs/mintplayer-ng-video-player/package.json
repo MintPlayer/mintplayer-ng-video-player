@@ -4,7 +4,7 @@
   "peerDependencies": {
     "@angular/common": "^12.1.1",
     "@angular/core": "^12.1.1",
-    "@mintplayer/ng-youtube-api": "^3.0.0",
+    "@mintplayer/ng-youtube-api": "^3.1.0",
     "@mintplayer/ng-dailymotion-api": "^3.0.0",
     "@mintplayer/ng-vimeo-api": "^3.0.0",
     "@mintplayer/ng-player-progress": "^1.0.0"
