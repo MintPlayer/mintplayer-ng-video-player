@@ -9,17 +9,25 @@ import { VideoRequest } from 'libs/mintplayer-ng-video-player/src/lib/interfaces
 })
 export class AppComponent {
   title = 'video-player-demo';
-  videoRequest: VideoRequest | null = null;
+  url: string = '';
 
   // npm start -- --open
   // npm run nx run-many -- --target=build --projects=ng-youtube-player-demo --with-deps
 
   // @ViewChild('player1') player1!: VideoPlayerComponent;
-  playVideo() {
-    // this.player1.playVideoById('jNQXAC9IVRw');
-    this.videoRequest = {
-      playerType: PlayerType.dailymotion,
-      id: 'x2yhuhb'
-    };
+  playVideo(video: string) {
+    this.url = video;
+    return false;
+  }
+
+  videos: string[] = [
+    'https://www.youtube.com/watch?v=tt2k8PGm-TI',
+    'https://www.youtube.com/watch?v=YykjpeuMNEk',
+    'https://www.youtube.com/watch?v=yFKhgF_vkgs',
+    'https://www.dailymotion.com/video/x2yhuhb',
+    'https://vimeo.com/14190306',
+  ];
+
+  constructor() {
   }
 }

@@ -11,6 +11,7 @@ import { VimeoApiService } from '@mintplayer/ng-vimeo-api';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { PlayerType } from '../../enums';
 import { VideoRequest } from '../../interfaces/video-request';
+import { PlatformWithRegexes } from '../../interfaces/platform-with-regexes';
 
 @Component({
   selector: 'video-player',
@@ -24,14 +25,13 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     private vimeoApiService: VimeoApiService,
     private zone: NgZone,
   ) {
-    this.domId = `player${VideoPlayerComponent.playerCounter++}`;
-    
     combineLatest([this.isViewInited$, this.videoRequest$])
       .pipe(filter(([isViewInited, videoRequest]) => {
         return !!isViewInited && (videoRequest !== null);
       }))
       .pipe(takeUntil(this.destroyed$))
       .subscribe(([isViewInited, videoRequest]) => {
+        console.log('Video request', videoRequest);
         switch (videoRequest?.playerType) {
           case PlayerType.youtube:
             this.youtubeApiService.youtubeApiReady$
@@ -63,41 +63,45 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isApiReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((value) => {
-        switch (this.videoRequest$.value?.playerType) {
-          case PlayerType.youtube:
-            this.player = new YT.Player(this.domId, {
-              width: this.width,
-              height: this.height,
-              events: {
-                onReady: (ev: YT.PlayerEvent) => {
-                  this.isPlayerReady$.next(true);
+        this.domId = `player${VideoPlayerComponent.playerCounter++}`;
+        this.container.nativeElement.innerHTML = `<div id="${this.domId}"></div>`;
+        setTimeout(() => {
+          switch (this.videoRequest$.value?.playerType) {
+            case PlayerType.youtube:
+              this.player = new YT.Player(this.domId, {
+                width: this.width,
+                height: this.height,
+                events: {
+                  onReady: (ev: YT.PlayerEvent) => {
+                    this.isPlayerReady$.next(true);
+                  }
                 }
-              }
-            });
-            break;
-          case PlayerType.dailymotion:
-            this.player = DM.player(this.container.nativeElement, {
-              width: String(this.width),
-              height: String(this.height),
-              events: {
-                apiready: () => {
-                  this.isPlayerReady$.next(true);
+              });
+              break;
+            case PlayerType.dailymotion:
+              this.player = DM.player(this.container.nativeElement.getElementsByTagName('div')[0], {
+                width: String(this.width),
+                height: String(this.height),
+                events: {
+                  apiready: () => {
+                    this.isPlayerReady$.next(true);
+                  }
                 }
-              }
-            });
-            break;
-          case PlayerType.vimeo:
-            let videoId = this.videoRequest$.value.id;
-            this.player = new Vimeo.Player(this.domId, {
-              id: videoId,
-              width: this.width,
-              height: this.height
-            });
-            this.player.ready().then(() => {
-              this.isPlayerReady$.next(true);
-            });
-            break;
-        }
+              });
+              break;
+            case PlayerType.vimeo:
+              let videoId = this.videoRequest$.value.id;
+              this.player = new Vimeo.Player(this.domId, {
+                id: videoId,
+                width: this.width,
+                height: this.height
+              });
+              this.player.ready().then(() => {
+                this.isPlayerReady$.next(true);
+              });
+              break;
+          }
+        }, 20);
       });
     
     this.isPlayerReady$
@@ -120,9 +124,58 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() public width: number = 800;
   @Input() public height: number = 600;
-  @Input() public set videoRequest(value: VideoRequest | null) {
-    this.videoRequest$.next(value);
+  //#region url
+  @Input() public set url(value: string) {
+
+    const platforms: PlatformWithRegexes[] = [{
+      platform: PlayerType.youtube,
+      regexes: [
+        // new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/watch\?v=(?<id>.+)/, 'g'),
+        new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/watch\?v=(?<id>[^&]+)/, 'g'),
+        new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtu\.be\/(?<id>.+)$/, 'g'),
+      ]
+    }, {
+      platform: PlayerType.dailymotion,
+      regexes: [
+        new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}dailymotion\.com\/video\/(?<id>[0-9A-Za-z]+)$/, 'g'),
+      ]
+    }, {
+      platform: PlayerType.vimeo,
+      regexes: [
+        new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}vimeo\.com\/(?<id>[0-9]+)$/, 'g'),
+      ]
+    }];
+
+    let platformIds = platforms.map(p => {
+      let matches = p.regexes.map(r => r.exec(value)).filter(r => r !== null);
+      if (matches.length === 0) {
+        return null;
+      }
+
+      if (matches[0] === null) {
+        return null;
+      } else if (matches[0].groups == null) {
+        return null;
+      }
+
+      return {
+        platform: p.platform,
+        id: matches[0].groups.id
+      };
+    }).filter(p => (p !== null));
+
+    // debugger;
+    if (platformIds.length === 0) {
+      throw `No player found for url ${value}`;
+    }
+
+    //debugger;
+    if (!!platformIds[0]) {
+      console.log('Next video', platformIds[0].platform, platformIds[0].id);
+      this.videoRequest$.next({ playerType: platformIds[0].platform, id: platformIds[0].id });
+    }
   }
+  //#endregion
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
 
   private static playerCounter: number = 1;
@@ -131,7 +184,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroyed$ = new Subject();
   private isViewInited$ = new BehaviorSubject<boolean>(false);
   private videoRequest$ = new BehaviorSubject<VideoRequest | null>(null);
-  private isApiReady$ = new BehaviorSubject<boolean>(false);
+  private isApiReady$ = new Subject();
   private isPlayerReady$ = new BehaviorSubject<boolean>(false);
   
   private player: YT.Player | DM.Player | Vimeo.Player | null = null;
