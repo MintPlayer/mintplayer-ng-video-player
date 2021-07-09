@@ -25,6 +25,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     private vimeoApiService: VimeoApiService,
     private zone: NgZone,
   ) {
+    // [isViewInited$,videoRequest$] => isApiReady$
     combineLatest([this.isViewInited$, this.videoRequest$])
       .pipe(filter(([isViewInited, videoRequest]) => {
         return !!isViewInited && (videoRequest !== null);
@@ -64,17 +65,33 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       this.domId = `player${VideoPlayerComponent.playerCounter++}`;
       this.container.nativeElement.innerHTML = `<div id="${this.domId}"></div>`;
     };
+    let destroyCurrentPlayer = () => {
+      switch (this.playerInfo?.type) {
+        case PlayerType.youtube:
+          (<YT.Player>this.playerInfo.player).destroy();
+          break;
+        case PlayerType.dailymotion:
+          // (<DM.Player>this.playerInfo.player).destroy();
+          break;
+        case PlayerType.vimeo:
+          (<Vimeo.Player>this.playerInfo.player).destroy();
+          break;
+      }
+    }
 
+    // [isApiReady$, videoRequest.playerType] => isSwitchingVideo$, isPlayerReady$
     this.isApiReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((value) => {
-        let videoRequest = this.videoRequest$.value;
-        switch (videoRequest?.playerType) {
+        let currentVideoRequest = this.videoRequest$.value;
+        switch (currentVideoRequest?.playerType) {
           case PlayerType.youtube:
             if (this.playerInfo?.type === PlayerType.youtube) {
-              (<YT.Player>this.playerInfo.player).loadVideoById(videoRequest.id);
+              // Recycle the YT.Player
+              (<YT.Player>this.playerInfo.player).loadVideoById(currentVideoRequest.id);
               this.isSwitchingVideo$.next(false);
             } else {
+              destroyCurrentPlayer();
               setHtml();
               this.playerInfo = {
                 type: PlayerType.youtube,
@@ -96,9 +113,11 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
             break;
           case PlayerType.dailymotion:
             if (this.playerInfo?.type === PlayerType.dailymotion) {
-              (<DM.Player>this.playerInfo.player).load({ video: videoRequest.id });
+              // Recycle the DM.Player
+              (<DM.Player>this.playerInfo.player).load({ video: currentVideoRequest.id });
               this.isSwitchingVideo$.next(false);
             } else {
+              destroyCurrentPlayer();
               setHtml();
               this.playerInfo = {
                 type: PlayerType.dailymotion,
@@ -120,11 +139,13 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
             break;
           case PlayerType.vimeo:
             if (this.playerInfo?.type === PlayerType.vimeo) {
-              (<Vimeo.Player>this.playerInfo.player).loadVideo(videoRequest.id);
+              // Recycle the Vimeo.Player
+              (<Vimeo.Player>this.playerInfo.player).loadVideo(currentVideoRequest.id);
               this.isSwitchingVideo$.next(false);
             } else {
+              destroyCurrentPlayer();
               setHtml();
-              let videoId = videoRequest.id;
+              let videoId = currentVideoRequest.id;
               let vimeoPlayer = new Vimeo.Player(this.domId, {
                 id: videoId,
                 width: this.width,
@@ -144,6 +165,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
 
+    // [isPlayerReady$] => playVideo
     this.isPlayerReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((ready) => {
