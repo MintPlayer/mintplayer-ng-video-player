@@ -216,7 +216,8 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this._currentTime !== newCurrentTime) {
           this.currentTimeChange.emit(this._currentTime = newCurrentTime);
         }
-        if (this._volume !== newVolume) {
+        if ((typeof newVolume !== 'undefined') && (this._volume !== newVolume)) {
+          console.log('emit volumeChange', newVolume);
           this.volumeChange.emit(this._volume = newVolume);
         }
         if (this._mute != newIsMuted) {
