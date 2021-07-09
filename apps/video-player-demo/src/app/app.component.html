@@ -1,9 +1,11 @@
 <body>
   <h1>Welcome to ng-youtube-player-demo!</h1>
-  <video-player [width]="800" [height]="600" [url]="url" #player1></video-player>
+  <video-player [width]="width" [height]="height" [url]="url" #player1></video-player>
   <br>
   <ng-container *ngFor="let video of videos">
     <a href (click)="playVideo(video)">{{ video }}</a>
     <br>
   </ng-container>
+
+  <button (click)="setSize()">Set size</button>
 </body>

@@ -28,6 +28,13 @@ export class AppComponent {
     'https://vimeo.com/14190306',
   ];
 
+  width = 800;
+  height = 600;
+  setSize() {
+    this.width = 400;
+    this.height = 300;
+  }
+
   constructor() {
   }
 }

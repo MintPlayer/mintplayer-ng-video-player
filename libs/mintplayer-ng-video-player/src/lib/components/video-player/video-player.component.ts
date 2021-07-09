@@ -141,6 +141,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isPlayerReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((ready) => {
+        (<any>window).myPlayer = this.playerInfo?.player;
         let videoRequest = this.videoRequest$.value;
         if (videoRequest !== null) {
           if (typeof videoRequest.id !== 'undefined') {
@@ -156,8 +157,56 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  @Input() public width: number = 800;
-  @Input() public height: number = 600;
+  //#region width
+  private _width: number = 600;
+  get width() {
+    return this._width;
+  }
+  @Input() set width(value: number) {
+    this._width = value;
+    if (!!this.playerInfo && !!this.playerInfo.player) {
+      switch (this.playerInfo.type) {
+        case PlayerType.youtube:
+          (<YT.Player>this.playerInfo.player).setSize(this._width, this._height);
+          break;
+        case PlayerType.dailymotion:
+          (<DM.Player>this.playerInfo.player).width = this._width;
+          break;
+        case PlayerType.vimeo:
+          let iframe = this.container.nativeElement.querySelector<HTMLIFrameElement>('div iframe');
+          if (!!iframe) {
+            iframe.width = String(value);
+          }
+          break;
+      }
+    }
+  }
+  //#endregion
+  //#region height
+  private _height: number = 450;
+  get height() {
+    return this._height;
+  }
+  @Input() set height(value: number) {
+    this._height = value;
+    if (!!this.playerInfo && !!this.playerInfo.player) {
+      switch (this.playerInfo.type) {
+        case PlayerType.youtube:
+          (<YT.Player>this.playerInfo.player).setSize(this._width, this._height);
+          break;
+        case PlayerType.dailymotion:
+          (<DM.Player>this.playerInfo.player).height = this._height;
+          break;
+        case PlayerType.vimeo:
+          let iframe = this.container.nativeElement.querySelector<HTMLIFrameElement>('div iframe');
+          if (!!iframe) {
+            iframe.height = String(value);
+          }
+          break;
+      }
+    }
+  }
+  //#endregion
   @Input() public autoplay: boolean = true;
   //#region url
   @Input() public set url(value: string) {
