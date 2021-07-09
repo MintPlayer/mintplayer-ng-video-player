@@ -1,4 +1,6 @@
 /// <reference path="../../../../../../node_modules/@types/youtube/index.d.ts" />
+/// <reference path="../../interfaces/dailymotion.ts" />
+/// <reference path="../../interfaces/vimeo.ts" />
 
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
@@ -59,7 +61,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     
     this.isApiReady$
-      .pipe(filter(r => !!r), take(1), takeUntil(this.destroyed$))
+      .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((value) => {
         switch (this.videoRequest$.value?.playerType) {
           case PlayerType.youtube:
@@ -85,8 +87,9 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
             });
             break;
           case PlayerType.vimeo:
+            let videoId = this.videoRequest$.value.id;
             this.player = new Vimeo.Player(this.domId, {
-              id: <string>this.videoRequest$.value?.id,
+              id: videoId,
               width: this.width,
               height: this.height
             });
@@ -96,10 +99,30 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
             break;
         }
       });
+    
+    this.isPlayerReady$
+      .pipe(filter(r => !!r), takeUntil(this.destroyed$))
+      .subscribe((ready) => {
+        let videoRequest = this.videoRequest$.value;
+        if (videoRequest !== null) {
+          if (typeof videoRequest.id !== 'undefined') {
+            if (videoRequest.playerType === PlayerType.youtube) {
+              (<YT.Player>this.player).loadVideoById(videoRequest.id)
+            } else if (videoRequest.playerType === PlayerType.dailymotion) {
+              (<DM.Player>this.player).load({ video: videoRequest.id });
+            } else if (videoRequest.playerType === PlayerType.vimeo) {
+              (<Vimeo.Player>this.player).loadVideo(videoRequest.id);
+            }
+          }
+        }
+      });
   }
 
   @Input() public width: number = 800;
   @Input() public height: number = 600;
+  @Input() public set videoRequest(value: VideoRequest | null) {
+    this.videoRequest$.next(value);
+  }
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
 
   private static playerCounter: number = 1;
