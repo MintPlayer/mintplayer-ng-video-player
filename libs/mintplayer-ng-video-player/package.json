@@ -1,6 +1,11 @@
 {
   "name": "@mintplayer/ng-video-player",
-  "version": "3.0.0",
+  "private": false,
+  "version": "3.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MintPlayer/mintplayer-ng-video-player"
+  },
   "peerDependencies": {
     "@angular/common": "^12.1.1",
     "@angular/core": "^12.1.1",
