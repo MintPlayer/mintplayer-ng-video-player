@@ -218,10 +218,10 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.currentTimeChange.emit(this._currentTime = event.seconds);
               });
               vimeoPlayer.on('enterpictureinpicture', (event) => {
-                this.isPipChange.emit(this._isPip = true);
+                this.isPipChange.emit(true);
               });
               vimeoPlayer.on('leavepictureinpicture', (event) => {
-                this.isPipChange.emit(this._isPip = false);
+                this.isPipChange.emit(false);
               });
               break;
             }
@@ -530,38 +530,77 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   @Output() public muteChange = new EventEmitter<boolean>();
   //#endregion
-  //#region isPip
-  private _isPip: boolean = false;
-  get isPip() {
-    return this._isPip;
+  
+  // //#region isPip
+  // private _isPip: boolean = false;
+  // get isPip() {
+  //   return this._isPip;
+  // }
+  // @Input() set isPip(value: boolean) {
+  //   this._isPip = value;
+  //   switch (this.playerInfo?.type) {
+  //     case PlayerType.youtube: {
+  //       if (value) {
+  //         throw 'YouTube does not support PiP mode';  
+  //       }
+  //     } break;
+  //     case PlayerType.dailymotion: {
+  //       if (value) {
+  //         throw 'DailyMotion does not support PiP mode';  
+  //       }
+  //     } break;
+  //     case PlayerType.vimeo: {
+  //       if (value) {
+  //         setTimeout(() => {
+  //           console.log('request pip');
+  //           (<Vimeo.Player>this.playerInfo?.player).requestPictureInPicture();
+  //         }, 50);
+  //       } else {
+  //         (<Vimeo.Player>this.playerInfo.player).exitPictureInPicture();
+  //       }
+  //     } break;
+  //   }
+  // }
+  @Output() public isPipChange = new EventEmitter<boolean>();
+  public getIsPip() {
+    switch (this.playerInfo?.type) {
+      case PlayerType.youtube:
+        return false
+      case PlayerType.dailymotion:
+        return false;
+      case PlayerType.vimeo: {
+        let player = <Vimeo.Player>this.playerInfo?.player;
+        return player.getPictureInPicture();
+      }
+      default:
+        return false;
+    }
   }
-  @Input() set isPip(value: boolean) {
-    this._isPip = value;
+  public async setIsPip(isPip: boolean) {
+    // Vimeo pip requests must originate from a user gesture.
+    // Hence why we can't make it a bindable property.
+    // Sadly, even with this approach, the browser seems to think the event wasn't user initiated when the iframe isn't focused.
     switch (this.playerInfo?.type) {
       case PlayerType.youtube: {
-        if (value) {
+        if (isPip) {
           throw 'YouTube does not support PiP mode';  
         }
       } break;
       case PlayerType.dailymotion: {
-        if (value) {
+        if (isPip) {
           throw 'DailyMotion does not support PiP mode';  
         }
       } break;
       case PlayerType.vimeo: {
-        if (value) {
-          setTimeout(() => {
-            console.log('request pip');
-            (<Vimeo.Player>this.playerInfo?.player).requestPictureInPicture();
-          }, 50);
+        if (isPip) {
+          await (<Vimeo.Player>this.playerInfo?.player).requestPictureInPicture();
         } else {
-          (<Vimeo.Player>this.playerInfo.player).exitPictureInPicture();
+          await (<Vimeo.Player>this.playerInfo.player).exitPictureInPicture();
         }
       } break;
     }
   }
-  @Output() public isPipChange = new EventEmitter<boolean>();
-  //#endregion
+  // //#endregion
   @Input() public autoplay: boolean = true;
   //#region url
   @Input() public set url(value: string) {
@@ -628,10 +667,6 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   private playerInfo: { type: PlayerType, player: YT.Player | DM.Player | Vimeo.Player } | null = null;
   private hasJustLoaded: boolean = false;
 
-  requestPip() {
-    this.isPip = true;
-  }
-  
   ngOnInit() {
   }
 

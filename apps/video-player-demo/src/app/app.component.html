@@ -1,6 +1,6 @@
 <body>
-  <h1>Welcome to ng-youtube-player-demo!</h1>
-  <video-player [width]="width" [height]="height" [autoplay]="true" [url]="url" (currentTimeChange)="onCurrentTimeChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState" [(isPip)]="isPip" #player1></video-player>
+  <h1>Welcome to video-player-demo!</h1>
+  <video-player [width]="width" [height]="height" [autoplay]="true" [url]="url" (currentTimeChange)="onCurrentTimeChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState" (isPipChange)="isPip = $event" #player1></video-player>
   <br>
   <label>{{ currentTime }}</label>
   <br>
@@ -20,8 +20,8 @@
   <input type="range" min="0" max="100" [(ngModel)]="volume">
   <br>
   <br>
-  <button (click)="isPip = true" *ngIf="!isPip">Enter PiP</button>
-  <button (click)="isPip = false" *ngIf="isPip">Leave PiP</button>
+  <button (click)="requestPip()" *ngIf="!isPip">Enter PiP</button>
+  <button (click)="exitPip()" *ngIf="isPip">Leave PiP</button>
   <table>
     <tr>
       <td colspan="4">

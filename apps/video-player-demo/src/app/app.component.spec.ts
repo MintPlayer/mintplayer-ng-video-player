@@ -1,10 +1,19 @@
+import { Component, Input } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { PlayerState } from '@mintplayer/ng-video-player';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AppComponent],
+      declarations: [
+        // Mock components
+        VideoPlayerMockComponent,
+      
+        AppComponent
+      ],
+      imports: [FormsModule]
     }).compileComponents();
   });
 
@@ -29,3 +38,20 @@ describe('AppComponent', () => {
     );
   });
 });
+
+@Component({
+  selector: 'video-player',
+  template: `
+    <div>
+      Video player
+    </div>`
+})
+class VideoPlayerMockComponent {
+  @Input() public url!: string;
+  @Input() public width!: number;
+  @Input() public height!: number;
+  @Input() public mute!: boolean;
+  @Input() public volume!: number;
+  @Input() public autoplay!: boolean;
+  @Input() public playerState!: PlayerState;
+}

@@ -42,6 +42,14 @@ export class AppComponent {
     this.isMuted = (<any>event.target).checked;
   }
 
+  @ViewChild('player1') player1!: VideoPlayerComponent;
+  async requestPip() {
+    await this.player1.setIsPip(true);
+  }
+  async exitPip() {
+    await this.player1.setIsPip(false);
+  }
+
   onCurrentTimeChange(currentTime: number) {
     this.currentTime = currentTime;
   }
