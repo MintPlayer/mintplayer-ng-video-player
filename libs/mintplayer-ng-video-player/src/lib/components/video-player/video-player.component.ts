@@ -32,7 +32,6 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       }))
       .pipe(takeUntil(this.destroyed$))
       .subscribe(([isViewInited, videoRequest]) => {
-        console.log('Video request', videoRequest);
         switch (videoRequest?.playerType) {
           case PlayerType.youtube:
             this.youtubeApiService.youtubeApiReady$
@@ -177,7 +176,6 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                 height: this.height,
                 autoplay: this.autoplay,
               });
-              let hasJustLoaded: boolean = false;
               this.playerInfo = {
                 type: PlayerType.vimeo,
                 player: vimeoPlayer
@@ -188,15 +186,20 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.playerStateChange.emit(PlayerState.unstarted);
               });
               vimeoPlayer.on('loaded', () => {
-                hasJustLoaded = true;
+                this.hasJustLoaded = true;
                 this.playerStateChange.emit(PlayerState.unstarted);
-                setTimeout(() => hasJustLoaded = false, 600);
+                setTimeout(() => {
+                  this.hasJustLoaded = false;
+                  if (this.autoplay) {
+                    (<Vimeo.Player>this.playerInfo?.player).play();
+                  }
+                }, 600);
               });
               vimeoPlayer.on('play', () => {
                 this.playerStateChange.emit(PlayerState.playing);
               });
               vimeoPlayer.on('pause', () => {
-                if (!hasJustLoaded) {
+                if (!this.hasJustLoaded) {
                   this.playerStateChange.emit(PlayerState.paused);
                 }
               });
@@ -282,7 +285,6 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
           this.currentTimeChange.emit(this._currentTime = newCurrentTime);
         }
         if ((typeof newVolume !== 'undefined') && (this._volume !== newVolume)) {
-          console.log('emit volumeChange', newVolume);
           this.volumeChange.emit(this._volume = newVolume);
         }
         if (this._mute != newIsMuted) {
@@ -577,6 +579,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   private isSwitchingVideo$ = new BehaviorSubject<boolean>(false);
 
   private playerInfo: { type: PlayerType, player: YT.Player | DM.Player | Vimeo.Player } | null = null;
+  private hasJustLoaded: boolean = false;
 
   ngOnInit() {
   }

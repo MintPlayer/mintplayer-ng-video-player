@@ -25,6 +25,7 @@ export class AppComponent {
     'https://www.youtube.com/watch?v=yFKhgF_vkgs',
     'https://www.dailymotion.com/video/x2yhuhb',
     'https://vimeo.com/14190306',
+    'https://vimeo.com/82932655',
   ];
 
   width = 800;
