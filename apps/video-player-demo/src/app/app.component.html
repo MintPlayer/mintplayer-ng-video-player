@@ -1,6 +1,6 @@
 <body>
   <h1>Welcome to ng-youtube-player-demo!</h1>
-  <video-player [width]="width" [height]="height" [(currentTime)]="currentTime" [(volume)]="volume" [(mute)]="isMuted" [url]="url" #player1></video-player>
+  <video-player [width]="width" [height]="height" [autoplay]="true" [url]="url" [(currentTime)]="currentTime" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState" #player1></video-player>
   <br>
   <label>{{ currentTime }}</label>
   <br>
@@ -18,4 +18,12 @@
   <br>
   <label>{{ volume | number: '0.0' }}</label>
   <input type="range" min="0" max="100" [(ngModel)]="volume">
+  <br>
+  <table>
+    <tr>
+      <td colspan="4">
+        {{ playerStates[playerState] }}
+      </td>
+    </tr>
+  </table>
 </body>

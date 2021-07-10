@@ -1,6 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { PlayerType, VideoPlayerComponent } from '@mintplayer/ng-video-player'
-import { VideoRequest } from 'libs/mintplayer-ng-video-player/src/lib/interfaces/video-request';
+import { PlayerState, PlayerType, VideoPlayerComponent } from '@mintplayer/ng-video-player'
 
 @Component({
   selector: 'mintplayer-ng-video-player-root',
@@ -41,6 +40,12 @@ export class AppComponent {
     this.isMuted = (<any>event.target).checked;
   }
 
+  playerStates = PlayerState;
+  playerState!: PlayerState;
+
+  onPlayerStateChange(event: PlayerState) {
+    console.log(event);
+  }
   constructor() {
   }
 }

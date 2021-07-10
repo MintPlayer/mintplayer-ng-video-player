@@ -7,7 +7,9 @@ declare namespace Vimeo {
 
         play(): void;
         pause(): void;
-        getPaused(): boolean;
+        getPlayed(): Promise<number[]>;
+        getPaused(): Promise<boolean>;
+        getEnded(): Promise<boolean>;
 
         getVideoId(): string;
         loadVideo(id: string): Promise<any>;
@@ -36,7 +38,6 @@ declare namespace Vimeo {
         setCurrentTime(time: number): void;
 
         getDuration(): number;
-        getEnded(): boolean;
         
         getLoop(): boolean;
         setLoop(loop: boolean): void;
@@ -48,7 +49,12 @@ declare namespace Vimeo {
         off(e: PlayerEvents, t: (...parms: any[]) => void): void;
     }
 
-    export type PlayerEvents = 'fullscreenchange'
+    export type PlayerEvents = 'loaded'
+                             | 'play'
+                             | 'pause'
+                             | 'ended'
+                             | 'timeupdate'
+                             | 'fullscreenchange'
                              | 'enterpictureinpicture'
                              | 'leavepictureinpicture'
                              | 'volumechange';

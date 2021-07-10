@@ -41,6 +41,9 @@ declare namespace DM {
         pause: () => void;
         seek: (t: number) => void;
 
+        paused: boolean;
+        ended: boolean;
+
         muted: boolean;
         setMuted: (mute: boolean) => void;
 

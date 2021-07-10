@@ -9,7 +9,7 @@ import { YoutubeApiService } from '@mintplayer/ng-youtube-api';
 import { DailymotionApiService } from '@mintplayer/ng-dailymotion-api';
 import { VimeoApiService } from '@mintplayer/ng-vimeo-api';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
-import { PlayerType } from '../../enums';
+import { PlayerState, PlayerType } from '../../enums';
 import { VideoRequest } from '../../interfaces/video-request';
 import { PlatformWithRegexes } from '../../interfaces/platform-with-regexes';
 
@@ -105,6 +105,22 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                     onReady: (ev: YT.PlayerEvent) => {
                       this.isPlayerReady$.next(true);
                       this.isSwitchingVideo$.next(false);
+                    },
+                    onStateChange: (ev: YT.OnStateChangeEvent) => {
+                      switch (ev.data) {
+                        case YT.PlayerState.PLAYING:
+                          this.playerStateChange.emit(PlayerState.playing);
+                          break;
+                        case YT.PlayerState.PAUSED:
+                          this.playerStateChange.emit(PlayerState.paused);
+                          break;
+                        case YT.PlayerState.ENDED:
+                          this.playerStateChange.emit(PlayerState.ended);
+                          break;
+                        case YT.PlayerState.UNSTARTED:
+                          this.playerStateChange.emit(PlayerState.unstarted);
+                          break;
+                      }
                     }
                   }
                 })
@@ -131,6 +147,15 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                     apiready: () => {
                       this.isPlayerReady$.next(true);
                       this.isSwitchingVideo$.next(false);
+                    },
+                    play: () => {
+                      this.playerStateChange.emit(PlayerState.playing);
+                    },
+                    pause: () => {
+                      this.playerStateChange.emit(PlayerState.paused);
+                    },
+                    end: () => {
+                      this.playerStateChange.emit(PlayerState.ended);
                     }
                   }
                 })
@@ -152,6 +177,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                 height: this.height,
                 autoplay: this.autoplay,
               });
+              let hasJustLoaded: boolean = false;
               this.playerInfo = {
                 type: PlayerType.vimeo,
                 player: vimeoPlayer
@@ -159,6 +185,23 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               vimeoPlayer.ready().then(() => {
                 this.isPlayerReady$.next(true);
                 this.isSwitchingVideo$.next(false);
+                this.playerStateChange.emit(PlayerState.unstarted);
+              });
+              vimeoPlayer.on('loaded', () => {
+                hasJustLoaded = true;
+                this.playerStateChange.emit(PlayerState.unstarted);
+                setTimeout(() => hasJustLoaded = false, 600);
+              });
+              vimeoPlayer.on('play', () => {
+                this.playerStateChange.emit(PlayerState.playing);
+              });
+              vimeoPlayer.on('pause', () => {
+                if (!hasJustLoaded) {
+                  this.playerStateChange.emit(PlayerState.paused);
+                }
+              });
+              vimeoPlayer.on('ended', () => {
+                this.playerStateChange.emit(PlayerState.ended);
               });
               break;
             }
@@ -184,7 +227,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
 
-    combineLatest([timer(0,50), this.isPlayerReady$, this.isSwitchingVideo$])
+    combineLatest([timer(0, 50), this.isPlayerReady$, this.isSwitchingVideo$])
       .pipe(filter(([time, isPlayerReady, isSwitchingVideo]) => {
         return isPlayerReady && !isSwitchingVideo;
       }))
@@ -234,7 +277,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           } break;
         }
-        
+
         if (this._currentTime !== newCurrentTime) {
           this.currentTimeChange.emit(this._currentTime = newCurrentTime);
         }
@@ -304,9 +347,127 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._currentTime;
   }
   @Input() set currentTime(value: number) {
-
+    if (this._currentTime !== value) {
+      this._currentTime = value;
+      switch (this.playerInfo?.type) {
+        case PlayerType.youtube:
+          (<YT.Player>this.playerInfo.player).seekTo(value, true);
+          break;
+        case PlayerType.dailymotion:
+          (<DM.Player>this.playerInfo.player).seek(value);
+          break;
+        case PlayerType.vimeo:
+          (<Vimeo.Player>this.playerInfo.player).setCurrentTime(value);
+          break;
+      }
+    }
   }
   @Output() public currentTimeChange = new EventEmitter<number>();
+  //#endregion
+  //#region playerState
+  public async getplayerState() {
+    switch (this.playerInfo?.type) {
+      case PlayerType.youtube: {
+
+        let player = <YT.Player>this.playerInfo.player;
+        switch (player.getPlayerState()) {
+          case YT.PlayerState.PLAYING:
+            return PlayerState.playing;
+          case YT.PlayerState.PAUSED:
+            return PlayerState.paused;
+          case YT.PlayerState.ENDED:
+            return PlayerState.ended;
+          default:
+            return PlayerState.unstarted;
+        }
+
+      }
+      case PlayerType.dailymotion: {
+
+        let player = <DM.Player>this.playerInfo.player;
+        if (!!player.ended) {
+          return PlayerState.ended;
+        } else if (!!player.paused) {
+          return PlayerState.paused;
+        } else {
+          return PlayerState.playing;
+        }
+
+      }
+      case PlayerType.vimeo: {
+
+        let player = <Vimeo.Player>this.playerInfo.player;
+        if (await player.getEnded()) {
+          return PlayerState.ended;
+        } else if (await player.getPaused()) {
+          return PlayerState.paused;
+        } else {
+          return PlayerState.playing;
+        }
+
+      }
+      default: {
+
+        throw `Player type ${this.playerInfo?.type} not supported`;
+
+      }
+    }
+  }
+  @Input() set playerState(value: PlayerState) {
+    switch (this.playerInfo?.type) {
+      case PlayerType.youtube: {
+
+        let player = <YT.Player>this.playerInfo.player;
+        switch (value) {
+          case PlayerState.playing:
+            player.playVideo();
+            break;
+          case PlayerState.paused:
+            player.pauseVideo();
+            break;
+          case PlayerState.ended:
+            player.stopVideo();
+            break;
+          case PlayerState.unstarted:
+            break;
+        }
+
+      } break;
+      case PlayerType.dailymotion: {
+
+        let player = <DM.Player>this.playerInfo.player;
+        switch (value) {
+          case PlayerState.playing:
+            player.play();
+            break;
+          case PlayerState.paused:
+            player.pause();
+            break;
+          case PlayerState.ended:
+          case PlayerState.unstarted:
+            break;
+        }
+
+      } break;
+      case PlayerType.vimeo: {
+
+        let player = <Vimeo.Player>this.playerInfo.player;
+        switch (value) {
+          case PlayerState.playing:
+            player.play();
+            break;
+          case PlayerState.paused:
+            player.pause();
+            break;
+          case PlayerState.ended:
+          case PlayerState.unstarted:
+            break;
+        }
+
+      } break;
+    }
+  }
+  @Output() public playerStateChange = new EventEmitter<PlayerState>();
   //#endregion
   //#region volume
   private _volume: number = 0;
@@ -323,7 +484,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       } break;
       case PlayerType.vimeo: {
         (<Vimeo.Player>this.playerInfo.player).setVolume(value / 100);
-      } break; 
+      } break;
     }
   }
   @Output() public volumeChange = new EventEmitter<number>();
@@ -347,7 +508,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       } break;
       case PlayerType.vimeo: {
         (<Vimeo.Player>this.playerInfo.player).setMuted(value);
-      } break; 
+      } break;
     }
   }
   @Output() public muteChange = new EventEmitter<boolean>();
