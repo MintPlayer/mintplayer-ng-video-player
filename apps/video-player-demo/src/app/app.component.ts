@@ -37,8 +37,13 @@ export class AppComponent {
   currentTime = 0;
   volume = 0;
   isMuted = false;
+  isPip = false;
   setMuted(event: Event) {
     this.isMuted = (<any>event.target).checked;
+  }
+
+  onCurrentTimeChange(currentTime: number) {
+    this.currentTime = currentTime;
   }
 
   playerStates = PlayerState;

@@ -175,6 +175,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                 width: this.width,
                 height: this.height,
                 autoplay: this.autoplay,
+                pip: true
               });
               this.playerInfo = {
                 type: PlayerType.vimeo,
@@ -189,9 +190,13 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.hasJustLoaded = true;
                 this.playerStateChange.emit(PlayerState.unstarted);
                 setTimeout(() => {
+                  let player = <Vimeo.Player>this.playerInfo?.player;
                   this.hasJustLoaded = false;
+                  player.getVolume().then(vol => {
+                    this.volumeChange.emit(this._volume = vol * 100);
+                  });
                   if (this.autoplay) {
-                    (<Vimeo.Player>this.playerInfo?.player).play();
+                    player.play();
                   }
                 }, 600);
               });
@@ -205,6 +210,18 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               });
               vimeoPlayer.on('ended', () => {
                 this.playerStateChange.emit(PlayerState.ended);
+              });
+              vimeoPlayer.on('volumechange', (event) => {
+                this.volumeChange.emit(this._volume = event.volume * 100);
+              });
+              vimeoPlayer.on('timeupdate', (event) => {
+                this.currentTimeChange.emit(this._currentTime = event.seconds);
+              });
+              vimeoPlayer.on('enterpictureinpicture', (event) => {
+                this.isPipChange.emit(this._isPip = true);
+              });
+              vimeoPlayer.on('leavepictureinpicture', (event) => {
+                this.isPipChange.emit(this._isPip = false);
               });
               break;
             }
@@ -236,8 +253,8 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       }))
       .pipe(takeUntil(this.destroyed$))
       .subscribe(async ([time, isPlayerReady, isSwitchingVideo]) => {
-        let newCurrentTime: number = 0;
-        let newVolume: number = 50;
+        let newCurrentTime: number | null = null;
+        let newVolume: number | null = null;
         let newIsMuted: boolean = false;
 
         switch (this.playerInfo?.type) {
@@ -267,13 +284,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
           } break;
           case PlayerType.vimeo: {
             let player = <Vimeo.Player>this.playerInfo.player;
-            if (player.getCurrentTime !== undefined) {
-              await player.getCurrentTime().then((time) => {
-                newCurrentTime = time;
-              });
-              await player.getVolume().then((vol) => {
-                newVolume = vol * 100;
-              });
+            if (player.getMuted !== undefined) {
               await player.getMuted().then((m) => {
                 newIsMuted = m;
               });
@@ -281,10 +292,10 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
           } break;
         }
 
-        if (this._currentTime !== newCurrentTime) {
+        if ((newCurrentTime !== null) && (this._currentTime !== newCurrentTime)) {
           this.currentTimeChange.emit(this._currentTime = newCurrentTime);
         }
-        if ((typeof newVolume !== 'undefined') && (this._volume !== newVolume)) {
+        if ((newVolume !== null) && (this._volume !== newVolume)) {
           this.volumeChange.emit(this._volume = newVolume);
         }
         if (this._mute != newIsMuted) {
@@ -348,23 +359,25 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   get currentTime() {
     return this._currentTime;
   }
-  @Input() set currentTime(value: number) {
-    if (this._currentTime !== value) {
-      this._currentTime = value;
+  @Output() public currentTimeChange = new EventEmitter<number>();
+  //#endregion
+  //#region seek
+  public seek(timestamp: number) {
+    if (this._currentTime !== timestamp) {
+      this._currentTime = timestamp;
       switch (this.playerInfo?.type) {
         case PlayerType.youtube:
-          (<YT.Player>this.playerInfo.player).seekTo(value, true);
+          (<YT.Player>this.playerInfo.player).seekTo(timestamp, true);
           break;
         case PlayerType.dailymotion:
-          (<DM.Player>this.playerInfo.player).seek(value);
+          (<DM.Player>this.playerInfo.player).seek(timestamp);
           break;
         case PlayerType.vimeo:
-          (<Vimeo.Player>this.playerInfo.player).setCurrentTime(value);
+          (<Vimeo.Player>this.playerInfo.player).setCurrentTime(timestamp);
           break;
       }
     }
   }
-  @Output() public currentTimeChange = new EventEmitter<number>();
   //#endregion
   //#region playerState
   public async getplayerState() {
@@ -477,6 +490,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._volume;
   }
   @Input() set volume(value: number) {
+    this._volume = value;
     switch (this.playerInfo?.type) {
       case PlayerType.youtube: {
         (<YT.Player>this.playerInfo.player).setVolume(value);
@@ -497,6 +511,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     return this._mute;
   }
   @Input() set mute(value: boolean) {
+    this._mute = value;
     switch (this.playerInfo?.type) {
       case PlayerType.youtube: {
         if (value) {
@@ -514,6 +529,38 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
   @Output() public muteChange = new EventEmitter<boolean>();
+  //#endregion
+  //#region isPip
+  private _isPip: boolean = false;
+  get isPip() {
+    return this._isPip;
+  }
+  @Input() set isPip(value: boolean) {
+    this._isPip = value;
+    switch (this.playerInfo?.type) {
+      case PlayerType.youtube: {
+        if (value) {
+          throw 'YouTube does not support PiP mode';  
+        }
+      } break;
+      case PlayerType.dailymotion: {
+        if (value) {
+          throw 'DailyMotion does not support PiP mode';  
+        }
+      } break;
+      case PlayerType.vimeo: {
+        if (value) {
+          setTimeout(() => {
+            console.log('request pip');
+            (<Vimeo.Player>this.playerInfo?.player).requestPictureInPicture();
+          }, 50);
+        } else {
+          (<Vimeo.Player>this.playerInfo.player).exitPictureInPicture();
+        }
+      } break;
+    }
+  }
+  @Output() public isPipChange = new EventEmitter<boolean>();
   //#endregion
   @Input() public autoplay: boolean = true;
   //#region url
@@ -581,6 +628,10 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   private playerInfo: { type: PlayerType, player: YT.Player | DM.Player | Vimeo.Player } | null = null;
   private hasJustLoaded: boolean = false;
 
+  requestPip() {
+    this.isPip = true;
+  }
+  
   ngOnInit() {
   }
 
