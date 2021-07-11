@@ -2,7 +2,7 @@
 /// <reference path="../../interfaces/dailymotion.ts" />
 /// <reference path="../../interfaces/vimeo.ts" />
 
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output, PLATFORM_ID, ViewChild } from '@angular/core';
 import { BehaviorSubject, combineLatest, Subject, timer } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 import { YoutubeApiService } from '@mintplayer/ng-youtube-api';
@@ -12,6 +12,7 @@ import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { PlayerState, PlayerType } from '../../enums';
 import { VideoRequest } from '../../interfaces/video-request';
 import { PlatformWithRegexes } from '../../interfaces/platform-with-regexes';
+import { isPlatformServer } from '@angular/common';
 
 @Component({
   selector: 'video-player',
@@ -23,6 +24,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     private youtubeApiService: YoutubeApiService,
     private dailymotionApiService: DailymotionApiService,
     private vimeoApiService: VimeoApiService,
+    @Inject(PLATFORM_ID) private platformId: Object,
     private zone: NgZone,
   ) {
     // [isViewInited$,videoRequest$] => isApiReady$
@@ -253,70 +255,72 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
 
-    combineLatest([timer(0, 50), this.isPlayerReady$, this.isSwitchingVideo$])
-      .pipe(filter(([time, isPlayerReady, isSwitchingVideo]) => {
-        return isPlayerReady && !isSwitchingVideo;
-      }))
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(async ([time, isPlayerReady, isSwitchingVideo]) => {
-        let newCurrentTime: number | null = null;
-        let newVolume: number | null = null;
-        let newIsMuted: boolean = false;
-        let duration: number = 0;
+    if (!isPlatformServer(this.platformId)) {
+      combineLatest([timer(0, 50), this.isPlayerReady$, this.isSwitchingVideo$])
+        .pipe(filter(([time, isPlayerReady, isSwitchingVideo]) => {
+          return isPlayerReady && !isSwitchingVideo;
+        }))
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(async ([time, isPlayerReady, isSwitchingVideo]) => {
+          let newCurrentTime: number | null = null;
+          let newVolume: number | null = null;
+          let newIsMuted: boolean = false;
+          let duration: number = 0;
 
-        switch (this.playerInfo?.type) {
-          case PlayerType.youtube: {
-            let player = <YT.Player>this.playerInfo.player;
-            if (player.getCurrentTime !== undefined) {
-              newCurrentTime = player.getCurrentTime();
-            }
-            if (player.getVolume !== undefined) {
-              newVolume = player.getVolume();
-            }
-            if (player.isMuted !== undefined) {
-              newIsMuted = player.isMuted();
-            }
-            if (player.getDuration !== undefined) {
-              duration = player.getDuration();
-            }
-          } break;
-          case PlayerType.dailymotion: {
-            let player = <DM.Player>this.playerInfo.player;
-            if (player.currentTime !== undefined) {
-              newCurrentTime = player.currentTime;
-            }
-            if (player.volume !== undefined) {
-              newVolume = player.volume * 100;
-            }
-            if (player.muted !== undefined) {
-              newIsMuted = player.muted;
-            }
-            duration = player.duration;
-          } break;
-          case PlayerType.vimeo: {
-            let player = <Vimeo.Player>this.playerInfo.player;
-            if (player.getMuted !== undefined) {
-              newIsMuted = await player.getMuted();
-            }
-            // if (player.getDuration !== undefined) {
-            //   duration = await player.getDuration();
-            // }
-          } break;
-        }
+          switch (this.playerInfo?.type) {
+            case PlayerType.youtube: {
+              let player = <YT.Player>this.playerInfo.player;
+              if (player.getCurrentTime !== undefined) {
+                newCurrentTime = player.getCurrentTime();
+              }
+              if (player.getVolume !== undefined) {
+                newVolume = player.getVolume();
+              }
+              if (player.isMuted !== undefined) {
+                newIsMuted = player.isMuted();
+              }
+              if (player.getDuration !== undefined) {
+                duration = player.getDuration();
+              }
+            } break;
+            case PlayerType.dailymotion: {
+              let player = <DM.Player>this.playerInfo.player;
+              if (player.currentTime !== undefined) {
+                newCurrentTime = player.currentTime;
+              }
+              if (player.volume !== undefined) {
+                newVolume = player.volume * 100;
+              }
+              if (player.muted !== undefined) {
+                newIsMuted = player.muted;
+              }
+              duration = player.duration;
+            } break;
+            case PlayerType.vimeo: {
+              let player = <Vimeo.Player>this.playerInfo.player;
+              if (player.getMuted !== undefined) {
+                newIsMuted = await player.getMuted();
+              }
+              // if (player.getDuration !== undefined) {
+              //   duration = await player.getDuration();
+              // }
+            } break;
+          }
 
-        if ((newCurrentTime !== null) && (this._currentTime !== newCurrentTime)) {
-          this.progressChange.emit({
-            currentTime: this._currentTime = newCurrentTime,
-            duration: duration
-          });
-        }
-        if ((newVolume !== null) && (this._volume !== newVolume)) {
-          this.volumeChange.emit(this._volume = newVolume);
-        }
-        if (this._mute != newIsMuted) {
-          this.muteChange.emit(this._mute = newIsMuted);
-        }
-      });
+          if ((newCurrentTime !== null) && (this._currentTime !== newCurrentTime)) {
+            this.progressChange.emit({
+              currentTime: this._currentTime = newCurrentTime,
+              duration: duration
+            });
+          }
+          if ((newVolume !== null) && (this._volume !== newVolume)) {
+            this.volumeChange.emit(this._volume = newVolume);
+          }
+          if (this._mute != newIsMuted) {
+            this.muteChange.emit(this._mute = newIsMuted);
+          }
+        });
+    }
   }
 
   //#region width
@@ -615,7 +619,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       } break;
     }
   }
-  // //#endregion
+  //#endregion
   @Input() public autoplay: boolean = true;
   //#region url
   @Input() public set url(value: string) {
