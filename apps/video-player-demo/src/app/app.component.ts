@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { PlayerState, PlayerType, VideoPlayerComponent } from '@mintplayer/ng-video-player'
 
 @Component({
@@ -34,7 +35,10 @@ export class AppComponent {
     this.width = 400;
     this.height = 300;
   }
-  currentTime = 0;
+  progress: PlayerProgress = {
+    currentTime: 0,
+    duration: 0
+  };
   volume = 0;
   isMuted = false;
   isPip = false;
@@ -50,8 +54,8 @@ export class AppComponent {
     await this.player1.setIsPip(false);
   }
 
-  onCurrentTimeChange(currentTime: number) {
-    this.currentTime = currentTime;
+  onProgressChange(progress: PlayerProgress) {
+    this.progress = progress;
   }
 
   playerStates = PlayerState;

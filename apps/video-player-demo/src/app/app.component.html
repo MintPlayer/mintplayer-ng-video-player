@@ -1,8 +1,8 @@
 <body>
   <h1>Welcome to video-player-demo!</h1>
-  <video-player [width]="width" [height]="height" [autoplay]="true" [url]="url" (currentTimeChange)="onCurrentTimeChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState" (isPipChange)="isPip = $event" #player1></video-player>
+  <video-player [width]="width" [height]="height" [autoplay]="true" [url]="url" (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState" (isPipChange)="isPip = $event" #player1></video-player>
   <br>
-  <label>{{ currentTime }}</label>
+  <label>{{ progress.currentTime }}</label>
   <br>
   <ng-container *ngFor="let video of videos">
     <a href (click)="playVideo(video)">{{ video }}</a>

@@ -37,7 +37,7 @@ declare namespace Vimeo {
         getCurrentTime(): Promise<number>;
         setCurrentTime(time: number): void;
 
-        getDuration(): number;
+        getDuration(): Promise<number>;
         
         getLoop(): boolean;
         setLoop(loop: boolean): void;
