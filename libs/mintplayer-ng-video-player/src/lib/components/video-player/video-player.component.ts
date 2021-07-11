@@ -648,7 +648,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         ]
       }];
 
-      let test = platforms[0].regexes[0].exec(value);
+      let test = new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/watch\?v=(?<id>[^&]+)/, 'g').exec(value);
       console.log('test', test);
 
 
