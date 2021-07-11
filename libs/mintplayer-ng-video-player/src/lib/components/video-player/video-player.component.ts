@@ -648,6 +648,10 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         ]
       }];
 
+      let test = platforms[0].regexes[0].exec(value);
+      console.log('test', test);
+
+
       let platformIds = platforms.map(p => {
         let matches = p.regexes.map(r => /*value.match(r)*/ r.exec(value)).filter(r => r !== null);
         console.log(matches);
