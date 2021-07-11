@@ -619,51 +619,55 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() public autoplay: boolean = true;
   //#region url
   @Input() public set url(value: string) {
-    this.isSwitchingVideo$.next(true);
+    if ((typeof value === 'undefined') || (value === null) || (value === '')) {
+      this.videoRequest$.next(null);
+    } else {
+      this.isSwitchingVideo$.next(true);
 
-    const platforms: PlatformWithRegexes[] = [{
-      platform: PlayerType.youtube,
-      regexes: [
-        // new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/watch\?v=(?<id>.+)/, 'g'),
-        new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/watch\?v=(?<id>[^&]+)/, 'g'),
-        new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtu\.be\/(?<id>.+)$/, 'g'),
-      ]
-    }, {
-      platform: PlayerType.dailymotion,
-      regexes: [
-        new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}dailymotion\.com\/video\/(?<id>[0-9A-Za-z]+)$/, 'g'),
-      ]
-    }, {
-      platform: PlayerType.vimeo,
-      regexes: [
-        new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}vimeo\.com\/(?<id>[0-9]+)$/, 'g'),
-      ]
-    }];
+      const platforms: PlatformWithRegexes[] = [{
+        platform: PlayerType.youtube,
+        regexes: [
+          // new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/watch\?v=(?<id>.+)/, 'g'),
+          new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/watch\?v=(?<id>[^&]+)/, 'g'),
+          new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtu\.be\/(?<id>.+)$/, 'g'),
+        ]
+      }, {
+        platform: PlayerType.dailymotion,
+        regexes: [
+          new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}dailymotion\.com\/video\/(?<id>[0-9A-Za-z]+)$/, 'g'),
+        ]
+      }, {
+        platform: PlayerType.vimeo,
+        regexes: [
+          new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}vimeo\.com\/(?<id>[0-9]+)$/, 'g'),
+        ]
+      }];
 
-    let platformIds = platforms.map(p => {
-      let matches = p.regexes.map(r => r.exec(value)).filter(r => r !== null);
-      if (matches.length === 0) {
-        return null;
+      let platformIds = platforms.map(p => {
+        let matches = p.regexes.map(r => r.exec(value)).filter(r => r !== null);
+        if (matches.length === 0) {
+          return null;
+        }
+
+        if (matches[0] === null) {
+          return null;
+        } else if (matches[0].groups == null) {
+          return null;
+        }
+
+        return {
+          platform: p.platform,
+          id: matches[0].groups.id
+        };
+      }).filter(p => (p !== null));
+
+      if (platformIds.length === 0) {
+        throw `No player found for url ${value}`;
       }
 
-      if (matches[0] === null) {
-        return null;
-      } else if (matches[0].groups == null) {
-        return null;
+      if (!!platformIds[0]) {
+        this.videoRequest$.next({ playerType: platformIds[0].platform, id: platformIds[0].id });
       }
-
-      return {
-        platform: p.platform,
-        id: matches[0].groups.id
-      };
-    }).filter(p => (p !== null));
-
-    if (platformIds.length === 0) {
-      throw `No player found for url ${value}`;
-    }
-
-    if (!!platformIds[0]) {
-      this.videoRequest$.next({ playerType: platformIds[0].platform, id: platformIds[0].id });
     }
   }
   //#endregion
