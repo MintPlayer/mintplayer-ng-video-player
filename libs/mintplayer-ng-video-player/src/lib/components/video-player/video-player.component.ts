@@ -301,9 +301,6 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               if (player.getMuted !== undefined) {
                 newIsMuted = await player.getMuted();
               }
-              // if (player.getDuration !== undefined) {
-              //   duration = await player.getDuration();
-              // }
             } break;
           }
 
@@ -623,7 +620,6 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() public autoplay: boolean = true;
   //#region url
   @Input() public set url(value: string) {
-    console.log('URL set');
     if ((typeof value === 'undefined') || (value === null) || (value === '')) {
       this.videoRequest$.next(null);
     } else {
@@ -648,21 +644,13 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         ]
       }];
 
-      let test = new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/watch\?v=(?<id>[^&]+)/, 'g').exec(value);
-      console.log('test', test);
-
-
       let platformIds = platforms.map(p => {
         let matches = p.regexes.map(r => /*value.match(r)*/ r.exec(value)).filter(r => r !== null);
-        console.log(matches);
         if (matches.length === 0) {
-          console.log('a');
           return null;
         } else if (matches[0] === null) {
-          console.log('b');
           return null;
         } else if (matches[0].groups == null) {
-          console.log('c');
           return null;
         } else {
           return {
@@ -671,8 +659,6 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
           };
         }
       }).filter(p => (p !== null));
-
-      console.log('plaform ids', platformIds);
 
       if (platformIds.length === 0) {
         throw `No player found for url ${value}`;
