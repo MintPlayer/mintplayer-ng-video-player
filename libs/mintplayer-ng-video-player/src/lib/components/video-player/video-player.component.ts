@@ -649,7 +649,8 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       }];
 
       let platformIds = platforms.map(p => {
-        let matches = p.regexes.map(r => r.exec(value)).filter(r => r !== null);
+        let matches = p.regexes.map(r => value.match(r) /*r.exec(value)*/).filter(r => r !== null);
+        console.log(matches);
         if (matches.length === 0) {
           console.log('a');
           return null;
@@ -657,7 +658,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
           console.log('b');
           return null;
         } else if (matches[0].groups == null) {
-          console.log('c', matches[0]);
+          console.log('c');
           return null;
         } else {
           return {
