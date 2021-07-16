@@ -1,7 +1,7 @@
 {
   "name": "@mintplayer/ng-video-player",
   "private": false,
-  "version": "12.0.0",
+  "version": "12.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player"
@@ -9,10 +9,11 @@
   "peerDependencies": {
     "@angular/common": "^12.1.1",
     "@angular/core": "^12.1.1",
-    "@mintplayer/ng-youtube-api": "^12.0.0",
-    "@mintplayer/ng-dailymotion-api": "^12.0.0",
-    "@mintplayer/ng-vimeo-api": "^12.0.0",
-    "@mintplayer/ng-player-progress": "^1.0.0"
+    "@mintplayer/ng-youtube-api": "^12.0.1",
+    "@mintplayer/ng-dailymotion-api": "^12.0.1",
+    "@mintplayer/ng-vimeo-api": "^12.0.2",
+    "@mintplayer/ng-player-progress": "^1.0.0",
+    "rxjs": "^6.0.0"
   },
   "dependencies": {
     "tslib": "^2.2.0"
