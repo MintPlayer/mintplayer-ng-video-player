@@ -143,6 +143,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                   height: String(this.height),
                   params: {
                     autoplay: this.autoplay,
+                    "queue-enable": false,
                   },
                   events: {
                     apiready: () => {
