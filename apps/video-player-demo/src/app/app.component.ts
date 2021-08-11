@@ -27,6 +27,8 @@ export class AppComponent {
     'https://www.dailymotion.com/video/x2yhuhb',
     'https://vimeo.com/14190306',
     'https://vimeo.com/82932655',
+    'https://soundcloud.com/dario-g/sunchyme-radio-edit',
+    'https://soundcloud.com/oasisofficial/whatever',
   ];
 
   width = 800;

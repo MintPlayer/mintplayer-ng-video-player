@@ -1,6 +1,7 @@
 /// <reference path="../../../../../../node_modules/@types/youtube/index.d.ts" />
 /// <reference path="../../interfaces/dailymotion.ts" />
 /// <reference path="../../interfaces/vimeo.ts" />
+/// <reference path="../../interfaces/soundcloud.ts" />
 
 import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output, PLATFORM_ID, ViewChild } from '@angular/core';
 import { BehaviorSubject, combineLatest, Subject, timer } from 'rxjs';
@@ -13,6 +14,8 @@ import { PlayerState, PlayerType } from '../../enums';
 import { VideoRequest } from '../../interfaces/video-request';
 import { PlatformWithRegexes } from '../../interfaces/platform-with-regexes';
 import { isPlatformServer } from '@angular/common';
+import { SoundcloudApiService } from '@mintplayer/ng-soundcloud-api';
+import { PlayProgressEvent } from '../../interfaces/soundcloud/play-progress.event';
 
 @Component({
   selector: 'video-player',
@@ -24,6 +27,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     private youtubeApiService: YoutubeApiService,
     private dailymotionApiService: DailymotionApiService,
     private vimeoApiService: VimeoApiService,
+    private soundcloudApiService: SoundcloudApiService,
     @Inject(PLATFORM_ID) private platformId: Object,
     private zone: NgZone,
   ) {
@@ -59,12 +63,24 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               });
             this.vimeoApiService.loadApi();
             break;
+          case PlayerType.soundcloud:
+            this.soundcloudApiService.soundcloudApiReady$
+              .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
+              .subscribe((ready) => {
+                this.isApiReady$.next(ready);
+              });
+            this.soundcloudApiService.loadApi();
+            break;
         }
       });
 
-    let setHtml = () => {
+    let setHtml = (playertype: PlayerType) => {
       this.domId = `player${VideoPlayerComponent.playerCounter++}`;
-      this.container.nativeElement.innerHTML = `<div id="${this.domId}"></div>`;
+      if (playertype === PlayerType.soundcloud) {
+        this.container.nativeElement.innerHTML = `<iframe id="${this.domId}" width="${this._width}" height="${this._height}" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&amp;" allow="autoplay"></iframe>`;
+      } else {
+        this.container.nativeElement.innerHTML = `<div id="${this.domId}"></div>`;
+      }
     };
     let destroyCurrentPlayer = () => {
       switch (this.playerInfo?.type) {
@@ -76,6 +92,9 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
           break;
         case PlayerType.vimeo:
           (<Vimeo.Player>this.playerInfo.player).destroy();
+          break;
+        case PlayerType.soundcloud:
+          // (<SC.Widget.Player>this.playerInfo.player).destroy();
           break;
       }
     }
@@ -93,7 +112,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               this.isSwitchingVideo$.next(false);
             } else {
               destroyCurrentPlayer();
-              setHtml();
+              setHtml(PlayerType.youtube);
               this.playerInfo = {
                 type: PlayerType.youtube,
                 player: new YT.Player(this.domId, {
@@ -135,7 +154,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               this.isSwitchingVideo$.next(false);
             } else {
               destroyCurrentPlayer();
-              setHtml();
+              setHtml(PlayerType.dailymotion);
               this.playerInfo = {
                 type: PlayerType.dailymotion,
                 player: DM.player(this.container.nativeElement.getElementsByTagName('div')[0], {
@@ -172,7 +191,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               });
             } else {
               destroyCurrentPlayer();
-              setHtml();
+              setHtml(PlayerType.vimeo);
               let videoId = currentVideoRequest.id;
               let vimeoPlayer = new Vimeo.Player(this.domId, {
                 id: videoId,
@@ -220,9 +239,11 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               });
               vimeoPlayer.on('timeupdate', (event) => {
                 vimeoPlayer.getDuration().then((d) => {
-                  this.progressChange.emit({
-                    currentTime: this._currentTime = event.seconds,
-                    duration: d
+                  this.zone.run(() => {
+                    this.progressChange.emit({
+                      currentTime: this._currentTime = event.seconds,
+                      duration: d
+                    });
                   });
                 });
               });
@@ -232,8 +253,53 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               vimeoPlayer.on('leavepictureinpicture', (event) => {
                 this.isPipChange.emit(false);
               });
-              break;
             }
+            break;
+          case PlayerType.soundcloud:
+            if (this.playerInfo?.type === PlayerType.soundcloud) {
+              console.log('path 2');
+              (<SC.Widget.Player>this.playerInfo.player).load(currentVideoRequest.id, {
+                auto_play: true,
+                callback: () => {
+                  console.log('hello');
+                  this.isSwitchingVideo$.next(false);
+                }
+              });
+            } else {
+              console.log('path 1');
+              destroyCurrentPlayer();
+              setHtml(PlayerType.soundcloud);
+              let soundcloudPlayer = SC.Widget(<HTMLIFrameElement>document.getElementById(this.domId));
+              this.playerInfo = {
+                type: PlayerType.soundcloud,
+                player: soundcloudPlayer
+              };
+              soundcloudPlayer.bind(SC.Widget.Events.READY, () => {
+                this.isPlayerReady$.next(true);
+                this.isSwitchingVideo$.next(false);
+                this.playerStateChange.emit(PlayerState.unstarted);
+              });
+              soundcloudPlayer.bind(SC.Widget.Events.PLAY, () => {
+                this.playerStateChange.emit(PlayerState.playing);
+              });
+              soundcloudPlayer.bind(SC.Widget.Events.PAUSE, () => {
+                this.playerStateChange.emit(PlayerState.paused);
+              });
+              soundcloudPlayer.bind(SC.Widget.Events.FINISH, () => {
+                this.playerStateChange.emit(PlayerState.ended);
+              });
+              soundcloudPlayer.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => {
+                soundcloudPlayer.getDuration((duration) => {
+                  this.zone.run(() => {
+                    this.progressChange.emit({
+                      currentTime: event.currentPosition / 1000,
+                      duration: duration / 1000
+                    });
+                  });
+                });
+              });
+            }
+            break;
         }
       });
 
@@ -251,6 +317,8 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               (<DM.Player>this.playerInfo?.player).load({ video: videoRequest.id });
             } else if (videoRequest.playerType === PlayerType.vimeo) {
               (<Vimeo.Player>this.playerInfo?.player).loadVideo(videoRequest.id);
+            } else if (videoRequest.playerType === PlayerType.soundcloud) {
+              (<SC.Widget.Player>this.playerInfo?.player).load(videoRequest.id, { auto_play: this.autoplay });
             }
           }
         }
@@ -303,6 +371,16 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                 newIsMuted = await player.getMuted();
               }
             } break;
+            case PlayerType.soundcloud: {
+              let player = <SC.Widget.Player>this.playerInfo.player;
+              if (player.getVolume !== undefined) {
+                newVolume = await new Promise<number>((resolve, reject) => {
+                  player.getVolume((volume) => {
+                    resolve(volume);
+                  });
+                });
+              }
+            } break;
           }
 
           if ((newCurrentTime !== null) && (this._currentTime !== newCurrentTime)) {
@@ -336,12 +414,18 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         case PlayerType.dailymotion:
           (<DM.Player>this.playerInfo.player).width = this._width;
           break;
-        case PlayerType.vimeo:
+        case PlayerType.vimeo: {
           let iframe = this.container.nativeElement.querySelector<HTMLIFrameElement>('div iframe');
           if (!!iframe) {
             iframe.width = String(value);
           }
-          break;
+        } break;
+        case PlayerType.soundcloud: {
+          let iframe = this.container.nativeElement.querySelector<HTMLIFrameElement>('iframe');
+          if (!!iframe) {
+            iframe.width = String(value);
+          }
+        } break;
       }
     }
   }
@@ -361,12 +445,18 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         case PlayerType.dailymotion:
           (<DM.Player>this.playerInfo.player).height = this._height;
           break;
-        case PlayerType.vimeo:
+        case PlayerType.vimeo: {
           let iframe = this.container.nativeElement.querySelector<HTMLIFrameElement>('div iframe');
           if (!!iframe) {
             iframe.height = String(value);
           }
-          break;
+        } break;
+        case PlayerType.soundcloud: {
+          let iframe = this.container.nativeElement.querySelector<HTMLIFrameElement>('iframe');
+          if (!!iframe) {
+            iframe.width = String(value);
+          }
+        } break;
       }
     }
   }
@@ -391,6 +481,9 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
           break;
         case PlayerType.vimeo:
           (<Vimeo.Player>this.playerInfo.player).setCurrentTime(timestamp);
+          break;
+        case PlayerType.soundcloud:
+          (<SC.Widget.Player>this.playerInfo.player).seekTo(timestamp * 1000);
           break;
       }
     }
@@ -432,6 +525,22 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         if (await player.getEnded()) {
           return PlayerState.ended;
         } else if (await player.getPaused()) {
+          return PlayerState.paused;
+        } else {
+          return PlayerState.playing;
+        }
+
+      }
+      case PlayerType.soundcloud: {
+
+        let player = <SC.Widget.Player>this.playerInfo.player;
+        let isPaused = await new Promise<boolean>((resolve, reject) => {
+          player.isPaused((paused) => {
+            resolve(paused);
+          });
+        });
+
+        if (isPaused) {
           return PlayerState.paused;
         } else {
           return PlayerState.playing;
@@ -497,6 +606,23 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
       } break;
+      case PlayerType.soundcloud: {
+        if (!this.isSwitchingVideo$.value) {
+          let player = <SC.Widget.Player>this.playerInfo.player;
+          switch (value) {
+            case PlayerState.playing:
+              player.play();
+              break;
+            case PlayerState.paused:
+              player.pause();
+              break;
+            case PlayerState.ended:
+            case PlayerState.unstarted:
+              break;
+          }
+        }
+
+      } break;
     }
   }
   @Output() public playerStateChange = new EventEmitter<PlayerState>();
@@ -517,6 +643,9 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       } break;
       case PlayerType.vimeo: {
         (<Vimeo.Player>this.playerInfo.player).setVolume(value / 100);
+      } break;
+      case PlayerType.soundcloud: {
+        (<SC.Widget.Player>this.playerInfo.player).setVolume(value);
       } break;
     }
   }
@@ -547,7 +676,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   @Output() public muteChange = new EventEmitter<boolean>();
   //#endregion
-  
+
   // //#region isPip
   // private _isPip: boolean = false;
   // get isPip() {
@@ -600,12 +729,12 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     switch (this.playerInfo?.type) {
       case PlayerType.youtube: {
         if (isPip) {
-          throw 'YouTube does not support PiP mode';  
+          throw 'YouTube does not support PiP mode';
         }
       } break;
       case PlayerType.dailymotion: {
         if (isPip) {
-          throw 'DailyMotion does not support PiP mode';  
+          throw 'DailyMotion does not support PiP mode';
         }
       } break;
       case PlayerType.vimeo: {
@@ -613,6 +742,11 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
           await (<Vimeo.Player>this.playerInfo?.player).requestPictureInPicture();
         } else {
           await (<Vimeo.Player>this.playerInfo.player).exitPictureInPicture();
+        }
+      } break;
+      case PlayerType.soundcloud: {
+        if (isPip) {
+          throw 'SoundCloud does not support PiP mode';
         }
       } break;
     }
@@ -644,10 +778,15 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         regexes: [
           new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}vimeo\.com\/(?<id>[0-9]+)$/, 'g'),
         ]
+      }, {
+        platform: PlayerType.soundcloud,
+        regexes: [
+          new RegExp(/(?<id>http[s]{0,1}:\/\/(www\.){0,1}soundcloud\.com\/.+)$/, 'g'),
+        ]
       }];
 
       let platformIds = platforms.map(p => {
-        let matches = p.regexes.map(r => /*value.match(r)*/ r.exec(value)).filter(r => r !== null);
+        let matches = p.regexes.map(r => r.exec(value)).filter(r => r !== null);
         if (matches.length === 0) {
           return null;
         } else if (matches[0] === null) {
@@ -684,7 +823,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   private isPlayerReady$ = new BehaviorSubject<boolean>(false);
   private isSwitchingVideo$ = new BehaviorSubject<boolean>(false);
 
-  private playerInfo: { type: PlayerType, player: YT.Player | DM.Player | Vimeo.Player } | null = null;
+  private playerInfo: { type: PlayerType, player: YT.Player | DM.Player | Vimeo.Player | SC.Widget.Player } | null = null;
   private hasJustLoaded: boolean = false;
 
   ngOnInit() {
