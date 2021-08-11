@@ -77,7 +77,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     let setHtml = (playertype: PlayerType) => {
       this.domId = `player${VideoPlayerComponent.playerCounter++}`;
       if (playertype === PlayerType.soundcloud) {
-        this.container.nativeElement.innerHTML = `<iframe id="${this.domId}" width="${this._width}" height="${this._height}" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&amp;" allow="autoplay"></iframe>`;
+        this.container.nativeElement.innerHTML = `<iframe id="${this.domId}" width="${this._width}" height="${this._height}" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&amp;show_teaser=false&amp;" allow="autoplay"></iframe>`;
       } else {
         this.container.nativeElement.innerHTML = `<div id="${this.domId}"></div>`;
       }
