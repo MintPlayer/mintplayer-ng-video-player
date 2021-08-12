@@ -4,18 +4,18 @@
 /// <reference path="../../interfaces/soundcloud.ts" />
 
 import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output, PLATFORM_ID, ViewChild } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
 import { BehaviorSubject, combineLatest, Subject, timer } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
+import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { YoutubeApiService } from '@mintplayer/ng-youtube-api';
 import { DailymotionApiService } from '@mintplayer/ng-dailymotion-api';
 import { VimeoApiService } from '@mintplayer/ng-vimeo-api';
-import { PlayerProgress } from '@mintplayer/ng-player-progress';
+import { SoundcloudApiService } from '@mintplayer/ng-soundcloud-api';
 import { PlayerState, PlayerType } from '../../enums';
 import { VideoRequest } from '../../interfaces/video-request';
-import { PlatformWithRegexes } from '../../interfaces/platform-with-regexes';
-import { isPlatformServer } from '@angular/common';
-import { SoundcloudApiService } from '@mintplayer/ng-soundcloud-api';
 import { PlayProgressEvent } from '../../interfaces/soundcloud/play-progress.event';
+import { PlayerTypeFinderService } from '../../services';
 
 @Component({
   selector: 'video-player',
@@ -30,6 +30,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     private soundcloudApiService: SoundcloudApiService,
     @Inject(PLATFORM_ID) private platformId: Object,
     private zone: NgZone,
+    private playerTypeFinder: PlayerTypeFinderService,
   ) {
     // [isViewInited$,videoRequest$] => isApiReady$
     combineLatest([this.isViewInited$, this.videoRequest$])
@@ -760,53 +761,11 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.isSwitchingVideo$.next(true);
 
-      const platforms: PlatformWithRegexes[] = [{
-        platform: PlayerType.youtube,
-        regexes: [
-          // new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/watch\?v=(?<id>.+)/, 'g'),
-          new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/watch\?v=(?<id>[^&]+)/, 'g'),
-          new RegExp(/http[s]{0,1}:\/\/m\.youtube\.com\/watch\?v=(?<id>[^&]+)/, 'g'),
-          new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtu\.be\/(?<id>.+)$/, 'g'),
-        ]
-      }, {
-        platform: PlayerType.dailymotion,
-        regexes: [
-          new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}dailymotion\.com\/video\/(?<id>[0-9A-Za-z]+)$/, 'g'),
-        ]
-      }, {
-        platform: PlayerType.vimeo,
-        regexes: [
-          new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}vimeo\.com\/(?<id>[0-9]+)$/, 'g'),
-        ]
-      }, {
-        platform: PlayerType.soundcloud,
-        regexes: [
-          new RegExp(/(?<id>http[s]{0,1}:\/\/(www\.){0,1}soundcloud\.com\/.+)$/, 'g'),
-        ]
-      }];
-
-      let platformIds = platforms.map(p => {
-        let matches = p.regexes.map(r => r.exec(value)).filter(r => r !== null);
-        if (matches.length === 0) {
-          return null;
-        } else if (matches[0] === null) {
-          return null;
-        } else if (matches[0].groups == null) {
-          return null;
-        } else {
-          return {
-            platform: p.platform,
-            id: matches[0].groups.id
-          };
-        }
-      }).filter(p => (p !== null));
-
-      if (platformIds.length === 0) {
+      let platformWithId = this.playerTypeFinder.getPlatformWithId(value);
+      if (platformWithId === null) {
         throw `No player found for url ${value}`;
-      }
-
-      if (!!platformIds[0]) {
-        this.videoRequest$.next({ playerType: platformIds[0].platform, id: platformIds[0].id });
+      } else {
+        this.videoRequest$.next({ playerType: platformWithId.platform, id: platformWithId.id });
       }
     }
   }
