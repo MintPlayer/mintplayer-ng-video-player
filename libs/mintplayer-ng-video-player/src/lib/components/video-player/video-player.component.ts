@@ -455,7 +455,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         case PlayerType.soundcloud: {
           let iframe = this.container.nativeElement.querySelector<HTMLIFrameElement>('iframe');
           if (!!iframe) {
-            iframe.width = String(value);
+            iframe.height = String(value);
           }
         } break;
       }
