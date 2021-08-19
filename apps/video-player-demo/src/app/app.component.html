@@ -28,5 +28,11 @@
         {{ playerStates[playerState] }}
       </td>
     </tr>
+    <tr>
+      <td colspan="4">
+        <button (click)="play()" *ngIf="playerState == playerStates['paused']">Play</button>
+        <button (click)="pause()" *ngIf="playerState == playerStates['playing']">Pause</button>
+      </td>
+    </tr>
   </table>
 </body>

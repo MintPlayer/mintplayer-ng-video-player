@@ -8,6 +8,10 @@ import { PlayerState, PlayerType, VideoPlayerComponent } from '@mintplayer/ng-vi
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+
+  constructor() {
+  }
+
   title = 'video-player-demo';
   url: string = '';
 
@@ -56,6 +60,13 @@ export class AppComponent {
     await this.player1.setIsPip(false);
   }
 
+  play() {
+    this.playerState = PlayerState.playing;
+  }
+  pause() {
+    this.playerState = PlayerState.paused;
+  }
+
   onProgressChange(progress: PlayerProgress) {
     this.progress = progress;
   }
@@ -65,7 +76,5 @@ export class AppComponent {
 
   onPlayerStateChange(event: PlayerState) {
     console.log(event);
-  }
-  constructor() {
   }
 }
