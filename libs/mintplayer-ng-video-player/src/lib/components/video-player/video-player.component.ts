@@ -799,6 +799,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       if (platformWithId === null) {
         throw `No player found for url ${value}`;
       } else {
+        console.log('platformWithId', platformWithId);
         this.videoRequest$.next({ playerType: platformWithId.platform, id: platformWithId.id });
       }
     }
