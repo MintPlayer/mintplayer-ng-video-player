@@ -39,6 +39,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       }))
       .pipe(takeUntil(this.destroyed$))
       .subscribe(([isViewInited, videoRequest]) => {
+        console.log('Received videoRequest');
         switch (videoRequest?.playerType) {
           case PlayerType.youtube:
             this.youtubeApiService.youtubeApiReady$
@@ -128,20 +129,22 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                       this.isSwitchingVideo$.next(false);
                     },
                     onStateChange: (ev: YT.OnStateChangeEvent) => {
-                      switch (ev.data) {
-                        case YT.PlayerState.PLAYING:
-                          this.playerStateChange.emit(PlayerState.playing);
-                          break;
-                        case YT.PlayerState.PAUSED:
-                          this.playerStateChange.emit(PlayerState.paused);
-                          break;
-                        case YT.PlayerState.ENDED:
-                          this.playerStateChange.emit(PlayerState.ended);
-                          break;
-                        case YT.PlayerState.UNSTARTED:
-                          this.playerStateChange.emit(PlayerState.unstarted);
-                          break;
-                      }
+                      this.zone.run(() => {
+                        switch (ev.data) {
+                          case YT.PlayerState.PLAYING:
+                            this.playerStateChange.emit(PlayerState.playing);
+                            break;
+                          case YT.PlayerState.PAUSED:
+                            this.playerStateChange.emit(PlayerState.paused);
+                            break;
+                          case YT.PlayerState.ENDED:
+                            this.playerStateChange.emit(PlayerState.ended);
+                            break;
+                          case YT.PlayerState.UNSTARTED:
+                            this.playerStateChange.emit(PlayerState.unstarted);
+                            break;
+                        }
+                      });
                     }
                   }
                 })
@@ -171,13 +174,19 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                       this.isSwitchingVideo$.next(false);
                     },
                     play: () => {
-                      this.playerStateChange.emit(PlayerState.playing);
+                      this.zone.run(() => {
+                        this.playerStateChange.emit(PlayerState.playing);
+                      });
                     },
                     pause: () => {
-                      this.playerStateChange.emit(PlayerState.paused);
+                      this.zone.run(() => {
+                        this.playerStateChange.emit(PlayerState.paused);
+                      });
                     },
                     end: () => {
-                      this.playerStateChange.emit(PlayerState.ended);
+                      this.zone.run(() => {
+                        this.playerStateChange.emit(PlayerState.ended);
+                      });
                     }
                   }
                 })
@@ -208,16 +217,22 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               vimeoPlayer.ready().then(() => {
                 this.isPlayerReady$.next(true);
                 this.isSwitchingVideo$.next(false);
-                this.playerStateChange.emit(PlayerState.unstarted);
+                this.zone.run(() => {
+                  this.playerStateChange.emit(PlayerState.unstarted);
+                });
               });
               vimeoPlayer.on('loaded', () => {
                 this.hasJustLoaded = true;
-                this.playerStateChange.emit(PlayerState.unstarted);
+                this.zone.run(() => {
+                  this.playerStateChange.emit(PlayerState.unstarted);
+                });
                 setTimeout(() => {
                   let player = <Vimeo.Player>this.playerInfo?.player;
                   this.hasJustLoaded = false;
                   player.getVolume().then(vol => {
-                    this.volumeChange.emit(this._volume = vol * 100);
+                    this.zone.run(() => {
+                      this.volumeChange.emit(this._volume = vol * 100);
+                    });
                   });
                   if (this.autoplay) {
                     player.play();
@@ -225,18 +240,26 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                 }, 600);
               });
               vimeoPlayer.on('play', () => {
-                this.playerStateChange.emit(PlayerState.playing);
+                this.zone.run(() => {
+                  this.playerStateChange.emit(PlayerState.playing);
+                });
               });
               vimeoPlayer.on('pause', () => {
                 if (!this.hasJustLoaded) {
-                  this.playerStateChange.emit(PlayerState.paused);
+                  this.zone.run(() => {
+                    this.playerStateChange.emit(PlayerState.paused);
+                  });
                 }
               });
               vimeoPlayer.on('ended', () => {
-                this.playerStateChange.emit(PlayerState.ended);
+                this.zone.run(() => {
+                  this.playerStateChange.emit(PlayerState.ended);
+                });
               });
               vimeoPlayer.on('volumechange', (event) => {
-                this.volumeChange.emit(this._volume = event.volume * 100);
+                this.zone.run(() => {
+                  this.volumeChange.emit(this._volume = event.volume * 100);
+                });
               });
               vimeoPlayer.on('timeupdate', (event) => {
                 vimeoPlayer.getDuration().then((d) => {
@@ -249,25 +272,26 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
               });
               vimeoPlayer.on('enterpictureinpicture', (event) => {
-                this.isPipChange.emit(true);
+                this.zone.run(() => {
+                  this.isPipChange.emit(true);
+                });
               });
               vimeoPlayer.on('leavepictureinpicture', (event) => {
-                this.isPipChange.emit(false);
+                this.zone.run(() => {
+                  this.isPipChange.emit(false);
+                });
               });
             }
             break;
           case PlayerType.soundcloud:
             if (this.playerInfo?.type === PlayerType.soundcloud) {
-              console.log('path 2');
               (<SC.Widget.Player>this.playerInfo.player).load(currentVideoRequest.id, {
                 auto_play: true,
                 callback: () => {
-                  console.log('hello');
                   this.isSwitchingVideo$.next(false);
                 }
               });
             } else {
-              console.log('path 1');
               destroyCurrentPlayer();
               setHtml(PlayerType.soundcloud);
               let soundcloudPlayer = SC.Widget(<HTMLIFrameElement>document.getElementById(this.domId));
@@ -278,16 +302,24 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               soundcloudPlayer.bind(SC.Widget.Events.READY, () => {
                 this.isPlayerReady$.next(true);
                 this.isSwitchingVideo$.next(false);
-                this.playerStateChange.emit(PlayerState.unstarted);
+                this.zone.run(() => {
+                  this.playerStateChange.emit(PlayerState.unstarted);
+                });
               });
               soundcloudPlayer.bind(SC.Widget.Events.PLAY, () => {
-                this.playerStateChange.emit(PlayerState.playing);
+                this.zone.run(() => {
+                  this.playerStateChange.emit(PlayerState.playing);
+                });
               });
               soundcloudPlayer.bind(SC.Widget.Events.PAUSE, () => {
-                this.playerStateChange.emit(PlayerState.paused);
+                this.zone.run(() => {
+                  this.playerStateChange.emit(PlayerState.paused);
+                });
               });
               soundcloudPlayer.bind(SC.Widget.Events.FINISH, () => {
-                this.playerStateChange.emit(PlayerState.ended);
+                this.zone.run(() => {
+                  this.playerStateChange.emit(PlayerState.ended);
+                });
               });
               soundcloudPlayer.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => {
                 soundcloudPlayer.getDuration((duration) => {
@@ -384,18 +416,20 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
             } break;
           }
 
-          if ((newCurrentTime !== null) && (this._currentTime !== newCurrentTime)) {
-            this.progressChange.emit({
-              currentTime: this._currentTime = newCurrentTime,
-              duration: duration
-            });
-          }
-          if ((newVolume !== null) && (this._volume !== newVolume)) {
-            this.volumeChange.emit(this._volume = newVolume);
-          }
-          if (this._mute != newIsMuted) {
-            this.muteChange.emit(this._mute = newIsMuted);
-          }
+          this.zone.run(() => {
+            if ((newCurrentTime !== null) && (this._currentTime !== newCurrentTime)) {
+              this.progressChange.emit({
+                currentTime: this._currentTime = newCurrentTime,
+                duration: duration
+              });
+            }
+            if ((newVolume !== null) && (this._volume !== newVolume)) {
+              this.volumeChange.emit(this._volume = newVolume);
+            }
+            if (this._mute != newIsMuted) {
+              this.muteChange.emit(this._mute = newIsMuted);
+            }
+          });
         });
     }
   }
