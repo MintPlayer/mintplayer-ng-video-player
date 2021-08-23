@@ -790,6 +790,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() public autoplay: boolean = true;
   //#region url
   @Input() public set url(value: string) {
+    console.log('set url');
     if ((typeof value === 'undefined') || (value === null) || (value === '')) {
       this.videoRequest$.next(null);
     } else {
