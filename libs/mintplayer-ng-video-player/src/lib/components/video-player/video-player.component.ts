@@ -35,44 +35,48 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     // [isViewInited$,videoRequest$] => isApiReady$
     combineLatest([this.isViewInited$, this.videoRequest$])
       .pipe(filter(([isViewInited, videoRequest]) => {
-        return !!isViewInited && (videoRequest !== null);
+        return !!isViewInited;
       }))
       .pipe(takeUntil(this.destroyed$))
       .subscribe(([isViewInited, videoRequest]) => {
         console.log('Received videoRequest');
-        switch (videoRequest?.playerType) {
-          case PlayerType.youtube:
-            this.youtubeApiService.youtubeApiReady$
-              .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
-              .subscribe((ready) => {
-                this.isApiReady$.next(ready);
-              });
-            this.youtubeApiService.loadApi();
-            break;
-          case PlayerType.dailymotion:
-            this.dailymotionApiService.dailymotionApiReady$
-              .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
-              .subscribe((ready) => {
-                this.isApiReady$.next(ready);
-              });
-            this.dailymotionApiService.loadApi();
-            break;
-          case PlayerType.vimeo:
-            this.vimeoApiService.vimeoApiReady$
-              .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
-              .subscribe((ready) => {
-                this.isApiReady$.next(ready);
-              });
-            this.vimeoApiService.loadApi();
-            break;
-          case PlayerType.soundcloud:
-            this.soundcloudApiService.soundcloudApiReady$
-              .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
-              .subscribe((ready) => {
-                this.isApiReady$.next(ready);
-              });
-            this.soundcloudApiService.loadApi();
-            break;
+        if (videoRequest === null) {
+          this.container.nativeElement.innerHTML = '';
+        } else {
+          switch (videoRequest.playerType) {
+            case PlayerType.youtube:
+              this.youtubeApiService.youtubeApiReady$
+                .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
+                .subscribe((ready) => {
+                  this.isApiReady$.next(ready);
+                });
+              this.youtubeApiService.loadApi();
+              break;
+            case PlayerType.dailymotion:
+              this.dailymotionApiService.dailymotionApiReady$
+                .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
+                .subscribe((ready) => {
+                  this.isApiReady$.next(ready);
+                });
+              this.dailymotionApiService.loadApi();
+              break;
+            case PlayerType.vimeo:
+              this.vimeoApiService.vimeoApiReady$
+                .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
+                .subscribe((ready) => {
+                  this.isApiReady$.next(ready);
+                });
+              this.vimeoApiService.loadApi();
+              break;
+            case PlayerType.soundcloud:
+              this.soundcloudApiService.soundcloudApiReady$
+                .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
+                .subscribe((ready) => {
+                  this.isApiReady$.next(ready);
+                });
+              this.soundcloudApiService.loadApi();
+              break;
+          }
         }
       });
 
