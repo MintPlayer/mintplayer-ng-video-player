@@ -799,7 +799,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() public set url(value: string) {
     this.setUrl(value);
   }
-  public setUrl(url: string) {
+  public setUrl(url: string | null) {
     console.log('set url');
     if ((typeof url === 'undefined') || (url === null) || (url === '')) {
       this.videoRequest$.next(null);
