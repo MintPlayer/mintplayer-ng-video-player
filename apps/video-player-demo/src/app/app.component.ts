@@ -18,9 +18,12 @@ export class AppComponent {
   // npm start -- --open
   // npm run nx run-many -- --target=build --projects=ng-youtube-player-demo --with-deps
 
-  // @ViewChild('player1') player1!: VideoPlayerComponent;
+  @ViewChild('player1') player1!: VideoPlayerComponent;
   playVideo(video: string) {
-    this.url = video;
+    // Pick one here
+    // this.url = video; // This will not replay the video when the url is the same.
+    this.player1.setUrl(video); // This will replay the video when the url is the same.
+
     return false;
   }
 
@@ -52,7 +55,6 @@ export class AppComponent {
     this.isMuted = (<any>event.target).checked;
   }
 
-  @ViewChild('player1') player1!: VideoPlayerComponent;
   async requestPip() {
     await this.player1.setIsPip(true);
   }
