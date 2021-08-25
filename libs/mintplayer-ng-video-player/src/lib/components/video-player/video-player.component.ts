@@ -41,6 +41,8 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(([isViewInited, videoRequest]) => {
         console.log('Received videoRequest');
         if (videoRequest === null) {
+          this.destroyCurrentPlayer();
+          this.playerInfo = null;
           this.container.nativeElement.innerHTML = '';
         } else {
           switch (videoRequest.playerType) {
@@ -88,23 +90,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
         this.container.nativeElement.innerHTML = `<div id="${this.domId}"></div>`;
       }
     };
-    let destroyCurrentPlayer = () => {
-      switch (this.playerInfo?.type) {
-        case PlayerType.youtube:
-          (<YT.Player>this.playerInfo.player).destroy();
-          break;
-        case PlayerType.dailymotion:
-          // (<DM.Player>this.playerInfo.player).destroy();
-          break;
-        case PlayerType.vimeo:
-          (<Vimeo.Player>this.playerInfo.player).destroy();
-          break;
-        case PlayerType.soundcloud:
-          // (<SC.Widget.Player>this.playerInfo.player).destroy();
-          break;
-      }
-    }
-
+    
     // [isApiReady$, videoRequest.playerType] => isSwitchingVideo$, isPlayerReady$
     this.isApiReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
@@ -117,7 +103,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               (<YT.Player>this.playerInfo.player).loadVideoById(currentVideoRequest.id);
               this.isSwitchingVideo$.next(false);
             } else {
-              destroyCurrentPlayer();
+              this.destroyCurrentPlayer();
               setHtml(PlayerType.youtube);
               this.playerInfo = {
                 type: PlayerType.youtube,
@@ -161,7 +147,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
               (<DM.Player>this.playerInfo.player).load({ video: currentVideoRequest.id });
               this.isSwitchingVideo$.next(false);
             } else {
-              destroyCurrentPlayer();
+              this.destroyCurrentPlayer();
               setHtml(PlayerType.dailymotion);
               this.playerInfo = {
                 type: PlayerType.dailymotion,
@@ -204,7 +190,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.isSwitchingVideo$.next(false);
               });
             } else {
-              destroyCurrentPlayer();
+              this.destroyCurrentPlayer();
               setHtml(PlayerType.vimeo);
               let videoId = currentVideoRequest.id;
               let vimeoPlayer = new Vimeo.Player(this.domId, {
@@ -296,7 +282,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
               });
             } else {
-              destroyCurrentPlayer();
+              this.destroyCurrentPlayer();
               setHtml(PlayerType.soundcloud);
               let soundcloudPlayer = SC.Widget(<HTMLIFrameElement>document.getElementById(this.domId));
               this.playerInfo = {
@@ -435,6 +421,23 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           });
         });
+    }
+  }
+
+  private destroyCurrentPlayer() {
+    switch (this.playerInfo?.type) {
+      case PlayerType.youtube:
+        (<YT.Player>this.playerInfo.player).destroy();
+        break;
+      case PlayerType.dailymotion:
+        // (<DM.Player>this.playerInfo.player).destroy();
+        break;
+      case PlayerType.vimeo:
+        (<Vimeo.Player>this.playerInfo.player).destroy();
+        break;
+      case PlayerType.soundcloud:
+        // (<SC.Widget.Player>this.playerInfo.player).destroy();
+        break;
     }
   }
 
