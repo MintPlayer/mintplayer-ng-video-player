@@ -794,15 +794,18 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() public autoplay: boolean = true;
   //#region url
   @Input() public set url(value: string) {
+    this.setUrl(value);
+  }
+  public setUrl(url: string) {
     console.log('set url');
-    if ((typeof value === 'undefined') || (value === null) || (value === '')) {
+    if ((typeof url === 'undefined') || (url === null) || (url === '')) {
       this.videoRequest$.next(null);
     } else {
       this.isSwitchingVideo$.next(true);
 
-      let platformWithId = this.playerTypeFinder.getPlatformWithId(value);
+      let platformWithId = this.playerTypeFinder.getPlatformWithId(url);
       if (platformWithId === null) {
-        throw `No player found for url ${value}`;
+        throw `No player found for url ${url}`;
       } else {
         console.log('platformWithId', platformWithId);
         this.videoRequest$.next({ playerType: platformWithId.platform, id: platformWithId.id });
