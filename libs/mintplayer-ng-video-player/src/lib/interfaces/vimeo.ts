@@ -13,6 +13,7 @@ declare namespace Vimeo {
 
         getVideoId(): string;
         loadVideo(id: string): Promise<any>;
+        getVideoTitle(): Promise<string>;
 
         getFullscreen(): boolean;
         requestFullscreen(): Promise<boolean>;

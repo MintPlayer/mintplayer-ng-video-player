@@ -111,7 +111,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                   width: this.width,
                   height: this.height,
                   playerVars: {
-                    fs: YT.FullscreenButton.Show,
+                    fs: 1,
                     autoplay: <any>this.autoplay,
                   },
                   events: {
@@ -331,7 +331,6 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isPlayerReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((ready) => {
-        (<any>window).myPlayer = this.playerInfo?.player;
         let videoRequest = this.videoRequest$.value;
         if (videoRequest !== null) {
           if (typeof videoRequest.id !== 'undefined') {
@@ -669,6 +668,37 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
   @Output() public playerStateChange = new EventEmitter<PlayerState>();
+  //#endregion
+  //#region title
+  public async getTitle() {
+    switch (this.playerInfo?.type) {
+      case PlayerType.youtube: {
+        let player = <YT.Player>this.playerInfo.player;
+        return <string>(<any>player).getVideoData().title;
+      }
+      case PlayerType.dailymotion: {
+        let player = <DM.Player>this.playerInfo.player;
+        return player.video.title.replace(new RegExp('\\+', 'g'), ' ');
+      }
+      case PlayerType.vimeo: {
+        let player = <Vimeo.Player>this.playerInfo.player;
+        let title = await player.getVideoTitle();
+        return title;
+      }
+      case PlayerType.soundcloud: {
+        let player = <SC.Widget.Player>this.playerInfo.player;
+        let title = await new Promise<string>((resolve, reject) => {
+          player.getCurrentSound((sound: any) => {
+            resolve(sound.description ?? sound.title);
+          });
+        });
+        return title;
+      }
+      default: {
+        return '';
+      }
+    }
+  }
   //#endregion
   //#region volume
   private _volume: number = 0;

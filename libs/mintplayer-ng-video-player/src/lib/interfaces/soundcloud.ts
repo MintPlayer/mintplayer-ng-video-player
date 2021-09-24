@@ -9,6 +9,7 @@ declare namespace SC {
             
             bind(event: SC.Widget.Events, handler: (event: any) => void): void;
 
+            getCurrentSound(callback: (sound: any) => void): void;
             getDuration(callback: (duration: number) => void): void;
             getPosition(callback: (position: number) => void): void;
             getVolume(callback: (volume: number) => void): void;

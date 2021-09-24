@@ -50,6 +50,8 @@ declare namespace DM {
         volume: number;
         setVolume: (volume: number) => void;
         onvolumechange: () => void;
+
+        video: Video;
     }
 
     export class PlayerEvents {
@@ -61,6 +63,12 @@ declare namespace DM {
         play: () => void;
         pause: () => void;
         end: () => void;
+    }
+
+    export interface Video {
+        videoId: string;
+        title: string;
+        duration: number;
     }
 
     export function player(element: HTMLElement, options: Partial<PlayerOptions>): Player;

@@ -38,6 +38,11 @@ export class AppComponent {
     'https://soundcloud.com/oasisofficial/whatever',
   ];
 
+  async getTitle() {
+    let title = await this.player1.getTitle();
+    alert('title\r\n' + title);
+  }
+
   width = 800;
   height = 600;
   setSize() {
