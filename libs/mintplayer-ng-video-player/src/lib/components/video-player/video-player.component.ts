@@ -111,6 +111,7 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
                   width: this.width,
                   height: this.height,
                   playerVars: {
+                    fs: YT.FullscreenButton.Show,
                     autoplay: <any>this.autoplay,
                   },
                   events: {
