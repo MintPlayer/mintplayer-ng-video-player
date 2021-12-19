@@ -162,9 +162,6 @@
       }
     }
   },
-  "cli": {
-    "defaultCollection": "@nrwl/angular"
-  },
   "schematics": {
     "@nrwl/angular": {
       "application": {
@@ -191,6 +188,5 @@
     "@nrwl/angular:component": {
       "style": "scss"
     }
-  },
-  "defaultProject": "video-player-demo"
+  }
 }
