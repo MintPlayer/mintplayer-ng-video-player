@@ -1,0 +1,28 @@
+{
+  "root": "apps/ng-video-player-demo-e2e",
+  "sourceRoot": "apps/ng-video-player-demo-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/ng-video-player-demo-e2e/cypress.json",
+        "devServerTarget": "ng-video-player-demo:serve:development"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "ng-video-player-demo:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/ng-video-player-demo-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["ng-video-player-demo"]
+}

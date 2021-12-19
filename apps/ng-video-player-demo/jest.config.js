@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'mintplayer-ng-video-player',
+  displayName: 'ng-video-player-demo',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -8,7 +8,7 @@ module.exports = {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-video-player',
+  coverageDirectory: '../../coverage/apps/ng-video-player-demo',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },
