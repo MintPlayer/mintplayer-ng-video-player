@@ -7,13 +7,13 @@
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player"
   },
   "peerDependencies": {
-    "@angular/common": "^13.0.0",
-    "@angular/core": "^13.0.0",
-    "@mintplayer/ng-youtube-api": "~13.0.0",
-    "@mintplayer/ng-dailymotion-api": "~13.0.0",
-    "@mintplayer/ng-vimeo-api": "~13.0.0",
-    "@mintplayer/ng-soundcloud-api": "~13.0.0",
-    "@mintplayer/ng-player-progress": "~13.0.0",
+    "@angular/common": "^13.1.0",
+    "@angular/core": "^13.1.0",
+    "@mintplayer/ng-youtube-api": "~13.1.0",
+    "@mintplayer/ng-dailymotion-api": "~13.1.0",
+    "@mintplayer/ng-vimeo-api": "~13.1.0",
+    "@mintplayer/ng-soundcloud-api": "~13.1.0",
+    "@mintplayer/ng-player-progress": "~13.1.0",
     "rxjs": "^7.0.0"
   },
   "dependencies": {
