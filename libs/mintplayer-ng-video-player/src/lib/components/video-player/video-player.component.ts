@@ -17,6 +17,7 @@ import { VideoRequest } from '../../interfaces/video-request';
 import { PlayProgressEvent } from '../../interfaces/soundcloud/play-progress.event';
 import { PlayerTypeFinderService } from '../../services';
 
+
 @Component({
   selector: 'video-player',
   templateUrl: './video-player.component.html',
