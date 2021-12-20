@@ -1,0 +1,55 @@
+name: publish-master
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+  
+    name: publish-master
+    runs-on: ubuntu-latest
+    
+    permissions: 
+      contents: read
+      packages: write 
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Setup node
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+
+    - name: Install dependencies
+      run: npm install
+    
+    - name: Build
+      run: npm run nx run-many -- --target=build --projects=video-player-demo --configuration production --with-deps
+
+    - name: Test
+      run: npm run nx run-many -- --target=test --projects=video-player-demo --with-deps  --watch=false --browsers=ChromeHeadless --coverage --coverageReporters=lcovonly
+
+    - name: Upload code coverage report
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        directory: ./coverage/libs/mintplayer-ng-video-player
+      
+    - name: Push to NPM
+      uses: JS-DevTools/npm-publish@v1
+      with:
+        package: 'dist/libs/mintplayer-ng-video-player/package.json'
+        registry: 'https://registry.npmjs.org'
+        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        access: 'public'
+
+    - name: Push to Github
+      uses: JS-DevTools/npm-publish@v1
+      with:
+        package: 'dist/libs/mintplayer-ng-video-player/package.json'
+        registry: 'https://npm.pkg.github.com'
+        token: ${{ github.token }}
+        access: 'public'
