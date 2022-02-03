@@ -24,7 +24,7 @@ jobs:
         node-version: 14
 
     - name: Install dependencies
-      run: npm install
+      run: npm i
     
     - name: Build
       run: npm run nx run-many -- --target=build --projects=video-player-demo --configuration=production
