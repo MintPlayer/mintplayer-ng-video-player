@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "libs/mintplayer-ng-vimeo-api",
+  "sourceRoot": "libs/mintplayer-ng-vimeo-api/src",
+  "prefix": "mintplayer-ng-video-player",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/libs/mintplayer-ng-vimeo-api"],
+      "options": {
+        "project": "libs/mintplayer-ng-vimeo-api/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/mintplayer-ng-vimeo-api/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/mintplayer-ng-vimeo-api/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/mintplayer-ng-vimeo-api"],
+      "options": {
+        "jestConfig": "libs/mintplayer-ng-vimeo-api/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/mintplayer-ng-vimeo-api/src/**/*.ts",
+          "libs/mintplayer-ng-vimeo-api/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

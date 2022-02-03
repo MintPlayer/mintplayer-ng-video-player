@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "libs/mintplayer-ng-player-progress",
+  "sourceRoot": "libs/mintplayer-ng-player-progress/src",
+  "prefix": "mintplayer-ng-video-player",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/libs/mintplayer-ng-player-progress"],
+      "options": {
+        "project": "libs/mintplayer-ng-player-progress/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/mintplayer-ng-player-progress/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/mintplayer-ng-player-progress/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/mintplayer-ng-player-progress"],
+      "options": {
+        "jestConfig": "libs/mintplayer-ng-player-progress/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/mintplayer-ng-player-progress/src/**/*.ts",
+          "libs/mintplayer-ng-player-progress/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

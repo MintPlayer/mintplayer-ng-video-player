@@ -1,0 +1,65 @@
+<body>
+    <h1 class="text-center">Welcome to {{ title }}!</h1>
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-xl-9 text-center">
+                <video-player [width]="400" [height]="300" (playerStateChange)="onPlayerStateChange($event)"
+                    (progressChange)="onProgressChange($event)" #player></video-player>
+                <!-- [url]="video == null ? '' : video.url" -->
+                <div class="d-block">
+                    <button class="btn btn-secondary float-start" (click)="onPrevious()">Previous</button>
+                    <button class="btn btn-secondary float-end" (click)="onNext()">Next</button>
+                </div>
+            </div>
+            <div class="col-xl-3">
+                <ul>
+                    <li *ngFor="let video of playlistController['_actualPlaylist']">
+                        {{ video.video.url }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-xl-6">
+                <h2>Available tracks</h2>
+                <ul class="list-group">
+                    <li *ngFor="let vid of videos" (click)="addVideoToPlaylist(vid)"
+                        class="list-group-item cursor-pointer">
+                        {{ vid.url }}
+                    </li>
+                </ul>
+            </div>
+            <div class="col-xl-6">
+                <ul class="list-group">
+                    <h2>Playlist</h2>
+                    <ul class="list-group">
+                        <li *ngFor="let vid of playlistController.playlist" class="list-group-item d-flex">
+                            <label class="d-flex flex-grow-1 float-start">
+                                <i *ngIf="vid === video" class="fa fa-play align-self-center"></i>
+                                <span class="flex-grow-1 py-1 mx-2" *ngIf="vid">{{ vid.url }}</span>
+                            </label>
+                            <button (click)="removeVideo(vid)" class="btn btn-secondary float-end">Remove</button>
+                        </li>
+                    </ul>
+                </ul>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-xl-12 text-center">
+                <span>
+                    <label>
+                        Repeat
+                        <select [(ngModel)]="repeat">
+                            <option *ngFor="let repeatOption of repeatOptions" [ngValue]="repeatOption.id">{{ repeatOption.text }}</option>
+                        </select>
+                    </label>
+                    <label>
+                        <input type="checkbox" [checked]="shuffle" (change)="shuffle = getChecked($event)">
+                        Shuffle
+                    </label>
+                    {{ playlistController.repeat | json }} {{ playlistController.shuffle }}
+                </span>
+            </div>
+        </div>
+    </div>
+</body>

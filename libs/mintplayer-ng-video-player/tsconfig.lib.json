@@ -5,7 +5,8 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": []
+    "types": [ "node", "youtube", "dailymotion", "vimeo", "soundcloud" ],
+    "typeRoots": ["src/types", "node_modules/@types"]
   },
   "exclude": ["src/test-setup.ts", "**/*.spec.ts", "**/*.test.ts"],
   "include": ["**/*.ts"]

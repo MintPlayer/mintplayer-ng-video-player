@@ -1,0 +1,19 @@
+<body>
+    <soundcloud-player [width]="size.width" [height]="size.height" [autoplay]="autoplay" (progressChange)="onProgressChange($event)" (playerStateChange)="onStateChange($event)" #player></soundcloud-player>
+    <br>
+    <button (click)="play()" *ngIf="playerState !== playerStates['PLAYING']">Play</button>
+    <button (click)="pause()" *ngIf="playerState !== playerStates['PAUSED']">Pause</button>
+    <button (click)="resize()">Resize</button>
+    <br>
+    <label>
+      <input type="checkbox" [checked]="autoplay" (change)="setAutoplay($event.target)">
+      Autoplay
+    </label>
+    <br>
+    <input type="text" width="300" [(ngModel)]="videoUrlInput">
+    <button (click)="playVideo()">Play this url</button>
+    <br>
+    {{ currentTime }}
+    <br>
+    {{ playerState }}
+  </body>

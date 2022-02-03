@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "libs/mintplayer-ng-playlist-controller",
+  "sourceRoot": "libs/mintplayer-ng-playlist-controller/src",
+  "prefix": "mintplayer-ng-video-player",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/libs/mintplayer-ng-playlist-controller"],
+      "options": {
+        "project": "libs/mintplayer-ng-playlist-controller/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/mintplayer-ng-playlist-controller/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/mintplayer-ng-playlist-controller/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/mintplayer-ng-playlist-controller"],
+      "options": {
+        "jestConfig": "libs/mintplayer-ng-playlist-controller/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/mintplayer-ng-playlist-controller/src/**/*.ts",
+          "libs/mintplayer-ng-playlist-controller/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

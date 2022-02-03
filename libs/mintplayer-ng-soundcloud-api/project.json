@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "libs/mintplayer-ng-soundcloud-api",
+  "sourceRoot": "libs/mintplayer-ng-soundcloud-api/src",
+  "prefix": "mintplayer-ng-video-player",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/libs/mintplayer-ng-soundcloud-api"],
+      "options": {
+        "project": "libs/mintplayer-ng-soundcloud-api/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/mintplayer-ng-soundcloud-api/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/mintplayer-ng-soundcloud-api/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/mintplayer-ng-soundcloud-api"],
+      "options": {
+        "jestConfig": "libs/mintplayer-ng-soundcloud-api/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/mintplayer-ng-soundcloud-api/src/**/*.ts",
+          "libs/mintplayer-ng-soundcloud-api/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

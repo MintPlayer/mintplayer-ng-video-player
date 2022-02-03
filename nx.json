@@ -45,5 +45,5 @@
       "style": "scss"
     }
   },
-  "defaultProject": "ng-video-player-demo"
+  "defaultProject": "video-player-demo"
 }

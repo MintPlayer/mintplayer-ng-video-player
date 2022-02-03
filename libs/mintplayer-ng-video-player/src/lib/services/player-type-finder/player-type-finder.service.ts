@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { PlayerType } from '../../enums';
-import { PlatformWithId } from '../../interfaces';
+import { EPlayerType } from '../../enums/';
+import { PlatformWithId } from '../../interfaces/platform-with-id';
 import { PlatformWithRegexes } from '../../interfaces/platform-with-regexes';
 
 @Injectable({
@@ -10,7 +10,7 @@ export class PlayerTypeFinderService {
 
   public getPlatformWithId(url: string) {
     const platforms: PlatformWithRegexes[] = [{
-      platform: PlayerType.youtube,
+      platform: EPlayerType.youtube,
       regexes: [
         // new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/watch\?v=(?<id>.+)/, 'g'),
         new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/watch\?v=(?<id>[^&]+)/, 'g'),
@@ -18,17 +18,17 @@ export class PlayerTypeFinderService {
         new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtu\.be\/(?<id>.+)$/, 'g'),
       ]
     }, {
-      platform: PlayerType.dailymotion,
+      platform: EPlayerType.dailymotion,
       regexes: [
         new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}dailymotion\.com\/video\/(?<id>[0-9A-Za-z]+)$/, 'g'),
       ]
     }, {
-      platform: PlayerType.vimeo,
+      platform: EPlayerType.vimeo,
       regexes: [
         new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}vimeo\.com\/(?<id>[0-9]+)$/, 'g'),
       ]
     }, {
-      platform: PlayerType.soundcloud,
+      platform: EPlayerType.soundcloud,
       regexes: [
         new RegExp(/(?<id>http[s]{0,1}:\/\/(www\.){0,1}soundcloud\.com\/.+)$/, 'g'),
       ]
@@ -58,5 +58,3 @@ export class PlayerTypeFinderService {
   }
 
 }
-
-

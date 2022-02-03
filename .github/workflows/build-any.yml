@@ -1,0 +1,34 @@
+name: npm-publish
+
+on:
+  push:
+    branches:
+      - '**'
+      - '!master'
+
+jobs:
+  build:
+  
+    name: npm-publish
+    runs-on: ubuntu-latest
+    
+    permissions: 
+      contents: read
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Setup node
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16
+
+    - name: Install dependencies
+      run: npm install
+    
+    - name: Build
+      run: npm run nx run-many -- --target=build --projects=video-player-demo --configuration=production
+
+    - name: Test
+      run: npm run nx run-many -- --target=test --projects=video-player-demo --watch=false --browsers=ChromeHeadless

@@ -1,4 +1,4 @@
-export enum PlayerState {
+export enum EPlayerState {
     unstarted = 1,
     playing = 2,
     paused = 3,

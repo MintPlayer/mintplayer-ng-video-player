@@ -1,0 +1,7 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/libs/mintplayer-ng-player-progress",
+  "lib": {
+    "entryFile": "src/index.ts"
+  }
+}

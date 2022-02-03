@@ -1,0 +1,16 @@
+<body>
+    <h1>Welcome to {{ title }}!</h1>
+    <div class="content">
+      <span>ng-vimeo-player-demo app is running!</span>
+      <vimeo-player [videoId]="playedVideoId1" [(volume)]="volume" [(isPip)]="isPip1" [width]="width1" [height]="height1" #player1></vimeo-player>
+      <vimeo-player [videoId]="playedVideoId2" [(volume)]="volume" [(isPip)]="isPip2" [width]="width1" [height]="height1" #player2></vimeo-player>
+      <br>
+      <input type="range" [(ngModel)]="volume" min="0" max="1" value="0.5" step="0.01"> {{ volume }}
+      <br>
+      <button (click)="playVideo()">Play video</button>
+      <br>
+      <button (click)="togglePip1()">Toggle PIP 1</button>
+      <button (click)="togglePip2()">Toggle PIP 2</button>
+      <button (click)="changeSize1()">Change size 1</button>
+    </div>
+  </body>

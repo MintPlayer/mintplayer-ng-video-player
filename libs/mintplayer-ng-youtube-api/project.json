@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "libs/mintplayer-ng-youtube-api",
+  "sourceRoot": "libs/mintplayer-ng-youtube-api/src",
+  "prefix": "mintplayer-ng-video-player",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/libs/mintplayer-ng-youtube-api"],
+      "options": {
+        "project": "libs/mintplayer-ng-youtube-api/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/mintplayer-ng-youtube-api/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/mintplayer-ng-youtube-api/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/mintplayer-ng-youtube-api"],
+      "options": {
+        "jestConfig": "libs/mintplayer-ng-youtube-api/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/mintplayer-ng-youtube-api/src/**/*.ts",
+          "libs/mintplayer-ng-youtube-api/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

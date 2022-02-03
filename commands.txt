@@ -1,16 +1,17 @@
-# Don't download latest LTS node, but use Node 14 instead
-npm install -g @angular/cli@latest
-npm install -g nx@latest
 npx create-nx-workspace
 > mintplayer-ng-video-player
 > angular
-> ng-video-player-demo
-> SASS
-> No
-cd mintplayer-ng-video-player
-# Remove the library folders
-# Remove the application folders
-# Open the angular.json, remove all projects, set "version":2
+> video-player-demo
+> scss
+cd mintplayer-ng-bootstrap
+nx g @nrwl/angular:lib mintplayer-ng-youtube-api --buildable --publishable --import-path @mintplayer/ng-youtube-api
+nx g @nrwl/angular:lib mintplayer-ng-youtube-player --buildable --publishable --import-path @mintplayer/ng-youtube-player
+nx g @nrwl/angular:lib mintplayer-ng-dailymotion-api --buildable --publishable --import-path @mintplayer/ng-dailymotion-api
+nx g @nrwl/angular:lib mintplayer-ng-dailymotion-player --buildable --publishable --import-path @mintplayer/ng-dailymotion-player
+nx g @nrwl/angular:lib mintplayer-ng-vimeo-api --buildable --publishable --import-path @mintplayer/ng-vimeo-api
+nx g @nrwl/angular:lib mintplayer-ng-vimeo-player --buildable --publishable --import-path @mintplayer/ng-vimeo-player
+nx g @nrwl/angular:lib mintplayer-ng-soundcloud-api --buildable --publishable --import-path @mintplayer/ng-soundcloud-api
+nx g @nrwl/angular:lib mintplayer-ng-soundcloud-player --buildable --publishable --import-path @mintplayer/ng-soundcloud-player
+nx g @nrwl/angular:lib mintplayer-ng-player-progress --buildable --publishable --import-path @mintplayer/ng-player-progress
 nx g @nrwl/angular:lib mintplayer-ng-video-player --buildable --publishable --import-path @mintplayer/ng-video-player
-nx g @nrwl/angular:application ng-video-player-demo --routing --style=scss
-code .
+nx g @nrwl/angular:lib mintplayer-ng-playlist-controller --buildable --publishable --import-path @mintplayer/ng-playlist-controller

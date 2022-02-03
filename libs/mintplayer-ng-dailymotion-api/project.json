@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "libs/mintplayer-ng-dailymotion-api",
+  "sourceRoot": "libs/mintplayer-ng-dailymotion-api/src",
+  "prefix": "mintplayer-ng-video-player",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/libs/mintplayer-ng-dailymotion-api"],
+      "options": {
+        "project": "libs/mintplayer-ng-dailymotion-api/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/mintplayer-ng-dailymotion-api/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/mintplayer-ng-dailymotion-api/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/mintplayer-ng-dailymotion-api"],
+      "options": {
+        "jestConfig": "libs/mintplayer-ng-dailymotion-api/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/mintplayer-ng-dailymotion-api/src/**/*.ts",
+          "libs/mintplayer-ng-dailymotion-api/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

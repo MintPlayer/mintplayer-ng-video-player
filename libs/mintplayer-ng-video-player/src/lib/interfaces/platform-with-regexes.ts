@@ -1,6 +1,6 @@
-import { PlayerType } from "../enums";
+import { EPlayerType } from "../enums/player-type";
 
 export interface PlatformWithRegexes {
-    platform: PlayerType;
+    platform: EPlayerType;
     regexes: RegExp[];
 }

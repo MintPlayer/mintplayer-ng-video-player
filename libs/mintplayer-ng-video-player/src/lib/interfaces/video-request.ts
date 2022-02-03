@@ -1,6 +1,6 @@
-import { PlayerType } from "../enums";
+import { EPlayerType } from "../enums/player-type";
 
 export interface VideoRequest {
-    playerType: PlayerType;
+    playerType: EPlayerType;
     id: string;
 }

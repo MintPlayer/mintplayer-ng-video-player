@@ -2,13 +2,11 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": ".",
-    "strict": true,
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
@@ -17,8 +15,36 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@mintplayer/ng-dailymotion-api": [
+        "libs/mintplayer-ng-dailymotion-api/src/index.ts"
+      ],
+      "@mintplayer/ng-dailymotion-player": [
+        "libs/mintplayer-ng-dailymotion-player/src/index.ts"
+      ],
+      "@mintplayer/ng-player-progress": [
+        "libs/mintplayer-ng-player-progress/src/index.ts"
+      ],
+      "@mintplayer/ng-playlist-controller": [
+        "libs/mintplayer-ng-playlist-controller/src/index.ts"
+      ],
+      "@mintplayer/ng-soundcloud-api": [
+        "libs/mintplayer-ng-soundcloud-api/src/index.ts"
+      ],
+      "@mintplayer/ng-soundcloud-player": [
+        "libs/mintplayer-ng-soundcloud-player/src/index.ts"
+      ],
       "@mintplayer/ng-video-player": [
         "libs/mintplayer-ng-video-player/src/index.ts"
+      ],
+      "@mintplayer/ng-vimeo-api": ["libs/mintplayer-ng-vimeo-api/src/index.ts"],
+      "@mintplayer/ng-vimeo-player": [
+        "libs/mintplayer-ng-vimeo-player/src/index.ts"
+      ],
+      "@mintplayer/ng-youtube-api": [
+        "libs/mintplayer-ng-youtube-api/src/index.ts"
+      ],
+      "@mintplayer/ng-youtube-player": [
+        "libs/mintplayer-ng-youtube-player/src/index.ts"
       ]
     }
   },
