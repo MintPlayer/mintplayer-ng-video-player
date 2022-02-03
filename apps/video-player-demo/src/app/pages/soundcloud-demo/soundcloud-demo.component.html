@@ -1,4 +1,5 @@
 <body>
+    <h2 class="text-center">Welcome to {{ title }}!</h2>
     <soundcloud-player [width]="size.width" [height]="size.height" [autoplay]="autoplay" (progressChange)="onProgressChange($event)" (playerStateChange)="onStateChange($event)" #player></soundcloud-player>
     <br>
     <button (click)="play()" *ngIf="playerState !== playerStates['PLAYING']">Play</button>

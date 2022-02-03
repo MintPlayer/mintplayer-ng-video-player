@@ -8,6 +8,7 @@ import { DailymotionPlayerComponent } from '@mintplayer/ng-dailymotion-player';
 })
 export class DailymotionDemoComponent {
 
+  title = 'DailyMotion player'
   videoId = '';
   @ViewChild('dmplayer') dmplayer!: DailymotionPlayerComponent;
 

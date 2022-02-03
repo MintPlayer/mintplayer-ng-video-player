@@ -46,7 +46,7 @@ export class PlaylistDemoComponent implements OnDestroy, AfterViewInit {
 
   @ViewChild('player') player!: VideoPlayerComponent;
   repeatOptions: any[];
-  title = 'playlist-controller-demo';
+  title = 'playlist';
   playlistController: PlaylistController<Video>;
   video: Video | null = null;
   videos: Video[] = [

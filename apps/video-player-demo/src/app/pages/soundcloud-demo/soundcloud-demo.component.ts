@@ -9,6 +9,7 @@ import { PlayerState, SoundcloudPlayerComponent } from '@mintplayer/ng-soundclou
 })
 export class SoundcloudDemoComponent implements AfterViewInit {
 
+  title = 'SoundCloud player';
   currentTime = 0;
   playerState = PlayerState.UNSTARTED;
   playerStates = PlayerState;

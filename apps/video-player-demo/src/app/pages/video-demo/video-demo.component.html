@@ -1,5 +1,5 @@
 <body>
-    <h1>Welcome to video-player-demo!</h1>
+    <h2>Welcome to {{ title }}!</h2>
     <video-player [width]="width" [height]="height" [autoplay]="true" [url]="url"
         (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
         (isPipChange)="isPip = $event" #player1></video-player>

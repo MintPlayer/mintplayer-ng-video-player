@@ -1,4 +1,6 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 
 import { VideoDemoComponent } from './video-demo.component';
 
@@ -8,7 +10,16 @@ describe('VideoDemoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ VideoDemoComponent ]
+      imports: [
+        FormsModule
+      ],
+      declarations: [
+        // Unit to test  
+        VideoDemoComponent,
+
+        // Mock dependencies
+        VideoPlayerMockComponent
+      ]
     })
     .compileComponents();
   });
@@ -22,4 +33,46 @@ describe('VideoDemoComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  
+  it(`should have as title 'video-player-demo'`, () => {
+    expect(component.title).toEqual('video-player-demo');
+  });
+
+  it('should render title', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h2')?.textContent).toContain(
+      'Welcome to video-player-demo!'
+    );
+  });
 });
+
+@Component({
+  selector: 'video-player',
+  template: '<div>Video player</div>'
+})
+class VideoPlayerMockComponent {
+  @Input() width = 400;
+  @Input() height = 300;
+  @Input() autoplay = true;
+  @Input() url = '';
+  @Input() volume = 50;
+  @Input() mute = false;
+  @Input() playerState = EPlayerState.unstarted;
+  @Output() volumeChange = new EventEmitter<number>();
+  @Output() muteChange = new EventEmitter<boolean>();
+  @Output() progressChange = new EventEmitter<PlayerProgress>();
+  @Output() playerStateChange = new EventEmitter<EPlayerState>();
+  @Output() isPipChange = new EventEmitter<boolean>();
+}
+
+interface PlayerProgress {
+  currentTime: number;
+  duration: number;
+}
+
+enum EPlayerState {
+  unstarted = 1,
+  playing = 2,
+  paused = 3,
+  ended = 4,
+}
