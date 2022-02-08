@@ -2,7 +2,11 @@
 ## IMPORTANT UPDATE
 In a [recent post](https://github.com/dailymotion/dailymotion-sdk-js), DailyMotion has announced that they are about to deprecate the Javascript SDK.
 You will need to register and generate an API key in order to use the SDK.
-Because of this change in development, we will most likely **be dropping support for the DailyMotion player** in the near future, unless they would change their mind.
+Because of this change in development, we will most likely
+
+⚠️ **BE DROPPING SUPPORT FOR THE DAILYMOTION PLAYER** ⚠️
+
+in the near future, unless they would review their decision.
 
 ## Version info
 
