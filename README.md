@@ -1,12 +1,22 @@
 # @mintplayer/ng-video-player
-## IMPORTANT UPDATE
+## ⚠️ IMPORTANT UPDATE ⚠️
 In a [recent post](https://github.com/dailymotion/dailymotion-sdk-js), DailyMotion has announced that they are about to deprecate the Javascript SDK.
 You will need to register and generate an API key in order to use the SDK.
-Because of this change in development, we will most likely
+Because of this change in development, we will be
 
-⚠️ **BE DROPPING SUPPORT FOR THE DAILYMOTION PLAYER** ⚠️
+⚠️ **DROPPING SUPPORT FOR THE DAILYMOTION PLAYER** ⚠️
 
-in the near future, unless they would review their decision.
+in the near future. So as soon as the `DM.player` api is taken down, this functionality will be removed from the library.
+
+As of why we do this, the explaination is very simple. We absolutely want to support an open development ecosystem. Obviously, registration for services does not mix well. Just to test the new SDK, I've tried going through the steps of embedding a player somewhere. Following steps are needed to accomplish this:
+
+- Create an account on their partnership website
+- Add your domain to your account profile
+- Perform some kind of domain ownership proof
+- Wait 24 hours until someone of the company manually performs the verification
+- Get a key for your domain
+- Finally you can use this key to embed a player on your website
+- Highly likely you'll be bumping quota and getting bills in your mailbox
 
 ## Version info
 
