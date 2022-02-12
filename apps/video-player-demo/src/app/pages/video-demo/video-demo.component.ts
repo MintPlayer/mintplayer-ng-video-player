@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CdkPortal, DomPortal, Portal } from '@angular/cdk/portal';
-import { Overlay } from '@angular/cdk/overlay';
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player';
 
@@ -42,7 +42,8 @@ export class VideoDemoComponent {
   // npm run nx run-many -- --target=build --projects=ng-youtube-player-demo --with-deps
 
   @ViewChild('videoPlayer') videoPlayer!: VideoPlayerComponent;
-  @ViewChild('videoPlayer') videoPlayerElement!: ElementRef<VideoPlayerComponent>;
+  @ViewChild('videoWrapper') videoWrapper!: ElementRef<HTMLDivElement>;
+  // @ViewChild('videoPlayer') videoPlayerElement!: ElementRef<VideoPlayerComponent>;
   @ViewChild('theTitle') theTitle!: ElementRef<HTMLHeadingElement>;
   playVideo(video: string) {
     // Pick one here
@@ -53,36 +54,42 @@ export class VideoDemoComponent {
   }
 
   titlePortal: Portal<HTMLHeadingElement> | null = null;
-  playerPortal: Portal<VideoPlayerComponent> | null = null;
+  titleOverlay: OverlayRef | null = null;
+  playerPortal: Portal<HTMLHeadingElement> | null = null;
+  playerOverlay: OverlayRef | null = null;
   moveToOverlay(element: HTMLHeadingElement | VideoPlayerComponent) {
     if ('currentTime' in element) {
-      this.playerPortal = new DomPortal(this.videoPlayerElement);
+      this.playerPortal = new DomPortal(this.videoWrapper);
       
-      const overlayRef = this.overlay.create({
+      this.playerOverlay = this.overlay.create({
         scrollStrategy: this.overlay.scrollStrategies.reposition(),
         positionStrategy: this.overlay.position()
         .global().bottom('20px').right('20px')
       });
       
-      const instance = overlayRef.attach(this.playerPortal);
+      const instance = this.playerOverlay.attach(this.playerPortal);
     } else {
       this.titlePortal = new DomPortal(element);
       
-      const overlayRef = this.overlay.create({
+      this.titleOverlay = this.overlay.create({
         scrollStrategy: this.overlay.scrollStrategies.reposition(),
         positionStrategy: this.overlay.position()
         .global().bottom('20px').right('20px')
       });
       
-      const instance = overlayRef.attach(this.titlePortal);
+      const instance = this.titleOverlay.attach(this.titlePortal);
     }
   }
 
   removeFromOverlay(what: 'title' | 'video') {
     if (what === 'title') {
-      this.titlePortal?.detach();
+      this.titleOverlay?.detach();
+      this.titleOverlay?.dispose();
+      this.titleOverlay = null;
     } else {
-      this.playerPortal?.detach();
+      this.playerOverlay?.detach();
+      this.playerOverlay?.dispose();
+      this.playerOverlay = null;
     }
   }
 
