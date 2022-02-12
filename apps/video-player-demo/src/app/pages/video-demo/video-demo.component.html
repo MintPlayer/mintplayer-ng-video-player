@@ -1,8 +1,8 @@
 <body>
-    <h2>Welcome to {{ title }}!</h2>
+    <h2 #theTitle>Welcome to {{ title }}!</h2>
     <video-player [width]="width" [height]="height" [autoplay]="true" [url]="url"
         (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
-        (isPipChange)="isPip = $event" #player1></video-player>
+        (isPipChange)="isPip = $event" #videoPlayer></video-player>
     <br>
     <label>{{ progress.currentTime }}</label>
     <br>
@@ -36,6 +36,27 @@
             <td colspan="4">
                 <button (click)="play()" *ngIf="playerState === playerStates['paused']">Play</button>
                 <button (click)="pause()" *ngIf="playerState === playerStates['playing']">Pause</button>
+            </td>
+        </tr>
+    </table>
+    <hr>
+    <table>
+        <tr>
+            <td>TITLE</td>
+            <td>
+                <button [disabled]="titlePortal" (click)="moveToOverlay(theTitle)">Move to overlay</button>
+            </td>
+            <td>
+                <button [disabled]="!titlePortal" (click)="removeFromOverlay('title')">Remove from overlay</button>
+            </td>
+        </tr>
+        <tr>
+            <td>VIDEO PLAYER</td>
+            <td>
+                <button [disabled]="playerPortal" (click)="moveToOverlay(videoPlayer)">Move to overlay</button>
+            </td>
+            <td>
+                <button [disabled]="!playerPortal" (click)="removeFromOverlay('video')">Remove from overlay</button>
             </td>
         </tr>
     </table>

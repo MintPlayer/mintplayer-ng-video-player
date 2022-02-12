@@ -1,4 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { CdkPortal, DomPortal, Portal } from '@angular/cdk/portal';
+import { Overlay } from '@angular/cdk/overlay';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player';
 
@@ -34,21 +36,58 @@ export class VideoDemoComponent {
     'https://soundcloud.com/oasisofficial/whatever',
   ];
 
+  constructor(private overlay: Overlay) { }
 
   // npm start -- --open
   // npm run nx run-many -- --target=build --projects=ng-youtube-player-demo --with-deps
 
-  @ViewChild('player1') player1!: VideoPlayerComponent;
+  @ViewChild('videoPlayer') videoPlayer!: VideoPlayerComponent;
+  @ViewChild('videoPlayer') videoPlayerElement!: ElementRef<VideoPlayerComponent>;
+  @ViewChild('theTitle') theTitle!: ElementRef<HTMLHeadingElement>;
   playVideo(video: string) {
     // Pick one here
     // this.url = video; // This will not replay the video when the url is the same.
-    this.player1.setUrl(video); // This will replay the video when the url is the same.
+    this.videoPlayer.setUrl(video); // This will replay the video when the url is the same.
 
     return false;
   }
 
+  titlePortal: Portal<HTMLHeadingElement> | null = null;
+  playerPortal: Portal<VideoPlayerComponent> | null = null;
+  moveToOverlay(element: HTMLHeadingElement | VideoPlayerComponent) {
+    if ('currentTime' in element) {
+      this.playerPortal = new DomPortal(this.videoPlayerElement);
+      
+      const overlayRef = this.overlay.create({
+        scrollStrategy: this.overlay.scrollStrategies.reposition(),
+        positionStrategy: this.overlay.position()
+        .global().bottom('20px').right('20px')
+      });
+      
+      const instance = overlayRef.attach(this.playerPortal);
+    } else {
+      this.titlePortal = new DomPortal(element);
+      
+      const overlayRef = this.overlay.create({
+        scrollStrategy: this.overlay.scrollStrategies.reposition(),
+        positionStrategy: this.overlay.position()
+        .global().bottom('20px').right('20px')
+      });
+      
+      const instance = overlayRef.attach(this.titlePortal);
+    }
+  }
+
+  removeFromOverlay(what: 'title' | 'video') {
+    if (what === 'title') {
+      this.titlePortal?.detach();
+    } else {
+      this.playerPortal?.detach();
+    }
+  }
+
   async getTitle() {
-    const title = await this.player1.getTitle();
+    const title = await this.videoPlayer.getTitle();
     alert('title\r\n' + title);
   }
 
@@ -62,10 +101,10 @@ export class VideoDemoComponent {
   }
 
   async requestPip() {
-    await this.player1.setIsPip(true);
+    await this.videoPlayer.setIsPip(true);
   }
   async exitPip() {
-    await this.player1.setIsPip(false);
+    await this.videoPlayer.setIsPip(false);
   }
 
   play() {
