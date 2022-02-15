@@ -288,22 +288,22 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 this.isPlayerReady$.next(true);
                 this.isSwitchingVideo$.next(false);
                 this.zone.run(() => {
-                  this.playerStateChange.emit(EPlayerState.unstarted);
+                  this.doSetPlayerState(EPlayerState.unstarted);
                 });
               });
               soundcloudPlayer.bind(SC.Widget.Events.PLAY, () => {
                 this.zone.run(() => {
-                  this.playerStateChange.emit(EPlayerState.playing);
+                  this.doSetPlayerState(EPlayerState.playing);
                 });
               });
               soundcloudPlayer.bind(SC.Widget.Events.PAUSE, () => {
                 this.zone.run(() => {
-                  this.playerStateChange.emit(EPlayerState.paused);
+                  this.doSetPlayerState(EPlayerState.paused);
                 });
               });
               soundcloudPlayer.bind(SC.Widget.Events.FINISH, () => {
                 this.zone.run(() => {
-                  this.playerStateChange.emit(EPlayerState.ended);
+                  this.doSetPlayerState(EPlayerState.ended);
                 });
               });
               soundcloudPlayer.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => {
@@ -526,6 +526,13 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   }
   //#endregion
   //#region playerState
+  private disableSetPlayerState = false;
+  private doSetPlayerState(playerState: EPlayerState) {
+    this.disableSetPlayerState = true;
+    setTimeout(() => this.disableSetPlayerState = false, 300);
+    this.playerStateChange.emit(playerState);
+  }
+
   public async getplayerState() {
     switch (this.playerInfo?.type) {
       case EPlayerType.youtube: {
@@ -643,7 +650,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
       } break;
       case EPlayerType.soundcloud: {
-        if (!this.isSwitchingVideo$.value) {
+        if (!this.isSwitchingVideo$.value && !this.disableSetPlayerState) {
           const player = <SC.Widget.Player>this.playerInfo.player;
           switch (value) {
             case EPlayerState.playing:
