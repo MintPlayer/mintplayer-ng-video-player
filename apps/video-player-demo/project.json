@@ -16,7 +16,8 @@
         "inlineStyleLanguage": "scss",
         "assets": [
           "apps/video-player-demo/src/favicon.ico",
-          "apps/video-player-demo/src/assets"
+          "apps/video-player-demo/src/assets",
+          "apps/video-player-demo/src/web.config"
         ],
         "styles": [
           "node_modules/@mintplayer/ng-bootstrap/_bootstrap.scss",
