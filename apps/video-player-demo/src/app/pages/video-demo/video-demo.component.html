@@ -2,11 +2,13 @@
     <h2 #theTitle>Welcome to {{ title }}!</h2>
     <div #videoWrapper>
         <video-player [width]="width" [height]="height" [autoplay]="true" [url]="url"
-            (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
+            (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted"
+            [(playerState)]="playerState"
             (isPipChange)="isPip = $event" #videoPlayer></video-player>
     </div>
     <br>
-    <label>{{ progress.currentTime }}</label>
+    <!-- <label>{{ progress.currentTime }}</label> -->
+    <label *ngIf="videoPlayer">{{ videoPlayer.currentTime }}</label>
     <br>
     <ng-container *ngFor="let video of videos">
         <a href (click)="playVideo(video)">{{ video }}</a>

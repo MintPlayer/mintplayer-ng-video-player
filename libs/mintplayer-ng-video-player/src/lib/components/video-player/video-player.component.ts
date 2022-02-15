@@ -200,6 +200,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 player: vimeoPlayer
               };
               vimeoPlayer.ready().then(() => {
+                console.log('the vimeo player is ready');
                 this.isPlayerReady$.next(true);
                 this.isSwitchingVideo$.next(false);
                 this.zone.run(() => {
@@ -208,6 +209,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
               });
               vimeoPlayer.on('loaded', () => {
                 this.hasJustLoaded = true;
+                console.log('the vimeo player has loaded');
                 this.zone.run(() => {
                   this.playerStateChange.emit(EPlayerState.unstarted);
                 });
@@ -285,24 +287,33 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 player: soundcloudPlayer
               };
               soundcloudPlayer.bind(SC.Widget.Events.READY, () => {
+                console.log('the ready');
                 this.isPlayerReady$.next(true);
                 this.isSwitchingVideo$.next(false);
                 this.zone.run(() => {
+                  this.disableSetPlayerState = true;
+                  setTimeout(() => this.disableSetPlayerState = false, 300);
                   this.playerStateChange.emit(EPlayerState.unstarted);
                 });
               });
               soundcloudPlayer.bind(SC.Widget.Events.PLAY, () => {
                 this.zone.run(() => {
+                  this.disableSetPlayerState = true;
+                  setTimeout(() => this.disableSetPlayerState = false, 300);
                   this.playerStateChange.emit(EPlayerState.playing);
                 });
               });
               soundcloudPlayer.bind(SC.Widget.Events.PAUSE, () => {
                 this.zone.run(() => {
+                  this.disableSetPlayerState = true;
+                  setTimeout(() => this.disableSetPlayerState = false, 300);
                   this.playerStateChange.emit(EPlayerState.paused);
                 });
               });
               soundcloudPlayer.bind(SC.Widget.Events.FINISH, () => {
                 this.zone.run(() => {
+                  this.disableSetPlayerState = true;
+                  setTimeout(() => this.disableSetPlayerState = false, 300);
                   this.playerStateChange.emit(EPlayerState.ended);
                 });
               });
@@ -325,19 +336,36 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     this.isPlayerReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((ready) => {
+        console.log('hello world');
         const videoRequest = this.videoRequest$.value;
         if (videoRequest !== null) {
           if (typeof videoRequest.id !== 'undefined') {
             if (videoRequest.playerType === EPlayerType.youtube) {
-              (<YT.Player>this.playerInfo?.player).loadVideoById(videoRequest.id)
+              (<YT.Player>this.playerInfo?.player).loadVideoById(videoRequest.id, VideoPlayerComponent.presetState?.startSeconds);
             } else if (videoRequest.playerType === EPlayerType.dailymotion) {
-              (<DM.Player>this.playerInfo?.player).load({ video: videoRequest.id });
+              (<DM.Player>this.playerInfo?.player).load({ video: videoRequest.id, start: VideoPlayerComponent.presetState?.startSeconds });
             } else if (videoRequest.playerType === EPlayerType.vimeo) {
-              (<Vimeo.Player>this.playerInfo?.player).loadVideo(videoRequest.id);
+              const vimeoPlayer = <Vimeo.Player>this.playerInfo?.player;
+              vimeoPlayer.loadVideo(videoRequest.id);
+              if (VideoPlayerComponent.presetState) {
+                vimeoPlayer.setCurrentTime(VideoPlayerComponent.presetState.startSeconds);
+              }
             } else if (videoRequest.playerType === EPlayerType.soundcloud) {
-              (<SC.Widget.Player>this.playerInfo?.player).load(videoRequest.id, { auto_play: this.autoplay });
+              const soundcloudPlayer = <SC.Widget.Player>this.playerInfo?.player;
+              (<any>window).player = soundcloudPlayer;
+              console.log('sc player ready');
+
+              console.log('presetState after', VideoPlayerComponent.presetState);
+              if (VideoPlayerComponent.presetState) {
+                soundcloudPlayer.load(videoRequest.id, { auto_play: false });
+                soundcloudPlayer.seekTo(VideoPlayerComponent.presetState.startSeconds * 1000);
+                setTimeout(() => soundcloudPlayer.play(), 10);
+              } else {
+                soundcloudPlayer.load(videoRequest.id, { auto_play: this.autoplay });
+              }
             }
           }
+          VideoPlayerComponent.presetState = null;
         }
       });
 
@@ -417,6 +445,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         });
     }
   }
+
+  static presetState: { startSeconds: number } | null = null;
 
   private destroyCurrentPlayer() {
     switch (this.playerInfo?.type) {
@@ -526,6 +556,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   }
   //#endregion
   //#region playerState
+  private disableSetPlayerState = false;
   public async getplayerState() {
     switch (this.playerInfo?.type) {
       case EPlayerType.youtube: {
@@ -568,20 +599,18 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
       }
       case EPlayerType.soundcloud: {
-
         const player = <SC.Widget.Player>this.playerInfo.player;
         const isPaused = await new Promise<boolean>((resolve, reject) => {
           player.isPaused((paused) => {
             resolve(paused);
           });
         });
-
+        
         if (isPaused) {
           return EPlayerState.paused;
         } else {
           return EPlayerState.playing;
         }
-
       }
       default: {
 
@@ -643,7 +672,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
       } break;
       case EPlayerType.soundcloud: {
-        if (!this.isSwitchingVideo$.value) {
+        if (!this.isSwitchingVideo$.value && !this.disableSetPlayerState) {
           const player = <SC.Widget.Player>this.playerInfo.player;
           switch (value) {
             case EPlayerState.playing:
@@ -744,7 +773,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   @Output() public muteChange = new EventEmitter<boolean>();
   //#endregion
 
-  // //#region isPip
+  //#region isPip
   // private _isPip: boolean = false;
   // get isPip() {
   //   return this._isPip;
@@ -845,6 +874,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
   private static playerCounter = 1;
   domId = 'player';
+  counter = 1;
 
   private destroyed$ = new Subject();
   private isViewInited$ = new BehaviorSubject<boolean>(false);
@@ -857,6 +887,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private hasJustLoaded = false;
 
   ngAfterViewInit() {
+    console.log('view inited');
     this.isViewInited$.next(true);
   }
 

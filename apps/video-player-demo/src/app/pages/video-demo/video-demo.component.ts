@@ -1,8 +1,10 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { CdkPortal, DomPortal, Portal } from '@angular/cdk/portal';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { CdkPortal, ComponentPortal, DomPortal, Portal } from '@angular/cdk/portal';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player';
+import { PlayerStateCache } from '../../interfaces/player-state-cache';
+import { delay, filter, take } from 'rxjs';
 
 @Component({
   selector: 'mintplayer-ng-video-player-video-demo',
@@ -36,14 +38,14 @@ export class VideoDemoComponent {
     'https://soundcloud.com/oasisofficial/whatever',
   ];
 
-  constructor(private overlay: Overlay) { }
+  constructor(private overlay: Overlay, private renderer: Renderer2) { }
 
   // npm start -- --open
   // npm run nx run-many -- --target=build --projects=ng-youtube-player-demo --with-deps
 
   @ViewChild('videoPlayer') videoPlayer!: VideoPlayerComponent;
   @ViewChild('videoWrapper') videoWrapper!: ElementRef<HTMLDivElement>;
-  // @ViewChild('videoPlayer') videoPlayerElement!: ElementRef<VideoPlayerComponent>;
+  @ViewChild('videoPlayer', { read: ElementRef }) videoPlayerElement!: ElementRef<VideoPlayerComponent>;
   @ViewChild('theTitle') theTitle!: ElementRef<HTMLHeadingElement>;
   playVideo(video: string) {
     // Pick one here
@@ -55,10 +57,21 @@ export class VideoDemoComponent {
 
   titlePortal: Portal<HTMLHeadingElement> | null = null;
   titleOverlay: OverlayRef | null = null;
-  playerPortal: Portal<HTMLHeadingElement> | null = null;
+  playerPortal: Portal<HTMLDivElement> | null = null;
   playerOverlay: OverlayRef | null = null;
   moveToOverlay(element: HTMLHeadingElement | VideoPlayerComponent) {
     if ('currentTime' in element) {
+      // const wrapper = this.renderer.createElement('div');
+      // const elem = <any>this.videoPlayerElement.nativeElement;
+      // this.renderer.insertBefore(elem.parentNode, wrapper, elem);
+      // this.renderer.appendChild(wrapper, elem);
+      VideoPlayerComponent.presetState = {
+        startSeconds: this.videoPlayer.currentTime
+      };
+      console.log('preserving state', {
+        presetState: VideoPlayerComponent.presetState,
+      });
+      
       this.playerPortal = new DomPortal(this.videoWrapper);
       
       this.playerOverlay = this.overlay.create({
@@ -66,8 +79,35 @@ export class VideoDemoComponent {
         positionStrategy: this.overlay.position()
         .global().bottom('20px').right('20px')
       });
-      
-      const instance = this.playerOverlay.attach(this.playerPortal);
+      this.playerOverlay.attach(this.playerPortal);
+      this.videoPlayer.seek(VideoPlayerComponent.presetState.startSeconds);
+
+      // console.log('element', element);
+      // element.getplayerState().then((playerState) => {
+      //   if (this.playerPortal && this.playerOverlay) {
+      //     const state = { currentTime: element.currentTime, playerState: playerState };
+      //     console.log('state', state);
+      //     const instance = this.playerOverlay.attach(this.playerPortal);
+      //     this.videoPlayer..changeDetectorRef.detectChanges();
+      //     element['isPlayerReady$'].pipe(filter(r => r), take(1)).subscribe((ready) => {
+      //       console.log('seek now');
+      //       // setTimeout(() => {
+      //         element.playerStateChange.pipe(take(1)).subscribe((state) => {
+      //           console.log('the player state', state);
+      //         });
+      //         // element['playerSta'].pipe(filter(req => !!req && !!req.id), take(1), delay(500)).subscribe(() => {
+      //         //   console.log('seek now 2');
+      //         //   element.seek(state.currentTime);
+      //         // });
+      //       // }, 50);
+      //     });
+      //     // setTimeout(() => {
+      //     //   element.playerState = state.playerState;
+      //     //   console.log('setting', state.playerState);
+      //     // }, 200);
+      //   }
+      // });
+        // console.log('instance', {instance, elem, playerPortal: this.playerPortal});
     } else {
       this.titlePortal = new DomPortal(element);
       
@@ -81,12 +121,18 @@ export class VideoDemoComponent {
     }
   }
 
+  playerStateCache: PlayerStateCache | null = null;
   removeFromOverlay(what: 'title' | 'video') {
     if (what === 'title') {
       this.titleOverlay?.detach();
       this.titleOverlay?.dispose();
       this.titleOverlay = null;
     } else {
+      VideoPlayerComponent.presetState = {
+        startSeconds: this.videoPlayer.currentTime
+      };
+
+
       this.playerOverlay?.detach();
       this.playerOverlay?.dispose();
       this.playerOverlay = null;
