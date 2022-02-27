@@ -18,6 +18,11 @@ As of why we do this, the explaination is very simple. We absolutely want to sup
 - Finally you can use this key to embed a player on your website
 - Highly likely you'll be bumping quota and getting bills in your mailbox
 
+## Demo
+
+A working demo application can [be found here](https://video-player.mintplayer.com).
+The code is included in the git repository.
+
 ## Version info
 
 | License      | Build status | Code coverage |
