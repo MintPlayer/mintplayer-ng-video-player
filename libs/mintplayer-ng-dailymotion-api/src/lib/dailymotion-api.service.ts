@@ -25,6 +25,7 @@ export class DailymotionApiService {
         // Create scripttag
         this.scriptTag = window.document.createElement('script');
         this.scriptTag.src = 'https://api.dmcdn.net/all.js';
+        // this.scriptTag.src = 'https://cdn.mintplayer.com/dailymotion/all.js';
 
         // Setup callback
         this.scriptTag.addEventListener('load', () => {
