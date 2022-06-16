@@ -1,6 +1,6 @@
 {
+  "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "application",
-  "root": "apps/video-player-demo",
   "sourceRoot": "apps/video-player-demo/src",
   "prefix": "mintplayer-ng-video-player",
   "targets": {
@@ -90,7 +90,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/apps/video-player-demo"],
       "options": {
-        "jestConfig": "apps/video-player-demo/jest.config.js",
+        "jestConfig": "apps/video-player-demo/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,5 +1,6 @@
-module.exports = {
-  displayName: 'mintplayer-ng-youtube-api',
+/* eslint-disable */
+export default {
+  displayName: 'mintplayer-ng-video-player',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -8,7 +9,7 @@ module.exports = {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-youtube-api',
+  coverageDirectory: '../../coverage/libs/mintplayer-ng-video-player',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

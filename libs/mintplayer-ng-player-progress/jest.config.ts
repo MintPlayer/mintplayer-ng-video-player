@@ -1,5 +1,6 @@
-module.exports = {
-  displayName: 'mintplayer-ng-vimeo-api',
+/* eslint-disable */
+export default {
+  displayName: 'mintplayer-ng-player-progress',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -8,7 +9,7 @@ module.exports = {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-vimeo-api',
+  coverageDirectory: '../../coverage/libs/mintplayer-ng-player-progress',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

@@ -1,13 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 
-import { PlaylistControllerService } from './playlist-controller.service';
+import { PlaylistController } from './playlist-controller.service';
+
+interface Video {
+  url: string;
+}
 
 describe('PlaylistControllerService', () => {
-  let service: PlaylistControllerService;
+  let service: PlaylistController<Video>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(PlaylistControllerService);
+    TestBed.configureTestingModule({
+      providers: [PlaylistController]
+    });
+    service = TestBed.inject<PlaylistController<Video>>(PlaylistController);
   });
 
   it('should be created', () => {

@@ -1,5 +1,6 @@
-module.exports = {
-  displayName: 'mintplayer-ng-soundcloud-api',
+/* eslint-disable */
+export default {
+  displayName: 'mintplayer-ng-youtube-api',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -8,7 +9,7 @@ module.exports = {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-soundcloud-api',
+  coverageDirectory: '../../coverage/libs/mintplayer-ng-youtube-api',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

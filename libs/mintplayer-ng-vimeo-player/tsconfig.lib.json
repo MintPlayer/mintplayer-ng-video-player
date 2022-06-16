@@ -5,9 +5,14 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": [ "node", "vimeo" ],
+    "types": ["node", "vimeo"],
     "typeRoots": ["src/types", "node_modules/@types"]
   },
-  "exclude": ["src/test-setup.ts", "**/*.spec.ts", "**/*.test.ts"],
+  "exclude": [
+    "src/test-setup.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "jest.config.ts"
+  ],
   "include": ["**/*.ts"]
 }

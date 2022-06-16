@@ -1,5 +1,6 @@
-module.exports = {
-  displayName: 'mintplayer-ng-playlist-controller',
+/* eslint-disable */
+export default {
+  displayName: 'video-player-demo',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -8,7 +9,7 @@ module.exports = {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-playlist-controller',
+  coverageDirectory: '../../coverage/apps/video-player-demo',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

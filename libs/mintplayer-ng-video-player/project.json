@@ -1,6 +1,6 @@
 {
+  "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
-  "root": "libs/mintplayer-ng-video-player",
   "sourceRoot": "libs/mintplayer-ng-video-player/src",
   "prefix": "mintplayer-ng-video-player",
   "targets": {
@@ -8,7 +8,8 @@
       "executor": "@nrwl/angular:package",
       "outputs": ["dist/libs/mintplayer-ng-video-player"],
       "options": {
-        "project": "libs/mintplayer-ng-video-player/ng-package.json"
+        "project": "libs/mintplayer-ng-video-player/ng-package.json",
+        "tsConfig": "libs/mintplayer-ng-video-player/tsconfig.lib.json"
       },
       "configurations": {
         "production": {
@@ -24,7 +25,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/mintplayer-ng-video-player"],
       "options": {
-        "jestConfig": "libs/mintplayer-ng-video-player/jest.config.js",
+        "jestConfig": "libs/mintplayer-ng-video-player/jest.config.ts",
         "passWithNoTests": true
       }
     },

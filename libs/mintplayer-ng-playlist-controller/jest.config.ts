@@ -1,5 +1,6 @@
-module.exports = {
-  displayName: 'mintplayer-ng-player-progress',
+/* eslint-disable */
+export default {
+  displayName: 'mintplayer-ng-playlist-controller',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -8,7 +9,7 @@ module.exports = {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-player-progress',
+  coverageDirectory: '../../coverage/libs/mintplayer-ng-playlist-controller',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

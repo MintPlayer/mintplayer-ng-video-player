@@ -1,5 +1,6 @@
-module.exports = {
-  displayName: 'mintplayer-ng-dailymotion-player',
+/* eslint-disable */
+export default {
+  displayName: 'mintplayer-ng-soundcloud-player',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
@@ -8,7 +9,7 @@ module.exports = {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-dailymotion-player',
+  coverageDirectory: '../../coverage/libs/mintplayer-ng-soundcloud-player',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

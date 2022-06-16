@@ -1,13 +1,14 @@
 {
   "name": "@mintplayer/ng-playlist-controller",
-  "version": "13.2.1",
+  "version": "14.0.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MintPlayer/mintplayer-ng-video-player"
+    "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
+    "directory": "libs/mintplayer-ng-playlist-controller"
   },
   "peerDependencies": {
-    "@angular/common": "^13.2.0",
-    "@angular/core": "^13.2.0",
+    "@angular/common": "^14.0.0",
+    "@angular/core": "^14.0.0",
     "rxjs": "^7.4.0"
   },
   "dependencies": {
