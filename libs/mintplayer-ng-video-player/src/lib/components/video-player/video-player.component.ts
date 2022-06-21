@@ -95,6 +95,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             if (this.playerInfo?.type === EPlayerType.youtube) {
               // Recycle the YT.Player
               (<YT.Player>this.playerInfo.player).loadVideoById(currentVideoRequest.id);
+              if (this.autoplay) {
+                setTimeout(() => (<YT.Player>this.playerInfo?.player).playVideo(), 100);
+              }
               this.isSwitchingVideo$.next(false);
             } else {
               this.destroyCurrentPlayer();
@@ -329,7 +332,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         if (videoRequest !== null) {
           if (typeof videoRequest.id !== 'undefined') {
             if (videoRequest.playerType === EPlayerType.youtube) {
-              (<YT.Player>this.playerInfo?.player).loadVideoById(videoRequest.id)
+              (<YT.Player>this.playerInfo?.player).loadVideoById(videoRequest.id);
             } else if (videoRequest.playerType === EPlayerType.dailymotion) {
               (<DM.Player>this.playerInfo?.player).load({ video: videoRequest.id });
             } else if (videoRequest.playerType === EPlayerType.vimeo) {
