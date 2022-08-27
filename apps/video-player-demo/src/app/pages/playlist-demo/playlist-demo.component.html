@@ -52,11 +52,10 @@
                             <option *ngFor="let repeatOption of repeatOptions" [ngValue]="repeatOption.id">{{ repeatOption.text }}</option>
                         </select>
                     </label>
-                    <label>
+                    <label class="mx-4">
                         <input type="checkbox" [checked]="shuffle" (change)="shuffle = getChecked($event)">
                         Shuffle
                     </label>
-                    {{ playlistController.repeat | json }} {{ playlistController.shuffle }}
                 </span>
             </div>
         </div>

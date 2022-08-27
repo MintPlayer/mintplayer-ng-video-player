@@ -1,20 +1,35 @@
 <body>
-    <h2 class="text-center">Welcome to {{ title }}!</h2>
-    <soundcloud-player [width]="size.width" [height]="size.height" [autoplay]="autoplay" (progressChange)="onProgressChange($event)" (playerStateChange)="onStateChange($event)" #player></soundcloud-player>
-    <br>
-    <button (click)="play()" *ngIf="playerState !== playerStates['PLAYING']">Play</button>
-    <button (click)="pause()" *ngIf="playerState !== playerStates['PAUSED']">Pause</button>
-    <button (click)="resize()">Resize</button>
-    <br>
-    <label>
-      <input type="checkbox" [checked]="autoplay" (change)="setAutoplay($event.target)">
-      Autoplay
-    </label>
-    <br>
-    <input type="text" width="300" [(ngModel)]="videoUrlInput">
-    <button (click)="playVideo()">Play this url</button>
-    <br>
-    {{ currentTime }}
-    <br>
-    {{ playerState }}
+    <h2>Welcome to {{ title }}!</h2>
+    <div class="container">
+      <div class="row mb-3">
+        <div class="col-md-12 text-center">
+          <div class="input-group">
+            <input type="text" class="form-control" width="300" [(ngModel)]="videoUrlInput">
+            <button class="btn btn-secondary" (click)="playVideo()">Play this url</button>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-6 text-center">
+          <label>
+            <input type="checkbox" [checked]="autoplay" (change)="setAutoplay($event.target)">
+            Autoplay
+          </label>
+        </div>
+        <div class="col-md-6 text-center">
+          <div class="btn-group">
+            <button (click)="play()" class="btn btn-secondary" *ngIf="playerState !== playerStates['PLAYING']">Play</button>
+            <button (click)="pause()" class="btn btn-secondary" *ngIf="playerState !== playerStates['PAUSED']">Pause</button>
+            <button (click)="resize()" class="btn btn-secondary">Resize</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <soundcloud-player [width]="size.width" [height]="size.height" [autoplay]="autoplay" (progressChange)="onProgressChange($event)" (playerStateChange)="onStateChange($event)" #player></soundcloud-player>
+          <br>
+          {{ currentTime }}
+        </div>
+      </div>
+    </div>
   </body>

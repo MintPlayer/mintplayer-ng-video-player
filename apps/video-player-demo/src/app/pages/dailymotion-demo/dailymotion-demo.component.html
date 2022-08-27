@@ -1,8 +1,6 @@
 <h2>Welcome to {{ title }}!</h2>
 <div class="content">
-  <span>ng-dailymotion-player-demo app is running!</span>
-  <br>
-  <button (click)="videoId = 'x2yhuhb'">Play a video</button>
+  <button class="btn btn-secondary" (click)="videoId = 'x2yhuhb'">Play video</button>
   <br>
   <dailymotion-player [width]="400" [height]="300" [videoId]="videoId" #dmplayer></dailymotion-player>
 </div>
