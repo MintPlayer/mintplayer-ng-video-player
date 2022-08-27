@@ -13,8 +13,8 @@ export class VideoDemoComponent {
   url = '';
   playerStates = EPlayerState;
   playerState!: EPlayerState;
-  width = 800;
-  height = 600;
+  width = 400;
+  height = 300;
   volume = 0;
   isMuted = false;
   isPip = false;
@@ -23,6 +23,7 @@ export class VideoDemoComponent {
     duration: 0
   };
   
+  newVideoUrl = '';
   videos: string[] = [
     'https://www.youtube.com/watch?v=tt2k8PGm-TI',
     'https://www.youtube.com/watch?v=YykjpeuMNEk',
@@ -33,6 +34,11 @@ export class VideoDemoComponent {
     'https://soundcloud.com/dario-g/sunchyme-radio-edit',
     'https://soundcloud.com/oasisofficial/whatever',
   ];
+
+  addToPlaylist() {
+    this.videos.push(this.newVideoUrl);
+    this.newVideoUrl = '';
+  }
 
 
   // npm start -- --open
