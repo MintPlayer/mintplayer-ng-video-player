@@ -33,7 +33,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       }))
       .pipe(takeUntil(this.destroyed$))
       .subscribe(([isViewInited, videoRequest]) => {
-        console.log('Received videoRequest');
         if (videoRequest === null) {
           this.destroyCurrentPlayer();
           this.playerInfo = null;

@@ -34,14 +34,14 @@ describe('VimeoDemoComponent', () => {
     expect(component).toBeTruthy();
   });
   
-  it(`should have as title 'vimeo-player-demo'`, () => {
-    expect(component.title).toEqual('vimeo-player-demo');
+  it(`should have as title 'Vimeo player'`, () => {
+    expect(component.title).toEqual('Vimeo player');
   });
 
   it('should render title', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h2')?.textContent).toContain(
-      'Welcome to vimeo-player-demo!'
+      'Welcome to Vimeo player!'
     );
   });
 });

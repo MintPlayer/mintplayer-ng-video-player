@@ -18,7 +18,9 @@ describe('VideoDemoComponent', () => {
         VideoDemoComponent,
 
         // Mock dependencies
-        VideoPlayerMockComponent
+        BsListGroupMockComponent,
+        BsListGroupItemMockComponent,
+        VideoPlayerMockComponent,
       ]
     })
     .compileComponents();
@@ -45,6 +47,18 @@ describe('VideoDemoComponent', () => {
     );
   });
 });
+
+@Component({
+  selector: 'bs-list-group',
+  template: 'list-group works'
+})
+class BsListGroupMockComponent {}
+
+@Component({
+  selector: 'bs-list-group-item',
+  template: 'list-group-item works'
+})
+class BsListGroupItemMockComponent {}
 
 @Component({
   selector: 'video-player',

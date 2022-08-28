@@ -1,4 +1,4 @@
-import { Component, ContentChildren, forwardRef, Input, QueryList } from '@angular/core';
+import { Component, ContentChildren, Directive, forwardRef, Input, QueryList } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
@@ -32,6 +32,7 @@ describe('AppComponent', () => {
         BsNavbarNavMockComponent,
         BsNavbarDropdownMockComponent,
         BsNavbarItemMockComponent,
+        BsNavbarContentMockDirective,
       ],
       providers: [
         { provide: 'VIDEO_PLAYER_VERSION', useValue: '1.0.0' }
@@ -147,4 +148,14 @@ class BsNavbarDropdownMockComponent {
 })
 class BsNavbarItemMockComponent {
   @ContentChildren(forwardRef(() => BsNavbarDropdownMockComponent)) dropdowns!: QueryList<BsNavbarDropdownMockComponent>;
+}
+
+@Directive({
+  selector: '[navbarContent]'
+})
+class BsNavbarContentMockDirective {
+  constructor() {
+  }
+  
+  @Input('navbarContent') navbar!: BsNavbarMockComponent;
 }
