@@ -24,6 +24,14 @@
             <a [routerLink]='["/playlist"]'>Playlist</a>
         </bs-navbar-item>
     </bs-navbar-nav>
+    <bs-navbar-nav class="me-0">
+        <bs-navbar-item>
+            <a class="nav-link text-nowrap" href="https://github.com/MintPlayer/mintplayer-ng-video-player" title="@mintplayer/ng-video-player on GitHub">
+                <span class="me-2 align-middle">{{ versionInfo }}</span>
+                <img src="/assets/github.svg" alt="@mintplayer/ng-video-player on GitHub">
+            </a>
+        </bs-navbar-item>
+    </bs-navbar-nav>
 </bs-navbar>
 <div [navbarContent]="nav" style="padding-top:10px">
     <h1 class="text-center">{{ title }}</h1>

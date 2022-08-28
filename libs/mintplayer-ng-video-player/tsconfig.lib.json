@@ -6,7 +6,9 @@
     "declarationMap": true,
     "inlineSources": true,
     "types": ["node", "youtube", "dailymotion", "vimeo", "soundcloud"],
-    "typeRoots": ["src/types", "node_modules/@types"]
+    "typeRoots": ["src/types", "node_modules/@types"],
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
     "src/test-setup.ts",

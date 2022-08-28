@@ -36,6 +36,9 @@
       "@mintplayer/ng-video-player": [
         "libs/mintplayer-ng-video-player/src/index.ts"
       ],
+      "@mintplayer/ng-video-player/package.json": [
+        "libs/mintplayer-ng-video-player/package.ts"
+      ],
       "@mintplayer/ng-vimeo-api": ["libs/mintplayer-ng-vimeo-api/src/index.ts"],
       "@mintplayer/ng-vimeo-player": [
         "libs/mintplayer-ng-vimeo-player/src/index.ts"
