@@ -7,10 +7,7 @@ import { YoutubePlayerComponent } from '@mintplayer/ng-youtube-player';
   styleUrls: ['./youtube-demo.component.scss']
 })
 export class YoutubeDemoComponent {
-  title = 'ng-youtube-player-demo';
-
-  // npm start -- --open
-  // npm run nx run-many -- --target=build --projects=ng-youtube-player-demo --with-deps
+  title = 'YouTube player';
 
   @ViewChild('player1') player1!: YoutubePlayerComponent;
   playVideo() {

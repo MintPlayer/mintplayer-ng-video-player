@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 
 @Component({
   selector: 'mintplayer-ng-video-player-root',
@@ -6,5 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'video-player-demo';
+  constructor(@Inject('VIDEO_PLAYER_VERSION') videoPlayerVersion: string) {
+    this.versionInfo = videoPlayerVersion;
+  }
+  
+  versionInfo = '';
+  title = '@mintplayer/ng-video-player';
 }

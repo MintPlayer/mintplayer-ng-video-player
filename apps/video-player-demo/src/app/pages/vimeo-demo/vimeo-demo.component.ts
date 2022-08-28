@@ -8,29 +8,15 @@ import { VimeoPlayerComponent } from '@mintplayer/ng-vimeo-player';
 })
 export class VimeoDemoComponent {
   @ViewChild('player1') player1!: VimeoPlayerComponent;
-  @ViewChild('player2') player2!: VimeoPlayerComponent;
 
-  title = 'vimeo-player-demo';
-  playedVideoId1: string | null = null;
-  playedVideoId2: string | null = null;
+  title = 'Vimeo player';
+  playedVideoId: string | null = null;
   volume = 0.5;
-  isPip1 = false;
-  isPip2 = false;
-  width1 = 400;
-  height1 = 300;
-  playVideo() {
-    this.playedVideoId1 = '1552092';
-    this.playedVideoId2 = '14190306';
-  }
+  isPip = false;
+  width = 400;
+  height = 300;
 
-  togglePip1() {
-    this.isPip1 = !this.isPip1;
-  }
-  togglePip2() {
-    this.isPip2 = !this.isPip2;
-  }
-  changeSize1() {
-    this.width1 = 800;
-    this.height1 = 600;
+  playVideo() {
+    this.playedVideoId = '14190306';
   }
 }

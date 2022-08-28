@@ -16,7 +16,6 @@ export class VimeoPlayerComponent implements OnDestroy, AfterViewInit {
     private ref: ChangeDetectorRef
   ) {
     this.domId = `vimeoplayer${VimeoPlayerComponent.playerCounter++}`;
-    console.log(this.domId);
     combineLatest([this.isViewInited$, this.videoId$])
       .pipe(filter(([isViewInited, videoId]) => { return (!!isViewInited) && (videoId !== null) && (videoId !== ''); }))
       .pipe(takeUntil(this.destroyed$))

@@ -33,7 +33,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       }))
       .pipe(takeUntil(this.destroyed$))
       .subscribe(([isViewInited, videoRequest]) => {
-        console.log('Received videoRequest');
         if (videoRequest === null) {
           this.destroyCurrentPlayer();
           this.playerInfo = null;
@@ -79,9 +78,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     const setHtml = (playertype: EPlayerType) => {
       this.domId = `player${VideoPlayerComponent.playerCounter++}`;
       if (playertype === EPlayerType.soundcloud) {
-        this.container.nativeElement.innerHTML = `<iframe id="${this.domId}" width="${this._width}" height="${this._height}" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&amp;show_teaser=false&amp;" allow="autoplay"></iframe>`;
+        this.container.nativeElement.innerHTML = `<iframe id="${this.domId}" width="${this._width}" height="${this._height}" style="max-width:100%" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&amp;show_teaser=false&amp;" allow="autoplay"></iframe>`;
       } else {
-        this.container.nativeElement.innerHTML = `<div id="${this.domId}"></div>`;
+        this.container.nativeElement.innerHTML = `<div id="${this.domId}" style="max-width:100%"></div>`;
       }
     };
     
