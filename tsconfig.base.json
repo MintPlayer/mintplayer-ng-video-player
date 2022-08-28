@@ -48,6 +48,12 @@
       ],
       "@mintplayer/ng-youtube-player": [
         "libs/mintplayer-ng-youtube-player/src/index.ts"
+      ],
+      "@mintplayer/ng-bootstrap": [
+        "./node_modules/@mintplayer/ng-bootstrap"
+      ],
+      "@mintplayer/ng-click-outside": [
+        "./node_modules/@mintplayer/ng-click-outside"
       ]
     }
   },
