@@ -2,3 +2,11 @@
 html {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
+body {
+    padding: 1rem;
+}
+
+@media (min-width: 768px) {
+    body { padding: 1rem 5rem; }
+}

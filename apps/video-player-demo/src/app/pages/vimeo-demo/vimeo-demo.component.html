@@ -1,21 +1,22 @@
 <body>
-    <h2>Welcome to {{ title }}!</h2>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6 text-center">
-          <div class="btn-group">
-            <button class="btn btn-secondary" (click)="playVideo()">Play video</button>
-            <button class="btn btn-secondary" (click)="isPip = !isPip">Toggle PIP</button>
-          </div>
-        </div>
-        <div class="col-md-6 text-center">
-          <input type="range" [(ngModel)]="volume" min="0" max="1" value="0.5" step="0.01"> {{ volume }}
-        </div>
+  <h2>Welcome to {{ title }}!</h2>
+  <bs-grid>
+    <div bsRow>
+      <div [bsColumn]="{md: 6}" class="text-center">
+        <bs-button-group>
+          <button [color]="colors.secondary" (click)="playVideo()">Play video</button>
+          <button [color]="colors.secondary" (click)="isPip = !isPip">Toggle PIP</button>
+        </bs-button-group>
       </div>
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <vimeo-player [videoId]="playedVideoId" [(volume)]="volume" [(isPip)]="isPip" [width]="width" [height]="height" #player1></vimeo-player>
-        </div>
+      <div [bsColumn]="{md: 6}" class="text-center">
+        <bs-range [(ngModel)]="volume" [min]="0" [max]="1" [step]="0.01"></bs-range>
+        {{ volume }}
       </div>
     </div>
-  </body>
+    <div bsRow>
+      <div [bsColumn]="{md: 12}" class="text-center">
+        <vimeo-player [videoId]="playedVideoId" [(volume)]="volume" [(isPip)]="isPip" [width]="width" [height]="height" #player1></vimeo-player>
+      </div>
+    </div>
+  </bs-grid>
+</body>

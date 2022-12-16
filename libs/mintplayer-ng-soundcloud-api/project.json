@@ -1,4 +1,5 @@
 {
+  "name": "mintplayer-ng-soundcloud-api",
   "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/mintplayer-ng-soundcloud-api/src",
@@ -6,7 +7,7 @@
   "targets": {
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": ["dist/libs/mintplayer-ng-soundcloud-api"],
+      "outputs": ["{workspaceRoot}/dist/libs/mintplayer-ng-soundcloud-api"],
       "options": {
         "project": "libs/mintplayer-ng-soundcloud-api/ng-package.json",
         "tsConfig": "libs/mintplayer-ng-soundcloud-api/tsconfig.lib.json"
@@ -23,7 +24,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/mintplayer-ng-soundcloud-api"],
+      "outputs": ["{workspaceRoot}/coverage/libs/mintplayer-ng-soundcloud-api"],
       "options": {
         "jestConfig": "libs/mintplayer-ng-soundcloud-api/jest.config.ts",
         "passWithNoTests": true

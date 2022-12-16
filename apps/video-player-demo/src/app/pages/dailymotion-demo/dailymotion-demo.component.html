@@ -1,6 +1,6 @@
 <h2>Welcome to {{ title }}!</h2>
 <div class="content">
-  <button class="btn btn-secondary" (click)="videoId = 'x2yhuhb'">Play video</button>
+  <button [color]="colors.secondary" (click)="videoId = 'x2yhuhb'">Play video</button>
   <br>
   <dailymotion-player [width]="400" [height]="300" [videoId]="videoId" #dmplayer></dailymotion-player>
 </div>

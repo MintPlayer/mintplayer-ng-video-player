@@ -1,4 +1,5 @@
 {
+  "name": "mintplayer-ng-youtube-api",
   "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/mintplayer-ng-youtube-api/src",
@@ -6,7 +7,7 @@
   "targets": {
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": ["dist/libs/mintplayer-ng-youtube-api"],
+      "outputs": ["{workspaceRoot}/dist/libs/mintplayer-ng-youtube-api"],
       "options": {
         "project": "libs/mintplayer-ng-youtube-api/ng-package.json",
         "tsConfig": "libs/mintplayer-ng-youtube-api/tsconfig.lib.json"
@@ -23,7 +24,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/mintplayer-ng-youtube-api"],
+      "outputs": ["{workspaceRoot}/coverage/libs/mintplayer-ng-youtube-api"],
       "options": {
         "jestConfig": "libs/mintplayer-ng-youtube-api/jest.config.ts",
         "passWithNoTests": true

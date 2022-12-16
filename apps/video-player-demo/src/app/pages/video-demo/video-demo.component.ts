@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { Color } from '@mintplayer/ng-bootstrap';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player';
 
@@ -11,6 +12,7 @@ export class VideoDemoComponent {
 
   title = 'video-player-demo';
   url = '';
+  colors = Color;
   playerStates = EPlayerState;
   playerState!: EPlayerState;
   width = 400;

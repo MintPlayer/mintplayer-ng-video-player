@@ -37,7 +37,7 @@ export class DailymotionPlayerComponent implements OnDestroy, AfterViewInit {
             },
             events: {
               apiready: () => {
-                console.log('player ready');
+                console.log('player ready', this.player);
                 this.isPlayerReady$.next(true);
               },
               play: () => {

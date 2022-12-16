@@ -8,7 +8,9 @@
     "types": ["node", "youtube", "dailymotion", "vimeo", "soundcloud"],
     "typeRoots": ["src/types", "node_modules/@types"],
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2022",
+    "useDefineForClassFields": false
   },
   "exclude": [
     "src/test-setup.ts",

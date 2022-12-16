@@ -1,4 +1,5 @@
 {
+  "name": "mintplayer-ng-playlist-controller",
   "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/mintplayer-ng-playlist-controller/src",
@@ -6,7 +7,9 @@
   "targets": {
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": ["dist/libs/mintplayer-ng-playlist-controller"],
+      "outputs": [
+        "{workspaceRoot}/dist/libs/mintplayer-ng-playlist-controller"
+      ],
       "options": {
         "project": "libs/mintplayer-ng-playlist-controller/ng-package.json",
         "tsConfig": "libs/mintplayer-ng-playlist-controller/tsconfig.lib.json"
@@ -23,7 +26,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/mintplayer-ng-playlist-controller"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/mintplayer-ng-playlist-controller"
+      ],
       "options": {
         "jestConfig": "libs/mintplayer-ng-playlist-controller/jest.config.ts",
         "passWithNoTests": true

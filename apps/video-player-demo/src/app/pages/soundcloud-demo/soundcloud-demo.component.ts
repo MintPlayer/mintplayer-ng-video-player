@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { Color } from '@mintplayer/ng-bootstrap';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { PlayerState, SoundcloudPlayerComponent } from '@mintplayer/ng-soundcloud-player';
 
@@ -11,6 +12,7 @@ export class SoundcloudDemoComponent implements AfterViewInit {
 
   title = 'SoundCloud player';
   currentTime = 0;
+  colors = Color;
   playerState = PlayerState.UNSTARTED;
   playerStates = PlayerState;
   size = { width: 400, height: 200 };

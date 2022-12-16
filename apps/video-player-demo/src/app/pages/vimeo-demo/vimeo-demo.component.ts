@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { Color } from '@mintplayer/ng-bootstrap';
 import { VimeoPlayerComponent } from '@mintplayer/ng-vimeo-player';
 
 @Component({
@@ -10,6 +11,7 @@ export class VimeoDemoComponent {
   @ViewChild('player1') player1!: VimeoPlayerComponent;
 
   title = 'Vimeo player';
+  colors = Color;
   playedVideoId: string | null = null;
   volume = 0.5;
   isPip = false;
