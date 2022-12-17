@@ -1,35 +1,34 @@
 <body>
-    <h2>Welcome to {{ title }}!</h2>
-    <div class="container">
-      <div class="row mb-3">
-        <div class="col-md-12 text-center">
-          <div class="input-group">
-            <input type="text" class="form-control" width="300" [(ngModel)]="videoUrlInput">
-            <button class="btn btn-secondary" (click)="playVideo()">Play this url</button>
-          </div>
-        </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-6 text-center">
-          <label>
-            <input type="checkbox" [checked]="autoplay" (change)="setAutoplay($event.target)">
-            Autoplay
-          </label>
-        </div>
-        <div class="col-md-6 text-center">
-          <div class="btn-group">
-            <button (click)="play()" class="btn btn-secondary" *ngIf="playerState !== playerStates['PLAYING']">Play</button>
-            <button (click)="pause()" class="btn btn-secondary" *ngIf="playerState !== playerStates['PAUSED']">Pause</button>
-            <button (click)="resize()" class="btn btn-secondary">Resize</button>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <soundcloud-player [width]="size.width" [height]="size.height" [autoplay]="autoplay" (progressChange)="onProgressChange($event)" (playerStateChange)="onStateChange($event)" #player></soundcloud-player>
-          <br>
-          {{ currentTime }}
-        </div>
+  <h2>Welcome to {{ title }}!</h2>
+  <bs-grid>
+    <div bsRow class="mb-3">
+      <div [bsColumn]="{md: 12}" class="text-center">
+        <bs-input-group>
+          <input type="text" class="form-control" width="300" [(ngModel)]="videoUrlInput">
+          <button [color]="colors.secondary" (click)="playVideo()">Play this url</button>
+        </bs-input-group>
       </div>
     </div>
-  </body>
+    <div bsRow class="mb-3">
+      <div [bsColumn]="{md: 6}" class="text-center">
+        <bs-toggle-button [type]="'checkbox'" [(ngModel)]="autoplay" class="d-inline-block">
+          Autoplay
+        </bs-toggle-button>
+      </div>
+      <div [bsColumn]="{md: 6}" class="text-center">
+        <bs-button-group>
+          <button (click)="play()" [color]="colors.secondary" *ngIf="playerState !== playerStates['PLAYING']">Play</button>
+          <button (click)="pause()" [color]="colors.secondary" *ngIf="playerState !== playerStates['PAUSED']">Pause</button>
+          <button (click)="resize()" [color]="colors.secondary">Resize</button>
+        </bs-button-group>
+      </div>
+    </div>
+    <div bsRow>
+      <div [bsColumn]="{md: 12}" class="text-center">
+        <soundcloud-player [width]="size.width" [height]="size.height" [autoplay]="autoplay" (progressChange)="onProgressChange($event)" (playerStateChange)="onStateChange($event)" #player></soundcloud-player>
+        <br>
+        {{ currentTime }}
+      </div>
+    </div>
+  </bs-grid>
+</body>

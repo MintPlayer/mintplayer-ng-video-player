@@ -1,6 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { BsButtonGroupModule } from '@mintplayer/ng-bootstrap/button-group';
+import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
+import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
+import { BsInputGroupModule } from '@mintplayer/ng-bootstrap/input-group';
+import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
+import { SoundcloudPlayerComponent } from '@mintplayer/ng-soundcloud-player';
+import { MockComponent, MockModule } from 'ng-mocks';
 
 import { SoundcloudDemoComponent } from './soundcloud-demo.component';
 
@@ -11,14 +18,19 @@ describe('SoundcloudDemoComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        FormsModule
+        FormsModule,
+        MockModule(BsGridModule),
+        MockModule(BsInputGroupModule),
+        MockModule(BsToggleButtonModule),
+        MockModule(BsButtonTypeModule),
+        MockModule(BsButtonGroupModule),
       ],
       declarations: [
         // Unit to test
         SoundcloudDemoComponent,
       
         // Mock dependencies
-        SoundcloudPlayerMockComponent
+        MockComponent(SoundcloudPlayerComponent),
       ]
     })
     .compileComponents();
@@ -56,22 +68,4 @@ enum PlayerState {
   PLAYING = 'playing',
   PAUSED = 'paused',
   ENDED = 'ended',
-}
-
-@Component({
-  selector: 'soundcloud-player',
-  template: '<div>Soundcloud player</div>'
-})
-class SoundcloudPlayerMockComponent {
-  @Input() width = 400;
-  @Input() height = 300;
-  @Input() videoId = '';
-  @Input() autoplay = true;
-
-  @Output() playerStateChange = new EventEmitter<PlayerState>();
-  @Output() progressChange = new EventEmitter<PlayerProgress>();
-
-  playVideo(soundCloudId: string) {
-    this.videoId = soundCloudId;
-  }
 }

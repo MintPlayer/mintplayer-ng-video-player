@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { BsNavbarModule } from '@mintplayer/ng-bootstrap';
+import { BsNavbarModule } from '@mintplayer/ng-bootstrap/navbar';
 import ngVideoPlayerJson from '@mintplayer/ng-video-player/package.json';
 import { AppRoutingModule } from './app-routing.module';
 

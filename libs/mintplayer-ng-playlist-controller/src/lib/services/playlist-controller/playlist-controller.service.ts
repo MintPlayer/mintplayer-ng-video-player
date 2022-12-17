@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ERepeatMode } from '../../enums/repeat-mode';
 import { NextVideoResult } from '../../interfaces/next-video-result';
 import { PlayedVideo } from '../../interfaces/played-video';
@@ -12,6 +12,7 @@ export class PlaylistController<TVideo> {
   private _currentPlayedVideo: PlayedVideo<TVideo> | null = null;
 
   public video$ = new BehaviorSubject<TVideo | null>(null);
+  // public video$(): Observable<TVideo | null>;
 
 
   //#region PUBLIC MEMBERS

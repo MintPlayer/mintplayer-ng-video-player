@@ -1,6 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { BsButtonGroupModule } from '@mintplayer/ng-bootstrap/button-group';
+import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
+import { BsRangeModule } from '@mintplayer/ng-bootstrap/range';
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
+import { MockComponent, MockModule } from 'ng-mocks';
 
 import { VimeoDemoComponent } from './vimeo-demo.component';
 
@@ -11,14 +15,17 @@ describe('VimeoDemoComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        FormsModule
+        FormsModule,
+        MockModule(BsGridModule),
+        MockModule(BsRangeModule),
+        MockModule(BsButtonGroupModule),
       ],
       declarations: [
         // Unit to test
         VimeoDemoComponent,
       
         // Mock dependencies
-        VimeoPlayerMockComponent
+        MockComponent(VideoPlayerComponent),
       ]
     })
     .compileComponents();
@@ -45,17 +52,3 @@ describe('VimeoDemoComponent', () => {
     );
   });
 });
-
-@Component({
-  selector: 'vimeo-player',
-  template: '<div>Vimeo player</div>'
-})
-class VimeoPlayerMockComponent {
-  @Input() width = 400;
-  @Input() height = 300;
-  @Input() videoId = '';
-  @Input() volume = 50;
-  @Input() isPip = false;
-  @Output() volumeChange = new EventEmitter<number>();
-  @Output() isPipChange = new EventEmitter<boolean>();
-}

@@ -1,10 +1,16 @@
-import { Component, EventEmitter, Injectable, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
+import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
+import { BsSelectModule } from '@mintplayer/ng-bootstrap/select';
+import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
 import { PlaylistController } from '@mintplayer/ng-playlist-controller';
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
-
 import { PlaylistDemoComponent } from './playlist-demo.component';
+
+interface Video {}
 
 describe('PlaylistDemoComponent', () => {
   let component: PlaylistDemoComponent;
@@ -13,17 +19,23 @@ describe('PlaylistDemoComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        FormsModule
+        FormsModule,
+        MockModule(BsGridModule),
+        MockModule(BsSelectModule),
+        MockModule(BsListGroupModule),
+        MockModule(BsToggleButtonModule),
       ],
       declarations: [
         // Unit to test
         PlaylistDemoComponent,
       
         // Mock dependencies
-        VideoPlayerMockComponent
+        MockComponent(VideoPlayerComponent),
       ],
       providers: [
-        { provide: PlaylistController, useClass: PlaylistControllerMock }
+        MockProvider(PlaylistController, {
+          video$: new BehaviorSubject<Video | null>(null),
+        }),
       ]
     })
     .compileComponents();
@@ -50,25 +62,3 @@ describe('PlaylistDemoComponent', () => {
     );
   });
 });
-
-enum EPlayerState {
-  unstarted = 1,
-  playing = 2,
-  paused = 3,
-  ended = 4,
-}
-
-@Component({
-  selector: 'video-player',
-  template: '<div>Video player</div>'
-})
-class VideoPlayerMockComponent {
-  @Input() width = 400;
-  @Input() height = 300;
-  @Output() playerStateChange = new EventEmitter<EPlayerState>();
-}
-
-@Injectable()
-class PlaylistControllerMock<TVideo> {
-  video$ = new BehaviorSubject<TVideo | null>(null);
-}

@@ -1,6 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { BsButtonGroupModule } from '@mintplayer/ng-bootstrap/button-group';
+import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
+import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
+import { BsInputGroupModule } from '@mintplayer/ng-bootstrap/input-group';
+import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
+import { BsRangeModule } from '@mintplayer/ng-bootstrap/range';
+import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
+import { MockComponent, MockModule } from 'ng-mocks';
 
 import { VideoDemoComponent } from './video-demo.component';
 
@@ -11,16 +19,21 @@ describe('VideoDemoComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        FormsModule
+        FormsModule,
+        MockModule(BsGridModule),
+        MockModule(BsRangeModule),
+        MockModule(BsListGroupModule),
+        MockModule(BsInputGroupModule),
+        MockModule(BsButtonTypeModule),
+        MockModule(BsButtonGroupModule),
+        MockModule(BsToggleButtonModule),
       ],
       declarations: [
         // Unit to test  
         VideoDemoComponent,
 
         // Mock dependencies
-        BsListGroupMockComponent,
-        BsListGroupItemMockComponent,
-        VideoPlayerMockComponent,
+        MockComponent(VideoPlayerComponent),
       ]
     })
     .compileComponents();
@@ -47,46 +60,3 @@ describe('VideoDemoComponent', () => {
     );
   });
 });
-
-@Component({
-  selector: 'bs-list-group',
-  template: 'list-group works'
-})
-class BsListGroupMockComponent {}
-
-@Component({
-  selector: 'bs-list-group-item',
-  template: 'list-group-item works'
-})
-class BsListGroupItemMockComponent {}
-
-@Component({
-  selector: 'video-player',
-  template: '<div>Video player</div>'
-})
-class VideoPlayerMockComponent {
-  @Input() width = 400;
-  @Input() height = 300;
-  @Input() autoplay = true;
-  @Input() url = '';
-  @Input() volume = 50;
-  @Input() mute = false;
-  @Input() playerState = EPlayerState.unstarted;
-  @Output() volumeChange = new EventEmitter<number>();
-  @Output() muteChange = new EventEmitter<boolean>();
-  @Output() progressChange = new EventEmitter<PlayerProgress>();
-  @Output() playerStateChange = new EventEmitter<EPlayerState>();
-  @Output() isPipChange = new EventEmitter<boolean>();
-}
-
-interface PlayerProgress {
-  currentTime: number;
-  duration: number;
-}
-
-enum EPlayerState {
-  unstarted = 1,
-  playing = 2,
-  paused = 3,
-  ended = 4,
-}

@@ -1,8 +1,8 @@
 <body>
     <h2 class="text-center">Welcome to {{ title }}!</h2>
-    <div class="container">
-        <div class="row mb-3">
-            <div class="col-xl-9 text-center">
+    <bs-grid>
+        <div bsRow class="mb-3">
+            <div [bsColumn]="{'xl': 9}" class="text-center">
                 <video-player [width]="400" [height]="300" (playerStateChange)="onPlayerStateChange($event)"
                     (progressChange)="onProgressChange($event)" #player></video-player>
                 <div class="d-block">
@@ -10,7 +10,7 @@
                     <button class="btn btn-secondary float-end" (click)="onNext()">Next</button>
                 </div>
             </div>
-            <div class="col-xl-3">
+            <div [bsColumn]="{'xl': 3}">
                 <ul>
                     <li *ngFor="let video of playlistController['_actualPlaylist']">
                         {{ video.video.url }}
@@ -18,46 +18,46 @@
                 </ul>
             </div>
         </div>
-        <div class="row mb-3">
-            <div class="col-xl-6">
+        <div bsRow class="mb-3">
+            <div [bsColumn]="{'xl': 6}">
                 <h3>Available tracks</h3>
-                <ul class="list-group">
-                    <li *ngFor="let vid of videos" (click)="addVideoToPlaylist(vid)"
-                        class="list-group-item cursor-pointer">
+                <bs-list-group>
+                    <bs-list-group-item *ngFor="let vid of videos" (click)="addVideoToPlaylist(vid)" class="cursor-pointer">
                         {{ vid.url }}
-                    </li>
-                </ul>
+                    </bs-list-group-item>
+                </bs-list-group>
             </div>
-            <div class="col-xl-6">
-                <ul class="list-group">
-                    <h3>Playlist</h3>
-                    <ul class="list-group">
-                        <li *ngFor="let vid of playlistController.playlist" class="list-group-item d-flex">
+            <div [bsColumn]="{'xl': 6}">
+                <h3>Playlist</h3>
+                <bs-list-group>
+                    <bs-list-group-item *ngFor="let vid of playlistController.playlist">
+                        <div class="d-flex">
                             <label class="d-flex flex-grow-1 float-start">
                                 <i *ngIf="vid === video" class="fa fa-play align-self-center"></i>
                                 <span class="flex-grow-1 py-1 mx-2" *ngIf="vid">{{ vid.url }}</span>
                             </label>
                             <button (click)="removeVideo(vid)" class="btn btn-secondary float-end">Remove</button>
-                        </li>
-                    </ul>
-                </ul>
+                        </div>
+                    </bs-list-group-item>
+                </bs-list-group>
             </div>
         </div>
-        <div class="row mb-3">
-            <div class="col-xl-12 text-center">
+        <div bsRow class="mb-3">
+            <div [bsColumn]="{'xl': 12}" class="text-center">
                 <span>
                     <label>
                         Repeat
-                        <select [(ngModel)]="repeat">
+                        <bs-select [(ngModel)]="repeat">
                             <option *ngFor="let repeatOption of repeatOptions" [ngValue]="repeatOption.id">{{ repeatOption.text }}</option>
-                        </select>
+                        </bs-select>
                     </label>
                     <label class="mx-4">
-                        <input type="checkbox" [checked]="shuffle" (change)="shuffle = getChecked($event)">
-                        Shuffle
+                        <bs-toggle-button [type]="'checkbox'" [isToggled]="shuffle" (change)="shuffle = getChecked($event)">
+                            Shuffle
+                        </bs-toggle-button>
                     </label>
                 </span>
             </div>
         </div>
-    </div>
+    </bs-grid>
 </body>
