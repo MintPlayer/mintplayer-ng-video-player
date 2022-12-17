@@ -1,5 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
+import { DailymotionPlayerComponent } from '@mintplayer/ng-dailymotion-player';
+import { MockComponent, MockModule } from 'ng-mocks';
 
 import { DailymotionDemoComponent } from './dailymotion-demo.component';
 
@@ -9,12 +12,15 @@ describe('DailymotionDemoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [
+        MockModule(BsButtonTypeModule),
+      ],
       declarations: [
         // Unit to test
         DailymotionDemoComponent,
       
         // Mock dependencies
-        DailymotionPlayerMockComponent
+        MockComponent(DailymotionPlayerComponent),
       ]
     })
     .compileComponents();
@@ -41,13 +47,3 @@ describe('DailymotionDemoComponent', () => {
     );
   });
 });
-
-@Component({
-  selector: 'dailymotion-player',
-  template: '<div>DailyMotion player</div>'
-})
-class DailymotionPlayerMockComponent {
-  @Input() width = 400;
-  @Input() height = 300;
-  @Input() videoId = '';
-}
