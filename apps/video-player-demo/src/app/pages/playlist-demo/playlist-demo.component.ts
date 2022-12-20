@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { Color } from '@mintplayer/ng-bootstrap';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { ERepeatMode, PlaylistController } from '@mintplayer/ng-playlist-controller';
 import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player';
@@ -47,6 +48,7 @@ export class PlaylistDemoComponent implements OnDestroy, AfterViewInit {
   @ViewChild('player') player!: VideoPlayerComponent;
   repeatOptions: any[];
   title = 'playlist';
+  colors = Color;
   playlistController: PlaylistController<Video>;
   video: Video | null = null;
   videos: Video[] = [

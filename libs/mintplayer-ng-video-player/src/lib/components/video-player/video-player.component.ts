@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output, PLATFORM_ID, ViewChild } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import { BehaviorSubject, combineLatest, Subject, timer } from 'rxjs';
-import { filter, take, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, take, takeUntil } from 'rxjs/operators';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { YoutubeApiService } from '@mintplayer/ng-youtube-api';
 import { DailymotionApiService } from '@mintplayer/ng-dailymotion-api';
@@ -26,7 +26,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     private zone: NgZone,
     private playerTypeFinder: PlayerTypeFinderService,
   ) {
-    // [isViewInited$,videoRequest$] => isApiReady$
+    //#region [isViewInited$,videoRequest$] => isApiReady$
     combineLatest([this.isViewInited$, this.videoRequest$])
       .pipe(filter(([isViewInited, videoRequest]) => {
         return !!isViewInited;
@@ -42,38 +42,31 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             case EPlayerType.youtube:
               this.youtubeApiService.youtubeApiReady$
                 .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
-                .subscribe((ready) => {
-                  this.isApiReady$.next(ready);
-                });
+                .subscribe((ready) => this.isApiReady$.next(ready));
               this.youtubeApiService.loadApi();
               break;
             case EPlayerType.dailymotion:
               this.dailymotionApiService.dailymotionApiReady$
                 .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
-                .subscribe((ready) => {
-                  this.isApiReady$.next(ready);
-                });
+                .subscribe((ready) => this.isApiReady$.next(ready));
               this.dailymotionApiService.loadApi();
               break;
             case EPlayerType.vimeo:
               this.vimeoApiService.vimeoApiReady$
                 .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
-                .subscribe((ready) => {
-                  this.isApiReady$.next(ready);
-                });
+                .subscribe((ready) => this.isApiReady$.next(ready));
               this.vimeoApiService.loadApi();
               break;
             case EPlayerType.soundcloud:
               this.soundcloudApiService.soundcloudApiReady$
                 .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
-                .subscribe((ready) => {
-                  this.isApiReady$.next(ready);
-                });
+                .subscribe((ready) => this.isApiReady$.next(ready));
               this.soundcloudApiService.loadApi();
               break;
           }
         }
       });
+    //#endregion
 
     const setHtml = (playertype: EPlayerType) => {
       this.domId = `player${VideoPlayerComponent.playerCounter++}`;
@@ -84,7 +77,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       }
     };
     
-    // [isApiReady$, videoRequest.playerType] => isSwitchingVideo$, isPlayerReady$
+    //#region [isApiReady$, videoRequest.playerType] => isSwitchingVideo$, isPlayerReady$
     this.isApiReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((value) => {
@@ -116,22 +109,16 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                       this.isSwitchingVideo$.next(false);
                     },
                     onStateChange: (ev: YT.OnStateChangeEvent) => {
-                      this.zone.run(() => {
-                        switch (ev.data) {
-                          case YT.PlayerState.PLAYING:
-                            this.playerStateChange.emit(EPlayerState.playing);
-                            break;
-                          case YT.PlayerState.PAUSED:
-                            this.playerStateChange.emit(EPlayerState.paused);
-                            break;
-                          case YT.PlayerState.ENDED:
-                            this.playerStateChange.emit(EPlayerState.ended);
-                            break;
-                          case YT.PlayerState.UNSTARTED:
-                            this.playerStateChange.emit(EPlayerState.unstarted);
-                            break;
-                        }
-                      });
+                      switch (ev.data) {
+                        case YT.PlayerState.PLAYING:
+                          return this.playerStateObserver$.next(EPlayerState.playing);
+                        case YT.PlayerState.PAUSED:
+                          return this.playerStateObserver$.next(EPlayerState.paused);
+                        case YT.PlayerState.ENDED:
+                          return this.playerStateObserver$.next(EPlayerState.ended);
+                        case YT.PlayerState.UNSTARTED:
+                          return this.playerStateObserver$.next(EPlayerState.unstarted);
+                      }
                     }
                   }
                 })
@@ -160,21 +147,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                       this.isPlayerReady$.next(true);
                       this.isSwitchingVideo$.next(false);
                     },
-                    play: () => {
-                      this.zone.run(() => {
-                        this.playerStateChange.emit(EPlayerState.playing);
-                      });
-                    },
-                    pause: () => {
-                      this.zone.run(() => {
-                        this.playerStateChange.emit(EPlayerState.paused);
-                      });
-                    },
-                    end: () => {
-                      this.zone.run(() => {
-                        this.playerStateChange.emit(EPlayerState.ended);
-                      });
-                    }
+                    play: () => this.playerStateObserver$.next(EPlayerState.playing),
+                    pause: () => this.playerStateObserver$.next(EPlayerState.paused),
+                    end: () => this.playerStateObserver$.next(EPlayerState.ended),
                   }
                 })
               };
@@ -183,9 +158,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           case EPlayerType.vimeo:
             if (this.playerInfo?.type === EPlayerType.vimeo) {
               // Recycle the Vimeo.Player
-              (<Vimeo.Player>this.playerInfo.player).loadVideo(currentVideoRequest.id).then((v) => {
-                this.isSwitchingVideo$.next(false);
-              });
+              (<Vimeo.Player>this.playerInfo.player)
+                .loadVideo(currentVideoRequest.id)
+                .then((v) => this.isSwitchingVideo$.next(false));
             } else {
               this.destroyCurrentPlayer();
               setHtml(EPlayerType.vimeo);
@@ -204,58 +179,33 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
               vimeoPlayer.ready().then(() => {
                 this.isPlayerReady$.next(true);
                 this.isSwitchingVideo$.next(false);
-                this.zone.run(() => {
-                  this.playerStateChange.emit(EPlayerState.unstarted);
-                });
+                this.playerStateObserver$.next(EPlayerState.unstarted);
               });
               vimeoPlayer.on('loaded', () => {
                 this.hasJustLoaded = true;
-                this.zone.run(() => {
-                  this.playerStateChange.emit(EPlayerState.unstarted);
-                });
+                this.playerStateObserver$.next(EPlayerState.unstarted);
                 setTimeout(() => {
                   const player = <Vimeo.Player>this.playerInfo?.player;
                   this.hasJustLoaded = false;
-                  player.getVolume().then(vol => {
-                    this.zone.run(() => {
-                      this.volumeChange.emit(this._volume = vol * 100);
-                    });
-                  });
+                  player.getVolume().then(newVolume => this.volumeObserver$.next(newVolume * 100));
+
                   if (this.autoplay) {
                     player.play();
                   }
                 }, 600);
               });
-              vimeoPlayer.on('play', () => {
-                this.zone.run(() => {
-                  this.playerStateChange.emit(EPlayerState.playing);
-                });
-              });
+              vimeoPlayer.on('play', () => this.playerStateObserver$.next(EPlayerState.playing));
               vimeoPlayer.on('pause', () => {
                 if (!this.hasJustLoaded) {
-                  this.zone.run(() => {
-                    this.playerStateChange.emit(EPlayerState.paused);
-                  });
+                  this.playerStateObserver$.next(EPlayerState.paused);
                 }
               });
-              vimeoPlayer.on('ended', () => {
-                this.zone.run(() => {
-                  this.playerStateChange.emit(EPlayerState.ended);
-                });
-              });
-              vimeoPlayer.on('volumechange', (event) => {
-                this.zone.run(() => {
-                  this.volumeChange.emit(this._volume = event.volume * 100);
-                });
-              });
+              vimeoPlayer.on('ended', () => this.playerStateObserver$.next(EPlayerState.ended));
+              vimeoPlayer.on('volumechange', (event) => this.volumeObserver$.next(event.volume * 100));
               vimeoPlayer.on('timeupdate', (event) => {
                 vimeoPlayer.getDuration().then((d) => {
-                  this.zone.run(() => {
-                    this.progressChange.emit({
-                      currentTime: this._currentTime = event.seconds,
-                      duration: d
-                    });
-                  });
+                  this.currentTimeObserver$.next(event.seconds);
+                  this.durationObserver$.next(d);
                 });
               });
               vimeoPlayer.on('enterpictureinpicture', (event) => {
@@ -274,9 +224,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             if (this.playerInfo?.type === EPlayerType.soundcloud) {
               (<SC.Widget.Player>this.playerInfo.player).load(currentVideoRequest.id, {
                 auto_play: true,
-                callback: () => {
-                  this.isSwitchingVideo$.next(false);
-                }
+                callback: () => this.isSwitchingVideo$.next(false)
               });
             } else {
               this.destroyCurrentPlayer();
@@ -289,41 +237,24 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
               soundcloudPlayer.bind(SC.Widget.Events.READY, () => {
                 this.isPlayerReady$.next(true);
                 this.isSwitchingVideo$.next(false);
-                this.zone.run(() => {
-                  this.doSetPlayerState(EPlayerState.unstarted);
-                });
+                this.playerStateObserver$.next(EPlayerState.unstarted);
               });
-              soundcloudPlayer.bind(SC.Widget.Events.PLAY, () => {
-                this.zone.run(() => {
-                  this.doSetPlayerState(EPlayerState.playing);
-                });
-              });
-              soundcloudPlayer.bind(SC.Widget.Events.PAUSE, () => {
-                this.zone.run(() => {
-                  this.doSetPlayerState(EPlayerState.paused);
-                });
-              });
-              soundcloudPlayer.bind(SC.Widget.Events.FINISH, () => {
-                this.zone.run(() => {
-                  this.doSetPlayerState(EPlayerState.ended);
-                });
-              });
+              soundcloudPlayer.bind(SC.Widget.Events.PLAY, () => this.playerStateObserver$.next(EPlayerState.playing));
+              soundcloudPlayer.bind(SC.Widget.Events.PAUSE, () => this.playerStateObserver$.next(EPlayerState.paused));
+              soundcloudPlayer.bind(SC.Widget.Events.FINISH, () => this.playerStateObserver$.next(EPlayerState.ended));
               soundcloudPlayer.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => {
                 soundcloudPlayer.getDuration((duration) => {
-                  this.zone.run(() => {
-                    this.progressChange.emit({
-                      currentTime: event.currentPosition / 1000,
-                      duration: duration / 1000
-                    });
-                  });
+                  this.currentTimeObserver$.next(event.currentPosition / 1000);
+                  this.durationObserver$.next(duration / 1000);
                 });
               });
             }
             break;
         }
       });
+    //#endregion
 
-    // [isPlayerReady$] => playVideo
+    //#region [isPlayerReady$] => playVideo
     this.isPlayerReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((ready) => {
@@ -342,80 +273,87 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           }
         }
       });
+    //#endregion
+
+    this.volumeObserver$
+      .pipe(debounceTime(20), distinctUntilChanged(), filter((volume) => volume !== null), takeUntil(this.destroyed$))
+      .subscribe((newVolume) => {
+        this.zone.run(() => this.volumeChange.emit(this._volume = newVolume));
+      });
+    this.muteObserver$
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
+      .subscribe((newMute) => {
+        this.zone.run(() => this.muteChange.emit(this._mute = newMute));
+      });
+    this.playerStateObserver$
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
+      .subscribe((newPlayerState) => {
+        this.zone.run(() => this.playerStateChange.emit(newPlayerState));
+      });
+    
+    combineLatest([
+      this.currentTimeObserver$.pipe(debounceTime(20), distinctUntilChanged()),
+      this.durationObserver$.pipe(debounceTime(20), distinctUntilChanged()),
+    ])
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(([currentTime, duration]) => {
+        this.zone.run(() => this.progressChange.emit({ currentTime, duration }));
+      });
 
     if (!isPlatformServer(this.platformId)) {
       combineLatest([timer(0, 50), this.isPlayerReady$, this.isSwitchingVideo$])
-        .pipe(filter(([time, isPlayerReady, isSwitchingVideo]) => {
-          return isPlayerReady && !isSwitchingVideo;
-        }))
+        .pipe(filter(([time, isPlayerReady, isSwitchingVideo]) => isPlayerReady && !isSwitchingVideo))
         .pipe(takeUntil(this.destroyed$))
         .subscribe(async ([time, isPlayerReady, isSwitchingVideo]) => {
-          let newCurrentTime: number | null = null;
-          let newVolume: number | null = null;
-          let newIsMuted = false;
-          let duration = 0;
-
           switch (this.playerInfo?.type) {
             case EPlayerType.youtube: {
               const player = <YT.Player>this.playerInfo.player;
               if (player.getCurrentTime !== undefined) {
-                newCurrentTime = player.getCurrentTime();
+                const newCurrentTime = player.getCurrentTime();
+                this.currentTimeObserver$.next(newCurrentTime);
               }
               if (player.getVolume !== undefined) {
-                newVolume = player.getVolume();
+                const newVolume = player.getVolume();
+                this.volumeObserver$.next(newVolume);
               }
               if (player.isMuted !== undefined) {
-                newIsMuted = player.isMuted();
+                const newIsMuted = player.isMuted();
+                this.muteObserver$.next(newIsMuted);
               }
               if (player.getDuration !== undefined) {
-                duration = player.getDuration();
+                const duration = player.getDuration();
+                this.durationObserver$.next(duration);
               }
             } break;
             case EPlayerType.dailymotion: {
               const player = <DM.Player>this.playerInfo.player;
               if (player.currentTime !== undefined) {
-                newCurrentTime = player.currentTime;
+                this.currentTimeObserver$.next(player.currentTime);
               }
               if (player.volume !== undefined) {
-                newVolume = player.volume * 100;
+                const newVolume = player.volume * 100;
+                this.volumeObserver$.next(newVolume);
               }
               if (player.muted !== undefined) {
-                newIsMuted = player.muted;
+                this.muteObserver$.next(player.muted);
               }
-              duration = player.duration;
+              if (player.duration !== undefined) {
+                this.durationObserver$.next(player.duration);
+              }
             } break;
             case EPlayerType.vimeo: {
               const player = <Vimeo.Player>this.playerInfo.player;
               if (player.getMuted !== undefined) {
-                newIsMuted = await player.getMuted();
+                player.getMuted().then((newIsMuted) => this.muteObserver$.next(newIsMuted));
               }
             } break;
             case EPlayerType.soundcloud: {
               const player = <SC.Widget.Player>this.playerInfo.player;
               if (player.getVolume !== undefined) {
-                newVolume = await new Promise<number>((resolve, reject) => {
-                  player.getVolume((volume) => {
-                    resolve(volume);
-                  });
-                });
+                player.getVolume((volume) => this.volumeObserver$.next(volume));
               }
             } break;
           }
-
-          this.zone.run(() => {
-            if ((newCurrentTime !== null) && (this._currentTime !== newCurrentTime)) {
-              this.progressChange.emit({
-                currentTime: this._currentTime = newCurrentTime,
-                duration: duration
-              });
-            }
-            if ((newVolume !== null) && (this._volume !== newVolume)) {
-              this.volumeChange.emit(this._volume = newVolume);
-            }
-            if (this._mute != newIsMuted) {
-              this.muteChange.emit(this._mute = newIsMuted);
-            }
-          });
         });
     }
   }
@@ -499,106 +437,27 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
   }
   //#endregion
-  //#region currentTime
-  private _currentTime = 0;
-  get currentTime() {
-    return this._currentTime;
-  }
-  @Output() public progressChange = new EventEmitter<PlayerProgress>();
-  //#endregion
   //#region seek
+  @Output() public progressChange = new EventEmitter<PlayerProgress>();
   public seek(timestamp: number) {
-    if (this._currentTime !== timestamp) {
-      this._currentTime = timestamp;
-      switch (this.playerInfo?.type) {
-        case EPlayerType.youtube:
-          (<YT.Player>this.playerInfo.player).seekTo(timestamp, true);
-          break;
-        case EPlayerType.dailymotion:
-          (<DM.Player>this.playerInfo.player).seek(timestamp);
-          break;
-        case EPlayerType.vimeo:
-          (<Vimeo.Player>this.playerInfo.player).setCurrentTime(timestamp);
-          break;
-        case EPlayerType.soundcloud:
-          (<SC.Widget.Player>this.playerInfo.player).seekTo(timestamp * 1000);
-          break;
-      }
+    this.currentTimeObserver$.next(timestamp);
+    switch (this.playerInfo?.type) {
+      case EPlayerType.youtube:
+        (<YT.Player>this.playerInfo.player).seekTo(timestamp, true);
+        break;
+      case EPlayerType.dailymotion:
+        (<DM.Player>this.playerInfo.player).seek(timestamp);
+        break;
+      case EPlayerType.vimeo:
+        (<Vimeo.Player>this.playerInfo.player).setCurrentTime(timestamp);
+        break;
+      case EPlayerType.soundcloud:
+        (<SC.Widget.Player>this.playerInfo.player).seekTo(timestamp * 1000);
+        break;
     }
   }
   //#endregion
   //#region playerState
-  private disableSetPlayerState = false;
-  private doSetPlayerState(playerState: EPlayerState) {
-    this.disableSetPlayerState = true;
-    setTimeout(() => this.disableSetPlayerState = false, 300);
-    this.playerStateChange.emit(playerState);
-  }
-
-  public async getplayerState() {
-    switch (this.playerInfo?.type) {
-      case EPlayerType.youtube: {
-
-        const player = <YT.Player>this.playerInfo.player;
-        switch (player.getPlayerState()) {
-          case YT.PlayerState.PLAYING:
-            return EPlayerState.playing;
-          case YT.PlayerState.PAUSED:
-            return EPlayerState.paused;
-          case YT.PlayerState.ENDED:
-            return EPlayerState.ended;
-          default:
-            return EPlayerState.unstarted;
-        }
-
-      }
-      case EPlayerType.dailymotion: {
-
-        const player = <DM.Player>this.playerInfo.player;
-        if (player.ended) {
-          return EPlayerState.ended;
-        } else if (player.paused) {
-          return EPlayerState.paused;
-        } else {
-          return EPlayerState.playing;
-        }
-
-      }
-      case EPlayerType.vimeo: {
-
-        const player = <Vimeo.Player>this.playerInfo.player;
-        if (await player.getEnded()) {
-          return EPlayerState.ended;
-        } else if (await player.getPaused()) {
-          return EPlayerState.paused;
-        } else {
-          return EPlayerState.playing;
-        }
-
-      }
-      case EPlayerType.soundcloud: {
-
-        const player = <SC.Widget.Player>this.playerInfo.player;
-        const isPaused = await new Promise<boolean>((resolve, reject) => {
-          player.isPaused((paused) => {
-            resolve(paused);
-          });
-        });
-
-        if (isPaused) {
-          return EPlayerState.paused;
-        } else {
-          return EPlayerState.playing;
-        }
-
-      }
-      default: {
-
-        throw `Player type ${this.playerInfo?.type} not supported`;
-
-      }
-    }
-  }
   @Input() set playerState(value: EPlayerState) {
     switch (this.playerInfo?.type) {
       case EPlayerType.youtube: {
@@ -652,19 +511,17 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
       } break;
       case EPlayerType.soundcloud: {
-        if (!this.isSwitchingVideo$.value && !this.disableSetPlayerState) {
-          const player = <SC.Widget.Player>this.playerInfo.player;
-          switch (value) {
-            case EPlayerState.playing:
-              player.play();
-              break;
-            case EPlayerState.paused:
-              player.pause();
-              break;
-            case EPlayerState.ended:
-            case EPlayerState.unstarted:
-              break;
-          }
+        const player = <SC.Widget.Player>this.playerInfo.player;
+        switch (value) {
+          case EPlayerState.playing:
+            player.play();
+            break;
+          case EPlayerState.paused:
+            player.pause();
+            break;
+          case EPlayerState.ended:
+          case EPlayerState.unstarted:
+            break;
         }
 
       } break;
@@ -743,7 +600,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         }
       } break;
       case EPlayerType.dailymotion: {
-        (<DM.Player>this.playerInfo.player).muted = value;
+        (<DM.Player>this.playerInfo.player).setMuted(value);
       } break;
       case EPlayerType.vimeo: {
         (<Vimeo.Player>this.playerInfo.player).setMuted(value);
@@ -834,7 +691,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     this.setUrl(value);
   }
   public setUrl(url: string | null) {
-    console.log('set url');
     if ((typeof url === 'undefined') || (url === null) || (url === '')) {
       this.videoRequest$.next(null);
     } else {
@@ -844,7 +700,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       if (platformWithId === null) {
         throw `No player found for url ${url}`;
       } else {
-        console.log('platformWithId', platformWithId);
         this.videoRequest$.next({ playerType: platformWithId.platform, id: platformWithId.id });
       }
     }
@@ -861,6 +716,12 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private isApiReady$ = new Subject();
   private isPlayerReady$ = new BehaviorSubject<boolean>(false);
   private isSwitchingVideo$ = new BehaviorSubject<boolean>(false);
+  private volumeObserver$ = new Subject<number>();
+  private muteObserver$ = new Subject<boolean>();
+  private currentTimeObserver$ = new Subject<number>();
+  private durationObserver$ = new Subject<number>();
+  private playerStateObserver$ = new Subject<EPlayerState>();
+
 
   private playerInfo: { type: EPlayerType, player: YT.Player | DM.Player | Vimeo.Player | SC.Widget.Player } | null = null;
   private hasJustLoaded = false;

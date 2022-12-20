@@ -6,8 +6,8 @@
                 <video-player [width]="400" [height]="300" (playerStateChange)="onPlayerStateChange($event)"
                     (progressChange)="onProgressChange($event)" #player></video-player>
                 <div class="d-block">
-                    <button class="btn btn-secondary float-start" (click)="onPrevious()">Previous</button>
-                    <button class="btn btn-secondary float-end" (click)="onNext()">Next</button>
+                    <button class="float-start" [color]="colors.secondary" (click)="onPrevious()">Previous</button>
+                    <button class="float-end" [color]="colors.secondary" (click)="onNext()">Next</button>
                 </div>
             </div>
             <div [bsColumn]="{'xl': 3}">
@@ -33,10 +33,11 @@
                     <bs-list-group-item *ngFor="let vid of playlistController.playlist">
                         <div class="d-flex">
                             <label class="d-flex flex-grow-1 float-start">
-                                <i *ngIf="vid === video" class="fa fa-play align-self-center"></i>
-                                <span class="flex-grow-1 py-1 mx-2" *ngIf="vid">{{ vid.url }}</span>
+                                <!-- <i *ngIf="vid === video" class="fa fa-play align-self-center"></i> -->
+                                <span class="align-self-center uc-icon">&#9654;</span>
+                                <span class="align-self-center flex-grow-1 mx-2" *ngIf="vid">{{ vid.url }}</span>
                             </label>
-                            <button (click)="removeVideo(vid)" class="btn btn-secondary float-end">Remove</button>
+                            <button (click)="removeVideo(vid)" [color]="colors.secondary" class="float-end">Remove</button>
                         </div>
                     </bs-list-group-item>
                 </bs-list-group>

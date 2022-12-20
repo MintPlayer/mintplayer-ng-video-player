@@ -15,10 +15,6 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@mintplayer/ng-bootstrap": ["./node_modules/@mintplayer/ng-bootstrap"],
-      "@mintplayer/ng-click-outside": [
-        "./node_modules/@mintplayer/ng-click-outside"
-      ],
       "@mintplayer/ng-dailymotion-api": [
         "libs/mintplayer-ng-dailymotion-api/src/index.ts"
       ],

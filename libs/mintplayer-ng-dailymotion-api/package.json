@@ -1,7 +1,7 @@
 {
   "name": "@mintplayer/ng-dailymotion-api",
   "private": false,
-  "version": "15.0.0",
+  "version": "15.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
