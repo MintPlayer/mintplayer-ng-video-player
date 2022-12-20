@@ -3,7 +3,13 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
-    "types": ["jest", "node", "youtube"]
+    "typeRoots": [
+      "../../node_modules/@types",
+      "../mintplayer-ng-dailymotion-api/types",
+      "../mintplayer-ng-vimeo-api/types",
+      "../mintplayer-ng-soundcloud-api/types"
+    ],
+    "types": ["jest", "node", "youtube", "dailymotion", "vimeo", "soundcloud"]
   },
   "files": ["src/test-setup.ts"],
   "include": ["**/*.test.ts", "**/*.spec.ts", "**/*.d.ts", "jest.config.ts"]
