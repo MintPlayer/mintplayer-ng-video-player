@@ -6,7 +6,7 @@
     "declarationMap": true,
     "inlineSources": true,
     "types": ["node", "soundcloud"],
-    "typeRoots": ["src/types", "node_modules/@types"],
+    "typeRoots": ["../mintplayer-ng-soundcloud-api/types", "node_modules/@types"],
     "target": "ES2022",
     "useDefineForClassFields": false
   },

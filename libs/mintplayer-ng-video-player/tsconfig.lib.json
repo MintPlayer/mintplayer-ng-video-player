@@ -6,7 +6,12 @@
     "declarationMap": true,
     "inlineSources": true,
     "types": ["node", "youtube", "dailymotion", "vimeo", "soundcloud"],
-    "typeRoots": ["src/types", "node_modules/@types"],
+    "typeRoots": [
+      "../mintplayer-ng-dailymotion-api/types",
+      "../mintplayer-ng-soundcloud-api/types",
+      "../mintplayer-ng-vimeo-api/types",
+      "node_modules/@types"
+    ],
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2022",

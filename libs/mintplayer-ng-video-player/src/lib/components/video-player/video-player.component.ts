@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output, PLATFORM_ID, ViewChild } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import { BehaviorSubject, combineLatest, Subject, timer } from 'rxjs';
-import { filter, take, takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, take, takeUntil } from 'rxjs/operators';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { YoutubeApiService } from '@mintplayer/ng-youtube-api';
 import { DailymotionApiService } from '@mintplayer/ng-dailymotion-api';
@@ -26,7 +26,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     private zone: NgZone,
     private playerTypeFinder: PlayerTypeFinderService,
   ) {
-    // [isViewInited$,videoRequest$] => isApiReady$
+    //#region [isViewInited$,videoRequest$] => isApiReady$
     combineLatest([this.isViewInited$, this.videoRequest$])
       .pipe(filter(([isViewInited, videoRequest]) => {
         return !!isViewInited;
@@ -74,6 +74,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           }
         }
       });
+    //#endregion
 
     const setHtml = (playertype: EPlayerType) => {
       this.domId = `player${VideoPlayerComponent.playerCounter++}`;
@@ -84,7 +85,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       }
     };
     
-    // [isApiReady$, videoRequest.playerType] => isSwitchingVideo$, isPlayerReady$
+    //#region [isApiReady$, videoRequest.playerType] => isSwitchingVideo$, isPlayerReady$
     this.isApiReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((value) => {
@@ -216,9 +217,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 setTimeout(() => {
                   const player = <Vimeo.Player>this.playerInfo?.player;
                   this.hasJustLoaded = false;
-                  player.getVolume().then(vol => {
+                  player.getVolume().then(newVolume => {
                     this.zone.run(() => {
-                      this.volumeChange.emit(this._volume = vol * 100);
+                      this.volumeObserver$.next(this._volume = newVolume * 100);
                     });
                   });
                   if (this.autoplay) {
@@ -245,7 +246,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
               });
               vimeoPlayer.on('volumechange', (event) => {
                 this.zone.run(() => {
-                  this.volumeChange.emit(this._volume = event.volume * 100);
+                  this.volumeObserver$.next(this._volume = event.volume * 100);
                 });
               });
               vimeoPlayer.on('timeupdate', (event) => {
@@ -322,8 +323,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
             break;
         }
       });
+    //#endregion
 
-    // [isPlayerReady$] => playVideo
+    //#region [isPlayerReady$] => playVideo
     this.isPlayerReady$
       .pipe(filter(r => !!r), takeUntil(this.destroyed$))
       .subscribe((ready) => {
@@ -342,6 +344,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           }
         }
       });
+    //#endregion
+
+    this.volumeObserver$
+      .pipe(debounceTime(20), takeUntil(this.destroyed$))
+      .subscribe((newVolume) => this.volumeChange.emit(this._volume = newVolume));
 
     if (!isPlatformServer(this.platformId)) {
       combineLatest([timer(0, 50), this.isPlayerReady$, this.isSwitchingVideo$])
@@ -410,7 +417,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
               });
             }
             if ((newVolume !== null) && (this._volume !== newVolume)) {
-              this.volumeChange.emit(this._volume = newVolume);
+              this.volumeObserver$.next(this._volume = newVolume);
             }
             if (this._mute != newIsMuted) {
               this.muteChange.emit(this._mute = newIsMuted);
@@ -834,7 +841,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     this.setUrl(value);
   }
   public setUrl(url: string | null) {
-    console.log('set url');
     if ((typeof url === 'undefined') || (url === null) || (url === '')) {
       this.videoRequest$.next(null);
     } else {
@@ -844,7 +850,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       if (platformWithId === null) {
         throw `No player found for url ${url}`;
       } else {
-        console.log('platformWithId', platformWithId);
         this.videoRequest$.next({ playerType: platformWithId.platform, id: platformWithId.id });
       }
     }
@@ -861,6 +866,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private isApiReady$ = new Subject();
   private isPlayerReady$ = new BehaviorSubject<boolean>(false);
   private isSwitchingVideo$ = new BehaviorSubject<boolean>(false);
+  private volumeObserver$ = new Subject<number>();
+  private muteObserver$ = new Subject<boolean>();
+
 
   private playerInfo: { type: EPlayerType, player: YT.Player | DM.Player | Vimeo.Player | SC.Widget.Player } | null = null;
   private hasJustLoaded = false;
