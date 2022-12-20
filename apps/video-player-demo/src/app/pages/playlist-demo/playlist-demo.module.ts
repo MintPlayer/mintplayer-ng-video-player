@@ -10,6 +10,7 @@ import { PlaylistControllerModule } from '@mintplayer/ng-playlist-controller';
 
 import { PlaylistDemoRoutingModule } from './playlist-demo-routing.module';
 import { PlaylistDemoComponent } from './playlist-demo.component';
+import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { PlaylistDemoComponent } from './playlist-demo.component';
     BsGridModule,
     BsSelectModule,
     BsListGroupModule,
+    BsButtonTypeModule,
     BsToggleButtonModule,
     VideoPlayerModule,
     PlaylistControllerModule,
