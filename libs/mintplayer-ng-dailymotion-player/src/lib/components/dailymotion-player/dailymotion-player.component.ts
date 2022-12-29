@@ -43,27 +43,40 @@ export class DailymotionPlayerComponent implements OnDestroy, AfterViewInit {
               play: () => {
                 this.stateChange.emit(DM.PlayerState.PLAYING);
                 if (this.progressTimer === null) {
-                  this.progressTimer = global.setInterval(() => {
+                  const handler = () => {
                     if (this.player !== null) {
                       this.progressChange.emit({
                         currentTime: this.player.currentTime,
                         duration: this.player.duration
                       });
                     }
-                  }, 100);
+                  };
+                  if (typeof global === 'undefined') {
+                    this.progressTimer = setInterval(handler, 100);
+                  } else {
+                    this.progressTimer = global.setInterval(handler, 100);
+                  }
                 }
               },
               pause: () => {
                 this.stateChange.emit(DM.PlayerState.PAUSED);
                 if (this.progressTimer) {
-                  global.clearInterval(this.progressTimer);
+                  if (typeof global === 'undefined') {
+                    clearInterval(this.progressTimer);
+                  } else {
+                    global.clearInterval(this.progressTimer);
+                  }
                   this.progressTimer = null;
                 }
               },
               end: () => {
                 this.stateChange.emit(DM.PlayerState.ENDED);
                 if (this.progressTimer) {
-                  global.clearInterval(this.progressTimer);
+                  if (typeof global === 'undefined') {
+                    clearInterval(this.progressTimer);
+                  } else {
+                    global.clearInterval(this.progressTimer);
+                  }
                   this.progressTimer = null;
                 }
               }

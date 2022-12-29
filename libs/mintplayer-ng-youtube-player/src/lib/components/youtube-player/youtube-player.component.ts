@@ -52,16 +52,25 @@ export class YoutubePlayerComponent implements AfterViewInit, OnDestroy {
                 this.stateChange.emit(state.data);
                 switch (state.data) {
                   case YT.PlayerState.PLAYING:
-                    this.progressTimer = global.setInterval(() => {
+                    const handler = () => {
                       this.progressChange.emit({
                         currentTime: this.player.getCurrentTime(),
                         duration: this.player.getDuration()
                       });
-                    }, 100);
+                    };
+                    if (typeof global === 'undefined') {
+                      this.progressTimer = setInterval(handler, 100);
+                    } else {
+                      this.progressTimer = global.setInterval(handler, 100);
+                    }
                     break;
                   default:
                     if (this.progressTimer) {
-                      global.clearInterval(this.progressTimer);
+                      if (typeof global === 'undefined') {
+                        clearInterval(this.progressTimer);
+                      } else {
+                        global.clearInterval(this.progressTimer);
+                      }
                     }
                     break;
                 }
@@ -79,7 +88,7 @@ export class YoutubePlayerComponent implements AfterViewInit, OnDestroy {
         // Go keep track of the volume, mute, ...
         let oldVolume: number;
         let oldMuted: boolean;
-        this.alwaysRunningTimer = global.setInterval(() => {
+        const handler = () => {
           try {
             const currentVolume = this.player.getVolume();
             if (oldVolume !== currentVolume) {
@@ -103,7 +112,13 @@ export class YoutubePlayerComponent implements AfterViewInit, OnDestroy {
           } catch (ex) {
             console.log('Mute timer exception', ex);
           }
-        }, 250);
+        };
+
+        if (typeof global === 'undefined') {
+          this.alwaysRunningTimer = setInterval(handler, 250);
+        } else {
+          this.alwaysRunningTimer = global.setInterval(handler, 250);
+        }
       });
     
     combineLatest([this.isPlayerReady$.pipe(filter(r => !!r)), this.videoRequest$])
@@ -124,10 +139,18 @@ export class YoutubePlayerComponent implements AfterViewInit, OnDestroy {
       .pipe(filter(d => !!d), take(1))
       .subscribe((d) => {
         if (this.alwaysRunningTimer) {
-          global.clearInterval(this.alwaysRunningTimer);
+          if (typeof global === 'undefined') {
+            clearInterval(this.alwaysRunningTimer);
+          } else {
+            global.clearInterval(this.alwaysRunningTimer);
+          }
         }
         if (this.progressTimer) {
-          global.clearInterval(this.progressTimer);
+          if (typeof global === 'undefined') {
+            clearInterval(this.progressTimer);
+          } else {
+            global.clearInterval(this.progressTimer);
+          }
         }
       });
   }
