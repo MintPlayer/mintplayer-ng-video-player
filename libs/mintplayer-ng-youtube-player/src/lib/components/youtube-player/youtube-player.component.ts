@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Input, NgZone, OnDestroy, Output } from '@angular/core';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { YoutubeApiService } from '@mintplayer/ng-youtube-api';
-import { BehaviorSubject, combineLatest, filter, Subject, take, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, delay, filter, Subject, take, takeUntil } from 'rxjs';
 import { YtVideoRequest } from '../../interfaces/yt-video-request';
 
 @Component({
@@ -23,8 +23,8 @@ export class YoutubePlayerComponent implements AfterViewInit, OnDestroy {
       });
       
     // Do the following after the Youtube API is loaded
-    this.youtubeApiService.youtubeApiReady$
-      .pipe(filter(r => !!r), take(1), takeUntil(this.destroyed$))
+    combineLatest([this.isViewInited$, this.youtubeApiService.youtubeApiReady$])
+      .pipe(filter(([isViewInited, youtubeApiReady]) => isViewInited && youtubeApiReady), take(1), takeUntil(this.destroyed$))
       .subscribe((value) => {
         if (this.player) {
           if (this.isPlayerReady$.value) {
@@ -133,7 +133,26 @@ export class YoutubePlayerComponent implements AfterViewInit, OnDestroy {
             this.player.cueVideoById(videoRequest.parameter);
             break;
         }
-      })
+      });
+
+    combineLatest([this.width$, this.height$])
+      .pipe(debounceTime(50), delay(5000), takeUntil(this.destroyed$))
+      .subscribe(([width, height]) => {
+        if ((this.player !== null) && (this.player !== undefined) && this.isPlayerReady$.value) {
+          let counter = 0;
+          while (true) {
+            try {
+              this.player.setSize(width, height);
+              break;
+            } catch (ex) {
+              if (++counter > 10) {
+                console.log('things aren\'t working well');
+                break;
+              }
+            }
+          }
+        }
+      });
 
     this.destroyed$
       .pipe(filter(d => !!d), take(1))
@@ -158,30 +177,24 @@ export class YoutubePlayerComponent implements AfterViewInit, OnDestroy {
 
   private static playerCounter = 1;
   domId = 'player';
+  private width$ = new BehaviorSubject<number>(200);
+  private height$ = new BehaviorSubject<number>(150);
  
 
   //#region width
-  private _width = 200;
   get width() {
-    return this._width;
+    return this.width$.value;
   }
   @Input() set width(value: number) {
-    this._width = value;
-    if ((this.player !== null) && (this.player !== undefined)) {
-      this.player.setSize(this._width, this._height);
-    }
+    this.width$.next(value);
   }
   //#endregion
   //#region height
-  private _height = 150;
   get height() {
-    return this._height;
+    return this.height$.value;
   }
   @Input() set height(value: number) {
-    this._height = value;
-    if ((this.player !== null) && (this.player !== undefined)) {
-      this.player.setSize(this._width, this._height);
-    }
+    this.height$.next(value);
   }
   //#endregion
   //#region autoplay

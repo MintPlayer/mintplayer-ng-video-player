@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
 import { YoutubePlayerComponent } from '@mintplayer/ng-youtube-player';
 
@@ -7,12 +7,12 @@ import { YoutubePlayerComponent } from '@mintplayer/ng-youtube-player';
   templateUrl: './youtube-demo.component.html',
   styleUrls: ['./youtube-demo.component.scss']
 })
-export class YoutubeDemoComponent {
+export class YoutubeDemoComponent implements AfterViewInit {
   title = 'YouTube player';
   colors = Color;
 
   @ViewChild('player1') player1!: YoutubePlayerComponent;
-  playVideo() {
+  ngAfterViewInit() {
     this.player1.playVideoById('jNQXAC9IVRw');
   }
 }
