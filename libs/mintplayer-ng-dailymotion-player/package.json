@@ -1,18 +1,18 @@
 {
   "name": "@mintplayer/ng-dailymotion-player",
   "private": false,
-  "version": "15.0.2",
+  "version": "16.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
     "directory": "libs/mintplayer-ng-dailymotion-player"
   },
   "peerDependencies": {
-    "@angular/common": "^15.0.0",
-    "@angular/core": "^15.0.0",
-    "@mintplayer/ng-player-progress": "^15.0.0",
-    "@mintplayer/ng-dailymotion-api": "^15.0.0",
-    "rxjs": "^7.4.0"
+    "@angular/common": "^16.0.0",
+    "@angular/core": "^16.0.0",
+    "@mintplayer/ng-player-progress": "^16.0.0",
+    "@mintplayer/ng-dailymotion-api": "^16.0.0",
+    "rxjs": "^7.8.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
