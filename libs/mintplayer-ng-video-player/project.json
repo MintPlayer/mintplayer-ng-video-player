@@ -6,7 +6,7 @@
   "prefix": "mintplayer-ng-video-player",
   "targets": {
     "build": {
-      "executor": "@nrwl/angular:package",
+      "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/libs/mintplayer-ng-video-player"],
       "options": {
         "project": "libs/mintplayer-ng-video-player/ng-package.json",
@@ -23,15 +23,18 @@
       "defaultConfiguration": "production"
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/mintplayer-ng-video-player"],
       "options": {
+        "codeCoverage": true,
+        "coverageReporters": ["lcovonly"],
+        "coverageDirectory": "coverage/libs/mintplayer-ng-video-player",
         "jestConfig": "libs/mintplayer-ng-video-player/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/mintplayer-ng-video-player/src/**/*.ts",

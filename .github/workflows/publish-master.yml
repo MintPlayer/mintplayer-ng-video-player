@@ -27,10 +27,10 @@ jobs:
       run: npm install
     
     - name: Build
-      run: npm run nx run-many -- --target=build --projects=video-player-demo --configuration=production
+      run: npm run build -- --configuration=production
 
     - name: Test
-      run: npm run nx run-many -- --target=test --projects=video-player-demo --watch=false --browsers=ChromeHeadless --coverage --coverageReporters=lcovonly
+      run: npm run test -- --watch=false --parallel=15
 
     ## ng-dailymotion-api
     - name: Upload code coverage report

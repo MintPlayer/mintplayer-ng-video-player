@@ -26,7 +26,7 @@ jobs:
       run: npm install
     
     - name: Build
-      run: npm run nx run-many -- --target=build --projects=video-player-demo --configuration=production
+      run: npm run build -- --configuration=production
 
     - name: Test
-      run: npm run nx run-many -- --target=test --projects=video-player-demo --watch=false --browsers=ChromeHeadless
+      run: npm run nx affected -- --target=test --watch=false --base=${{ github.event.pull_request.base.sha }} --head=${{ github.event.pull_request.head.sha }}

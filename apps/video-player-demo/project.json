@@ -79,7 +79,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/video-player-demo/src/**/*.ts",
@@ -88,7 +88,7 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/video-player-demo"],
       "options": {
         "jestConfig": "apps/video-player-demo/jest.config.ts",

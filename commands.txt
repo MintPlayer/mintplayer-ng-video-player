@@ -4,14 +4,14 @@ npx create-nx-workspace
 > video-player-demo
 > scss
 cd mintplayer-ng-bootstrap
-nx g @nrwl/angular:lib mintplayer-ng-youtube-api --buildable --publishable --import-path @mintplayer/ng-youtube-api
-nx g @nrwl/angular:lib mintplayer-ng-youtube-player --buildable --publishable --import-path @mintplayer/ng-youtube-player
-nx g @nrwl/angular:lib mintplayer-ng-dailymotion-api --buildable --publishable --import-path @mintplayer/ng-dailymotion-api
-nx g @nrwl/angular:lib mintplayer-ng-dailymotion-player --buildable --publishable --import-path @mintplayer/ng-dailymotion-player
-nx g @nrwl/angular:lib mintplayer-ng-vimeo-api --buildable --publishable --import-path @mintplayer/ng-vimeo-api
-nx g @nrwl/angular:lib mintplayer-ng-vimeo-player --buildable --publishable --import-path @mintplayer/ng-vimeo-player
-nx g @nrwl/angular:lib mintplayer-ng-soundcloud-api --buildable --publishable --import-path @mintplayer/ng-soundcloud-api
-nx g @nrwl/angular:lib mintplayer-ng-soundcloud-player --buildable --publishable --import-path @mintplayer/ng-soundcloud-player
-nx g @nrwl/angular:lib mintplayer-ng-player-progress --buildable --publishable --import-path @mintplayer/ng-player-progress
-nx g @nrwl/angular:lib mintplayer-ng-video-player --buildable --publishable --import-path @mintplayer/ng-video-player
-nx g @nrwl/angular:lib mintplayer-ng-playlist-controller --buildable --publishable --import-path @mintplayer/ng-playlist-controller
+nx g @nx/angular:lib mintplayer-ng-youtube-api --buildable --publishable --import-path @mintplayer/ng-youtube-api
+nx g @nx/angular:lib mintplayer-ng-youtube-player --buildable --publishable --import-path @mintplayer/ng-youtube-player
+nx g @nx/angular:lib mintplayer-ng-dailymotion-api --buildable --publishable --import-path @mintplayer/ng-dailymotion-api
+nx g @nx/angular:lib mintplayer-ng-dailymotion-player --buildable --publishable --import-path @mintplayer/ng-dailymotion-player
+nx g @nx/angular:lib mintplayer-ng-vimeo-api --buildable --publishable --import-path @mintplayer/ng-vimeo-api
+nx g @nx/angular:lib mintplayer-ng-vimeo-player --buildable --publishable --import-path @mintplayer/ng-vimeo-player
+nx g @nx/angular:lib mintplayer-ng-soundcloud-api --buildable --publishable --import-path @mintplayer/ng-soundcloud-api
+nx g @nx/angular:lib mintplayer-ng-soundcloud-player --buildable --publishable --import-path @mintplayer/ng-soundcloud-player
+nx g @nx/angular:lib mintplayer-ng-player-progress --buildable --publishable --import-path @mintplayer/ng-player-progress
+nx g @nx/angular:lib mintplayer-ng-video-player --buildable --publishable --import-path @mintplayer/ng-video-player
+nx g @nx/angular:lib mintplayer-ng-playlist-controller --buildable --publishable --import-path @mintplayer/ng-playlist-controller
