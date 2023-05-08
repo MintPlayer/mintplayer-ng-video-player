@@ -9,6 +9,7 @@ import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
 import { PlaylistDemoComponent } from './playlist-demo.component';
+import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
 
 interface Video {}
 
@@ -23,6 +24,7 @@ describe('PlaylistDemoComponent', () => {
         MockModule(BsGridModule),
         MockModule(BsSelectModule),
         MockModule(BsListGroupModule),
+        MockModule(BsButtonTypeModule),
         MockModule(BsToggleButtonModule),
       ],
       declarations: [

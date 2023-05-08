@@ -4,7 +4,8 @@
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "typeRoots": ["../../node_modules/@types", "../mintplayer-ng-vimeo-api/types"],
-    "types": ["jest", "node", "vimeo"]
+    "types": ["jest", "node", "vimeo"],
+    "target": "es2016"
   },
   "files": ["src/test-setup.ts"],
   "include": ["**/*.test.ts", "**/*.spec.ts", "**/*.d.ts", "jest.config.ts"]

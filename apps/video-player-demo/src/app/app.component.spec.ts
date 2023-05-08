@@ -2,6 +2,8 @@ import { Component, ContentChildren, Directive, forwardRef, Input, QueryList } f
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { MockModule } from 'ng-mocks';
+import { BsNavbarModule } from '@mintplayer/ng-bootstrap/navbar';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -14,7 +16,8 @@ describe('AppComponent', () => {
           { path: 'soundcloud', component: SoundcloudMockComponent },
           { path: 'video', component: VideoMockComponent },
           { path: 'playlist', component: PlaylistMockComponent },
-        ])
+        ]),
+        MockModule(BsNavbarModule)
       ],
       declarations: [
         AppComponent,
@@ -26,13 +29,6 @@ describe('AppComponent', () => {
         SoundcloudMockComponent,
         VideoMockComponent,
         PlaylistMockComponent,
-        
-        // Mock components
-        BsNavbarMockComponent,
-        BsNavbarNavMockComponent,
-        BsNavbarDropdownMockComponent,
-        BsNavbarItemMockComponent,
-        BsNavbarContentMockDirective,
       ],
       providers: [
         { provide: 'VIDEO_PLAYER_VERSION', useValue: '1.0.0' }
@@ -97,65 +93,3 @@ class VideoMockComponent { }
   template: `<div>Playlist</div>`
 })
 class PlaylistMockComponent { }
-
-@Component({
-  selector: 'bs-navbar',
-  template: `
-  <nav>
-    <div>
-      <ng-content></ng-content>
-    </div>  
-  </nav>`
-})
-class BsNavbarMockComponent {
-}
-
-@Component({
-  selector: 'bs-navbar-nav',
-  template: `
-  <div>
-    <ul>
-      <ng-content></ng-content>
-    </ul>  
-  </div>`
-})
-class BsNavbarNavMockComponent {
-  @Input() collapse = true;
-}
-
-@Component({
-  selector: 'bs-navbar-dropdown',
-  template: `
-  <ul>
-    <ng-content></ng-content>
-  </ul>`,
-  providers: [
-    // { provide: BsNavbarDropdownComponent, useExisting: BsNavbarDropdownMockComponent }
-  ]
-})
-class BsNavbarDropdownMockComponent {
-}
-
-@Component({
-  selector: 'bs-navbar-item',
-  template: `
-  <li>
-    <ng-content></ng-content>
-  </li>`,
-  providers: [
-    // { provide: BsNavbarItemComponent, useExisting: BsNavbarItemMockComponent }
-  ]
-})
-class BsNavbarItemMockComponent {
-  @ContentChildren(forwardRef(() => BsNavbarDropdownMockComponent)) dropdowns!: QueryList<BsNavbarDropdownMockComponent>;
-}
-
-@Directive({
-  selector: '[navbarContent]'
-})
-class BsNavbarContentMockDirective {
-  constructor() {
-  }
-  
-  @Input('navbarContent') navbar!: BsNavbarMockComponent;
-}

@@ -7,6 +7,8 @@ import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { MockComponent, MockModule } from 'ng-mocks';
 
 import { VimeoDemoComponent } from './vimeo-demo.component';
+import { VimeoPlayerModule } from '@mintplayer/ng-vimeo-player';
+import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
 
 describe('VimeoDemoComponent', () => {
   let component: VimeoDemoComponent;
@@ -18,7 +20,9 @@ describe('VimeoDemoComponent', () => {
         FormsModule,
         MockModule(BsGridModule),
         MockModule(BsRangeModule),
+        MockModule(BsButtonTypeModule),
         MockModule(BsButtonGroupModule),
+        MockModule(VimeoPlayerModule)
       ],
       declarations: [
         // Unit to test

@@ -4,7 +4,8 @@
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "typeRoots": ["../../node_modules/@types", "../mintplayer-ng-soundcloud-api/types"],
-    "types": ["jest", "node", "soundcloud"]
+    "types": ["jest", "node", "soundcloud"],
+    "target": "es2016"
   },
   "files": ["src/test-setup.ts"],
   "include": ["**/*.test.ts", "**/*.spec.ts", "**/*.d.ts", "jest.config.ts"]
