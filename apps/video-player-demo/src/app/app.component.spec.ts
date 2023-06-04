@@ -9,6 +9,7 @@ describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
+        BsNavbarModule,
         RouterTestingModule.withRoutes([
           { path: 'youtube', component: YoutubeMockComponent },
           { path: 'dailymotion', component: DailymotionMockComponent },
@@ -16,8 +17,7 @@ describe('AppComponent', () => {
           { path: 'soundcloud', component: SoundcloudMockComponent },
           { path: 'video', component: VideoMockComponent },
           { path: 'playlist', component: PlaylistMockComponent },
-        ]),
-        MockModule(BsNavbarModule)
+        ])
       ],
       declarations: [
         AppComponent,
