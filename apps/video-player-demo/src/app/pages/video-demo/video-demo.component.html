@@ -1,55 +1,57 @@
 <body>
     <h2 class="text-center">Welcome to {{ title }}!</h2>
-    <bs-grid>
-        <div bsRow>
-            <div [bsColumn]="{lg: 6}">
-                <bs-list-group class="d-block mb-3">
-                    <bs-list-group-item (click)="playVideo(video)" class="cursor-pointer" *ngFor="let video of videos">{{ video }}</bs-list-group-item>
-                </bs-list-group>
-                <bs-input-group>
-                    <input type="text" [(ngModel)]="newVideoUrl" class="form-control">
-                    <button [color]="colors.primary" (click)="addToPlaylist()">Add</button>
-                </bs-input-group>
+    <bs-form>
+        <bs-grid>
+            <div bsRow>
+                <div [bsColumn]="{lg: 6}">
+                    <bs-list-group class="d-block mb-3">
+                        <bs-list-group-item (click)="playVideo(video)" class="cursor-pointer" *ngFor="let video of videos">{{ video }}</bs-list-group-item>
+                    </bs-list-group>
+                    <bs-input-group>
+                        <input type="text" [(ngModel)]="newVideoUrl" class="form-control">
+                        <button [color]="colors.primary" (click)="addToPlaylist()">Add</button>
+                    </bs-input-group>
+                </div>
+                <div [bsColumn]="{lg: 6}">
+                    <div class="d-block text-center">
+                        <video-player [width]="width" [height]="height" [autoplay]="true" [url]="url"
+                            (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
+                            (isPipChange)="isPip = $event" #player1></video-player>
+                    </div>
+                    <div bsRow>
+                        <div bsColumn class="text-center">
+                            <label>{{ progress.currentTime }}</label>
+                        </div>
+                        <div bsColumn class="text-center">
+                            {{ playerStates[playerState] }}
+                            <br>
+                            <button (click)="play()" [color]="colors.secondary" *ngIf="playerState === playerStates['paused']">Play</button>
+                            <button (click)="pause()" [color]="colors.secondary" *ngIf="playerState === playerStates['playing']">Pause</button>
+                        </div>
+                    </div>
+                    <div bsRow>
+                        <div bsColumn class="text-center">
+                            <label>
+                                <label>{{ volume | number: '0.0' }}</label>
+                                <bs-range [(ngModel)]="volume" [min]="0" [max]="100" [step]="1"></bs-range>
+                            </label>
+                        </div>
+                        <div bsColumn class="text-center">
+                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isMuted" class="d-inline-block">
+                                Mute
+                            </bs-toggle-button>
+                        </div>
+                    </div>
+                    <div class="d-block text-center">
+                        <bs-button-group>
+                            <button (click)="getTitle()" [color]="colors.secondary">Get Title</button>
+                            <button (click)="setSize()" [color]="colors.secondary">Set size</button>
+                            <button (click)="requestPip()" [color]="colors.secondary" *ngIf="!isPip">Enter PiP</button>
+                            <button (click)="exitPip()" [color]="colors.secondary" *ngIf="isPip">Leave PiP</button>
+                        </bs-button-group>
+                    </div>
+                </div>
             </div>
-            <div [bsColumn]="{lg: 6}">
-                <div class="d-block text-center">
-                    <video-player [width]="width" [height]="height" [autoplay]="true" [url]="url"
-                        (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
-                        (isPipChange)="isPip = $event" #player1></video-player>
-                </div>
-                <div bsRow>
-                    <div bsColumn class="text-center">
-                        <label>{{ progress.currentTime }}</label>
-                    </div>
-                    <div bsColumn class="text-center">
-                        {{ playerStates[playerState] }}
-                        <br>
-                        <button (click)="play()" [color]="colors.secondary" *ngIf="playerState === playerStates['paused']">Play</button>
-                        <button (click)="pause()" [color]="colors.secondary" *ngIf="playerState === playerStates['playing']">Pause</button>
-                    </div>
-                </div>
-                <div bsRow>
-                    <div bsColumn class="text-center">
-                        <label>
-                            <label>{{ volume | number: '0.0' }}</label>
-                            <bs-range [(ngModel)]="volume" [min]="0" [max]="100" [step]="1"></bs-range>
-                        </label>
-                    </div>
-                    <div bsColumn class="text-center">
-                        <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isMuted" class="d-inline-block">
-                            Mute
-                        </bs-toggle-button>
-                    </div>
-                </div>
-                <div class="d-block text-center">
-                    <bs-button-group>
-                        <button (click)="getTitle()" [color]="colors.secondary">Get Title</button>
-                        <button (click)="setSize()" [color]="colors.secondary">Set size</button>
-                        <button (click)="requestPip()" [color]="colors.secondary" *ngIf="!isPip">Enter PiP</button>
-                        <button (click)="exitPip()" [color]="colors.secondary" *ngIf="isPip">Leave PiP</button>
-                    </bs-button-group>
-                </div>
-            </div>
-        </div>
-    </bs-grid>
+        </bs-grid>
+    </bs-form>
 </body>

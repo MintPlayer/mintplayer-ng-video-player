@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
 import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
 import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
 import { BsInputGroupModule } from '@mintplayer/ng-bootstrap/input-group';
@@ -19,6 +20,7 @@ import { SoundcloudDemoComponent } from './soundcloud-demo.component';
   imports: [
     CommonModule,
     FormsModule,
+    BsFormModule,
     BsGridModule,
     BsInputGroupModule,
     BsButtonGroupModule,

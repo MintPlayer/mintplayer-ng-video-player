@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
 import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
 import { BsRangeModule } from '@mintplayer/ng-bootstrap/range';
 import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
@@ -21,6 +22,7 @@ import { VideoDemoComponent } from './video-demo.component';
   imports: [
     CommonModule,
     FormsModule,
+    BsFormModule,
     BsGridModule,
     BsRangeModule,
     BsListGroupModule,

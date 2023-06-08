@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { Color } from '@mintplayer/ng-bootstrap';
 
 @Component({
   selector: 'mintplayer-ng-video-player-root',
@@ -11,5 +12,6 @@ export class AppComponent {
   }
   
   versionInfo = '';
+  colors = Color;
   title = '@mintplayer/ng-video-player';
 }

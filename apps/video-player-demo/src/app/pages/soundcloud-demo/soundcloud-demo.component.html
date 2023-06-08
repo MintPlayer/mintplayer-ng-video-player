@@ -1,34 +1,36 @@
 <body>
   <h2>Welcome to {{ title }}!</h2>
-  <bs-grid>
-    <div bsRow class="mb-3">
-      <div [bsColumn]="{md: 12}" class="text-center">
-        <bs-input-group>
-          <input type="text" class="form-control" width="300" [(ngModel)]="videoUrlInput">
-          <button [color]="colors.secondary" (click)="playVideo()">Play this url</button>
-        </bs-input-group>
+  <bs-form>
+    <bs-grid>
+      <div bsRow class="mb-3">
+        <div [bsColumn]="{md: 12}" class="text-center">
+          <bs-input-group>
+            <input type="text" class="form-control" width="300" [(ngModel)]="videoUrlInput">
+            <button [color]="colors.secondary" (click)="playVideo()">Play this url</button>
+          </bs-input-group>
+        </div>
       </div>
-    </div>
-    <div bsRow class="mb-3">
-      <div [bsColumn]="{md: 6}" class="text-center">
-        <bs-toggle-button [type]="'checkbox'" [(ngModel)]="autoplay" class="d-inline-block">
-          Autoplay
-        </bs-toggle-button>
+      <div bsRow class="mb-3">
+        <div [bsColumn]="{md: 6}" class="text-center">
+          <bs-toggle-button [type]="'checkbox'" [(ngModel)]="autoplay" class="d-inline-block">
+            Autoplay
+          </bs-toggle-button>
+        </div>
+        <div [bsColumn]="{md: 6}" class="text-center">
+          <bs-button-group>
+            <button (click)="play()" [color]="colors.secondary" *ngIf="playerState !== playerStates['PLAYING']">Play</button>
+            <button (click)="pause()" [color]="colors.secondary" *ngIf="playerState !== playerStates['PAUSED']">Pause</button>
+            <button (click)="resize()" [color]="colors.secondary">Resize</button>
+          </bs-button-group>
+        </div>
       </div>
-      <div [bsColumn]="{md: 6}" class="text-center">
-        <bs-button-group>
-          <button (click)="play()" [color]="colors.secondary" *ngIf="playerState !== playerStates['PLAYING']">Play</button>
-          <button (click)="pause()" [color]="colors.secondary" *ngIf="playerState !== playerStates['PAUSED']">Pause</button>
-          <button (click)="resize()" [color]="colors.secondary">Resize</button>
-        </bs-button-group>
+      <div bsRow>
+        <div [bsColumn]="{md: 12}" class="text-center">
+          <soundcloud-player [width]="size.width" [height]="size.height" [autoplay]="autoplay" (progressChange)="onProgressChange($event)" (playerStateChange)="onStateChange($event)" #player></soundcloud-player>
+          <br>
+          {{ currentTime }}
+        </div>
       </div>
-    </div>
-    <div bsRow>
-      <div [bsColumn]="{md: 12}" class="text-center">
-        <soundcloud-player [width]="size.width" [height]="size.height" [autoplay]="autoplay" (progressChange)="onProgressChange($event)" (playerStateChange)="onStateChange($event)" #player></soundcloud-player>
-        <br>
-        {{ currentTime }}
-      </div>
-    </div>
-  </bs-grid>
+    </bs-grid>
+  </bs-form>
 </body>
