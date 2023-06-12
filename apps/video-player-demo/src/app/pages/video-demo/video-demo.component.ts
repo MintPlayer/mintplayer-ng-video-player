@@ -1,5 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
+import { VIDEO_APIS } from '@mintplayer/ng-player-player-provider';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player';
 
@@ -9,6 +10,10 @@ import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player'
   styleUrls: ['./video-demo.component.scss']
 })
 export class VideoDemoComponent {
+
+  constructor(@Inject(VIDEO_APIS) players: string[]) {
+    console.log('VIDEO_APIS', players);
+  }
 
   title = 'video-player-demo';
   url = '';

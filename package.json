@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "nx",
     "nx": "nx",
-    "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2020 browser module main",
+    "postinstall": "node ./decorate-angular-cli.js",
     "start": "nx serve",
     "build": "nx build",
     "build:sme": "nx build --source-map",
@@ -29,11 +29,16 @@
     "bootstrap-icons": "~1.9.1",
     "font-awesome": "^4.7.0",
     "rxjs": "~7.5.6",
-    "tslib": "^2.0.0",
+    "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~16.0.0",
+    "@angular-devkit/core": "~16.0.0",
+    "@angular-devkit/schematics": "~16.0.0",
+    "@angular-eslint/eslint-plugin": "~16.0.0",
+    "@angular-eslint/eslint-plugin-template": "~16.0.0",
+    "@angular-eslint/template-parser": "~16.0.0",
     "@angular/cli": "~16.0.0",
     "@angular/compiler-cli": "~16.0.0",
     "@angular/language-service": "~16.0.0",
@@ -43,7 +48,8 @@
     "@nx/js": "16.3.2",
     "@nx/linter": "16.3.2",
     "@nx/workspace": "16.3.2",
-    "@types/jest": "28.1.8",
+    "@schematics/angular": "~16.0.0",
+    "@types/jest": "^29.4.0",
     "@types/node": "16.11.7",
     "@types/youtube": "^0.0.46",
     "@typescript-eslint/eslint-plugin": "~5.58.0",
@@ -66,6 +72,7 @@
     "prettier": "^2.6.2",
     "source-map-explorer": "^2.5.3",
     "ts-jest": "29.1.0",
+    "ts-node": "10.9.1",
     "typescript": "~5.0.4"
   }
 }
