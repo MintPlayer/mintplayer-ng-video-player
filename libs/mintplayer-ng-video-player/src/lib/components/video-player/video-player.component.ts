@@ -40,25 +40,25 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         } else {
           switch (videoRequest.playerType) {
             case EPlayerType.youtube:
-              this.youtubeApiService.youtubeApiReady$
+              this.youtubeApiService.apiReady$
                 .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
                 .subscribe((ready) => this.isApiReady$.next(ready));
               this.youtubeApiService.loadApi();
               break;
             case EPlayerType.dailymotion:
-              this.dailymotionApiService.dailymotionApiReady$
+              this.dailymotionApiService.apiReady$
                 .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
                 .subscribe((ready) => this.isApiReady$.next(ready));
               this.dailymotionApiService.loadApi();
               break;
             case EPlayerType.vimeo:
-              this.vimeoApiService.vimeoApiReady$
+              this.vimeoApiService.apiReady$
                 .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
                 .subscribe((ready) => this.isApiReady$.next(ready));
               this.vimeoApiService.loadApi();
               break;
             case EPlayerType.soundcloud:
-              this.soundcloudApiService.soundcloudApiReady$
+              this.soundcloudApiService.apiReady$
                 .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
                 .subscribe((ready) => this.isApiReady$.next(ready));
               this.soundcloudApiService.loadApi();

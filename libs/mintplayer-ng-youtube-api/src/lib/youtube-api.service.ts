@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
+import { IApiService } from '@mintplayer/ng-player-player-provider';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class YoutubeApiService {
+export class YoutubeApiService implements IApiService {
 
   private hasAlreadyStartedLoadingIframeApi = false;
-  private isIframeApiReady = false;
   private scriptTag!: HTMLScriptElement;
 
-  public youtubeApiReady$ = new BehaviorSubject<boolean>(
+  public apiReady$ = new BehaviorSubject<boolean>(
     (typeof window === 'undefined')
       ? false
       : (<any>window)['YT'] !== undefined
@@ -20,16 +20,15 @@ export class YoutubeApiService {
     // If not during server-side rendering
     if (typeof window !== 'undefined') {
 
-      if (this.isIframeApiReady) {
-        this.youtubeApiReady$.next(true);
+      if (this.apiReady$.value) {
+        this.apiReady$.next(true);
       } else if (!this.hasAlreadyStartedLoadingIframeApi) {
         // Ensure the script is inserted only once
         this.hasAlreadyStartedLoadingIframeApi = true;
         
         // Setup callback
         (<any>window)['onYouTubeIframeAPIReady'] = () => {
-          this.isIframeApiReady = true;
-          this.youtubeApiReady$.next(true);
+          this.apiReady$.next(true);
         };
 
         // Invocation

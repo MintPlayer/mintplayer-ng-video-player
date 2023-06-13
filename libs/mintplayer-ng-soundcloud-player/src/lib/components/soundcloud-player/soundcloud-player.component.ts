@@ -27,7 +27,7 @@ export class SoundcloudPlayerComponent implements AfterViewInit, OnDestroy {
       });
 
     combineLatest([
-      this.soundcloudApiService.soundcloudApiReady$,
+      this.soundcloudApiService.apiReady$,
       this.videoUrl$
     ])
       .pipe(filter(([soundcloudApiReady, videoUrl]) => { return (!!soundcloudApiReady) && (videoUrl !== null) && (videoUrl !== ''); }))

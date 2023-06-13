@@ -23,7 +23,7 @@ export class YoutubePlayerComponent implements AfterViewInit, OnDestroy {
       });
       
     // Do the following after the Youtube API is loaded
-    combineLatest([this.isViewInited$, this.youtubeApiService.youtubeApiReady$])
+    combineLatest([this.isViewInited$, this.youtubeApiService.apiReady$])
       .pipe(filter(([isViewInited, youtubeApiReady]) => isViewInited && youtubeApiReady), take(1), takeUntil(this.destroyed$))
       .subscribe((value) => {
         if (this.player) {

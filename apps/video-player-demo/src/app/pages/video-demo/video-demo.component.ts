@@ -1,6 +1,6 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { VIDEO_APIS } from '@mintplayer/ng-player-player-provider';
+import { IApiService, VIDEO_APIS } from '@mintplayer/ng-player-player-provider';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player';
 
@@ -11,7 +11,7 @@ import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player'
 })
 export class VideoDemoComponent {
 
-  constructor(@Inject(VIDEO_APIS) players: string[]) {
+  constructor(@Inject(VIDEO_APIS) players: IApiService[]) {
     console.log('VIDEO_APIS', players);
   }
 

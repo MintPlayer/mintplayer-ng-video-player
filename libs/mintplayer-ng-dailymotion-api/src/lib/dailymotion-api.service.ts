@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
+import { IApiService } from '@mintplayer/ng-player-player-provider';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DailymotionApiService {
+export class DailymotionApiService implements IApiService {
 
   private hasAlreadyStartedLoadingApi = false;
-  private isApiReady = false;
   private scriptTag!: HTMLScriptElement;
 
-  public dailymotionApiReady$ = new BehaviorSubject<boolean>(false);
+  public apiReady$ = new BehaviorSubject<boolean>(false);
 
   public loadApi() {
     // If not during server-side rendering
     if (typeof window !== 'undefined') {
 
-      if (this.isApiReady) {
-        this.dailymotionApiReady$.next(true);
+      if (this.apiReady$.value) {
+        this.apiReady$.next(true);
       } else if (!this.hasAlreadyStartedLoadingApi) {
         // Ensure the script is inserted only once
         this.hasAlreadyStartedLoadingApi = true;
@@ -29,8 +29,7 @@ export class DailymotionApiService {
 
         // Setup callback
         this.scriptTag.addEventListener('load', () => {
-          this.isApiReady = true;
-          this.dailymotionApiReady$.next(true);
+          this.apiReady$.next(true);
         });
         this.scriptTag.addEventListener('error', () => {
           throw new Error(`${this.scriptTag.src} failed to load`);

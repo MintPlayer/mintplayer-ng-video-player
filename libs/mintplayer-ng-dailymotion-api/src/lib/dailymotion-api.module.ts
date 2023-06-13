@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VIDEO_APIS } from '@mintplayer/ng-player-player-provider';
+import { DailymotionApiService } from './dailymotion-api.service';
 
 @NgModule({
   declarations: [],
@@ -8,7 +9,7 @@ import { VIDEO_APIS } from '@mintplayer/ng-player-player-provider';
   providers: [{
     provide: VIDEO_APIS,
     multi: true,
-    useValue: 'DailyMotion'
+    useClass: DailymotionApiService
   }]
 })
 export class DailymotionApiModule { }

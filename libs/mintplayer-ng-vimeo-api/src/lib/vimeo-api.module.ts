@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VIDEO_APIS } from '@mintplayer/ng-player-player-provider';
+import { VimeoApiService } from './vimeo-api.service';
 
 @NgModule({
   declarations: [],
@@ -8,7 +9,7 @@ import { VIDEO_APIS } from '@mintplayer/ng-player-player-provider';
   providers: [{
     provide: VIDEO_APIS,
     multi: true,
-    useValue: 'Vimeo'
+    useClass: VimeoApiService
   }]
 })
 export class VimeoApiModule { }

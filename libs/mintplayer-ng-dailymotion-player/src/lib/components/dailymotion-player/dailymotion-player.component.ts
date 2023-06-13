@@ -20,7 +20,7 @@ export class DailymotionPlayerComponent implements OnDestroy, AfterViewInit {
         this.dailymotionApiService.loadApi();
       });
     
-    this.dailymotionApiService.dailymotionApiReady$
+    this.dailymotionApiService.apiReady$
       .pipe(filter(r => !!r), take(1), takeUntil(this.destroyed$))
       .subscribe((value) => {
         console.log('api loaded', this.player);

@@ -23,7 +23,7 @@ export class VimeoPlayerComponent implements OnDestroy, AfterViewInit {
         this.vimeoApiService.loadApi();
       });
 
-    this.vimeoApiService.vimeoApiReady$
+    this.vimeoApiService.apiReady$
       .pipe(filter(r => !!r), take(1), takeUntil(this.destroyed$))
       .subscribe((value) => {
         if (this.player) {
