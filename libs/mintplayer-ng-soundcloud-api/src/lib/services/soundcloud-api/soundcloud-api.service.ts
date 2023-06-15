@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IApiService } from '@mintplayer/ng-player-player-provider';
+import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-player-provider';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -9,6 +9,14 @@ export class SoundcloudApiService implements IApiService {
 
   private hasAlreadyStartedLoadingApi = false;
   private scriptTag!: HTMLScriptElement;
+
+  public get id() {
+    return 'soundcloud';
+  }
+
+  public urlRegexes = [
+    new RegExp(/(?<id>http[s]{0,1}:\/\/(www\.){0,1}soundcloud\.com\/.+)$/, 'g'),
+  ];
 
   public apiReady$ = new BehaviorSubject<boolean>(false);
 
@@ -45,5 +53,44 @@ export class SoundcloudApiService implements IApiService {
         }
       }
     }
+  }
+
+  public prepareHtml(domId: string, width: number, height: number) {
+    return `<iframe id="${domId}" width="${width}" height="${height}" style="max-width:100%" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&amp;show_teaser=false&amp;" allow="autoplay"></iframe>`;
+  }
+
+  public createPlayer(options: PlayerOptions): PlayerAdapter {
+    if (!options.element) {
+      throw 'The SoundCloud api requires the options.element to be set';
+    }
+
+    const player = SC.Widget(<HTMLIFrameElement>options.element.getElementsByTagName('iframe')[0]);
+    player.bind(SC.Widget.Events.READY, () => options.onReady());
+    player.bind(SC.Widget.Events.PLAY, () => options.onStateChange(EPlayerState.playing));
+    player.bind(SC.Widget.Events.PAUSE, () => options.onStateChange(EPlayerState.paused));
+    player.bind(SC.Widget.Events.FINISH, () => options.onStateChange(EPlayerState.ended));
+    // player.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => {
+
+    return {
+      loadVideoById: (id: string) => {
+        player.load(id, { auto_play: options.autoplay });
+      },
+      setPlayerState: (state: EPlayerState) => {
+        switch (state) {
+          case EPlayerState.playing:
+            player.play();
+            break;
+          case EPlayerState.paused:
+            player.pause();
+            break;
+          case EPlayerState.ended:
+          case EPlayerState.unstarted:
+            break;
+        }
+      },
+      setVolume: (volume) => {
+        player.setVolume(volume);
+      }
+    };
   }
 }

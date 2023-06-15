@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IApiService } from '@mintplayer/ng-player-player-provider';
+import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-player-provider';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -9,6 +9,14 @@ export class DailymotionApiService implements IApiService {
 
   private hasAlreadyStartedLoadingApi = false;
   private scriptTag!: HTMLScriptElement;
+
+  public get id() {
+    return 'dailymotion';
+  }
+
+  urlRegexes = [
+    new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}dailymotion\.com\/video\/(?<id>[0-9A-Za-z]+)$/, 'g'),
+  ];
 
   public apiReady$ = new BehaviorSubject<boolean>(false);
 
@@ -46,5 +54,52 @@ export class DailymotionApiService implements IApiService {
         }
       }
     }
+  }
+
+  public prepareHtml(domId: string, width: number, height: number) {
+    return `<div id="${domId}" style="max-width:100%"></div>`;
+  }
+
+  public createPlayer(options: PlayerOptions): PlayerAdapter {
+    if (!options.element) {
+      throw 'The DailyMotion api requires the options.element to be set';
+    }
+
+    const player = DM.player(options.element.getElementsByTagName('div')[0], {
+      width: String(options.width),
+      height: String(options.height),
+      params: {
+        autoplay: options.autoplay,
+        "queue-enable": false,
+      },
+      events: {
+        apiready: () => options.onReady(),
+        play: () => options.onStateChange(EPlayerState.playing),
+        pause: () => options.onStateChange(EPlayerState.paused),
+        end: () => options.onStateChange(EPlayerState.ended),
+      }
+    });
+
+    return {
+      loadVideoById: (id: string) => {
+        player.load({video: id});
+      },
+      setPlayerState: (state: EPlayerState) => {
+        switch (state) {
+          case EPlayerState.playing:
+            player.play();
+            break;
+          case EPlayerState.paused:
+            player.pause();
+            break;
+          case EPlayerState.ended:
+          case EPlayerState.unstarted:
+            break;
+        }
+      },
+      setVolume: (volume) => {
+        player.setVolume(volume / 100);
+      }
+    };
   }
 }

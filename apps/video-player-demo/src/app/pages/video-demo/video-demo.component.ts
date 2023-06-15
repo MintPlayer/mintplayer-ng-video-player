@@ -1,8 +1,8 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { IApiService, VIDEO_APIS } from '@mintplayer/ng-player-player-provider';
+import { EPlayerState, IApiService, VIDEO_APIS } from '@mintplayer/ng-player-player-provider';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
-import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player';
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 
 @Component({
   selector: 'mintplayer-ng-video-player-video-demo',

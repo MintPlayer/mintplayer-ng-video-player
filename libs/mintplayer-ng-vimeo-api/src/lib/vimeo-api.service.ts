@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IApiService } from '@mintplayer/ng-player-player-provider';
+import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-player-provider';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -9,6 +9,14 @@ export class VimeoApiService implements IApiService {
 
   private hasAlreadyStartedLoadingVimeoApi = false;
   private scriptTag!: HTMLScriptElement;
+
+  public get id() {
+    return 'vimeo';
+  }
+
+  public urlRegexes = [
+    new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}vimeo\.com\/(?<id>[0-9]+)$/, 'g'),
+  ];
 
   public apiReady$ = new BehaviorSubject<boolean>(
     (typeof window === 'undefined')
@@ -45,6 +53,60 @@ export class VimeoApiService implements IApiService {
         }
       }
     }
+  }
+
+  public prepareHtml(domId: string, width: number, height: number) {
+    return `<div id="${domId}" style="max-width:100%"></div>`;
+  }
+
+  public createPlayer(options: PlayerOptions) {
+    if (!options.domId) {
+      throw 'The Vimeo api requires the options.domId to be set';
+    }
+
+    if (!options.initialVideoId) {
+      throw 'Vimeo requires an initial video';
+    }
+
+    const player = new Vimeo.Player(options.domId, {
+      id: options.initialVideoId,
+      width: options.width,
+      height: options.height,
+      autoplay: options.autoplay,
+      pip: true,
+    });
+
+    player.ready().then(() => options.onReady());
+    player.on('loaded', () => {
+      options.onStateChange(EPlayerState.unstarted);
+      setTimeout(() => options.autoplay && player.play(), 600);
+    });
+    player.on('play', () => options.onStateChange(EPlayerState.playing));
+    player.on('pause', () => options.onStateChange(EPlayerState.paused));
+    player.on('ended', () => options.onStateChange(EPlayerState.ended));
+    player.on('volumechange', (ev) => options.onVolumeChange(ev.volume * 100));
+
+    return <PlayerAdapter>{
+      loadVideoById: (id: string) => {
+        player.loadVideo(id);
+      },
+      setPlayerState: (state: EPlayerState) => {
+        switch (state) {
+          case EPlayerState.playing:
+            player.play();
+            break;
+          case EPlayerState.paused:
+            player.pause();
+            break;
+          case EPlayerState.ended:
+          case EPlayerState.unstarted:
+            break;
+        }
+      },
+      setVolume: (volume) => {
+        player.setVolume(volume / 100);
+      }
+    };
   }
 
 }
