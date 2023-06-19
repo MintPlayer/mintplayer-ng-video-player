@@ -4,10 +4,7 @@
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "typeRoots": [
-      "../../node_modules/@types",
-      "../mintplayer-ng-dailymotion-api/types",
-      "../mintplayer-ng-vimeo-api/types",
-      "../mintplayer-ng-soundcloud-api/types"
+      "../../node_modules/@types"
     ],
     "types": ["jest", "node", "youtube", "dailymotion", "vimeo", "soundcloud"]
   },

@@ -1,10 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DailymotionPlayerComponent } from './components/dailymotion-player/dailymotion-player.component';
+import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { VideoPlayerComponent, VideoPlayerModule } from '@mintplayer/ng-video-player';
+import { DailymotionApiService } from './dailymotion-api.service';
 
 @NgModule({
-  imports: [CommonModule],
-  declarations: [DailymotionPlayerComponent],
-  exports: [DailymotionPlayerComponent],
+  declarations: [],
+  imports: [CommonModule, VideoPlayerModule],
+  providers: [{
+    provide: VIDEO_APIS,
+    multi: true,
+    useClass: DailymotionApiService
+  }],
+  exports: [VideoPlayerComponent]
 })
-export class DailymotionPlayerModule {}
+export class DailymotionPlayerModule { }

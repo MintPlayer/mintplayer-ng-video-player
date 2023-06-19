@@ -15,7 +15,8 @@
     </div>
     <div bsRow>
       <div [bsColumn]="{md: 12}" class="text-center">
-        <vimeo-player [videoId]="playedVideoId" [(volume)]="volume" [(isPip)]="isPip" [width]="width" [height]="height" #player1></vimeo-player>
+        <!-- [(isPip)]="isPip" -->
+        <video-player [(volume)]="volume" [width]="width" [height]="height" #player1></video-player>
       </div>
     </div>
   </bs-grid>

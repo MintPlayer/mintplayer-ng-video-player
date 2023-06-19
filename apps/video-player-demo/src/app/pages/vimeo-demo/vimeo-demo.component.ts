@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { VimeoPlayerComponent } from '@mintplayer/ng-vimeo-player';
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 
 @Component({
   selector: 'mintplayer-ng-video-player-vimeo-demo',
@@ -8,17 +8,16 @@ import { VimeoPlayerComponent } from '@mintplayer/ng-vimeo-player';
   styleUrls: ['./vimeo-demo.component.scss']
 })
 export class VimeoDemoComponent {
-  @ViewChild('player1') player1!: VimeoPlayerComponent;
+  @ViewChild('player1') player1!: VideoPlayerComponent;
 
   title = 'Vimeo player';
   colors = Color;
-  playedVideoId: string | null = null;
   volume = 0.5;
   isPip = false;
   width = 400;
   height = 300;
 
   playVideo() {
-    this.playedVideoId = '14190306';
+    this.player1.setUrl('https://vimeo.com/14190306');
   }
 }

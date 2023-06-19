@@ -2,9 +2,10 @@ import { AfterViewInit, ChangeDetectorRef, Component, NgZone, OnDestroy, ViewChi
 import { Color } from '@mintplayer/ng-bootstrap';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { ERepeatMode, PlaylistController } from '@mintplayer/ng-playlist-controller';
-import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player';
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { Subject, takeUntil } from 'rxjs';
 import { Video } from '../../interfaces/video';
+import { EPlayerState } from '@mintplayer/ng-player-provider';
 
 @Component({
   selector: 'mintplayer-ng-video-player-playlist-demo',

@@ -62,6 +62,22 @@ describe('AppComponent', () => {
   });
 });
 
+type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+
+enum Color {
+  primary = 0,
+  secondary = 1,
+  success = 2,
+  danger = 3,
+  warning = 4,
+  info = 5,
+  light = 6,
+  dark = 7,
+  body = 8,
+  white = 9,
+  transparent = 10
+}
+
 @Component({
   selector: 'youtube-mock-page',
   template: `<div>Youtube</div>`
@@ -108,6 +124,8 @@ class PlaylistMockComponent { }
   </nav>`
 })
 class BsNavbarMockComponent {
+  @Input() color?: Color;
+  @Input() breakpoint?: Breakpoint;
 }
 
 @Component({
@@ -151,11 +169,8 @@ class BsNavbarItemMockComponent {
 }
 
 @Directive({
-  selector: '[navbarContent]'
+  selector: '[bsNavbarContent]'
 })
 class BsNavbarContentMockDirective {
-  constructor() {
-  }
-  
-  @Input('navbarContent') navbar!: BsNavbarMockComponent;
+  @Input('bsNavbarContent') navbar!: BsNavbarMockComponent;
 }

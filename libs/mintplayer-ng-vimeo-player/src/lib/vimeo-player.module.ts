@@ -1,10 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VimeoPlayerComponent } from './components/vimeo-player/vimeo-player.component';
+import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { VideoPlayerComponent, VideoPlayerModule } from '@mintplayer/ng-video-player';
+import { VimeoApiService } from './vimeo-api.service';
 
 @NgModule({
-  imports: [CommonModule],
-  declarations: [VimeoPlayerComponent],
-  exports: [VimeoPlayerComponent],
+  declarations: [],
+  imports: [CommonModule, VideoPlayerModule],
+  providers: [{
+    provide: VIDEO_APIS,
+    multi: true,
+    useClass: VimeoApiService
+  }],
+  exports: [VideoPlayerComponent]
 })
-export class VimeoPlayerModule {}
+export class VimeoPlayerModule { }

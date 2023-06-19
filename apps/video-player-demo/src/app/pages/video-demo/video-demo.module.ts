@@ -14,6 +14,11 @@ import { VideoPlayerModule } from '@mintplayer/ng-video-player';
 import { VideoDemoRoutingModule } from './video-demo-routing.module';
 import { VideoDemoComponent } from './video-demo.component';
 
+import { YoutubePlayerModule } from '@mintplayer/ng-youtube-player';
+import { DailymotionPlayerModule } from '@mintplayer/ng-dailymotion-player';
+import { VimeoPlayerModule } from '@mintplayer/ng-vimeo-player';
+import { SoundcloudPlayerModule } from '@mintplayer/ng-soundcloud-player';
+
 
 @NgModule({
   declarations: [
@@ -31,6 +36,10 @@ import { VideoDemoComponent } from './video-demo.component';
     BsButtonGroupModule,
     BsToggleButtonModule,
     VideoPlayerModule,
+    YoutubePlayerModule,
+    DailymotionPlayerModule,
+    VimeoPlayerModule,
+    SoundcloudPlayerModule,
     VideoDemoRoutingModule
   ]
 })

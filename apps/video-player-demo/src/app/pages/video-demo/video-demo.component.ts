@@ -1,7 +1,8 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
+import { EPlayerState, IApiService, VIDEO_APIS } from '@mintplayer/ng-player-provider';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
-import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player';
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 
 @Component({
   selector: 'mintplayer-ng-video-player-video-demo',
@@ -10,8 +11,11 @@ import { EPlayerState, VideoPlayerComponent } from '@mintplayer/ng-video-player'
 })
 export class VideoDemoComponent {
 
+  constructor(@Inject(VIDEO_APIS) players: IApiService[]) {
+    console.log('VIDEO_APIS', players);
+  }
+
   title = 'video-player-demo';
-  url = '';
   colors = Color;
   playerStates = EPlayerState;
   playerState!: EPlayerState;
@@ -66,7 +70,7 @@ export class VideoDemoComponent {
   }
 
   setMuted(event: Event) {
-    this.isMuted = (<any>event.target).checked;
+    this.isMuted = (<HTMLInputElement>event.target).checked;
   }
 
   async requestPip() {
@@ -88,6 +92,8 @@ export class VideoDemoComponent {
   }
 
   onPlayerStateChange(event: EPlayerState) {
-    console.log(event);
+    if (event === EPlayerState.ended) {
+      this.player1.setUrl(null);
+    }
   }
 }

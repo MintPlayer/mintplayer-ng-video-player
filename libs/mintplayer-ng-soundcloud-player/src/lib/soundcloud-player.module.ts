@@ -1,10 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SoundcloudPlayerComponent } from './components/soundcloud-player/soundcloud-player.component';
+import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { VideoPlayerComponent, VideoPlayerModule } from '@mintplayer/ng-video-player';
+import { SoundcloudApiService } from './services/soundcloud-api/soundcloud-api.service';
 
 @NgModule({
-  imports: [CommonModule],
-  declarations: [SoundcloudPlayerComponent],
-  exports: [SoundcloudPlayerComponent],
+  declarations: [],
+  imports: [CommonModule, VideoPlayerModule],
+  providers: [{
+    provide: VIDEO_APIS,
+    multi: true,
+    useClass: SoundcloudApiService
+  }],
+  exports: [VideoPlayerComponent]
 })
-export class SoundcloudPlayerModule {}
+export class SoundcloudPlayerModule { }

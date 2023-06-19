@@ -5,11 +5,8 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": ["node", "youtube", "dailymotion", "vimeo", "soundcloud"],
+    "types": ["node"],
     "typeRoots": [
-      "../mintplayer-ng-dailymotion-api/types",
-      "../mintplayer-ng-soundcloud-api/types",
-      "../mintplayer-ng-vimeo-api/types",
       "node_modules/@types"
     ],
     "resolveJsonModule": true,

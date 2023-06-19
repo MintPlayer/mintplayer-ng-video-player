@@ -1,6 +1,6 @@
-import { EPlayerType } from "../enums/player-type";
+import { IApiService } from "@mintplayer/ng-player-provider";
 
 export interface VideoRequest {
-    playerType: EPlayerType;
+    api: IApiService;
     id: string;
 }
