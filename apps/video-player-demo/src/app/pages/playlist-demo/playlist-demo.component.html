@@ -37,7 +37,9 @@
                                 <span class="align-self-center uc-icon">&#9654;</span>
                                 <span class="align-self-center flex-grow-1 mx-2" *ngIf="vid">{{ vid.url }}</span>
                             </label>
-                            <button (click)="removeVideo(vid)" [color]="colors.secondary" class="float-end">Remove</button>
+                            <button (click)="removeVideo(vid)" [color]="colors.secondary" title="Remove" class="float-end">
+                                <bs-icon [icon]="'trash-fill'"></bs-icon>
+                            </button>
                         </div>
                     </bs-list-group-item>
                 </bs-list-group>

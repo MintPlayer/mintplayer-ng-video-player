@@ -40,7 +40,7 @@ jobs:
         directory: ./coverage/libs/mintplayer-ng-player-provider
       
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-player-provider/package.json'
         registry: 'https://registry.npmjs.org'
@@ -48,7 +48,7 @@ jobs:
         access: 'public'
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-player-provider/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -63,7 +63,7 @@ jobs:
         directory: ./coverage/libs/mintplayer-ng-dailymotion-player
       
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-dailymotion-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -71,7 +71,7 @@ jobs:
         access: 'public'
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-dailymotion-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -86,7 +86,7 @@ jobs:
         directory: ./coverage/libs/mintplayer-ng-soundcloud-player
       
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-soundcloud-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -94,7 +94,7 @@ jobs:
         access: 'public'
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-soundcloud-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -109,7 +109,7 @@ jobs:
         directory: ./coverage/libs/mintplayer-ng-vimeo-player
       
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-vimeo-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -117,7 +117,7 @@ jobs:
         access: 'public'
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-vimeo-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -132,7 +132,7 @@ jobs:
         directory: ./coverage/libs/mintplayer-ng-youtube-player
       
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-youtube-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -140,7 +140,7 @@ jobs:
         access: 'public'
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-youtube-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -149,7 +149,7 @@ jobs:
 
     ## ng-player-progress
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-player-progress/package.json'
         registry: 'https://registry.npmjs.org'
@@ -157,7 +157,7 @@ jobs:
         access: 'public'
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-player-progress/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -172,7 +172,7 @@ jobs:
         directory: ./coverage/libs/mintplayer-ng-playlist-controller
       
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-playlist-controller/package.json'
         registry: 'https://registry.npmjs.org'
@@ -180,7 +180,7 @@ jobs:
         access: 'public'
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-playlist-controller/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -195,7 +195,8 @@ jobs:
         directory: ./coverage/libs/mintplayer-ng-video-player
       
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v1
+      id: publish_ng_video_player
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-video-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -203,7 +204,7 @@ jobs:
         access: 'public'
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v1
+      uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-video-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -212,6 +213,7 @@ jobs:
 
     - name: Publish through FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      if: ${{ steps.publish_ng_video_player.outputs.type }}
       with:
         server: mintplayer.com
         username: ${{ secrets.PUBLISH_FTP_USER }}

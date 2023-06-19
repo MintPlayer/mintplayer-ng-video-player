@@ -10,3 +10,6 @@ body {
 @media (min-width: 768px) {
     body { padding: 1rem 5rem; }
 }
+
+// This shouldn't be here
+@import "../../../node_modules/bootstrap-icons/font/bootstrap-icons";
