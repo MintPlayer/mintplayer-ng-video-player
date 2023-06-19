@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
 import { VideoPlayerComponent, VideoPlayerModule } from '@mintplayer/ng-video-player';
-import { VimeoApiService } from './vimeo-api.service';
+import { SoundcloudApiService } from './services/soundcloud-api/soundcloud-api.service';
 
 @NgModule({
   declarations: [],
@@ -10,8 +10,8 @@ import { VimeoApiService } from './vimeo-api.service';
   providers: [{
     provide: VIDEO_APIS,
     multi: true,
-    useClass: VimeoApiService
+    useClass: SoundcloudApiService
   }],
   exports: [VideoPlayerComponent]
 })
-export class VimeoApiModule { }
+export class SoundcloudPlayerModule { }

@@ -7,7 +7,7 @@ import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
 import { BsInputGroupModule } from '@mintplayer/ng-bootstrap/input-group';
 import { BsButtonGroupModule } from '@mintplayer/ng-bootstrap/button-group';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
-import { SoundcloudApiModule } from '@mintplayer/ng-soundcloud-player';
+import { SoundcloudPlayerModule } from '@mintplayer/ng-soundcloud-player';
 
 import { SoundcloudDemoRoutingModule } from './soundcloud-demo-routing.module';
 import { SoundcloudDemoComponent } from './soundcloud-demo.component';
@@ -26,7 +26,7 @@ import { SoundcloudDemoComponent } from './soundcloud-demo.component';
     BsButtonGroupModule,
     BsButtonTypeModule,
     BsToggleButtonModule,
-    SoundcloudApiModule,
+    SoundcloudPlayerModule,
     SoundcloudDemoRoutingModule
   ]
 })

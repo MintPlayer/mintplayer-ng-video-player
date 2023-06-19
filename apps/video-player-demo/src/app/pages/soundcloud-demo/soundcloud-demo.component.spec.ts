@@ -1,15 +1,15 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { BsButtonGroupModule } from '@mintplayer/ng-bootstrap/button-group';
-import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
+import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
 import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
 import { BsInputGroupModule } from '@mintplayer/ng-bootstrap/input-group';
+import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
+import { BsButtonGroupModule } from '@mintplayer/ng-bootstrap/button-group';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
-import { SoundcloudPlayerComponent } from '@mintplayer/ng-soundcloud-player';
-import { MockComponent, MockModule } from 'ng-mocks';
+import { MockModule } from 'ng-mocks';
 
 import { SoundcloudDemoComponent } from './soundcloud-demo.component';
+import { SoundcloudPlayerModule } from '@mintplayer/ng-soundcloud-player';
 
 describe('SoundcloudDemoComponent', () => {
   let component: SoundcloudDemoComponent;
@@ -19,18 +19,17 @@ describe('SoundcloudDemoComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         FormsModule,
+        MockModule(BsFormModule),
         MockModule(BsGridModule),
         MockModule(BsInputGroupModule),
         MockModule(BsToggleButtonModule),
         MockModule(BsButtonTypeModule),
         MockModule(BsButtonGroupModule),
+        MockModule(SoundcloudPlayerModule)
       ],
       declarations: [
         // Unit to test
         SoundcloudDemoComponent,
-      
-        // Mock dependencies
-        MockComponent(SoundcloudPlayerComponent),
       ]
     })
     .compileComponents();

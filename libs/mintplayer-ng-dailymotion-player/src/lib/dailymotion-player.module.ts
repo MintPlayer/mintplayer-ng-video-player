@@ -14,4 +14,4 @@ import { DailymotionApiService } from './dailymotion-api.service';
   }],
   exports: [VideoPlayerComponent]
 })
-export class DailymotionApiModule { }
+export class DailymotionPlayerModule { }

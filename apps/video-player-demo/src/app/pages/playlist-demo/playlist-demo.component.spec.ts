@@ -9,6 +9,8 @@ import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
 import { PlaylistDemoComponent } from './playlist-demo.component';
+import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
+import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
 
 interface Video {}
 
@@ -24,6 +26,7 @@ describe('PlaylistDemoComponent', () => {
         MockModule(BsSelectModule),
         MockModule(BsListGroupModule),
         MockModule(BsToggleButtonModule),
+        MockModule(BsButtonTypeModule)
       ],
       declarations: [
         // Unit to test
@@ -36,6 +39,7 @@ describe('PlaylistDemoComponent', () => {
         MockProvider(PlaylistController, {
           video$: new BehaviorSubject<Video | null>(null),
         }),
+        { provide: VIDEO_APIS, multi: true, useValue: [] }
       ]
     })
     .compileComponents();

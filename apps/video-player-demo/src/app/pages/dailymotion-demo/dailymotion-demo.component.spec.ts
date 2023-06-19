@@ -1,8 +1,7 @@
-import { Component, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
-import { DailymotionPlayerComponent } from '@mintplayer/ng-dailymotion-player';
-import { MockComponent, MockModule } from 'ng-mocks';
+import { DailymotionPlayerModule } from '@mintplayer/ng-dailymotion-player';
+import { MockModule } from 'ng-mocks';
 
 import { DailymotionDemoComponent } from './dailymotion-demo.component';
 
@@ -14,13 +13,11 @@ describe('DailymotionDemoComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         MockModule(BsButtonTypeModule),
+        MockModule(DailymotionPlayerModule)
       ],
       declarations: [
         // Unit to test
         DailymotionDemoComponent,
-      
-        // Mock dependencies
-        MockComponent(DailymotionPlayerComponent),
       ]
     })
     .compileComponents();
