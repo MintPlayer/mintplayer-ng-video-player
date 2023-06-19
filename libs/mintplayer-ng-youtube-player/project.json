@@ -27,7 +27,8 @@
       "outputs": ["{workspaceRoot}/coverage/libs/mintplayer-ng-youtube-player"],
       "options": {
         "jestConfig": "libs/mintplayer-ng-youtube-player/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "codeCoverage": true
       }
     },
     "lint": {

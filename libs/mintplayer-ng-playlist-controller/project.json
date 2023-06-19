@@ -31,7 +31,8 @@
       ],
       "options": {
         "jestConfig": "libs/mintplayer-ng-playlist-controller/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "codeCoverage": true
       }
     },
     "lint": {

@@ -43,11 +43,37 @@ The code is included in the git repository.
 | @mintplayer/ng-playlist-controller  | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-playlist-controller.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-playlist-controller) |
 | @mintplayer/ng-video-player         | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-video-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-video-player)               |
 
+## Important note
+
+Since version 16.1, the dependency graph between the project has changed.
+The `ng-video-player` package no longer depends on `ng-youtube-player`, `ng-dailymotion-player`, `ng-vimeo-player` and `ng-soundcloud-player`. But now it's the other way around. See the installation instructions below for the updated packages.
+
 ## Installation
 
-    npm i @mintplayer/ng-video-player
+Run the corresponding commands, depending on what players you want to support in your application:
 
-This should also install the peerDependencies in your project.
+    npm i @mintplayer/ng-youtube-player
+    npm i @mintplayer/ng-dailymotion-player
+    npm i @mintplayer/ng-vimeo-player
+    npm i @mintplayer/ng-soundcloud-player
+
+This should also install the peerDependencies (like `@mintplayer/ng-video-player`) in your project.
+
+## Usage
+Import the modules for which you want to support a player:
+
+```
+@NgModule({
+    ...,
+    imports: [
+        ...,
+        YoutubePlayerModule,
+        DailymotionPlayerModule,
+        VimeoPlayerModule,
+        SoundcloudPlayerModule,
+    ]
+})
+```
 
 ## Components
 All components are showcased in the angular app included in the project. You can simply run

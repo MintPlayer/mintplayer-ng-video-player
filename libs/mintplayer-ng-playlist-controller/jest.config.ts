@@ -10,6 +10,7 @@ export default {
     },
   },
   coverageDirectory: '../../coverage/libs/mintplayer-ng-playlist-controller',
+  coverageReporters: ['lcovonly'],
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

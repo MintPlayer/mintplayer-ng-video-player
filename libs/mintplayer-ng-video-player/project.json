@@ -27,7 +27,8 @@
       "outputs": ["{workspaceRoot}/coverage/libs/mintplayer-ng-video-player"],
       "options": {
         "jestConfig": "libs/mintplayer-ng-video-player/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "codeCoverage": true
       }
     },
     "lint": {
