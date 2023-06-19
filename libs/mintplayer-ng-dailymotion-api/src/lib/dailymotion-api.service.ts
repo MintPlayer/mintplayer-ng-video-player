@@ -1,7 +1,7 @@
 import { Injectable, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-player-provider';
-import { BehaviorSubject, combineLatest, timer, filter, takeUntil, Subject } from 'rxjs';
+import { BehaviorSubject, timer, takeUntil, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -37,9 +37,7 @@ export class DailymotionApiService implements IApiService {
         // this.scriptTag.src = 'https://cdn.mintplayer.com/dailymotion/all.js';
 
         // Setup callback
-        this.scriptTag.addEventListener('load', () => {
-          this.apiReady$.next(true);
-        });
+        this.scriptTag.addEventListener('load', () => this.apiReady$.next(true));
         this.scriptTag.addEventListener('error', () => {
           throw new Error(`${this.scriptTag.src} failed to load`);
         });
@@ -79,10 +77,7 @@ export class DailymotionApiService implements IApiService {
           options.onReady();
           timer(0, 50)
             .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-            .subscribe((time) => {
-              // Mute
-              options.onMuteChange(player.muted);
-            });
+            .subscribe((time) => options.onMuteChange(player.muted));
         },
         play: () => options.onStateChange(EPlayerState.playing),
         pause: () => options.onStateChange(EPlayerState.paused),
@@ -97,10 +92,8 @@ export class DailymotionApiService implements IApiService {
     }
 
     return {
-      platformId: 'dailymotion',
-      loadVideoById: (id: string) => {
-        player.load({video: id});
-      },
+      platformId: this.id,
+      loadVideoById: (id: string) => player.load({video: id}),
       setPlayerState: (state: EPlayerState) => {
         switch (state) {
           case EPlayerState.playing:
@@ -114,18 +107,10 @@ export class DailymotionApiService implements IApiService {
             break;
         }
       },
-      setMute: (mute) => {
-        player.setMuted(mute);
-      },
-      setVolume: (volume) => {
-        player.setVolume(volume / 100);
-      },
-      setProgress: (time) => {
-        player.seek(time);
-      },
-      destroy: () => {
-        destroyRef.next(true);
-      }
+      setMute: (mute) => player.setMuted(mute),
+      setVolume: (volume) => player.setVolume(volume / 100),
+      setProgress: (time) => player.seek(time),
+      destroy: () => destroyRef.next(true)
     };
   }
 }

@@ -124,10 +124,8 @@ export class YoutubeApiService implements IApiService {
     });
 
     return {
-      platformId: 'youtube',
-      loadVideoById: (id: string) => {
-        player.loadVideoById(id);
-      },
+      platformId: this.id,
+      loadVideoById: (id: string) => player.loadVideoById(id),
       setPlayerState: (state: EPlayerState) => {
         switch (state) {
           case EPlayerState.playing:
@@ -143,18 +141,10 @@ export class YoutubeApiService implements IApiService {
             break;
         }
       },
-      setMute: (mute) => {
-        mute ? player.mute() : player.unMute();
-      },
-      setVolume: (volume) => {
-        player.setVolume(volume);
-      },
-      setProgress: (time) => {
-        player.seekTo(time, true);
-      },
-      destroy: () => {
-        destroyRef.next(true);
-      }
+      setMute: (mute) => mute ? player.mute() : player.unMute(),
+      setVolume: (volume) => player.setVolume(volume),
+      setProgress: (time) => player.seekTo(time, true),
+      destroy: () => destroyRef.next(true)
     }
   }
 

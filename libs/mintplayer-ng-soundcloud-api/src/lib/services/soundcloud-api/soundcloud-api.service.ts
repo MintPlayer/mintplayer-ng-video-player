@@ -37,9 +37,7 @@ export class SoundcloudApiService implements IApiService {
         this.scriptTag.src = 'https://w.soundcloud.com/player/api.js';
 
         // Setup callback
-        this.scriptTag.addEventListener('load', () => {
-          this.apiReady$.next(true);
-        });
+        this.scriptTag.addEventListener('load', () => this.apiReady$.next(true));
         this.scriptTag.addEventListener('error', () => {
           throw new Error(`${this.scriptTag.src} failed to load`);
         });
@@ -90,10 +88,8 @@ export class SoundcloudApiService implements IApiService {
     });
 
     return {
-      platformId: 'soundcloud',
-      loadVideoById: (id: string) => {
-        player.load(id, { auto_play: options.autoplay });
-      },
+      platformId: this.id,
+      loadVideoById: (id: string) => player.load(id, { auto_play: options.autoplay }),
       setPlayerState: (state: EPlayerState) => {
         switch (state) {
           case EPlayerState.playing:
@@ -107,18 +103,10 @@ export class SoundcloudApiService implements IApiService {
             break;
         }
       },
-      setMute: (mute) => {
-        player.setVolume(mute ? 0 : 50);
-      },
-      setVolume: (volume) => {
-        player.setVolume(volume);
-      },
-      setProgress: (time) => {
-        player.seekTo(time * 1000);
-      },
-      destroy: () => {
-        destroyRef.next(true);
-      }
+      setMute: (mute) => player.setVolume(mute ? 0 : 50),
+      setVolume: (volume) => player.setVolume(volume),
+      setProgress: (time) => player.seekTo(time * 1000),
+      destroy: () => destroyRef.next(true)
     };
   }
 }

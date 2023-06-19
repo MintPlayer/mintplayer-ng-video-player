@@ -101,10 +101,8 @@ export class VimeoApiService implements IApiService {
     });
 
     return <PlayerAdapter>{
-      platformId: 'vimeo',
-      loadVideoById: (id: string) => {
-        player.loadVideo(id);
-      },
+      platformId: this.id,
+      loadVideoById: (id: string) => player.loadVideo(id),
       setPlayerState: (state: EPlayerState) => {
         switch (state) {
           case EPlayerState.playing:
@@ -118,18 +116,10 @@ export class VimeoApiService implements IApiService {
             break;
         }
       },
-      setVolume: (volume) => {
-        player.setVolume(volume / 100);
-      },
-      setMute: (mute) => {
-        player.setMuted(mute);
-      },
-      setProgress: (time) => {
-        player.setCurrentTime(time);
-      },
-      destroy: () => {
-        destroyRef.next(true);
-      }
+      setVolume: (volume) => player.setVolume(volume / 100),
+      setMute: (mute) => player.setMuted(mute),
+      setProgress: (time) => player.setCurrentTime(time),
+      destroy: () => destroyRef.next(true)
     };
   }
 
