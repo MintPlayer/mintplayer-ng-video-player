@@ -1,5 +1,6 @@
-import { InjectionToken } from "@angular/core";
+import { DestroyRef, InjectionToken } from "@angular/core";
 import { BehaviorSubject } from 'rxjs';
+import { PlayerProgress } from '@mintplayer/ng-player-progress';
 
 export const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis');
 
@@ -9,7 +10,7 @@ export interface IApiService {
     loadApi(): void;
     apiReady$: BehaviorSubject<boolean>;
     prepareHtml(domId: string, width: number, height: number): string;
-    createPlayer(options: PlayerOptions): PlayerAdapter;
+    createPlayer(options: PlayerOptions, destroy: DestroyRef): PlayerAdapter;
 }
 
 export interface PlayerOptions {
@@ -25,14 +26,20 @@ export interface PlayerOptions {
     // Events
     onReady: () => void;
     onStateChange: (ev: EPlayerState) => void;
+    onMuteChange: (ev: boolean) => void;
     onVolumeChange: (volume: number) => void;
+    onProgressChange: (progress: PlayerProgress) => void;
 }
 
 export interface PlayerAdapter {
     // Methods
     loadVideoById: (id: string) => void;
     setPlayerState: (state: EPlayerState) => void;
+    setMute: (mute: boolean) => void;
     setVolume: (volume: number) => void;
+    setProgress: (time: number) => void;
+    destroy: () => void;
+    get platformId(): string;
 }
 
 export enum EPlayerState {

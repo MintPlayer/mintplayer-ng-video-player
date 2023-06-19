@@ -1,7 +1,8 @@
 import { isPlatformServer } from '@angular/common';
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-player-provider';
-import { BehaviorSubject, combineLatest, timer, filter, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -69,11 +70,12 @@ export class YoutubeApiService implements IApiService {
     return `<div id="${domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions): PlayerAdapter {
+  public createPlayer(options: PlayerOptions, destroy: DestroyRef): PlayerAdapter {
     if (!options.domId) {
       throw 'The YouTube api requires the options.domId to be set';
     }
 
+    const destroyRef = new Subject();
     const player = new YT.Player(options.domId, {
       width: options.width,
       height: options.height,
@@ -84,6 +86,27 @@ export class YoutubeApiService implements IApiService {
       events: {
         onReady: (ev: YT.PlayerEvent) => {
           options.onReady();
+          if (!isPlatformServer(this.platformId)) {
+            timer(0, 50)
+              .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+              .subscribe((time) => {
+                // Progress
+                const currentTime = player.getCurrentTime();
+                const duration = player.getDuration();
+                options.onProgressChange({ currentTime, duration });
+              });
+            timer(0, 50)
+              .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+              .subscribe((time) => {
+                // Volume
+                const vol = player.getVolume();
+                options.onVolumeChange(vol);
+                
+                // Mute
+                const currentMute = player.isMuted();
+                options.onMuteChange(currentMute);
+              });
+          }
         },
         onStateChange: (ev: YT.OnStateChangeEvent) => {
           switch (ev.data) {
@@ -100,15 +123,8 @@ export class YoutubeApiService implements IApiService {
       }
     });
 
-    // if (!isPlatformServer(this.platformId)) {
-    //   combineLatest([timer(0, 50), this.isPlayerReady$, this.isSwitchingVideo$])
-    //     .pipe(filter(([time, isPlayerReady, isSwitchingVideo]) => isPlayerReady && !isSwitchingVideo))
-    //     .pipe(takeUntil(this.destroyed$))
-    //     .subscribe(async ([time, isPlayerReady, isSwitchingVideo]) => {
-
-    // }
-
     return {
+      platformId: 'youtube',
       loadVideoById: (id: string) => {
         player.loadVideoById(id);
       },
@@ -127,8 +143,17 @@ export class YoutubeApiService implements IApiService {
             break;
         }
       },
+      setMute: (mute) => {
+        mute ? player.mute() : player.unMute();
+      },
       setVolume: (volume) => {
         player.setVolume(volume);
+      },
+      setProgress: (time) => {
+        player.seekTo(time, true);
+      },
+      destroy: () => {
+        destroyRef.next(true);
       }
     }
   }

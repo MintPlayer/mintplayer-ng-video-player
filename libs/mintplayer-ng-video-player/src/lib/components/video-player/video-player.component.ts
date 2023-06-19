@@ -1,10 +1,7 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output, PLATFORM_ID, ViewChild } from '@angular/core';
-import { isPlatformServer } from '@angular/common';
-import { BehaviorSubject, combineLatest, Subject, timer } from 'rxjs';
+import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output, PLATFORM_ID, ViewChild } from '@angular/core';
+import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, take, takeUntil } from 'rxjs/operators';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
-import { PlayProgressEvent } from '@mintplayer/ng-soundcloud-api';
-import { EPlayerType } from '../../enums/player-type';
 import { VideoRequest } from '../../interfaces/video-request';
 import { EPlayerState, IApiService, PlayerAdapter, VIDEO_APIS } from '@mintplayer/ng-player-player-provider';
 
@@ -16,8 +13,9 @@ import { EPlayerState, IApiService, PlayerAdapter, VIDEO_APIS } from '@mintplaye
 export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   constructor(
     @Inject(VIDEO_APIS) private apis: IApiService[],
-    @Inject(PLATFORM_ID) private platformId: unknown,
+    @Inject(PLATFORM_ID) private platformId: Object,
     private zone: NgZone,
+    private destroy: DestroyRef,
   ) {
     //#region [isViewInited$, url$] => videoRequest$
     combineLatest([this.isViewInited$, this.url$])
@@ -31,11 +29,10 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           this.playerInfo = null;
           this.container.nativeElement.innerHTML = '';
         } else {
-
           const matchingApis = apis
             .map(api => {
               const matches = api.urlRegexes
-                .map(rgx => rgx.exec(url))
+                .map(rgx => new RegExp(rgx).exec(url))
                 .filter(r => r !== null);
 
               if (matches.length === 0) {
@@ -75,9 +72,13 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       });
     //#endregion
 
-    const setHtml = (request: VideoRequest) => {
-      this.domId = `player${VideoPlayerComponent.playerCounter++}`;
-      this.container.nativeElement.innerHTML = request.api.prepareHtml(this.domId, this._width, this._height);
+    const setHtml = (request: VideoRequest | null) => {
+      if (request) {
+        this.domId = `player${VideoPlayerComponent.playerCounter++}`;
+        this.container.nativeElement.innerHTML = request.api.prepareHtml(this.domId, this._width, this._height);
+      } else {
+        this.container.nativeElement.innerHTML = '';
+      }
     };
     
     //#region [isApiReady$, videoRequest.playerType] => isSwitchingVideo$, isPlayerReady$
@@ -87,28 +88,43 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const currentVideoRequest = this.videoRequest$.value;
 
         if (currentVideoRequest) {
-          setHtml(currentVideoRequest);
-          this.playerInfo = {
-            platformId: currentVideoRequest.id,
-            adapter: currentVideoRequest.api.createPlayer({
-              width: this.width,
-              height: this.height,
-              autoplay: this.autoplay,
-              domId: this.domId,
-              element: this.container.nativeElement,
-              initialVideoId: currentVideoRequest.id,
-              onReady: () => {
-                this.isPlayerReady$.next(true);
-                this.isSwitchingVideo$.next(false);
-              },
-              onStateChange: (state) => {
-                this.playerStateObserver$.next(state);
-              },
-              onVolumeChange: (volume) => {
-                this.volumeObserver$.next(volume);
-              }
-            })
-          };
+          if (currentVideoRequest.api.id === this.playerInfo?.adapter.platformId) {
+            this.playerInfo.adapter.loadVideoById(currentVideoRequest.id);
+          } else {
+            this.playerInfo?.adapter.destroy();
+            setHtml(currentVideoRequest);
+            this.playerInfo = {
+              platformId: currentVideoRequest.id,
+              adapter: currentVideoRequest.api.createPlayer({
+                width: this.width,
+                height: this.height,
+                autoplay: this.autoplay,
+                domId: this.domId,
+                element: this.container.nativeElement,
+                initialVideoId: currentVideoRequest.id,
+                onReady: () => {
+                  this.isPlayerReady$.next(true);
+                  this.isSwitchingVideo$.next(false);
+                },
+                onStateChange: (state) => {
+                  this.playerStateObserver$.next(state);
+                },
+                onMuteChange: (mute) => {
+                  this.muteObserver$.next(mute);
+                },
+                onVolumeChange: (volume) => {
+                  this.volumeObserver$.next(volume);
+                },
+                onProgressChange: (progress) => {
+                  this.currentTimeObserver$.next(progress);
+                }
+              }, destroy)
+            };
+          }
+        } else {
+          // Cancel all timers / Clear the html
+          this.playerInfo?.adapter.destroy();
+          setHtml(null);
         }
 
 
@@ -317,11 +333,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       .subscribe((newVolume) => {
         this.zone.run(() => this.volumeChange.emit(this._volume = newVolume));
       });
-    // this.muteObserver$
-    //   .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
-    //   .subscribe((newMute) => {
-    //     this.zone.run(() => this.muteChange.emit(this._mute = newMute));
-    //   });
+    this.muteObserver$
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
+      .subscribe((newMute) => {
+        this.zone.run(() => this.muteChange.emit(this._mute = newMute));
+      });
     this.playerStateObserver$
       .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
       .subscribe((newPlayerState) => {
@@ -336,6 +352,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     //   .subscribe(([currentTime, duration]) => {
     //     this.zone.run(() => this.progressChange.emit({ currentTime, duration }));
     //   });
+    this.currentTimeObserver$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((progress) => {
+        this.zone.run(() => this.progressChange.emit(progress));
+      });
 
     // if (!isPlatformServer(this.platformId)) {
     //   combineLatest([timer(0, 50), this.isPlayerReady$, this.isSwitchingVideo$])
@@ -631,6 +652,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   }
   @Input() set mute(value: boolean) {
     this._mute = value;
+    this.playerInfo?.adapter.setMute(value);
     // switch (this.playerInfo?.type) {
     //   case EPlayerType.youtube: {
     //     if (value) {
@@ -732,7 +754,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   }
   public setUrl(url: string | null) {
     if ((typeof url === 'undefined') || (url === null) || (url === '')) {
-      this.videoRequest$.next(null);
+      this.url$.next(null);
     } else {
       this.isSwitchingVideo$.next(true);
       this.url$.next(url);
@@ -753,8 +775,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private isSwitchingVideo$ = new BehaviorSubject<boolean>(false);
   private volumeObserver$ = new Subject<number>();
   private muteObserver$ = new Subject<boolean>();
-  private currentTimeObserver$ = new Subject<number>();
-  private durationObserver$ = new Subject<number>();
+  private currentTimeObserver$ = new Subject<PlayerProgress>();
+  // private durationObserver$ = new Subject<number>();
   private playerStateObserver$ = new Subject<EPlayerState>();
 
 

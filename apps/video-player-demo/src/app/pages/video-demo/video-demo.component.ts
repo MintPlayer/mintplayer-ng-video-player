@@ -16,7 +16,6 @@ export class VideoDemoComponent {
   }
 
   title = 'video-player-demo';
-  url = '';
   colors = Color;
   playerStates = EPlayerState;
   playerState!: EPlayerState;
@@ -71,7 +70,7 @@ export class VideoDemoComponent {
   }
 
   setMuted(event: Event) {
-    this.isMuted = (<any>event.target).checked;
+    this.isMuted = (<HTMLInputElement>event.target).checked;
   }
 
   async requestPip() {
@@ -93,6 +92,8 @@ export class VideoDemoComponent {
   }
 
   onPlayerStateChange(event: EPlayerState) {
-    console.log(event);
+    if (event === EPlayerState.ended) {
+      this.player1.setUrl(null);
+    }
   }
 }

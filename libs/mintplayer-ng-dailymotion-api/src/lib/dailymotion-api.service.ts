@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-player-provider';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest, timer, filter, takeUntil, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -60,11 +61,12 @@ export class DailymotionApiService implements IApiService {
     return `<div id="${domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions): PlayerAdapter {
+  public createPlayer(options: PlayerOptions, destroy: DestroyRef): PlayerAdapter {
     if (!options.element) {
       throw 'The DailyMotion api requires the options.element to be set';
     }
 
+    const destroyRef = new Subject();
     const player = DM.player(options.element.getElementsByTagName('div')[0], {
       width: String(options.width),
       height: String(options.height),
@@ -73,14 +75,29 @@ export class DailymotionApiService implements IApiService {
         "queue-enable": false,
       },
       events: {
-        apiready: () => options.onReady(),
+        apiready: () => {
+          options.onReady();
+          timer(0, 50)
+            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .subscribe((time) => {
+              // Mute
+              options.onMuteChange(player.muted);
+            });
+        },
         play: () => options.onStateChange(EPlayerState.playing),
         pause: () => options.onStateChange(EPlayerState.paused),
         end: () => options.onStateChange(EPlayerState.ended),
       }
     });
 
+    player.onvolumechange = () => {
+      if (player) {
+        options.onVolumeChange(player.volume * 100);
+      }
+    }
+
     return {
+      platformId: 'dailymotion',
       loadVideoById: (id: string) => {
         player.load({video: id});
       },
@@ -97,8 +114,17 @@ export class DailymotionApiService implements IApiService {
             break;
         }
       },
+      setMute: (mute) => {
+        player.setMuted(mute);
+      },
       setVolume: (volume) => {
         player.setVolume(volume / 100);
+      },
+      setProgress: (time) => {
+        player.seek(time);
+      },
+      destroy: () => {
+        destroyRef.next(true);
       }
     };
   }

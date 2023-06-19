@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { DestroyRef, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-player-provider';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -59,7 +60,7 @@ export class VimeoApiService implements IApiService {
     return `<div id="${domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions) {
+  public createPlayer(options: PlayerOptions, destroy: DestroyRef) {
     if (!options.domId) {
       throw 'The Vimeo api requires the options.domId to be set';
     }
@@ -68,6 +69,7 @@ export class VimeoApiService implements IApiService {
       throw 'Vimeo requires an initial video';
     }
 
+    const destroyRef = new Subject();
     const player = new Vimeo.Player(options.domId, {
       id: options.initialVideoId,
       width: options.width,
@@ -80,13 +82,26 @@ export class VimeoApiService implements IApiService {
     player.on('loaded', () => {
       options.onStateChange(EPlayerState.unstarted);
       setTimeout(() => options.autoplay && player.play(), 600);
+      timer(0, 50)
+        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+        .subscribe((time) => {
+          // Mute
+          player.getMuted().then((currentMute) => options.onMuteChange(currentMute));
+        });
+      player.getVolume().then((vol) => options.onVolumeChange(vol * 100));
     });
     player.on('play', () => options.onStateChange(EPlayerState.playing));
     player.on('pause', () => options.onStateChange(EPlayerState.paused));
     player.on('ended', () => options.onStateChange(EPlayerState.ended));
     player.on('volumechange', (ev) => options.onVolumeChange(ev.volume * 100));
+    player.on('timeupdate', (ev) => {
+      player.getDuration().then((duration) => {
+        options.onProgressChange({ currentTime: ev.seconds, duration });
+      });
+    });
 
     return <PlayerAdapter>{
+      platformId: 'vimeo',
       loadVideoById: (id: string) => {
         player.loadVideo(id);
       },
@@ -105,6 +120,15 @@ export class VimeoApiService implements IApiService {
       },
       setVolume: (volume) => {
         player.setVolume(volume / 100);
+      },
+      setMute: (mute) => {
+        player.setMuted(mute);
+      },
+      setProgress: (time) => {
+        player.setCurrentTime(time);
+      },
+      destroy: () => {
+        destroyRef.next(true);
       }
     };
   }
