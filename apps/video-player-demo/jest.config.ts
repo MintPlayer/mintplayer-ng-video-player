@@ -10,6 +10,7 @@ export default {
     },
   },
   coverageDirectory: '../../coverage/apps/video-player-demo',
+  coverageReporters: ['lcovonly'],
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

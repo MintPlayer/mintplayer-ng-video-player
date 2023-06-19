@@ -92,7 +92,8 @@
       "outputs": ["{workspaceRoot}/coverage/apps/video-player-demo"],
       "options": {
         "jestConfig": "apps/video-player-demo/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "codeCoverage": true
       }
     }
   },

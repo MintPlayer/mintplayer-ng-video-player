@@ -29,7 +29,8 @@
       ],
       "options": {
         "jestConfig": "libs/mintplayer-ng-soundcloud-player/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "codeCoverage": true
       }
     },
     "lint": {
