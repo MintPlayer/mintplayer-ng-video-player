@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
-import { PlayerState, SoundcloudPlayerComponent } from '@mintplayer/ng-soundcloud-player';
+import { EPlayerState } from '@mintplayer/ng-player-provider';
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 
 @Component({
   selector: 'mintplayer-ng-video-player-soundcloud-demo',
@@ -13,29 +14,28 @@ export class SoundcloudDemoComponent implements AfterViewInit {
   title = 'SoundCloud player';
   currentTime = 0;
   colors = Color;
-  playerState = PlayerState.UNSTARTED;
-  playerStates = PlayerState;
+  playerState = EPlayerState.unstarted;
+  playerStates = EPlayerState;
   size = { width: 400, height: 200 };
   autoplay = true;
-  @ViewChild('player') player!: SoundcloudPlayerComponent;
+  @ViewChild('player') player!: VideoPlayerComponent;
   videoUrlInput = 'https://soundcloud.com/dario-g/sunchyme-radio-edit';
 
   ngAfterViewInit() {
-    this.player.playVideo('https://soundcloud.com/oasisofficial/whatever');
+    this.player.setUrl('https://soundcloud.com/oasisofficial/whatever');
   }
 
-
   playVideo() {
-    this.player.playVideo(this.videoUrlInput);
+    this.player.setUrl(this.videoUrlInput);
   }
 
 
   play() {
-    this.player.play();
+    this.player.playerState = EPlayerState.playing;
   }
   
   pause() {
-    this.player.pause();
+    this.player.playerState = EPlayerState.paused;
   }
 
   resize() {
@@ -50,7 +50,7 @@ export class SoundcloudDemoComponent implements AfterViewInit {
     this.currentTime = event.currentTime;
   }
 
-  onStateChange(state: PlayerState) {
+  onStateChange(state: EPlayerState) {
     this.playerState = state;
   }
 }

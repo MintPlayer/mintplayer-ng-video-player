@@ -1,1 +1,0 @@
-export * from './vimeo-player/vimeo-player.component';

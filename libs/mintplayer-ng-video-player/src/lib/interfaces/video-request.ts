@@ -1,4 +1,4 @@
-import { IApiService } from "@mintplayer/ng-player-player-provider";
+import { IApiService } from "@mintplayer/ng-player-provider";
 
 export interface VideoRequest {
     api: IApiService;

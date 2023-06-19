@@ -3,7 +3,7 @@ import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, take, takeUntil } from 'rxjs/operators';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { VideoRequest } from '../../interfaces/video-request';
-import { EPlayerState, IApiService, PlayerAdapter, VIDEO_APIS } from '@mintplayer/ng-player-player-provider';
+import { EPlayerState, IApiService, PlayerAdapter, VIDEO_APIS } from '@mintplayer/ng-player-provider';
 
 @Component({
   selector: 'video-player',

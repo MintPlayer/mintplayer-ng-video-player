@@ -18,15 +18,15 @@
         </div>
         <div [bsColumn]="{md: 6}" class="text-center">
           <bs-button-group>
-            <button (click)="play()" [color]="colors.secondary" *ngIf="playerState !== playerStates['PLAYING']">Play</button>
-            <button (click)="pause()" [color]="colors.secondary" *ngIf="playerState !== playerStates['PAUSED']">Pause</button>
+            <button (click)="play()" [color]="colors.secondary" *ngIf="playerState !== playerStates.playing">Play</button>
+            <button (click)="pause()" [color]="colors.secondary" *ngIf="playerState !== playerStates.paused">Pause</button>
             <button (click)="resize()" [color]="colors.secondary">Resize</button>
           </bs-button-group>
         </div>
       </div>
       <div bsRow>
         <div [bsColumn]="{md: 12}" class="text-center">
-          <soundcloud-player [width]="size.width" [height]="size.height" [autoplay]="autoplay" (progressChange)="onProgressChange($event)" (playerStateChange)="onStateChange($event)" #player></soundcloud-player>
+          <video-player [width]="size.width" [height]="size.height" [autoplay]="autoplay" (progressChange)="onProgressChange($event)" (playerStateChange)="onStateChange($event)" #player></video-player>
           <br>
           {{ currentTime }}
         </div>

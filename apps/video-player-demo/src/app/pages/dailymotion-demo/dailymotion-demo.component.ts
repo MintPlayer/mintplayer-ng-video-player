@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { DailymotionPlayerComponent } from '@mintplayer/ng-dailymotion-player';
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 
 @Component({
   selector: 'mintplayer-ng-video-player-dailymotion-demo',
@@ -11,7 +11,11 @@ export class DailymotionDemoComponent {
 
   title = 'DailyMotion player'
   videoId = '';
-  @ViewChild('dmplayer') dmplayer!: DailymotionPlayerComponent;
+  @ViewChild('dmplayer') dmplayer!: VideoPlayerComponent;
   colors = Color;
 
+
+  playVideo() {
+    this.dmplayer.setUrl('https://www.dailymotion.com/video/x2yhuhb');
+  }
 }

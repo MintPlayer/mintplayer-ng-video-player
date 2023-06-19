@@ -14,10 +14,10 @@ import { VideoPlayerModule } from '@mintplayer/ng-video-player';
 import { VideoDemoRoutingModule } from './video-demo-routing.module';
 import { VideoDemoComponent } from './video-demo.component';
 
-import { YoutubeApiModule } from '@mintplayer/ng-youtube-api';
-import { DailymotionApiModule } from '@mintplayer/ng-dailymotion-api';
-import { VimeoApiModule } from '@mintplayer/ng-vimeo-api';
-import { SoundcloudApiModule } from '@mintplayer/ng-soundcloud-api';
+import { YoutubeApiModule } from '@mintplayer/ng-youtube-player';
+import { DailymotionApiModule } from '@mintplayer/ng-dailymotion-player';
+import { VimeoApiModule } from '@mintplayer/ng-vimeo-player';
+import { SoundcloudApiModule } from '@mintplayer/ng-soundcloud-player';
 
 
 @NgModule({

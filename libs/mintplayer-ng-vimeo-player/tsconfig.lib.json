@@ -6,7 +6,7 @@
     "declarationMap": true,
     "inlineSources": true,
     "types": ["node", "vimeo"],
-    "typeRoots": ["../mintplayer-ng-vimeo-api/types", "node_modules/@types"],
+    "typeRoots": ["types", "../../node_modules/@types"],
     "target": "ES2022",
     "useDefineForClassFields": false
   },

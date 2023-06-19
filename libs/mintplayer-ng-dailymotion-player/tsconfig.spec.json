@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
-    "typeRoots": ["../../node_modules/@types", "../mintplayer-ng-dailymotion-api/types"],
+    "typeRoots": ["../../node_modules/@types"],
     "types": ["jest", "node", "dailymotion"]
   },
   "files": ["src/test-setup.ts"],

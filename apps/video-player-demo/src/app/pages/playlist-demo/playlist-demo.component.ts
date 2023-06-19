@@ -5,7 +5,7 @@ import { ERepeatMode, PlaylistController } from '@mintplayer/ng-playlist-control
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { Subject, takeUntil } from 'rxjs';
 import { Video } from '../../interfaces/video';
-import { EPlayerState } from '@mintplayer/ng-player-player-provider';
+import { EPlayerState } from '@mintplayer/ng-player-provider';
 
 @Component({
   selector: 'mintplayer-ng-video-player-playlist-demo',

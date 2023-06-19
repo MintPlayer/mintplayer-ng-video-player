@@ -1,5 +1,5 @@
 {
-  "name": "@mintplayer/ng-player-player-provider",
+  "name": "@mintplayer/ng-player-provider",
   "version": "16.0.0",
   "peerDependencies": {
     "@angular/common": "^16.0.0",
