@@ -88,7 +88,6 @@ export class SoundcloudApiService implements IApiService {
     });
 
     return {
-      platformId: this.id,
       loadVideoById: (id: string) => player.load(id, { auto_play: options.autoplay }),
       setPlayerState: (state: EPlayerState) => {
         switch (state) {

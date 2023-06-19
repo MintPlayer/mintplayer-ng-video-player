@@ -124,7 +124,6 @@ export class YoutubeApiService implements IApiService {
     });
 
     return {
-      platformId: this.id,
       loadVideoById: (id: string) => player.loadVideoById(id),
       setPlayerState: (state: EPlayerState) => {
         switch (state) {

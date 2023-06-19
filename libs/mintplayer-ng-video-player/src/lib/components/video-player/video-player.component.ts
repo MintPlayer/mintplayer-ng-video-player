@@ -88,13 +88,14 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         const currentVideoRequest = this.videoRequest$.value;
 
         if (currentVideoRequest) {
-          if (currentVideoRequest.api.id === this.playerInfo?.adapter.platformId) {
+          if (currentVideoRequest.api.id === this.playerInfo?.platformId) {
             this.playerInfo.adapter.loadVideoById(currentVideoRequest.id);
           } else {
             this.playerInfo?.adapter.destroy();
             setHtml(currentVideoRequest);
             this.playerInfo = {
-              platformId: currentVideoRequest.id,
+              platformId: currentVideoRequest.api.id,
+              videoId: currentVideoRequest.id,
               adapter: currentVideoRequest.api.createPlayer({
                 width: this.width,
                 height: this.height,
@@ -780,7 +781,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private playerStateObserver$ = new Subject<EPlayerState>();
 
 
-  private playerInfo: { platformId: string, adapter: PlayerAdapter } | null = null;
+  private playerInfo: { platformId: string, videoId: string, adapter: PlayerAdapter } | null = null;
   private hasJustLoaded = false;
 
   ngAfterViewInit() {

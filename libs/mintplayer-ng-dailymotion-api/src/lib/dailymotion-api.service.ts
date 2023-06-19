@@ -92,7 +92,6 @@ export class DailymotionApiService implements IApiService {
     }
 
     return {
-      platformId: this.id,
       loadVideoById: (id: string) => player.load({video: id}),
       setPlayerState: (state: EPlayerState) => {
         switch (state) {

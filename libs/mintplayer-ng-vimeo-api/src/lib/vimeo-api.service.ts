@@ -101,7 +101,6 @@ export class VimeoApiService implements IApiService {
     });
 
     return <PlayerAdapter>{
-      platformId: this.id,
       loadVideoById: (id: string) => player.loadVideo(id),
       setPlayerState: (state: EPlayerState) => {
         switch (state) {

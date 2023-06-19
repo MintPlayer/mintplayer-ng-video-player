@@ -39,7 +39,6 @@ export interface PlayerAdapter {
     setVolume: (volume: number) => void;
     setProgress: (time: number) => void;
     destroy: () => void;
-    get platformId(): string;
 }
 
 export enum EPlayerState {
