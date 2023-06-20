@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
 
 import { VideoPlayerComponent } from './video-player.component';
 import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
@@ -11,7 +10,7 @@ describe('VideoPlayerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ FormsModule ],
+      imports: [],
       declarations: [ VideoPlayerComponent ],
       providers: [
         <StaticProvider>{ provide: VIDEO_APIS, multi: true, useValue: [] }
