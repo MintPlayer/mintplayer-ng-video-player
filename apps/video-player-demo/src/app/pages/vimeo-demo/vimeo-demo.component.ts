@@ -12,7 +12,7 @@ export class VimeoDemoComponent {
 
   title = 'Vimeo player';
   colors = Color;
-  volume = 0.5;
+  volume = 100;
   isPip = false;
   width = 400;
   height = 300;

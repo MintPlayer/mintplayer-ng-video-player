@@ -5,7 +5,7 @@
             <div bsRow>
                 <div [bsColumn]="{lg: 6}">
                     <bs-list-group class="d-block mb-3">
-                        <bs-list-group-item (click)="playVideo(video)" class="cursor-pointer" *ngFor="let video of videos">{{ video }}</bs-list-group-item>
+                        <bs-list-group-item (click)="playVideo(video)" class="cursor-pointer overflow-hidden text-truncate truncate-start" *ngFor="let video of videos">{{ video }}</bs-list-group-item>
                     </bs-list-group>
                     <bs-input-group>
                         <input type="text" [(ngModel)]="newVideoUrl" class="form-control">
@@ -19,10 +19,10 @@
                             (playerStateChange)="onPlayerStateChange($event)" (isPipChange)="isPip = $event" #player1></video-player>
                     </div>
                     <div bsRow>
-                        <div bsColumn class="text-center">
+                        <div [bsColumn]="{'md': 6}" class="text-center">
                             <label>{{ progress.currentTime }}</label>
                         </div>
-                        <div bsColumn class="text-center">
+                        <div [bsColumn]="{'md': 6}" class="text-center">
                             {{ playerStates[playerState] }}
                             <br>
                             <button (click)="play()" [color]="colors.secondary" *ngIf="playerState === playerStates['paused']">Play</button>
@@ -30,14 +30,14 @@
                         </div>
                     </div>
                     <div bsRow>
-                        <div bsColumn class="text-center">
+                        <div [bsColumn]="{'md': 6}" class="text-center">
                             <label>
                                 <label>{{ volume | number: '0.0' }}</label>
                                 <bs-range [(ngModel)]="volume" [min]="0" [max]="100" [step]="1"></bs-range>
                             </label>
                         </div>
-                        <div bsColumn class="text-center">
-                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isMuted" class="d-inline-block">
+                        <div [bsColumn]="{'md': 6}" class="text-center">
+                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isMuted" class="d-inline-block py-3">
                                 Mute
                             </bs-toggle-button>
                         </div>
