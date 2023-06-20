@@ -32,13 +32,9 @@ The code is included in the git repository.
 | Package                             | Version                                                                                                                                                |
 |-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
 | @mintplayer/ng-player-progress      | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-player-progress.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-player-progress)         |
-| @mintplayer/ng-youtube-api          | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-youtube-api.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-youtube-api)                 |
 | @mintplayer/ng-youtube-player       | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-youtube-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-youtube-player)           |
-| @mintplayer/ng-dailymotion-api      | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-dailymotion-api.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-dailymotion-api)         |
 | @mintplayer/ng-dailymotion-player   | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-dailymotion-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-dailymotion-player)   |
-| @mintplayer/ng-vimeo-api            | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-vimeo-api.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-vimeo-api)                     |
 | @mintplayer/ng-vimeo-player         | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-vimeo-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-vimeo-player)               |
-| @mintplayer/ng-soundcloud-api       | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-soundcloud-api.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-soundcloud-api)           |
 | @mintplayer/ng-soundcloud-player    | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-soundcloud-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-soundcloud-player)     |
 | @mintplayer/ng-playlist-controller  | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-playlist-controller.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-playlist-controller) |
 | @mintplayer/ng-video-player         | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-video-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-video-player)               |
@@ -62,7 +58,7 @@ This should also install the peerDependencies (like `@mintplayer/ng-video-player
 ## Usage
 Import the modules for which you want to support a player:
 
-```
+```ts
 @NgModule({
     ...,
     imports: [
@@ -73,6 +69,43 @@ Import the modules for which you want to support a player:
         SoundcloudPlayerModule,
     ]
 })
+```
+
+Use the component in the template:
+
+```html
+<video-player [width]="width" [height]="height" [autoplay]="true"
+    [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
+    (progressChange)="onProgressChange($event)" (isPipChange)="isPip = $event" #player1></video-player>
+
+```
+
+```ts
+@ViewChild('player1') player1!: VideoPlayerComponent;
+playVideo(video: string) {
+    // This will replay the video when the url is the same.
+    this.player1.setUrl(video);
+
+    return false;
+}
+```
+
+Or use the `url` input binding:
+
+```html
+<video-player [width]="width" [height]="height" [autoplay]="true" [url]="url"
+    [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
+    (progressChange)="onProgressChange($event)" (isPipChange)="isPip = $event"></video-player>
+
+```
+
+```ts
+url: string | null = null;
+playVideo(video: string) {
+    // This will not replay the video when the url is the same.
+    this.url = video;
+    return false;
+}
 ```
 
 ## Components
