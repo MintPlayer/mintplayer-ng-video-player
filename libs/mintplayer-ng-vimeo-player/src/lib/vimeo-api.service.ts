@@ -1,4 +1,4 @@
-import { DestroyRef, Injectable } from '@angular/core';
+import { DestroyRef, Injectable, NgZone } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
@@ -7,6 +7,8 @@ import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
   providedIn: 'root'
 })
 export class VimeoApiService implements IApiService {
+
+  constructor(private zone: NgZone) {}
 
   private hasAlreadyStartedLoadingVimeoApi = false;
   private scriptTag!: HTMLScriptElement;
@@ -60,7 +62,7 @@ export class VimeoApiService implements IApiService {
     return `<div id="${domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef) {
+  public createPlayer(options: PlayerOptions, destroy: DestroyRef): PlayerAdapter {
     if (!options.domId) {
       throw 'The Vimeo api requires the options.domId to be set';
     }
@@ -99,6 +101,19 @@ export class VimeoApiService implements IApiService {
         options.onProgressChange({ currentTime: ev.seconds, duration });
       });
     });
+    player.on('enterpictureinpicture', (ev) => {
+      this.zone.run(() => options.onIsPipChange(true));
+    });
+    player.on('leavepictureinpicture', (ev) => {
+      this.zone.run(() => options.onIsPipChange(false));
+    });
+    player.on('fullscreenchange', (ev) => {
+      player.getFullscreen().then((fullscreen) => {
+        this.zone.run(() => options.onFullscreenChange(fullscreen));
+      });
+    });
+
+    const d = Promise.
 
     return <PlayerAdapter>{
       loadVideoById: (id: string) => player.loadVideo(id),
@@ -118,6 +133,10 @@ export class VimeoApiService implements IApiService {
       setVolume: (volume) => player.setVolume(volume / 100),
       setMute: (mute) => player.setMuted(mute),
       setProgress: (time) => player.setCurrentTime(time),
+      isFullscreen: () => player.getFullscreen(),
+      setFullscreen: (fullscreen) => fullscreen ? player.requestFullscreen() : player.exitFullscreen(),
+      setIsPip: (isPip) => isPip ? player.requestPictureInPicture() : player.exitPictureInPicture(),
+      isPip: () => player.getPictureInPicture(),
       destroy: () => destroyRef.next(true)
     };
   }

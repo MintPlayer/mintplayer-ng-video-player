@@ -10,7 +10,7 @@ export interface IApiService {
     loadApi(): void;
     apiReady$: BehaviorSubject<boolean>;
     prepareHtml(domId: string, width: number, height: number): string;
-    createPlayer(options: PlayerOptions, destroy: DestroyRef): PlayerAdapter;
+    createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter>;
 }
 
 export interface PlayerOptions {
@@ -29,6 +29,8 @@ export interface PlayerOptions {
     onMuteChange: (ev: boolean) => void;
     onVolumeChange: (volume: number) => void;
     onProgressChange: (progress: PlayerProgress) => void;
+    onFullscreenChange: (fullscreen: boolean) => void;
+    onIsPipChange: (isPip: boolean) => void;
 }
 
 export interface PlayerAdapter {
@@ -38,6 +40,10 @@ export interface PlayerAdapter {
     setMute: (mute: boolean) => void;
     setVolume: (volume: number) => void;
     setProgress: (time: number) => void;
+    isFullscreen(): boolean;
+    setFullscreen: (fullscreen: boolean) => void;
+    isPip(): boolean;
+    setIsPip: (isPip: boolean) => void;
     destroy: () => void;
 }
 

@@ -23,12 +23,17 @@ export class VideoDemoComponent {
   height = 300;
   volume = 0;
   isMuted = false;
+  fullscreen = false;
   isPip = false;
   progress: PlayerProgress = {
     currentTime: 0,
     duration: 0
   };
   
+  logThis(ev: boolean) {
+    console.log('fullscreen change', ev);
+  }
+
   newVideoUrl = '';
   videos: string[] = [
     'https://www.youtube.com/watch?v=tt2k8PGm-TI',
@@ -73,12 +78,12 @@ export class VideoDemoComponent {
     this.isMuted = (<HTMLInputElement>event.target).checked;
   }
 
-  async requestPip() {
-    await this.player1.setIsPip(true);
-  }
-  async exitPip() {
-    await this.player1.setIsPip(false);
-  }
+  // requestPip() {
+  //   this.player1.isPip = true;
+  // }
+  // exitPip() {
+  //   this.player1.isPip = false;
+  // }
 
   play() {
     this.playerState = EPlayerState.playing;

@@ -59,60 +59,69 @@ export class DailymotionApiService implements IApiService {
     return `<div id="${domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef): PlayerAdapter {
-    if (!options.element) {
-      throw 'The DailyMotion api requires the options.element to be set';
-    }
+  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+    return new Promise((resolve, reject) => {
+      if (!options.element) {
+        reject('The DailyMotion api requires the options.element to be set');
+        return;
+      }
 
-    const destroyRef = new Subject();
-    const player = DM.player(options.element.getElementsByTagName('div')[0], {
-      width: String(options.width),
-      height: String(options.height),
-      params: {
-        autoplay: options.autoplay,
-        "queue-enable": false,
-      },
-      events: {
-        apiready: () => {
-          options.onReady();
-          timer(0, 50)
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-            .subscribe((time) => {
-              options.onMuteChange(player.muted);
-              options.onProgressChange({ currentTime: player.currentTime, duration: player.duration });
-            });
+      const destroyRef = new Subject();
+      const player = DM.player(options.element.getElementsByTagName('div')[0], {
+        width: String(options.width),
+        height: String(options.height),
+        params: {
+          autoplay: options.autoplay,
+          "queue-enable": false,
         },
-        play: () => options.onStateChange(EPlayerState.playing),
-        pause: () => options.onStateChange(EPlayerState.paused),
-        end: () => options.onStateChange(EPlayerState.ended),
-      }
-    });
-
-    player.onvolumechange = () => {
-      if (player) {
-        options.onVolumeChange(player.volume * 100);
-      }
-    }
-
-    return {
-      loadVideoById: (id: string) => player.load({video: id}),
-      setPlayerState: (state: EPlayerState) => {
-        switch (state) {
-          case EPlayerState.playing:
-            player.play();
-            break;
-          case EPlayerState.paused:
-            player.pause();
-            break;
-          case EPlayerState.ended:
-          case EPlayerState.unstarted:
-            break;
+        events: {
+          apiready: () => {
+            options.onReady();
+            timer(0, 50)
+              .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+              .subscribe((time) => {
+                options.onMuteChange(player.muted);
+                options.onProgressChange({ currentTime: player.currentTime, duration: player.duration });
+              });
+              
+            // options.element?.querySelector('iframe')?.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
+          },
+          play: () => options.onStateChange(EPlayerState.playing),
+          pause: () => options.onStateChange(EPlayerState.paused),
+          end: () => options.onStateChange(EPlayerState.ended),
         }
-      },
-      setMute: (mute) => player.setMuted(mute),
-      setVolume: (volume) => player.setVolume(volume / 100),
-      setProgress: (time) => player.seek(time),
-      destroy: () => destroyRef.next(true)
-    };
+      });
+
+      player.onvolumechange = () => {
+        if (player) {
+          options.onVolumeChange(player.volume * 100);
+        }
+      }
+
+      resolve({
+        loadVideoById: (id: string) => player.load({video: id}),
+        setPlayerState: (state: EPlayerState) => {
+          switch (state) {
+            case EPlayerState.playing:
+              player.play();
+              break;
+            case EPlayerState.paused:
+              player.pause();
+              break;
+            case EPlayerState.ended:
+            case EPlayerState.unstarted:
+              break;
+          }
+        },
+        setMute: (mute) => player.setMuted(mute),
+        setVolume: (volume) => player.setVolume(volume / 100),
+        setProgress: (time) => player.seek(time),
+        isFullscreen: () => new Promise(resolve => resolve(false)),
+        setFullscreen: (fullscreen) => console.error('The DailyMotion player doesn\'t support fullscreen mode through javascript'),
+        isPip: () => false,
+        setIsPip: (isPip) => console.error('The DailyMotion player doesn\'t support picture-in-picture mode'),
+        destroy: () => destroyRef.next(true)
+      });
+    });
   }
 }

@@ -59,53 +59,60 @@ export class SoundcloudApiService implements IApiService {
     return `<iframe id="${domId}" width="${width}" height="${height}" style="max-width:100%" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&amp;show_teaser=false&amp;" allow="autoplay"></iframe>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef): PlayerAdapter {
-    if (!options.element) {
-      throw 'The SoundCloud api requires the options.element to be set';
-    }
+  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+    return new Promise((resolve, reject) => {
+      if (!options.element) {
+        reject('The SoundCloud api requires the options.element to be set');
+        return;
+      }
 
-    const destroyRef = new Subject();
-    const player = SC.Widget(<HTMLIFrameElement>options.element.getElementsByTagName('iframe')[0]);
-    player.bind(SC.Widget.Events.READY, () => {
-      options.onReady();
-      timer(0, 50)
-        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-        .subscribe((time) => {
-          // Volume
-          player.getVolume((currentVolume) => {
-            options.onVolumeChange(currentVolume);
-            options.onMuteChange(currentVolume === 0 ? true : false);
-          });
-        })
-    });
-    player.bind(SC.Widget.Events.PLAY, () => options.onStateChange(EPlayerState.playing));
-    player.bind(SC.Widget.Events.PAUSE, () => options.onStateChange(EPlayerState.paused));
-    player.bind(SC.Widget.Events.FINISH, () => options.onStateChange(EPlayerState.ended));
-    player.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => {
-      player.getDuration((duration) => {
-        options.onProgressChange({ currentTime: event.currentPosition / 1000, duration: duration / 1000 });
+      const destroyRef = new Subject();
+      const player = SC.Widget(<HTMLIFrameElement>options.element.getElementsByTagName('iframe')[0]);
+      player.bind(SC.Widget.Events.READY, () => {
+        options.onReady();
+        timer(0, 50)
+          .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+          .subscribe((time) => {
+            // Volume
+            player.getVolume((currentVolume) => {
+              options.onVolumeChange(currentVolume);
+              options.onMuteChange(currentVolume === 0 ? true : false);
+            });
+          })
+      });
+      player.bind(SC.Widget.Events.PLAY, () => options.onStateChange(EPlayerState.playing));
+      player.bind(SC.Widget.Events.PAUSE, () => options.onStateChange(EPlayerState.paused));
+      player.bind(SC.Widget.Events.FINISH, () => options.onStateChange(EPlayerState.ended));
+      player.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => {
+        player.getDuration((duration) => {
+          options.onProgressChange({ currentTime: event.currentPosition / 1000, duration: duration / 1000 });
+        });
+      });
+
+      resolve({
+        loadVideoById: (id: string) => player.load(id, { auto_play: options.autoplay }),
+        setPlayerState: (state: EPlayerState) => {
+          switch (state) {
+            case EPlayerState.playing:
+              player.play();
+              break;
+            case EPlayerState.paused:
+              player.pause();
+              break;
+            case EPlayerState.ended:
+            case EPlayerState.unstarted:
+              break;
+          }
+        },
+        setMute: (mute) => player.setVolume(mute ? 0 : 50),
+        setVolume: (volume) => player.setVolume(volume),
+        setProgress: (time) => player.seekTo(time * 1000),
+        isFullscreen: () => new Promise(resolve => resolve(false)),
+        setFullscreen: (fullscreen) => console.error('SoundCloud player doesn\'t support fullscreen mode'),
+        isPip: () => false,
+        setIsPip: (isPip) => console.warn('SoundCloud player doesn\'t support picture-in-picture mode'),
+        destroy: () => destroyRef.next(true)
       });
     });
-
-    return {
-      loadVideoById: (id: string) => player.load(id, { auto_play: options.autoplay }),
-      setPlayerState: (state: EPlayerState) => {
-        switch (state) {
-          case EPlayerState.playing:
-            player.play();
-            break;
-          case EPlayerState.paused:
-            player.pause();
-            break;
-          case EPlayerState.ended:
-          case EPlayerState.unstarted:
-            break;
-        }
-      },
-      setMute: (mute) => player.setVolume(mute ? 0 : 50),
-      setVolume: (volume) => player.setVolume(volume),
-      setProgress: (time) => player.seekTo(time * 1000),
-      destroy: () => destroyRef.next(true)
-    };
   }
 }

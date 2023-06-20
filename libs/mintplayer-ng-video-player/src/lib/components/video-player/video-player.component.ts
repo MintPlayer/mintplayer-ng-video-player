@@ -4,6 +4,7 @@ import { debounceTime, distinctUntilChanged, filter, take, takeUntil } from 'rxj
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { VideoRequest } from '../../interfaces/video-request';
 import { EPlayerState, IApiService, PlayerAdapter, VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'video-player',
@@ -93,34 +94,42 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           } else {
             this.playerInfo?.adapter.destroy();
             setHtml(currentVideoRequest);
-            this.playerInfo = {
-              platformId: currentVideoRequest.api.id,
-              videoId: currentVideoRequest.id,
-              adapter: currentVideoRequest.api.createPlayer({
-                width: this.width,
-                height: this.height,
-                autoplay: this.autoplay,
-                domId: this.domId,
-                element: this.container.nativeElement,
-                initialVideoId: currentVideoRequest.id,
-                onReady: () => {
-                  this.isPlayerReady$.next(true);
-                  this.isSwitchingVideo$.next(false);
-                },
-                onStateChange: (state) => {
-                  this.playerStateObserver$.next(state);
-                },
-                onMuteChange: (mute) => {
-                  this.muteObserver$.next(mute);
-                },
-                onVolumeChange: (volume) => {
-                  this.volumeObserver$.next(volume);
-                },
-                onProgressChange: (progress) => {
-                  this.currentTimeObserver$.next(progress);
-                }
-              }, destroy)
-            };
+            currentVideoRequest.api.createPlayer({
+              width: this.width,
+              height: this.height,
+              autoplay: this.autoplay,
+              domId: this.domId,
+              element: this.container.nativeElement,
+              initialVideoId: currentVideoRequest.id,
+              onReady: () => {
+                this.isPlayerReady$.next(true);
+                this.isSwitchingVideo$.next(false);
+              },
+              onStateChange: (state) => {
+                this.playerStateObserver$.next(state);
+              },
+              onMuteChange: (mute) => {
+                this.muteObserver$.next(mute);
+              },
+              onVolumeChange: (volume) => {
+                this.volumeObserver$.next(volume);
+              },
+              onProgressChange: (progress) => {
+                this.currentTimeObserver$.next(progress);
+              },
+              onFullscreenChange: (fullscreen) => {
+                this.fullscreenObserver$.next(fullscreen);
+              },
+              onIsPipChange: (isPip) => {
+                this.isPipObserver$.next(isPip);
+              }
+            }, destroy).then((adapter) => {
+              this.playerInfo = {
+                platformId: currentVideoRequest.api.id,
+                videoId: currentVideoRequest.id,
+                adapter: adapter,
+              };
+            });
           }
         } else {
           // Cancel all timers / Clear the html
@@ -130,149 +139,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
 
         // switch (currentVideoRequest?.playerType) {
-        //   case EPlayerType.youtube:
-        //     if (this.playerInfo?.platformId === EPlayerType.youtube) {
-        //       // Recycle the YT.Player
-        //       (<YT.Player>this.playerInfo.player).loadVideoById(currentVideoRequest.id);
-        //       if (this.autoplay) {
-        //         setTimeout(() => (<YT.Player>this.playerInfo?.player).playVideo(), 100);
-        //       }
-        //       this.isSwitchingVideo$.next(false);
-        //     } else {
-        //       this.destroyCurrentPlayer();
-        //       setHtml(currentVideoRequest);
-        //       currentVideoRequest.api.createPlayer({
-        //         width: this.width,
-        //         height: this.height,
-        //         autoplay: this.autoplay,
-        //         domId: this.domId
-        //       });
-        //       // this.playerInfo = {
-        //       //   type: EPlayerType.youtube,
-        //       //   player: new YT.Player(this.domId, {
-        //       //     width: this.width,
-        //       //     height: this.height,
-        //       //     playerVars: {
-        //       //       fs: 1,
-        //       //       autoplay: <any>this.autoplay,
-        //       //     },
-        //       //     events: {
-        //       //       onReady: (ev: YT.PlayerEvent) => {
-        //       //         this.isPlayerReady$.next(true);
-        //       //         this.isSwitchingVideo$.next(false);
-        //       //       },
-        //       //       onStateChange: (ev: YT.OnStateChangeEvent) => {
-        //       //         switch (ev.data) {
-        //       //           case YT.PlayerState.PLAYING:
-        //       //             return this.playerStateObserver$.next(EPlayerState.playing);
-        //       //           case YT.PlayerState.PAUSED:
-        //       //             return this.playerStateObserver$.next(EPlayerState.paused);
-        //       //           case YT.PlayerState.ENDED:
-        //       //             return this.playerStateObserver$.next(EPlayerState.ended);
-        //       //           case YT.PlayerState.UNSTARTED:
-        //       //             return this.playerStateObserver$.next(EPlayerState.unstarted);
-        //       //         }
-        //       //       }
-        //       //     }
-        //       //   })
-        //       // };
-        //     }
-        //     break;
-        //   // case EPlayerType.dailymotion:
-        //   //   if (this.playerInfo?.type === EPlayerType.dailymotion) {
-        //   //     // Recycle the DM.Player
-        //   //     (<DM.Player>this.playerInfo.player).load({ video: currentVideoRequest.id });
-        //   //     this.isSwitchingVideo$.next(false);
-        //   //   } else {
-        //   //     this.destroyCurrentPlayer();
-        //   //     setHtml(EPlayerType.dailymotion);
-        //   //     this.playerInfo = {
-        //   //       type: EPlayerType.dailymotion,
-        //   //       player: DM.player(this.container.nativeElement.getElementsByTagName('div')[0], {
-        //   //         width: String(this.width),
-        //   //         height: String(this.height),
-        //   //         params: {
-        //   //           autoplay: this.autoplay,
-        //   //           "queue-enable": false,
-        //   //         },
-        //   //         events: {
-        //   //           apiready: () => {
-        //   //             this.isPlayerReady$.next(true);
-        //   //             this.isSwitchingVideo$.next(false);
-        //   //           },
-        //   //           play: () => this.playerStateObserver$.next(EPlayerState.playing),
-        //   //           pause: () => this.playerStateObserver$.next(EPlayerState.paused),
-        //   //           end: () => this.playerStateObserver$.next(EPlayerState.ended),
-        //   //         }
-        //   //       })
-        //   //     };
-        //   //   }
-        //   //   break;
-        //   // case EPlayerType.vimeo:
-        //   //   if (this.playerInfo?.type === EPlayerType.vimeo) {
-        //   //     // Recycle the Vimeo.Player
-        //   //     (<Vimeo.Player>this.playerInfo.player)
-        //   //       .loadVideo(currentVideoRequest.id)
-        //   //       .then((v) => this.isSwitchingVideo$.next(false));
-        //   //   } else {
-        //   //     this.destroyCurrentPlayer();
-        //   //     setHtml(EPlayerType.vimeo);
-        //   //     const videoId = currentVideoRequest.id;
-        //   //     const vimeoPlayer = new Vimeo.Player(this.domId, {
-        //   //       id: videoId,
-        //   //       width: this.width,
-        //   //       height: this.height,
-        //   //       autoplay: this.autoplay,
-        //   //       pip: true
-        //   //     });
-        //   //     this.playerInfo = {
-        //   //       type: EPlayerType.vimeo,
-        //   //       player: vimeoPlayer
-        //   //     };
-        //   //     vimeoPlayer.ready().then(() => {
-        //   //       this.isPlayerReady$.next(true);
-        //   //       this.isSwitchingVideo$.next(false);
-        //   //       this.playerStateObserver$.next(EPlayerState.unstarted);
-        //   //     });
-        //   //     vimeoPlayer.on('loaded', () => {
-        //   //       this.hasJustLoaded = true;
-        //   //       this.playerStateObserver$.next(EPlayerState.unstarted);
-        //   //       setTimeout(() => {
-        //   //         const player = <Vimeo.Player>this.playerInfo?.player;
-        //   //         this.hasJustLoaded = false;
-        //   //         player.getVolume().then(newVolume => this.volumeObserver$.next(newVolume * 100));
-
-        //   //         if (this.autoplay) {
-        //   //           player.play();
-        //   //         }
-        //   //       }, 600);
-        //   //     });
-        //   //     vimeoPlayer.on('play', () => this.playerStateObserver$.next(EPlayerState.playing));
-        //   //     vimeoPlayer.on('pause', () => {
-        //   //       if (!this.hasJustLoaded) {
-        //   //         this.playerStateObserver$.next(EPlayerState.paused);
-        //   //       }
-        //   //     });
-        //   //     vimeoPlayer.on('ended', () => this.playerStateObserver$.next(EPlayerState.ended));
-        //   //     vimeoPlayer.on('volumechange', (event) => this.volumeObserver$.next(event.volume * 100));
-        //   //     vimeoPlayer.on('timeupdate', (event) => {
-        //   //       vimeoPlayer.getDuration().then((d) => {
-        //   //         this.currentTimeObserver$.next(event.seconds);
-        //   //         this.durationObserver$.next(d);
-        //   //       });
-        //   //     });
-        //   //     vimeoPlayer.on('enterpictureinpicture', (event) => {
-        //   //       this.zone.run(() => {
-        //   //         this.isPipChange.emit(true);
-        //   //       });
-        //   //     });
-        //   //     vimeoPlayer.on('leavepictureinpicture', (event) => {
-        //   //       this.zone.run(() => {
-        //   //         this.isPipChange.emit(false);
-        //   //       });
-        //   //     });
-        //   //   }
-        //   //   break;
         //   // case EPlayerType.soundcloud:
         //   //   if (this.playerInfo?.type === EPlayerType.soundcloud) {
         //   //     (<SC.Widget.Player>this.playerInfo.player).load(currentVideoRequest.id, {
@@ -344,6 +210,12 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       .subscribe((newPlayerState) => {
         this.zone.run(() => this.playerStateChange.emit(newPlayerState));
       });
+    this.fullscreenObserver$
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntilDestroyed())
+      .subscribe((fullscreen) => this.fullscreenChange.emit(fullscreen));
+    this.isPipObserver$
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntilDestroyed())
+      .subscribe((newIsPip) => this.isPipChange.emit(newIsPip));
     
     // combineLatest([
     //   this.currentTimeObserver$.pipe(debounceTime(20), distinctUntilChanged()),
@@ -673,14 +545,27 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   @Output() public muteChange = new EventEmitter<boolean>();
   //#endregion
 
-  // //#region isPip
-  // private _isPip: boolean = false;
-  // get isPip() {
-  //   return this._isPip;
-  // }
-  // @Input() set isPip(value: boolean) {
-  //   this._isPip = value;
-  //   switch (this.playerInfo?.type) {
+  //#region fullscreen
+  // private _fullscreen = false;
+  get fullscreen() {
+    return this.playerInfo?.adapter.isFullscreen() ?? false;
+  }
+  @Input() set fullscreen(value: boolean) {
+    this.playerInfo?.adapter.setFullscreen(value);
+  }
+  @Output() public fullscreenChange = new EventEmitter<boolean>();
+  //#endregion
+
+  //#region isPip
+  // private _isPip = false;
+  get isPip() {
+    return this.playerInfo?.adapter.isPip() ?? false;
+    // return this._isPip;
+  }
+  @Input() set isPip(value: boolean) {
+    // this._isPip = value;
+    this.playerInfo?.adapter.setIsPip(value);
+    //   switch (this.playerInfo?.type) {
   //     case EPlayerType.youtube: {
   //       if (value) {
   //         throw 'YouTube does not support PiP mode';  
@@ -702,51 +587,51 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   //       }
   //     } break;
   //   }
-  // }
+  }
   @Output() public isPipChange = new EventEmitter<boolean>();
-  public getIsPip() {
-    // switch (this.playerInfo?.type) {
-    //   case EPlayerType.youtube:
-    //     return false
-    //   case EPlayerType.dailymotion:
-    //     return false;
-    //   case EPlayerType.vimeo: {
-    //     const player = <Vimeo.Player>this.playerInfo?.player;
-    //     return player.getPictureInPicture();
-    //   }
-    //   default:
-    //     return false;
-    // }
-  }
-  public async setIsPip(isPip: boolean) {
-    // // Vimeo pip requests must originate from a user gesture.
-    // // Hence why we can't make it a bindable property.
-    // // Sadly, even with this approach, the browser seems to think the event wasn't user initiated when the iframe isn't focused.
-    // switch (this.playerInfo?.type) {
-    //   case EPlayerType.youtube: {
-    //     if (isPip) {
-    //       throw 'YouTube does not support PiP mode';
-    //     }
-    //   } break;
-    //   case EPlayerType.dailymotion: {
-    //     if (isPip) {
-    //       throw 'DailyMotion does not support PiP mode';
-    //     }
-    //   } break;
-    //   case EPlayerType.vimeo: {
-    //     if (isPip) {
-    //       await (<Vimeo.Player>this.playerInfo?.player).requestPictureInPicture();
-    //     } else {
-    //       await (<Vimeo.Player>this.playerInfo.player).exitPictureInPicture();
-    //     }
-    //   } break;
-    //   case EPlayerType.soundcloud: {
-    //     if (isPip) {
-    //       throw 'SoundCloud does not support PiP mode';
-    //     }
-    //   } break;
-    // }
-  }
+  // public getIsPip() {
+  //   // switch (this.playerInfo?.type) {
+  //   //   case EPlayerType.youtube:
+  //   //     return false
+  //   //   case EPlayerType.dailymotion:
+  //   //     return false;
+  //   //   case EPlayerType.vimeo: {
+  //   //     const player = <Vimeo.Player>this.playerInfo?.player;
+  //   //     return player.getPictureInPicture();
+  //   //   }
+  //   //   default:
+  //   //     return false;
+  //   // }
+  // }
+  // public async setIsPip(isPip: boolean) {
+  //   // // Vimeo pip requests must originate from a user gesture.
+  //   // // Hence why we can't make it a bindable property.
+  //   // // Sadly, even with this approach, the browser seems to think the event wasn't user initiated when the iframe isn't focused.
+  //   // switch (this.playerInfo?.type) {
+  //   //   case EPlayerType.youtube: {
+  //   //     if (isPip) {
+  //   //       throw 'YouTube does not support PiP mode';
+  //   //     }
+  //   //   } break;
+  //   //   case EPlayerType.dailymotion: {
+  //   //     if (isPip) {
+  //   //       throw 'DailyMotion does not support PiP mode';
+  //   //     }
+  //   //   } break;
+  //   //   case EPlayerType.vimeo: {
+  //   //     if (isPip) {
+  //   //       await (<Vimeo.Player>this.playerInfo?.player).requestPictureInPicture();
+  //   //     } else {
+  //   //       await (<Vimeo.Player>this.playerInfo.player).exitPictureInPicture();
+  //   //     }
+  //   //   } break;
+  //   //   case EPlayerType.soundcloud: {
+  //   //     if (isPip) {
+  //   //       throw 'SoundCloud does not support PiP mode';
+  //   //     }
+  //   //   } break;
+  //   // }
+  // }
   //#endregion
   @Input() public autoplay = true;
   //#region url
@@ -777,12 +662,12 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private volumeObserver$ = new Subject<number>();
   private muteObserver$ = new Subject<boolean>();
   private currentTimeObserver$ = new Subject<PlayerProgress>();
-  // private durationObserver$ = new Subject<number>();
+  private fullscreenObserver$ = new Subject<boolean>();
+  private isPipObserver$ = new Subject<boolean>();
   private playerStateObserver$ = new Subject<EPlayerState>();
 
 
   private playerInfo: { platformId: string, videoId: string, adapter: PlayerAdapter } | null = null;
-  private hasJustLoaded = false;
 
   ngAfterViewInit() {
     this.isViewInited$.next(true);

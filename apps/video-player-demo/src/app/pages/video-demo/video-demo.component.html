@@ -16,7 +16,7 @@
                     <div class="d-block text-center">
                         <video-player [width]="width" [height]="height" [autoplay]="true"
                             (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
-                            (playerStateChange)="onPlayerStateChange($event)" (isPipChange)="isPip = $event" #player1></video-player>
+                            (playerStateChange)="onPlayerStateChange($event)" [(fullscreen)]="fullscreen" [(isPip)]="isPip" (fullscreenChange)="logThis($event)" #player1></video-player>
                     </div>
                     <div bsRow>
                         <div [bsColumn]="{'md': 6}" class="text-center">
@@ -46,8 +46,10 @@
                         <bs-button-group>
                             <button (click)="getTitle()" [color]="colors.secondary">Get Title</button>
                             <button (click)="setSize()" [color]="colors.secondary">Set size</button>
-                            <button (click)="requestPip()" [color]="colors.secondary" *ngIf="!isPip">Enter PiP</button>
-                            <button (click)="exitPip()" [color]="colors.secondary" *ngIf="isPip">Leave PiP</button>
+                            <button (click)="fullscreen = true" [color]="colors.secondary" *ngIf="!fullscreen">Enter Fullscreen</button>
+                            <button (click)="fullscreen = false" [color]="colors.secondary" *ngIf="fullscreen">Leave Fullscreen</button>
+                            <button (click)="isPip = true" [color]="colors.secondary" *ngIf="!isPip">Enter PiP</button>
+                            <button (click)="isPip = false" [color]="colors.secondary" *ngIf="isPip">Leave PiP</button>
                         </bs-button-group>
                     </div>
                 </div>
