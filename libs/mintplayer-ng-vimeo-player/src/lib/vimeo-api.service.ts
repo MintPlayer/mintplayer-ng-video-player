@@ -78,6 +78,7 @@ export class VimeoApiService implements IApiService {
       pip: true,
     });
 
+    console.log('Vimeo Player', player);
     player.ready().then(() => options.onReady());
     player.on('loaded', () => {
       options.onStateChange(EPlayerState.unstarted);
@@ -99,6 +100,14 @@ export class VimeoApiService implements IApiService {
         options.onProgressChange({ currentTime: ev.seconds, duration });
       });
     });
+
+    // We want to determine the fullscreen state from the VideoPlayerComponent
+    // However this requires us to resolve the promise, which we can't do from a property getter
+    // So the only way is to
+    // From the VideoPlayer, subscribe to a Subject, Persist this value there
+    // options.onFullscreenChange() => updates the Subject
+    // Subscribe to this subject => store the value in a field
+    // Return this field from the property
 
     return <PlayerAdapter>{
       loadVideoById: (id: string) => player.loadVideo(id),

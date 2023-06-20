@@ -66,6 +66,7 @@ export class SoundcloudApiService implements IApiService {
 
     const destroyRef = new Subject();
     const player = SC.Widget(<HTMLIFrameElement>options.element.getElementsByTagName('iframe')[0]);
+    console.log('SC Player', player);
     player.bind(SC.Widget.Events.READY, () => {
       options.onReady();
       timer(0, 50)

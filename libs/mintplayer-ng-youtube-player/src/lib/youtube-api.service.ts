@@ -122,6 +122,7 @@ export class YoutubeApiService implements IApiService {
         }
       }
     });
+    console.log('YT Player', player);
 
     return {
       loadVideoById: (id: string) => player.loadVideoById(id),

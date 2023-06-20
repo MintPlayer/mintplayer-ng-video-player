@@ -87,6 +87,7 @@ export class DailymotionApiService implements IApiService {
         end: () => options.onStateChange(EPlayerState.ended),
       }
     });
+    console.log('DM Player', player);
 
     player.onvolumechange = () => {
       if (player) {
