@@ -1,5 +1,5 @@
-import { isPlatformServer } from '@angular/common';
-import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformServer, DOCUMENT } from '@angular/common';
+import { DestroyRef, Inject, Injectable, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
@@ -9,8 +9,13 @@ import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 })
 export class YoutubeApiService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: any) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: any, rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
+    this.document = doc;
+    this.renderer = rendererFactory.createRenderer(null, null);
+  }
 
+  private document: Document;
+  private renderer: Renderer2;
   private hasAlreadyStartedLoadingIframeApi = false;
   private scriptTag!: HTMLScriptElement;
 
@@ -49,15 +54,15 @@ export class YoutubeApiService implements IApiService {
         };
 
         // Invocation
-        this.scriptTag = window.document.createElement('script');
+        this.scriptTag = this.renderer.createElement('script');
         this.scriptTag.src = 'https://www.youtube.com/iframe_api';
 
         // Insert in DOM
-        const firstScriptTag = window.document.getElementsByTagName('script')[0];
+        const firstScriptTag = this.document.getElementsByTagName('script')[0];
         if (!firstScriptTag) {
-          document.head.appendChild(this.scriptTag);
+          this.renderer.appendChild(this.document.head, this.scriptTag);
         } else if (firstScriptTag.parentNode) {
-          firstScriptTag.parentNode.insertBefore(this.scriptTag, firstScriptTag);
+          this.renderer.insertBefore(firstScriptTag.parentNode, this.scriptTag, firstScriptTag);
         } else {
           throw 'First script tag has no parent node';
         }

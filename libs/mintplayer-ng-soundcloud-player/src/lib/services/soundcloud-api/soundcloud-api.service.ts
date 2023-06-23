@@ -1,4 +1,5 @@
-import { DestroyRef, Injectable } from '@angular/core';
+import { DOCUMENT, isPlatformServer } from '@angular/common';
+import { DestroyRef, Inject, Injectable, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
@@ -9,6 +10,13 @@ import { PlayProgressEvent } from '../../events/play-progress.event';
 })
 export class SoundcloudApiService implements IApiService {
 
+  constructor(@Inject(PLATFORM_ID) private platformId: any, rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
+    this.document = doc;
+    this.renderer = rendererFactory.createRenderer(null, null);
+  }
+
+  private document: Document;
+  private renderer: Renderer2;
   private hasAlreadyStartedLoadingApi = false;
   private scriptTag!: HTMLScriptElement;
 
@@ -33,7 +41,7 @@ export class SoundcloudApiService implements IApiService {
         this.hasAlreadyStartedLoadingApi = true;
         
         // Create scripttag
-        this.scriptTag = window.document.createElement('script');
+        this.scriptTag = this.renderer.createElement('script');
         this.scriptTag.src = 'https://w.soundcloud.com/player/api.js';
 
         // Setup callback
@@ -43,11 +51,11 @@ export class SoundcloudApiService implements IApiService {
         });
 
         // Insert in DOM
-        const firstScriptTag = window.document.getElementsByTagName('script')[0];
+        const firstScriptTag = this.document.getElementsByTagName('script')[0];
         if (!firstScriptTag) {
-          document.head.appendChild(this.scriptTag);
+          this.renderer.appendChild(this.document.head, this.scriptTag);
         } else if (firstScriptTag.parentNode) {
-          firstScriptTag.parentNode.insertBefore(this.scriptTag, firstScriptTag);
+          this.renderer.insertBefore(firstScriptTag.parentNode, this.scriptTag, firstScriptTag);
         } else {
           throw 'First script tag has no parent node';
         }
@@ -68,15 +76,17 @@ export class SoundcloudApiService implements IApiService {
     const player = SC.Widget(<HTMLIFrameElement>options.element.getElementsByTagName('iframe')[0]);
     player.bind(SC.Widget.Events.READY, () => {
       options.onReady();
-      timer(0, 50)
-        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-        .subscribe((time) => {
-          // Volume
-          player.getVolume((currentVolume) => {
-            options.onVolumeChange(currentVolume);
-            options.onMuteChange(currentVolume === 0 ? true : false);
+      if (!isPlatformServer(this.platformId)) {
+        timer(0, 50)
+          .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+          .subscribe((time) => {
+            // Volume
+            player.getVolume((currentVolume) => {
+              options.onVolumeChange(currentVolume);
+              options.onMuteChange(currentVolume === 0 ? true : false);
+            });
           });
-        })
+      }
     });
     player.bind(SC.Widget.Events.PLAY, () => options.onStateChange(EPlayerState.playing));
     player.bind(SC.Widget.Events.PAUSE, () => options.onStateChange(EPlayerState.paused));
