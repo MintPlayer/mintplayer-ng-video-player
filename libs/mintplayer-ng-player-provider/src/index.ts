@@ -38,6 +38,8 @@ export interface PlayerAdapter {
     setMute: (mute: boolean) => void;
     setVolume: (volume: number) => void;
     setProgress: (time: number) => void;
+    setSize: (width: number, height: number) => void;
+    getTitle: () => Promise<string>;
     destroy: () => void;
 }
 

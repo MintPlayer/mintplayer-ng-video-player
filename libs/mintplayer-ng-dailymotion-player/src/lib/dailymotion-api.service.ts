@@ -122,7 +122,14 @@ export class DailymotionApiService implements IApiService {
       setMute: (mute) => player.setMuted(mute),
       setVolume: (volume) => player.setVolume(volume / 100),
       setProgress: (time) => player.seek(time),
-      destroy: () => destroyRef.next(true)
+      setSize: (width, height) => {
+        player.width = width;
+        player.height = height;
+      },
+      getTitle: () => new Promise((resolve) => {
+        resolve(player.video.title.replace(new RegExp('\\+', 'g'), ' '));
+      }),
+      destroy: () => destroyRef.next(true),
     };
   }
 }

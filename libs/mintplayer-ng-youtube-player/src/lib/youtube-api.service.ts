@@ -147,7 +147,14 @@ export class YoutubeApiService implements IApiService {
       setMute: (mute) => mute ? player.mute() : player.unMute(),
       setVolume: (volume) => player.setVolume(volume),
       setProgress: (time) => player.seekTo(time, true),
-      destroy: () => destroyRef.next(true)
+      setSize: (width, height) => player.setSize(width, height),
+      getTitle: () => new Promise((resolve) => {
+        resolve((<any>player).getVideoData().title);
+      }),
+      destroy: () => {
+        destroyRef.next(true);
+        player.destroy();  
+      },
     }
   }
 

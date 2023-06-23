@@ -67,6 +67,10 @@ export class VideoPlayerComponent implements AfterViewInit {
             .pipe(filter(ready => !!ready), take(1), takeUntilDestroyed(destroy))
             .subscribe((ready) => this.isApiReady$.next(ready));
           videoRequest?.api.loadApi();
+        } else {
+          // Cancel all timers / Clear the html
+          this.playerInfo?.adapter?.destroy();
+          this.container.nativeElement.innerHTML = '';
         }
       });
     //#endregion
@@ -90,7 +94,7 @@ export class VideoPlayerComponent implements AfterViewInit {
           if (currentVideoRequest.api.id === this.playerInfo?.platformId) {
             this.playerInfo.adapter.loadVideoById(currentVideoRequest.id);
           } else {
-            this.playerInfo?.adapter.destroy();
+            this.playerInfo?.adapter?.destroy();
             setHtml(currentVideoRequest);
             this.playerInfo = {
               platformId: currentVideoRequest.api.id,
@@ -113,188 +117,7 @@ export class VideoPlayerComponent implements AfterViewInit {
               }, destroy)
             };
           }
-        } else {
-          // Cancel all timers / Clear the html
-          this.playerInfo?.adapter?.destroy();
-          setHtml(null);
         }
-
-
-        // switch (currentVideoRequest?.playerType) {
-        //   case EPlayerType.youtube:
-        //     if (this.playerInfo?.platformId === EPlayerType.youtube) {
-        //       // Recycle the YT.Player
-        //       (<YT.Player>this.playerInfo.player).loadVideoById(currentVideoRequest.id);
-        //       if (this.autoplay) {
-        //         setTimeout(() => (<YT.Player>this.playerInfo?.player).playVideo(), 100);
-        //       }
-        //       this.isSwitchingVideo$.next(false);
-        //     } else {
-        //       this.destroyCurrentPlayer();
-        //       setHtml(currentVideoRequest);
-        //       currentVideoRequest.api.createPlayer({
-        //         width: this.width,
-        //         height: this.height,
-        //         autoplay: this.autoplay,
-        //         domId: this.domId
-        //       });
-        //       // this.playerInfo = {
-        //       //   type: EPlayerType.youtube,
-        //       //   player: new YT.Player(this.domId, {
-        //       //     width: this.width,
-        //       //     height: this.height,
-        //       //     playerVars: {
-        //       //       fs: 1,
-        //       //       autoplay: <any>this.autoplay,
-        //       //     },
-        //       //     events: {
-        //       //       onReady: (ev: YT.PlayerEvent) => {
-        //       //         this.isPlayerReady$.next(true);
-        //       //         this.isSwitchingVideo$.next(false);
-        //       //       },
-        //       //       onStateChange: (ev: YT.OnStateChangeEvent) => {
-        //       //         switch (ev.data) {
-        //       //           case YT.PlayerState.PLAYING:
-        //       //             return this.playerStateObserver$.next(EPlayerState.playing);
-        //       //           case YT.PlayerState.PAUSED:
-        //       //             return this.playerStateObserver$.next(EPlayerState.paused);
-        //       //           case YT.PlayerState.ENDED:
-        //       //             return this.playerStateObserver$.next(EPlayerState.ended);
-        //       //           case YT.PlayerState.UNSTARTED:
-        //       //             return this.playerStateObserver$.next(EPlayerState.unstarted);
-        //       //         }
-        //       //       }
-        //       //     }
-        //       //   })
-        //       // };
-        //     }
-        //     break;
-        //   // case EPlayerType.dailymotion:
-        //   //   if (this.playerInfo?.type === EPlayerType.dailymotion) {
-        //   //     // Recycle the DM.Player
-        //   //     (<DM.Player>this.playerInfo.player).load({ video: currentVideoRequest.id });
-        //   //     this.isSwitchingVideo$.next(false);
-        //   //   } else {
-        //   //     this.destroyCurrentPlayer();
-        //   //     setHtml(EPlayerType.dailymotion);
-        //   //     this.playerInfo = {
-        //   //       type: EPlayerType.dailymotion,
-        //   //       player: DM.player(this.container.nativeElement.getElementsByTagName('div')[0], {
-        //   //         width: String(this.width),
-        //   //         height: String(this.height),
-        //   //         params: {
-        //   //           autoplay: this.autoplay,
-        //   //           "queue-enable": false,
-        //   //         },
-        //   //         events: {
-        //   //           apiready: () => {
-        //   //             this.isPlayerReady$.next(true);
-        //   //             this.isSwitchingVideo$.next(false);
-        //   //           },
-        //   //           play: () => this.playerStateObserver$.next(EPlayerState.playing),
-        //   //           pause: () => this.playerStateObserver$.next(EPlayerState.paused),
-        //   //           end: () => this.playerStateObserver$.next(EPlayerState.ended),
-        //   //         }
-        //   //       })
-        //   //     };
-        //   //   }
-        //   //   break;
-        //   // case EPlayerType.vimeo:
-        //   //   if (this.playerInfo?.type === EPlayerType.vimeo) {
-        //   //     // Recycle the Vimeo.Player
-        //   //     (<Vimeo.Player>this.playerInfo.player)
-        //   //       .loadVideo(currentVideoRequest.id)
-        //   //       .then((v) => this.isSwitchingVideo$.next(false));
-        //   //   } else {
-        //   //     this.destroyCurrentPlayer();
-        //   //     setHtml(EPlayerType.vimeo);
-        //   //     const videoId = currentVideoRequest.id;
-        //   //     const vimeoPlayer = new Vimeo.Player(this.domId, {
-        //   //       id: videoId,
-        //   //       width: this.width,
-        //   //       height: this.height,
-        //   //       autoplay: this.autoplay,
-        //   //       pip: true
-        //   //     });
-        //   //     this.playerInfo = {
-        //   //       type: EPlayerType.vimeo,
-        //   //       player: vimeoPlayer
-        //   //     };
-        //   //     vimeoPlayer.ready().then(() => {
-        //   //       this.isPlayerReady$.next(true);
-        //   //       this.isSwitchingVideo$.next(false);
-        //   //       this.playerStateObserver$.next(EPlayerState.unstarted);
-        //   //     });
-        //   //     vimeoPlayer.on('loaded', () => {
-        //   //       this.hasJustLoaded = true;
-        //   //       this.playerStateObserver$.next(EPlayerState.unstarted);
-        //   //       setTimeout(() => {
-        //   //         const player = <Vimeo.Player>this.playerInfo?.player;
-        //   //         this.hasJustLoaded = false;
-        //   //         player.getVolume().then(newVolume => this.volumeObserver$.next(newVolume * 100));
-
-        //   //         if (this.autoplay) {
-        //   //           player.play();
-        //   //         }
-        //   //       }, 600);
-        //   //     });
-        //   //     vimeoPlayer.on('play', () => this.playerStateObserver$.next(EPlayerState.playing));
-        //   //     vimeoPlayer.on('pause', () => {
-        //   //       if (!this.hasJustLoaded) {
-        //   //         this.playerStateObserver$.next(EPlayerState.paused);
-        //   //       }
-        //   //     });
-        //   //     vimeoPlayer.on('ended', () => this.playerStateObserver$.next(EPlayerState.ended));
-        //   //     vimeoPlayer.on('volumechange', (event) => this.volumeObserver$.next(event.volume * 100));
-        //   //     vimeoPlayer.on('timeupdate', (event) => {
-        //   //       vimeoPlayer.getDuration().then((d) => {
-        //   //         this.currentTimeObserver$.next(event.seconds);
-        //   //         this.durationObserver$.next(d);
-        //   //       });
-        //   //     });
-        //   //     vimeoPlayer.on('enterpictureinpicture', (event) => {
-        //   //       this.zone.run(() => {
-        //   //         this.isPipChange.emit(true);
-        //   //       });
-        //   //     });
-        //   //     vimeoPlayer.on('leavepictureinpicture', (event) => {
-        //   //       this.zone.run(() => {
-        //   //         this.isPipChange.emit(false);
-        //   //       });
-        //   //     });
-        //   //   }
-        //   //   break;
-        //   // case EPlayerType.soundcloud:
-        //   //   if (this.playerInfo?.type === EPlayerType.soundcloud) {
-        //   //     (<SC.Widget.Player>this.playerInfo.player).load(currentVideoRequest.id, {
-        //   //       auto_play: true,
-        //   //       callback: () => this.isSwitchingVideo$.next(false)
-        //   //     });
-        //   //   } else {
-        //   //     this.destroyCurrentPlayer();
-        //   //     setHtml(EPlayerType.soundcloud);
-        //   //     const soundcloudPlayer = SC.Widget(<HTMLIFrameElement>document.getElementById(this.domId));
-        //   //     this.playerInfo = {
-        //   //       type: EPlayerType.soundcloud,
-        //   //       player: soundcloudPlayer
-        //   //     };
-        //   //     soundcloudPlayer.bind(SC.Widget.Events.READY, () => {
-        //   //       this.isPlayerReady$.next(true);
-        //   //       this.isSwitchingVideo$.next(false);
-        //   //       this.playerStateObserver$.next(EPlayerState.unstarted);
-        //   //     });
-        //   //     soundcloudPlayer.bind(SC.Widget.Events.PLAY, () => this.playerStateObserver$.next(EPlayerState.playing));
-        //   //     soundcloudPlayer.bind(SC.Widget.Events.PAUSE, () => this.playerStateObserver$.next(EPlayerState.paused));
-        //   //     soundcloudPlayer.bind(SC.Widget.Events.FINISH, () => this.playerStateObserver$.next(EPlayerState.ended));
-        //   //     soundcloudPlayer.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => {
-        //   //       soundcloudPlayer.getDuration((duration) => {
-        //   //         this.currentTimeObserver$.next(event.currentPosition / 1000);
-        //   //         this.durationObserver$.next(duration / 1000);
-        //   //       });
-        //   //     });
-        //   //   }
-        //   //   break;
-        // }
       });
     //#endregion
 
@@ -306,15 +129,6 @@ export class VideoPlayerComponent implements AfterViewInit {
         if (videoRequest !== null) {
           if (typeof videoRequest.id !== 'undefined') {
             this.playerInfo?.adapter.loadVideoById(videoRequest.id);
-            // if (videoRequest.playerType === EPlayerType.youtube) {
-            //   (<YT.Player>this.playerInfo?.player).loadVideoById(videoRequest.id);
-            // } else if (videoRequest.playerType === EPlayerType.dailymotion) {
-            //   (<DM.Player>this.playerInfo?.player).load({ video: videoRequest.id });
-            // } else if (videoRequest.playerType === EPlayerType.vimeo) {
-            //   (<Vimeo.Player>this.playerInfo?.player).loadVideo(videoRequest.id);
-            // } else if (videoRequest.playerType === EPlayerType.soundcloud) {
-            //   (<SC.Widget.Player>this.playerInfo?.player).load(videoRequest.id, { auto_play: this.autoplay });
-            // }
           }
         }
       });
@@ -349,81 +163,7 @@ export class VideoPlayerComponent implements AfterViewInit {
       .subscribe((progress) => {
         this.zone.run(() => this.progressChange.emit(progress));
       });
-
-    // if (!isPlatformServer(this.platformId)) {
-    //   combineLatest([timer(0, 50), this.isPlayerReady$, this.isSwitchingVideo$])
-    //     .pipe(filter(([time, isPlayerReady, isSwitchingVideo]) => isPlayerReady && !isSwitchingVideo))
-    //     .pipe(takeUntil(this.destroyed$))
-    //     .subscribe(async ([time, isPlayerReady, isSwitchingVideo]) => {
-    //       switch (this.playerInfo?.type) {
-    //         case EPlayerType.youtube: {
-    //           const player = <YT.Player>this.playerInfo.player;
-    //           if (player.getCurrentTime !== undefined) {
-    //             const newCurrentTime = player.getCurrentTime();
-    //             this.currentTimeObserver$.next(newCurrentTime);
-    //           }
-    //           if (player.getVolume !== undefined) {
-    //             const newVolume = player.getVolume();
-    //             this.volumeObserver$.next(newVolume);
-    //           }
-    //           if (player.isMuted !== undefined) {
-    //             const newIsMuted = player.isMuted();
-    //             this.muteObserver$.next(newIsMuted);
-    //           }
-    //           if (player.getDuration !== undefined) {
-    //             const duration = player.getDuration();
-    //             this.durationObserver$.next(duration);
-    //           }
-    //         } break;
-    //         case EPlayerType.dailymotion: {
-    //           const player = <DM.Player>this.playerInfo.player;
-    //           if (player.currentTime !== undefined) {
-    //             this.currentTimeObserver$.next(player.currentTime);
-    //           }
-    //           if (player.volume !== undefined) {
-    //             const newVolume = player.volume * 100;
-    //             this.volumeObserver$.next(newVolume);
-    //           }
-    //           if (player.muted !== undefined) {
-    //             this.muteObserver$.next(player.muted);
-    //           }
-    //           if (player.duration !== undefined) {
-    //             this.durationObserver$.next(player.duration);
-    //           }
-    //         } break;
-    //         case EPlayerType.vimeo: {
-    //           const player = <Vimeo.Player>this.playerInfo.player;
-    //           if (player.getMuted !== undefined) {
-    //             player.getMuted().then((newIsMuted) => this.muteObserver$.next(newIsMuted));
-    //           }
-    //         } break;
-    //         case EPlayerType.soundcloud: {
-    //           const player = <SC.Widget.Player>this.playerInfo.player;
-    //           if (player.getVolume !== undefined) {
-    //             player.getVolume((volume) => this.volumeObserver$.next(volume));
-    //           }
-    //         } break;
-    //       }
-    //     });
-    // }
   }
-
-  // private destroyCurrentPlayer() {
-  //   switch (this.playerInfo?.type) {
-  //     case EPlayerType.youtube:
-  //       (<YT.Player>this.playerInfo.player).destroy();
-  //       break;
-  //     case EPlayerType.dailymotion:
-  //       // (<DM.Player>this.playerInfo.player).destroy();
-  //       break;
-  //     case EPlayerType.vimeo:
-  //       (<Vimeo.Player>this.playerInfo.player).destroy();
-  //       break;
-  //     case EPlayerType.soundcloud:
-  //       // (<SC.Widget.Player>this.playerInfo.player).destroy();
-  //       break;
-  //   }
-  // }
 
   //#region width
   private _width = 600;
@@ -432,28 +172,7 @@ export class VideoPlayerComponent implements AfterViewInit {
   }
   @Input() set width(value: number) {
     this._width = value;
-    // if (!!this.playerInfo && !!this.playerInfo.player) {
-    //   switch (this.playerInfo.type) {
-    //     case EPlayerType.youtube:
-    //       (<YT.Player>this.playerInfo.player).setSize(this._width, this._height);
-    //       break;
-    //     case EPlayerType.dailymotion:
-    //       (<DM.Player>this.playerInfo.player).width = this._width;
-    //       break;
-    //     case EPlayerType.vimeo: {
-    //       const iframe = this.container.nativeElement.querySelector<HTMLIFrameElement>('div iframe');
-    //       if (iframe) {
-    //         iframe.width = String(value);
-    //       }
-    //     } break;
-    //     case EPlayerType.soundcloud: {
-    //       const iframe = this.container.nativeElement.querySelector<HTMLIFrameElement>('iframe');
-    //       if (iframe) {
-    //         iframe.width = String(value);
-    //       }
-    //     } break;
-    //   }
-    // }
+    this.playerInfo?.adapter.setSize(this._width, this._height);
   }
   //#endregion
   //#region height
@@ -463,153 +182,23 @@ export class VideoPlayerComponent implements AfterViewInit {
   }
   @Input() set height(value: number) {
     this._height = value;
-    // if (!!this.playerInfo && !!this.playerInfo.player) {
-    //   switch (this.playerInfo.type) {
-    //     case EPlayerType.youtube:
-    //       (<YT.Player>this.playerInfo.player).setSize(this._width, this._height);
-    //       break;
-    //     case EPlayerType.dailymotion:
-    //       (<DM.Player>this.playerInfo.player).height = this._height;
-    //       break;
-    //     case EPlayerType.vimeo: {
-    //       const iframe = this.container.nativeElement.querySelector<HTMLIFrameElement>('div iframe');
-    //       if (iframe) {
-    //         iframe.height = String(value);
-    //       }
-    //     } break;
-    //     case EPlayerType.soundcloud: {
-    //       const iframe = this.container.nativeElement.querySelector<HTMLIFrameElement>('iframe');
-    //       if (iframe) {
-    //         iframe.height = String(value);
-    //       }
-    //     } break;
-    //   }
-    // }
+    this.playerInfo?.adapter.setSize(this._width, this._height);
   }
   //#endregion
-  //#region seek
+  //#region progress
   @Output() public progressChange = new EventEmitter<PlayerProgress>();
-  public seek(timestamp: number) {
-    // this.currentTimeObserver$.next(timestamp);
-    // switch (this.playerInfo?.type) {
-    //   case EPlayerType.youtube:
-    //     (<YT.Player>this.playerInfo.player).seekTo(timestamp, true);
-    //     break;
-    //   case EPlayerType.dailymotion:
-    //     (<DM.Player>this.playerInfo.player).seek(timestamp);
-    //     break;
-    //   case EPlayerType.vimeo:
-    //     (<Vimeo.Player>this.playerInfo.player).setCurrentTime(timestamp);
-    //     break;
-    //   case EPlayerType.soundcloud:
-    //     (<SC.Widget.Player>this.playerInfo.player).seekTo(timestamp * 1000);
-    //     break;
-    // }
-  }
   //#endregion
   //#region playerState
   @Input() set playerState(value: EPlayerState) {
     this.playerInfo?.adapter.setPlayerState(value);
-    // switch (this.playerInfo?.type) {
-    //   case EPlayerType.youtube: {
-
-    //     const player = <YT.Player>this.playerInfo.player;
-    //     switch (value) {
-    //       case EPlayerState.playing:
-    //         player.playVideo();
-    //         break;
-    //       case EPlayerState.paused:
-    //         player.pauseVideo();
-    //         break;
-    //       case EPlayerState.ended:
-    //         player.stopVideo();
-    //         break;
-    //       case EPlayerState.unstarted:
-    //         break;
-    //     }
-
-    //   } break;
-    //   case EPlayerType.dailymotion: {
-
-    //     const player = <DM.Player>this.playerInfo.player;
-    //     switch (value) {
-    //       case EPlayerState.playing:
-    //         player.play();
-    //         break;
-    //       case EPlayerState.paused:
-    //         player.pause();
-    //         break;
-    //       case EPlayerState.ended:
-    //       case EPlayerState.unstarted:
-    //         break;
-    //     }
-
-    //   } break;
-    //   case EPlayerType.vimeo: {
-
-    //     const player = <Vimeo.Player>this.playerInfo.player;
-    //     switch (value) {
-    //       case EPlayerState.playing:
-    //         player.play();
-    //         break;
-    //       case EPlayerState.paused:
-    //         player.pause();
-    //         break;
-    //       case EPlayerState.ended:
-    //       case EPlayerState.unstarted:
-    //         break;
-    //     }
-
-    //   } break;
-    //   case EPlayerType.soundcloud: {
-    //     const player = <SC.Widget.Player>this.playerInfo.player;
-    //     switch (value) {
-    //       case EPlayerState.playing:
-    //         player.play();
-    //         break;
-    //       case EPlayerState.paused:
-    //         player.pause();
-    //         break;
-    //       case EPlayerState.ended:
-    //       case EPlayerState.unstarted:
-    //         break;
-    //     }
-
-    //   } break;
-    // }
   }
   @Output() public playerStateChange = new EventEmitter<EPlayerState>();
   //#endregion
   //#region title
-  public async getTitle() {
-    return '';
-    // switch (this.playerInfo?.type) {
-    //   case EPlayerType.youtube: {
-    //     const player = <YT.Player>this.playerInfo.player;
-    //     return <string>(<any>player).getVideoData().title;
-    //   }
-    //   case EPlayerType.dailymotion: {
-    //     const player = <DM.Player>this.playerInfo.player;
-    //     return player.video.title.replace(new RegExp('\\+', 'g'), ' ');
-    //   }
-    //   case EPlayerType.vimeo: {
-    //     const player = <Vimeo.Player>this.playerInfo.player;
-    //     const title = await player.getVideoTitle();
-    //     return title;
-    //   }
-    //   case EPlayerType.soundcloud: {
-    //     const player = <SC.Widget.Player>this.playerInfo.player;
-    //     const title = await new Promise<string>((resolve, reject) => {
-    //       player.getCurrentSound((sound: any) => {
-    //         resolve(sound.description ?? sound.title);
-    //       });
-    //     });
-    //     return title;
-    //   }
-    //   default: {
-    //     return '';
-    //   }
-    // }
+  public getTitle() {
+    return new Promise((resolve) => {
+      resolve(this.playerInfo?.adapter?.getTitle() ?? null);
+    });
   }
   //#endregion
   //#region volume
@@ -620,20 +209,6 @@ export class VideoPlayerComponent implements AfterViewInit {
   @Input() set volume(value: number) {
     this._volume = value;
     this.playerInfo?.adapter.setVolume(value);
-    // switch (this.playerInfo?.type) {
-    //   case EPlayerType.youtube: {
-    //     (<YT.Player>this.playerInfo.player).setVolume(value);
-    //   } break;
-    //   case EPlayerType.dailymotion: {
-    //     (<DM.Player>this.playerInfo.player).setVolume(value / 100);
-    //   } break;
-    //   case EPlayerType.vimeo: {
-    //     (<Vimeo.Player>this.playerInfo.player).setVolume(value / 100);
-    //   } break;
-    //   case EPlayerType.soundcloud: {
-    //     (<SC.Widget.Player>this.playerInfo.player).setVolume(value);
-    //   } break;
-    // }
   }
   @Output() public volumeChange = new EventEmitter<number>();
   //#endregion
@@ -645,21 +220,6 @@ export class VideoPlayerComponent implements AfterViewInit {
   @Input() set mute(value: boolean) {
     this._mute = value;
     this.playerInfo?.adapter.setMute(value);
-    // switch (this.playerInfo?.type) {
-    //   case EPlayerType.youtube: {
-    //     if (value) {
-    //       (<YT.Player>this.playerInfo.player).mute();
-    //     } else {
-    //       (<YT.Player>this.playerInfo.player).unMute();
-    //     }
-    //   } break;
-    //   case EPlayerType.dailymotion: {
-    //     (<DM.Player>this.playerInfo.player).setMuted(value);
-    //   } break;
-    //   case EPlayerType.vimeo: {
-    //     (<Vimeo.Player>this.playerInfo.player).setMuted(value);
-    //   } break;
-    // }
   }
   @Output() public muteChange = new EventEmitter<boolean>();
   //#endregion
@@ -767,7 +327,6 @@ export class VideoPlayerComponent implements AfterViewInit {
   private volumeObserver$ = new Subject<number>();
   private muteObserver$ = new Subject<boolean>();
   private currentTimeObserver$ = new Subject<PlayerProgress>();
-  // private durationObserver$ = new Subject<number>();
   private playerStateObserver$ = new Subject<EPlayerState>();
 
 
