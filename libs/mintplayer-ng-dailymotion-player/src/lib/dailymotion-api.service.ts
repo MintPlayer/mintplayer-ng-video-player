@@ -1,4 +1,5 @@
-import { Injectable, DestroyRef } from '@angular/core';
+import { DOCUMENT, isPlatformServer } from '@angular/common';
+import { Injectable, DestroyRef, Inject, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, timer, takeUntil, Subject } from 'rxjs';
@@ -8,6 +9,13 @@ import { BehaviorSubject, timer, takeUntil, Subject } from 'rxjs';
 })
 export class DailymotionApiService implements IApiService {
 
+  constructor(@Inject(PLATFORM_ID) private platformId: any, rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
+    this.document = doc;
+    this.renderer = rendererFactory.createRenderer(null, null);
+  }
+
+  private document: Document;
+  private renderer: Renderer2;
   private hasAlreadyStartedLoadingApi = false;
   private scriptTag!: HTMLScriptElement;
 
@@ -32,7 +40,7 @@ export class DailymotionApiService implements IApiService {
         this.hasAlreadyStartedLoadingApi = true;
         
         // Create scripttag
-        this.scriptTag = window.document.createElement('script');
+        this.scriptTag = this.renderer.createElement('script');
         this.scriptTag.src = 'https://api.dmcdn.net/all.js';
         // this.scriptTag.src = 'https://cdn.mintplayer.com/dailymotion/all.js';
 
@@ -43,11 +51,11 @@ export class DailymotionApiService implements IApiService {
         });
 
         // Insert in DOM
-        const firstScriptTag = window.document.getElementsByTagName('script')[0];
+        const firstScriptTag = this.document.getElementsByTagName('script')[0];
         if (!firstScriptTag) {
-          document.head.appendChild(this.scriptTag);
+          this.renderer.appendChild(this.document.head, this.scriptTag);
         } else if (firstScriptTag.parentNode) {
-          firstScriptTag.parentNode.insertBefore(this.scriptTag, firstScriptTag);
+          this.renderer.insertBefore(firstScriptTag.parentNode, this.scriptTag, firstScriptTag);
         } else {
           throw 'First script tag has no parent node';
         }
@@ -75,12 +83,14 @@ export class DailymotionApiService implements IApiService {
       events: {
         apiready: () => {
           options.onReady();
-          timer(0, 50)
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-            .subscribe((time) => {
-              options.onMuteChange(player.muted);
-              options.onProgressChange({ currentTime: player.currentTime, duration: player.duration });
-            });
+          if (!isPlatformServer(this.platformId)) {
+            timer(0, 50)
+              .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+              .subscribe((time) => {
+                options.onMuteChange(player.muted);
+                options.onProgressChange({ currentTime: player.currentTime, duration: player.duration });
+              });
+          }
         },
         play: () => options.onStateChange(EPlayerState.playing),
         pause: () => options.onStateChange(EPlayerState.paused),

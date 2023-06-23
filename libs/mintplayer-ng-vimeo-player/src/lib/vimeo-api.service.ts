@@ -1,4 +1,5 @@
-import { DestroyRef, Injectable } from '@angular/core';
+import { DOCUMENT, isPlatformServer } from '@angular/common';
+import { DestroyRef, Inject, Injectable, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
@@ -8,6 +9,14 @@ import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 })
 export class VimeoApiService implements IApiService {
 
+
+  constructor(@Inject(PLATFORM_ID) private platformId: any, rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
+    this.document = doc;
+    this.renderer = rendererFactory.createRenderer(null, null);
+  }
+
+  private document: Document;
+  private renderer: Renderer2;
   private hasAlreadyStartedLoadingVimeoApi = false;
   private scriptTag!: HTMLScriptElement;
 
@@ -36,7 +45,7 @@ export class VimeoApiService implements IApiService {
         this.hasAlreadyStartedLoadingVimeoApi = true;
         
         // Invocation
-        this.scriptTag = window.document.createElement('script');
+        this.scriptTag = this.renderer.createElement('script');
         this.scriptTag.src = 'https://player.vimeo.com/api/player.js';
         this.scriptTag.onload = () => {
           // Callback
@@ -44,11 +53,11 @@ export class VimeoApiService implements IApiService {
         };
 
         // Insert in DOM
-        const firstScriptTag = window.document.getElementsByTagName('script')[0];
+        const firstScriptTag = this.document.getElementsByTagName('script')[0];
         if (!firstScriptTag) {
-          document.head.appendChild(this.scriptTag);
+          this.renderer.appendChild(this.document.head, this.scriptTag);
         } else if (firstScriptTag.parentNode) {
-          firstScriptTag.parentNode.insertBefore(this.scriptTag, firstScriptTag);
+          this.renderer.insertBefore(firstScriptTag.parentNode, this.scriptTag, firstScriptTag);
         } else {
           throw 'First script tag has no parent node';
         }
@@ -81,14 +90,16 @@ export class VimeoApiService implements IApiService {
     player.ready().then(() => options.onReady());
     player.on('loaded', () => {
       options.onStateChange(EPlayerState.unstarted);
-      setTimeout(() => options.autoplay && player.play(), 600);
-      timer(0, 50)
-        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-        .subscribe((time) => {
-          // Mute
-          player.getMuted().then((currentMute) => options.onMuteChange(currentMute));
-        });
-      player.getVolume().then((vol) => options.onVolumeChange(vol * 100));
+      if (!isPlatformServer(this.platformId)) {
+        setTimeout(() => options.autoplay && player.play(), 600);
+        timer(0, 50)
+          .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+          .subscribe((time) => {
+            // Mute
+            player.getMuted().then((currentMute) => options.onMuteChange(currentMute));
+          });
+        player.getVolume().then((vol) => options.onVolumeChange(vol * 100));
+      }
     });
     player.on('play', () => options.onStateChange(EPlayerState.playing));
     player.on('pause', () => options.onStateChange(EPlayerState.paused));
