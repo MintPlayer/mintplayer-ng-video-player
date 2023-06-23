@@ -115,7 +115,17 @@ export class SoundcloudApiService implements IApiService {
       setMute: (mute) => player.setVolume(mute ? 0 : 50),
       setVolume: (volume) => player.setVolume(volume),
       setProgress: (time) => player.seekTo(time * 1000),
-      destroy: () => destroyRef.next(true)
+      setSize: (width, height) => {
+        if (options.element) {
+          const iframe = options.element.querySelector<HTMLIFrameElement>('iframe');
+          if (iframe) {
+            iframe.width = String(width);
+            iframe.height = String(height);
+          }
+        }
+      },
+      getTitle: () => new Promise<string>((resolve) => player.getCurrentSound((sound: {description: string, title: string}) => resolve(sound.description ?? sound.title))),
+      destroy: () => destroyRef.next(true),
     };
   }
 }

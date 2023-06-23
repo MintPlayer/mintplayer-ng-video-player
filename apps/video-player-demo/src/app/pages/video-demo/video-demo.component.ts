@@ -59,9 +59,10 @@ export class VideoDemoComponent {
     return false;
   }
 
-  async getTitle() {
-    const title = await this.player1.getTitle();
-    alert('title\r\n' + title);
+  getTitle() {
+    this.player1.getTitle().then((title) => {
+      alert('title\r\n' + title);
+    });
   }
 
   setSize() {

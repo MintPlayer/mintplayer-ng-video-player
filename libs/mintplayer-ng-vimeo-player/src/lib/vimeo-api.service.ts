@@ -110,6 +110,16 @@ export class VimeoApiService implements IApiService {
         options.onProgressChange({ currentTime: ev.seconds, duration });
       });
     });
+    //     vimeoPlayer.on('enterpictureinpicture', (event) => {
+    //       this.zone.run(() => {
+    //         this.isPipChange.emit(true);
+    //       });
+    //     });
+    //     vimeoPlayer.on('leavepictureinpicture', (event) => {
+    //       this.zone.run(() => {
+    //         this.isPipChange.emit(false);
+    //       });
+    //     });
 
     return <PlayerAdapter>{
       loadVideoById: (id: string) => player.loadVideo(id),
@@ -129,7 +139,20 @@ export class VimeoApiService implements IApiService {
       setVolume: (volume) => player.setVolume(volume / 100),
       setMute: (mute) => player.setMuted(mute),
       setProgress: (time) => player.setCurrentTime(time),
-      destroy: () => destroyRef.next(true)
+      setSize: (width, height) => {
+        if (options.element) {
+          const iframe = options.element.querySelector<HTMLIFrameElement>('div iframe');
+          if (iframe) {
+            iframe.width = String(width);
+            iframe.height = String(height);
+          }
+        }
+      },
+      getTitle: () => player.getVideoTitle(),
+      destroy: () => {
+        destroyRef.next(true);
+        player.destroy();
+      },
     };
   }
 
