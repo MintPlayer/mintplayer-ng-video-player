@@ -28,6 +28,9 @@
         "{workspaceRoot}/coverage/libs/mintplayer-ng-player-progress"
       ],
       "options": {
+        "codeCoverage": true,
+        "coverageReporters": ["lcovonly"],
+        "coverageDirectory": "coverage/libs/mintplayer-ng-player-progress",
         "jestConfig": "libs/mintplayer-ng-player-progress/jest.config.ts",
         "passWithNoTests": true
       }

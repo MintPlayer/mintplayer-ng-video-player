@@ -30,9 +30,11 @@
         "{workspaceRoot}/coverage/libs/mintplayer-ng-playlist-controller"
       ],
       "options": {
+        "codeCoverage": true,
+        "coverageReporters": ["lcovonly"],
+        "coverageDirectory": "coverage/libs/mintplayer-ng-playlist-controller",
         "jestConfig": "libs/mintplayer-ng-playlist-controller/jest.config.ts",
-        "passWithNoTests": true,
-        "codeCoverage": true
+        "passWithNoTests": true
       }
     },
     "lint": {
