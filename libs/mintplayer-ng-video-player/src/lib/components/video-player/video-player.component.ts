@@ -24,7 +24,7 @@ export class VideoPlayerComponent implements AfterViewInit {
       .pipe(takeUntilDestroyed())
       .subscribe(([isViewInited, url]) => {
         if (url === null) {
-          // this.destroyCurrentPlayer();
+          this.playerInfo?.adapter?.destroy();
           this.playerInfo = null;
           this.container.nativeElement.innerHTML = '';
         } else {
