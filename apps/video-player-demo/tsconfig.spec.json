@@ -3,6 +3,12 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
+    "typeRoots": [
+      "../../node_modules/@types",
+      "../../libs/mintplayer-ng-dailymotion-player/types",
+      "../../libs/mintplayer-ng-soundcloud-player/types",
+      "../../libs/mintplayer-ng-vimeo-player/types"
+    ],
     "types": ["jest", "node", "youtube", "dailymotion", "vimeo", "soundcloud"]
   },
   "files": ["src/test-setup.ts"],

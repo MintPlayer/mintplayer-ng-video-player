@@ -26,9 +26,11 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/mintplayer-ng-video-player"],
       "options": {
+        "codeCoverage": true,
+        "coverageReporters": ["lcovonly"],
+        "coverageDirectory": "coverage/libs/mintplayer-ng-video-player",
         "jestConfig": "libs/mintplayer-ng-video-player/jest.config.ts",
-        "passWithNoTests": true,
-        "codeCoverage": true
+        "passWithNoTests": true
       }
     },
     "lint": {

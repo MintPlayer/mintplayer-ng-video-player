@@ -3,8 +3,6 @@ export default {
   displayName: 'mintplayer-ng-player-provider',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-player-provider',
-  coverageReporters: ['lcovonly'],
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

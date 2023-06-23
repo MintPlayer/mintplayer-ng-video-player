@@ -28,9 +28,11 @@
         "{workspaceRoot}/coverage/libs/mintplayer-ng-dailymotion-player"
       ],
       "options": {
+        "codeCoverage": true,
+        "coverageReporters": ["lcovonly"],
+        "coverageDirectory": "coverage/libs/mintplayer-ng-dailymotion-player",
         "jestConfig": "libs/mintplayer-ng-dailymotion-player/jest.config.ts",
-        "passWithNoTests": true,
-        "codeCoverage": true
+        "passWithNoTests": true
       }
     },
     "lint": {

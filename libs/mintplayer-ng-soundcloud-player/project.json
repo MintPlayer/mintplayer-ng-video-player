@@ -28,9 +28,11 @@
         "{workspaceRoot}/coverage/libs/mintplayer-ng-soundcloud-player"
       ],
       "options": {
+        "codeCoverage": true,
+        "coverageReporters": ["lcovonly"],
+        "coverageDirectory": "coverage/libs/mintplayer-ng-soundcloud-player",
         "jestConfig": "libs/mintplayer-ng-soundcloud-player/jest.config.ts",
-        "passWithNoTests": true,
-        "codeCoverage": true
+        "passWithNoTests": true
       }
     },
     "lint": {
