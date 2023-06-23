@@ -1,16 +1,17 @@
-import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, OnInit, Output, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Inject, Input, NgZone, Output, PLATFORM_ID, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, take, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, take } from 'rxjs/operators';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
-import { VideoRequest } from '../../interfaces/video-request';
 import { EPlayerState, IApiService, PlayerAdapter, VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { VideoRequest } from '../../interfaces/video-request';
 
 @Component({
   selector: 'video-player',
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss']
 })
-export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
+export class VideoPlayerComponent implements AfterViewInit {
   constructor(
     @Inject(VIDEO_APIS) private apis: IApiService[],
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -19,10 +20,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   ) {
     //#region [isViewInited$, url$] => videoRequest$
     combineLatest([this.isViewInited$, this.url$])
-      .pipe(filter(([isViewInited, url]) => {
-        return !!isViewInited;
-      }))
-      .pipe(takeUntil(this.destroyed$))
+      .pipe(filter(([isViewInited, url]) => !!isViewInited))
+      .pipe(takeUntilDestroyed())
       .subscribe(([isViewInited, url]) => {
         if (url === null) {
           // this.destroyCurrentPlayer();
@@ -61,11 +60,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
     //#region [videoRequest$] => isApiReady$
     this.videoRequest$
-      .pipe(takeUntil(this.destroyed$))
+      .pipe(takeUntilDestroyed())
       .subscribe((videoRequest) => {
         if (videoRequest) {
           videoRequest?.api.apiReady$
-            .pipe(filter(ready => !!ready), take(1), takeUntil(this.destroyed$))
+            .pipe(filter(ready => !!ready), take(1), takeUntilDestroyed(destroy))
             .subscribe((ready) => this.isApiReady$.next(ready));
           videoRequest?.api.loadApi();
         }
@@ -83,7 +82,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     
     //#region [isApiReady$, videoRequest.playerType] => isSwitchingVideo$, isPlayerReady$
     this.isApiReady$
-      .pipe(filter(r => !!r), takeUntil(this.destroyed$))
+      .pipe(filter(r => !!r), takeUntilDestroyed())
       .subscribe((value) => {
         const currentVideoRequest = this.videoRequest$.value;
 
@@ -107,24 +106,16 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                   this.isPlayerReady$.next(true);
                   this.isSwitchingVideo$.next(false);
                 },
-                onStateChange: (state) => {
-                  this.playerStateObserver$.next(state);
-                },
-                onMuteChange: (mute) => {
-                  this.muteObserver$.next(mute);
-                },
-                onVolumeChange: (volume) => {
-                  this.volumeObserver$.next(volume);
-                },
-                onProgressChange: (progress) => {
-                  this.currentTimeObserver$.next(progress);
-                }
+                onStateChange: (state) => this.playerStateObserver$.next(state),
+                onMuteChange: (mute) => this.muteObserver$.next(mute),
+                onVolumeChange: (volume) => this.volumeObserver$.next(volume),
+                onProgressChange: (progress) => this.currentTimeObserver$.next(progress)
               }, destroy)
             };
           }
         } else {
           // Cancel all timers / Clear the html
-          this.playerInfo?.adapter.destroy();
+          this.playerInfo?.adapter?.destroy();
           setHtml(null);
         }
 
@@ -309,7 +300,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
     //#region [isPlayerReady$] => playVideo
     this.isPlayerReady$
-      .pipe(filter(r => !!r), takeUntil(this.destroyed$))
+      .pipe(filter(r => !!r), takeUntilDestroyed())
       .subscribe((ready) => {
         const videoRequest = this.videoRequest$.value;
         if (videoRequest !== null) {
@@ -330,17 +321,17 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     //#endregion
 
     this.volumeObserver$
-      .pipe(debounceTime(20), distinctUntilChanged(), filter((volume) => volume !== null), takeUntil(this.destroyed$))
+      .pipe(debounceTime(20), distinctUntilChanged(), filter((volume) => volume !== null), takeUntilDestroyed())
       .subscribe((newVolume) => {
         this.zone.run(() => this.volumeChange.emit(this._volume = newVolume));
       });
     this.muteObserver$
-      .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntilDestroyed())
       .subscribe((newMute) => {
         this.zone.run(() => this.muteChange.emit(this._mute = newMute));
       });
     this.playerStateObserver$
-      .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntilDestroyed())
       .subscribe((newPlayerState) => {
         this.zone.run(() => this.playerStateChange.emit(newPlayerState));
       });
@@ -354,7 +345,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     //     this.zone.run(() => this.progressChange.emit({ currentTime, duration }));
     //   });
     this.currentTimeObserver$
-      .pipe(takeUntil(this.destroyed$))
+      .pipe(takeUntilDestroyed())
       .subscribe((progress) => {
         this.zone.run(() => this.progressChange.emit(progress));
       });
@@ -767,7 +758,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private static playerCounter = 1;
   domId = 'player';
 
-  private destroyed$ = new Subject();
   private isViewInited$ = new BehaviorSubject<boolean>(false);
   private url$ = new BehaviorSubject<string | null>(null);
   private videoRequest$ = new BehaviorSubject<VideoRequest | null>(null);
@@ -786,10 +776,5 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.isViewInited$.next(true);
-  }
-
-  ngOnDestroy() {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
   }
 }

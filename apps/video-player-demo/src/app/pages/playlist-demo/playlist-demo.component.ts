@@ -1,18 +1,18 @@
-import { AfterViewInit, ChangeDetectorRef, Component, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, NgZone, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { ERepeatMode, PlaylistController } from '@mintplayer/ng-playlist-controller';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
-import { Subject, takeUntil } from 'rxjs';
 import { Video } from '../../interfaces/video';
 import { EPlayerState } from '@mintplayer/ng-player-provider';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'mintplayer-ng-video-player-playlist-demo',
   templateUrl: './playlist-demo.component.html',
   styleUrls: ['./playlist-demo.component.scss']
 })
-export class PlaylistDemoComponent implements OnDestroy, AfterViewInit {
+export class PlaylistDemoComponent implements AfterViewInit {
   constructor(
     playlistController: PlaylistController<Video>,
     private ref: ChangeDetectorRef,
@@ -20,7 +20,7 @@ export class PlaylistDemoComponent implements OnDestroy, AfterViewInit {
   ) {
     this.playlistController = playlistController;
     this.playlistController.video$
-      .pipe(takeUntil(this.destroyed$))
+      .pipe(takeUntilDestroyed())
       .subscribe((video) => {
         if (this.isViewInited) {
           if (video !== null) {
@@ -44,7 +44,6 @@ export class PlaylistDemoComponent implements OnDestroy, AfterViewInit {
   }
   
   private isViewInited = false;
-  private destroyed$ = new Subject();
 
   @ViewChild('player') player!: VideoPlayerComponent;
   repeatOptions: any[];
@@ -61,10 +60,6 @@ export class PlaylistDemoComponent implements OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.isViewInited = true;
-  }
-
-  ngOnDestroy() {
-    this.destroyed$.next(true);
   }
 
   addVideoToPlaylist(video: Video) {
