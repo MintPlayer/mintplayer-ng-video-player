@@ -10,10 +10,8 @@ import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 export class DailymotionDemoComponent {
 
   title = 'DailyMotion player'
-  videoId = '';
   @ViewChild('dmplayer') dmplayer!: VideoPlayerComponent;
   colors = Color;
-
 
   playVideo() {
     this.dmplayer.setUrl('https://www.dailymotion.com/video/x2yhuhb');

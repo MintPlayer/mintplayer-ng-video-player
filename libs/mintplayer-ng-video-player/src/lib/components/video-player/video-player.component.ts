@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Inject, Input, NgZone, Output, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, Output, PLATFORM_ID, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, take } from 'rxjs/operators';
@@ -11,7 +11,7 @@ import { VideoRequest } from '../../interfaces/video-request';
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss']
 })
-export class VideoPlayerComponent implements AfterViewInit {
+export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   constructor(
     @Inject(VIDEO_APIS) private apis: IApiService[],
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -70,7 +70,9 @@ export class VideoPlayerComponent implements AfterViewInit {
         } else {
           // Cancel all timers / Clear the html
           this.playerInfo?.adapter?.destroy();
-          this.container.nativeElement.innerHTML = '';
+          if (this.container && this.container.nativeElement) {
+            this.container.nativeElement.innerHTML = '';
+          }
         }
       });
     //#endregion
@@ -335,5 +337,9 @@ export class VideoPlayerComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.isViewInited$.next(true);
+  }
+
+  ngOnDestroy() {
+    this.playerInfo?.adapter?.destroy();
   }
 }
