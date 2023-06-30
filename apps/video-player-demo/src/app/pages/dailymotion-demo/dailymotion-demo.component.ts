@@ -14,7 +14,6 @@ export class DailymotionDemoComponent {
   @ViewChild('dmplayer') dmplayer!: VideoPlayerComponent;
   colors = Color;
 
-
   playVideo() {
     this.dmplayer.setUrl('https://www.dailymotion.com/video/x2yhuhb');
   }
