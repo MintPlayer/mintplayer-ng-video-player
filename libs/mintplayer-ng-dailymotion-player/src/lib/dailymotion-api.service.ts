@@ -104,6 +104,8 @@ export class DailymotionApiService implements IApiService {
       }
     }
 
+    console.log('DM player', player);
+
     return {
       loadVideoById: (id: string) => player.load({video: id}),
       setPlayerState: (state: EPlayerState) => {
@@ -129,6 +131,23 @@ export class DailymotionApiService implements IApiService {
       getTitle: () => new Promise((resolve) => {
         resolve(player.video.title.replace(new RegExp('\\+', 'g'), ' '));
       }),
+      setFullscreen: (isFullscreen) => {
+        if (isFullscreen) {
+          console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
+          setTimeout(() => options.onFullscreenChange(false), 50);
+        }
+      },
+      getFullscreen: () => new Promise(resolve => {
+        console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
+        resolve(false);
+      }),
+      setPip: (isPip) => {
+        if (isPip) {
+          console.warn('DailyMotion player doesn\'t support PIP mode');
+          setTimeout(() => options.onPipChange(false), 50);
+        }
+      },
+      getPip: () => new Promise(resolve => resolve(false)),
       destroy: () => destroyRef.next(true),
     };
   }

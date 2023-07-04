@@ -127,6 +127,8 @@ export class YoutubeApiService implements IApiService {
       }
     });
 
+    console.log('YT player', player);
+
     return {
       loadVideoById: (id: string) => player.loadVideoById(id),
       setPlayerState: (state: EPlayerState) => {
@@ -151,6 +153,23 @@ export class YoutubeApiService implements IApiService {
       getTitle: () => new Promise((resolve) => {
         resolve((<any>player).getVideoData().title);
       }),
+      setFullscreen: (isFullscreen) => {
+        if (isFullscreen) {
+          console.warn('YouTube player doesn\'t allow setting fullscreen from outside');
+          setTimeout(() => options.onFullscreenChange(false), 50);
+        }
+      },
+      getFullscreen: () => new Promise(resolve => {
+        console.warn('YouTube player doesn\'t allow setting fullscreen from outside');
+        resolve(false);
+      }),
+      setPip: (isPip) => {
+        if (isPip) {
+          console.warn('YouTube player doesn\'t support PIP mode');
+          setTimeout(() => options.onPipChange(false), 50);
+        }
+      },
+      getPip: () => new Promise(resolve => resolve(false)),
       destroy: () => {
         destroyRef.next(true);
         player.destroy();  

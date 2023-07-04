@@ -110,16 +110,15 @@ export class VimeoApiService implements IApiService {
         options.onProgressChange({ currentTime: ev.seconds, duration });
       });
     });
-    //     vimeoPlayer.on('enterpictureinpicture', (event) => {
-    //       this.zone.run(() => {
-    //         this.isPipChange.emit(true);
-    //       });
-    //     });
-    //     vimeoPlayer.on('leavepictureinpicture', (event) => {
-    //       this.zone.run(() => {
-    //         this.isPipChange.emit(false);
-    //       });
-    //     });
+    player.on('enterpictureinpicture', (event) => {
+      options.onPipChange(true);
+    });
+    player.on('leavepictureinpicture', (event) => {
+      options.onPipChange(false);
+    });
+    player.on('fullscreenchange', (ev: { fullscreen: boolean }) => {
+      options.onFullscreenChange(ev.fullscreen)
+    });
 
     return <PlayerAdapter>{
       loadVideoById: (id: string) => player.loadVideo(id),
@@ -149,6 +148,34 @@ export class VimeoApiService implements IApiService {
         }
       },
       getTitle: () => player.getVideoTitle(),
+      setFullscreen: (isFullscreen) => {
+        if (isFullscreen) {
+          player.requestFullscreen();
+        } else {
+          player.exitFullscreen();
+        }
+      },
+      getFullscreen: () => player.getFullscreen(),
+      setPip: (isPip) => {
+        if (isPip) {
+          // const iframe = options.element?.querySelector<HTMLIFrameElement>('div iframe');
+          // iframe?.click();
+
+          // Below promise doesn't resolve nor reject
+          player.requestPictureInPicture();
+          setTimeout(() => {
+            player.getPictureInPicture().then((current) => {
+              if (current !== isPip) {
+                console.warn('To enable pip from outside its iframe, you need to first focus the player, then call setPip');
+                options.onPipChange(current);
+              }
+            });
+          }, 50);
+        } else {
+          player.exitPictureInPicture();
+        }
+      },
+      getPip: () => player.getPictureInPicture(),
       destroy: () => {
         destroyRef.next(true);
         player.destroy();

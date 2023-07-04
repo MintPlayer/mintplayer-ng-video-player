@@ -115,9 +115,13 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 onStateChange: (state) => this.playerStateObserver$.next(state),
                 onMuteChange: (mute) => this.muteObserver$.next(mute),
                 onVolumeChange: (volume) => this.volumeObserver$.next(volume),
-                onProgressChange: (progress) => this.currentTimeObserver$.next(progress)
+                onProgressChange: (progress) => this.currentTimeObserver$.next(progress),
+                onPipChange: (isPip) => this.pipObserver$.next(isPip),
+                onFullscreenChange: (isFullscreen) => this.fullscreenObserver$.next(isFullscreen),
               }, destroy)
             };
+            this.pipObserver$.next(false);
+            this.fullscreenObserver$.next(false);
           }
         }
       });
@@ -150,6 +154,16 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       .pipe(debounceTime(20), distinctUntilChanged(), takeUntilDestroyed())
       .subscribe((newPlayerState) => {
         this.zone.run(() => this.playerStateChange.emit(newPlayerState));
+      });
+    this.pipObserver$
+      .pipe(debounceTime(20), takeUntilDestroyed())
+      .subscribe((isPip) => {
+        this.zone.run(() => this.isPipChange.emit(this._isPip = isPip));
+      });
+    this.fullscreenObserver$
+      .pipe(debounceTime(20), takeUntilDestroyed())
+      .subscribe((isFullscreen) => {
+        this.zone.run(() => this.isFullscreenChange.emit(this._isFullscreen = isFullscreen));
       });
     
     // combineLatest([
@@ -226,79 +240,34 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   @Output() public muteChange = new EventEmitter<boolean>();
   //#endregion
 
-  // //#region isPip
-  // private _isPip: boolean = false;
-  // get isPip() {
-  //   return this._isPip;
-  // }
-  // @Input() set isPip(value: boolean) {
-  //   this._isPip = value;
-  //   switch (this.playerInfo?.type) {
-  //     case EPlayerType.youtube: {
-  //       if (value) {
-  //         throw 'YouTube does not support PiP mode';  
-  //       }
-  //     } break;
-  //     case EPlayerType.dailymotion: {
-  //       if (value) {
-  //         throw 'DailyMotion does not support PiP mode';  
-  //       }
-  //     } break;
-  //     case EPlayerType.vimeo: {
-  //       if (value) {
-  //         setTimeout(() => {
-  //           console.log('request pip');
-  //           (<Vimeo.Player>this.playerInfo?.player).requestPictureInPicture();
-  //         }, 50);
-  //       } else {
-  //         (<Vimeo.Player>this.playerInfo.player).exitPictureInPicture();
-  //       }
-  //     } break;
-  //   }
-  // }
-  @Output() public isPipChange = new EventEmitter<boolean>();
-  public getIsPip() {
-    // switch (this.playerInfo?.type) {
-    //   case EPlayerType.youtube:
-    //     return false
-    //   case EPlayerType.dailymotion:
-    //     return false;
-    //   case EPlayerType.vimeo: {
-    //     const player = <Vimeo.Player>this.playerInfo?.player;
-    //     return player.getPictureInPicture();
-    //   }
-    //   default:
-    //     return false;
-    // }
+  //#region isFullscreen
+  private _isFullscreen = false;
+  get isFullscreen() {
+    return this._isFullscreen;
   }
-  public async setIsPip(isPip: boolean) {
-    // // Vimeo pip requests must originate from a user gesture.
-    // // Hence why we can't make it a bindable property.
-    // // Sadly, even with this approach, the browser seems to think the event wasn't user initiated when the iframe isn't focused.
-    // switch (this.playerInfo?.type) {
-    //   case EPlayerType.youtube: {
-    //     if (isPip) {
-    //       throw 'YouTube does not support PiP mode';
-    //     }
-    //   } break;
-    //   case EPlayerType.dailymotion: {
-    //     if (isPip) {
-    //       throw 'DailyMotion does not support PiP mode';
-    //     }
-    //   } break;
-    //   case EPlayerType.vimeo: {
-    //     if (isPip) {
-    //       await (<Vimeo.Player>this.playerInfo?.player).requestPictureInPicture();
-    //     } else {
-    //       await (<Vimeo.Player>this.playerInfo.player).exitPictureInPicture();
-    //     }
-    //   } break;
-    //   case EPlayerType.soundcloud: {
-    //     if (isPip) {
-    //       throw 'SoundCloud does not support PiP mode';
-    //     }
-    //   } break;
-    // }
+  @Input() set isFullscreen(value: boolean) {
+    if (this.playerInfo && this.playerInfo.adapter) {
+      this.playerInfo.adapter.setFullscreen(value);
+    }
+  }
+  @Output() public isFullscreenChange = new EventEmitter<boolean>();
+  //#endregion
+  //#region isPip
+  private _isPip = false;
+  get isPip() {
+    return this._isPip;
+  }
+  @Input() set isPip(value: boolean) {
+    if (this.playerInfo && this.playerInfo.adapter) {
+      this.playerInfo.adapter.setPip(value);
+    }
+  }
+  @Output() public isPipChange = new EventEmitter<boolean>();
+  public setIsPip(isPip: boolean) {
+    // Vimeo pip requests must originate from a user gesture.
+    // Hence why we can't make it a bindable property.
+    // Sadly, even with this approach, the browser seems to think the event wasn't user initiated when the iframe isn't focused.
+    this.playerInfo?.adapter?.setPip(isPip);
   }
   //#endregion
   @Input() public autoplay = true;
@@ -330,7 +299,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private muteObserver$ = new Subject<boolean>();
   private currentTimeObserver$ = new Subject<PlayerProgress>();
   private playerStateObserver$ = new Subject<EPlayerState>();
-
+  private pipObserver$ = new Subject<boolean>();
+  private fullscreenObserver$ = new Subject<boolean>();
+  
 
   private playerInfo: { platformId: string, videoId: string, adapter: PlayerAdapter } | null = null;
   private hasJustLoaded = false;
