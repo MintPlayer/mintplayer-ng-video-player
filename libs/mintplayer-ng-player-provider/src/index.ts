@@ -29,6 +29,8 @@ export interface PlayerOptions {
     onMuteChange: (ev: boolean) => void;
     onVolumeChange: (volume: number) => void;
     onProgressChange: (progress: PlayerProgress) => void;
+    onFullscreenChange: (isFullscreen: boolean) => void;
+    onPipChange: (isPip: boolean) => void;
 }
 
 export interface PlayerAdapter {
@@ -40,6 +42,10 @@ export interface PlayerAdapter {
     setProgress: (time: number) => void;
     setSize: (width: number, height: number) => void;
     getTitle: () => Promise<string>;
+    setPip: (isPip: boolean) => void;
+    getPip: () => Promise<boolean>;
+    setFullscreen: (isFullscreen: boolean) => void;
+    getFullscreen: () => Promise<boolean>;
     destroy: () => void;
 }
 

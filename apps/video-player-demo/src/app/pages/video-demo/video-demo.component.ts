@@ -24,6 +24,7 @@ export class VideoDemoComponent {
   volume = 0;
   isMuted = false;
   isPip = false;
+  isFullscreen = false;
   progress: PlayerProgress = {
     currentTime: 0,
     duration: 0
@@ -68,17 +69,6 @@ export class VideoDemoComponent {
   setSize() {
     this.width = 100;
     this.height = 75;
-  }
-
-  setMuted(event: Event) {
-    this.isMuted = (<HTMLInputElement>event.target).checked;
-  }
-
-  async requestPip() {
-    await this.player1.setIsPip(true);
-  }
-  async exitPip() {
-    await this.player1.setIsPip(false);
   }
 
   play() {

@@ -16,7 +16,7 @@
                     <div class="d-block text-center">
                         <video-player [width]="width" [height]="height" [autoplay]="true"
                             (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
-                            (playerStateChange)="onPlayerStateChange($event)" (isPipChange)="isPip = $event" #player1></video-player>
+                            (playerStateChange)="onPlayerStateChange($event)" [(isPip)]="isPip" [(isFullscreen)]="isFullscreen" #player1></video-player>
                     </div>
                     <div bsRow>
                         <div [bsColumn]="{'md': 6}" class="text-center">
@@ -42,12 +42,22 @@
                             </bs-toggle-button>
                         </div>
                     </div>
+                    <div bsRow>
+                        <div [bsColumn]="{'md': 6}" class="text-center">
+                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isPip" class="d-inline-block py-3">
+                                PiP
+                            </bs-toggle-button>
+                        </div>
+                        <div [bsColumn]="{'md': 6}" class="text-center">
+                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isFullscreen" class="d-inline-block py-3">
+                                Fullscreen
+                            </bs-toggle-button>
+                        </div>
+                    </div>
                     <div class="d-block text-center">
                         <bs-button-group>
                             <button (click)="getTitle()" [color]="colors.secondary">Get Title</button>
                             <button (click)="setSize()" [color]="colors.secondary">Set size</button>
-                            <button (click)="requestPip()" [color]="colors.secondary" *ngIf="!isPip">Enter PiP</button>
-                            <button (click)="exitPip()" [color]="colors.secondary" *ngIf="isPip">Leave PiP</button>
                         </bs-button-group>
                     </div>
                 </div>

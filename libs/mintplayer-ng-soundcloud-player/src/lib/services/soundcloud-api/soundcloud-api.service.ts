@@ -125,6 +125,20 @@ export class SoundcloudApiService implements IApiService {
         }
       },
       getTitle: () => new Promise<string>((resolve) => player.getCurrentSound((sound: {description: string, title: string}) => resolve(sound.description ?? sound.title))),
+      setFullscreen: (isFullscreen) => {
+        if (isFullscreen) {
+          console.warn('SoundCloud player doesn\'t support fullscreen mode');
+          setTimeout(() => options.onFullscreenChange(false), 50);
+        }
+      },
+      getFullscreen: () => new Promise(resolve => resolve(false)),
+      setPip: (isPip) => {
+        if (isPip) {
+          console.warn('SoundCloud player doesn\'t support PIP mode');
+          setTimeout(() => options.onPipChange(false), 50);
+        }
+      },
+      getPip: () => new Promise(resolve => resolve(false)),
       destroy: () => destroyRef.next(true),
     };
   }
