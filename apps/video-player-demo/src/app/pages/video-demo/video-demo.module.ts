@@ -9,7 +9,6 @@ import { BsInputGroupModule } from '@mintplayer/ng-bootstrap/input-group';
 import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
 import { BsButtonGroupModule } from '@mintplayer/ng-bootstrap/button-group';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
-import { VideoPlayerModule } from '@mintplayer/ng-video-player';
 
 import { VideoDemoRoutingModule } from './video-demo-routing.module';
 import { VideoDemoComponent } from './video-demo.component';
@@ -35,7 +34,6 @@ import { SoundcloudPlayerModule } from '@mintplayer/ng-soundcloud-player';
     BsButtonTypeModule,
     BsButtonGroupModule,
     BsToggleButtonModule,
-    VideoPlayerModule,
     YoutubePlayerModule,
     DailymotionPlayerModule,
     VimeoPlayerModule,
