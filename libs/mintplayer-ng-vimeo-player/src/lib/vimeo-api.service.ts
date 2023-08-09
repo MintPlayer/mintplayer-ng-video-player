@@ -99,6 +99,7 @@ export class VimeoApiService implements IApiService {
             player.getMuted().then((currentMute) => options.onMuteChange(currentMute));
           });
         player.getVolume().then((vol) => options.onVolumeChange(vol * 100));
+        player.getDuration().then((duration) => options.onDurationChange(duration));
       }
     });
     player.on('play', () => options.onStateChange(EPlayerState.playing));
@@ -106,9 +107,7 @@ export class VimeoApiService implements IApiService {
     player.on('ended', () => options.onStateChange(EPlayerState.ended));
     player.on('volumechange', (ev) => options.onVolumeChange(ev.volume * 100));
     player.on('timeupdate', (ev) => {
-      player.getDuration().then((duration) => {
-        options.onProgressChange({ currentTime: ev.seconds, duration });
-      });
+      options.onCurrentTimeChange(ev.seconds);
     });
     player.on('enterpictureinpicture', (event) => {
       options.onPipChange(true);

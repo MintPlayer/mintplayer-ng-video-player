@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, Output, PLATFORM_ID, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, take } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/operators';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { EPlayerState, IApiService, PlayerAdapter, VIDEO_APIS } from '@mintplayer/ng-player-provider';
 import { VideoRequest } from '../../interfaces/video-request';
@@ -115,7 +115,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 onStateChange: (state) => this.playerStateObserver$.next(state),
                 onMuteChange: (mute) => this.muteObserver$.next(mute),
                 onVolumeChange: (volume) => this.volumeObserver$.next(volume),
-                onProgressChange: (progress) => this.currentTimeObserver$.next(progress),
+                onCurrentTimeChange: (progress) => this.currentTimeObserver$.next(progress),
+                onDurationChange: (duration) => this.durationObserver$.next(duration),
                 onPipChange: (isPip) => this.pipObserver$.next(isPip),
                 onFullscreenChange: (isFullscreen) => this.fullscreenObserver$.next(isFullscreen),
               }, destroy)
@@ -174,11 +175,13 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     //   .subscribe(([currentTime, duration]) => {
     //     this.zone.run(() => this.progressChange.emit({ currentTime, duration }));
     //   });
-    this.currentTimeObserver$
+
+    this.progressObserver$ = combineLatest([this.currentTimeObserver$, this.durationObserver$])
       .pipe(takeUntilDestroyed())
-      .subscribe((progress) => {
-        this.zone.run(() => this.progressChange.emit(progress));
-      });
+      .pipe(map(([currentTime, duration]) => <PlayerProgress>{ currentTime, duration }));
+      
+    this.progressObserver$.pipe(takeUntilDestroyed())
+      .subscribe((progress) => this.zone.run(() => this.progressChange.emit(progress)));
   }
 
   //#region width
@@ -297,7 +300,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private isSwitchingVideo$ = new BehaviorSubject<boolean>(false);
   private volumeObserver$ = new Subject<number>();
   private muteObserver$ = new Subject<boolean>();
-  private currentTimeObserver$ = new Subject<PlayerProgress>();
+  private currentTimeObserver$ = new Subject<number>();
+  private durationObserver$ = new Subject<number>();
+  private progressObserver$: Observable<PlayerProgress>;
   private playerStateObserver$ = new Subject<EPlayerState>();
   private pipObserver$ = new Subject<boolean>();
   private fullscreenObserver$ = new Subject<boolean>();

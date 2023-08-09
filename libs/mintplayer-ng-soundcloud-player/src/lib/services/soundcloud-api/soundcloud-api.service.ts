@@ -88,13 +88,14 @@ export class SoundcloudApiService implements IApiService {
           });
       }
     });
-    player.bind(SC.Widget.Events.PLAY, () => options.onStateChange(EPlayerState.playing));
+    player.bind(SC.Widget.Events.PLAY, () => {
+      options.onStateChange(EPlayerState.playing);
+      player.getDuration((duration) => options.onDurationChange(duration / 1000));
+    });
     player.bind(SC.Widget.Events.PAUSE, () => options.onStateChange(EPlayerState.paused));
     player.bind(SC.Widget.Events.FINISH, () => options.onStateChange(EPlayerState.ended));
     player.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => {
-      player.getDuration((duration) => {
-        options.onProgressChange({ currentTime: event.currentPosition / 1000, duration: duration / 1000 });
-      });
+      options.onCurrentTimeChange(event.currentPosition / 1000);
     });
 
     return {

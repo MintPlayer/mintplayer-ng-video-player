@@ -88,11 +88,14 @@ export class DailymotionApiService implements IApiService {
               .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
               .subscribe((time) => {
                 options.onMuteChange(player.muted);
-                options.onProgressChange({ currentTime: player.currentTime, duration: player.duration });
+                options.onCurrentTimeChange(player.currentTime);
               });
           }
         },
-        play: () => options.onStateChange(EPlayerState.playing),
+        play: () => {
+          options.onStateChange(EPlayerState.playing);
+          options.onDurationChange(player.duration);
+        },
         pause: () => options.onStateChange(EPlayerState.paused),
         end: () => options.onStateChange(EPlayerState.ended),
       }

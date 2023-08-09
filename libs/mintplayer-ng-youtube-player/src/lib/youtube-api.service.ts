@@ -30,6 +30,7 @@ export class YoutubeApiService implements IApiService {
     new RegExp(/http[s]{0,1}:\/\/m\.youtube\.com\/watch\?v=(?<id>[^&]+)/, 'g'),
     new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/shorts\/(?<id>[^&?]+)/, 'g'),
     new RegExp(/http[s]{0,1}:\/\/m\.youtube\.com\/shorts\/(?<id>[^&?]+)/, 'g'),
+    new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/live\/(?<id>[^&?]+)/, 'g'),
   ];
 
   public apiReady$ = new BehaviorSubject<boolean>(
@@ -96,8 +97,7 @@ export class YoutubeApiService implements IApiService {
               .subscribe((time) => {
                 // Progress
                 const currentTime = player.getCurrentTime();
-                const duration = player.getDuration();
-                options.onProgressChange({ currentTime, duration });
+                options.onCurrentTimeChange(currentTime);
               });
             timer(0, 50)
               .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
@@ -115,6 +115,7 @@ export class YoutubeApiService implements IApiService {
         onStateChange: (ev: YT.OnStateChangeEvent) => {
           switch (ev.data) {
             case YT.PlayerState.PLAYING:
+              options.onDurationChange(player.getDuration());
               return options.onStateChange(EPlayerState.playing);
             case YT.PlayerState.PAUSED:
               return options.onStateChange(EPlayerState.paused);
