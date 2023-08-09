@@ -1,6 +1,6 @@
 import { DestroyRef, InjectionToken } from "@angular/core";
 import { BehaviorSubject } from 'rxjs';
-import { PlayerProgress } from '@mintplayer/ng-player-progress';
+// import { PlayerProgress } from '@mintplayer/ng-player-progress';
 
 export const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis');
 
@@ -28,7 +28,8 @@ export interface PlayerOptions {
     onStateChange: (ev: EPlayerState) => void;
     onMuteChange: (ev: boolean) => void;
     onVolumeChange: (volume: number) => void;
-    onProgressChange: (progress: PlayerProgress) => void;
+    onCurrentTimeChange: (currentTime: number) => void;
+    onDurationChange: (duration: number) => void;
     onFullscreenChange: (isFullscreen: boolean) => void;
     onPipChange: (isPip: boolean) => void;
 }
