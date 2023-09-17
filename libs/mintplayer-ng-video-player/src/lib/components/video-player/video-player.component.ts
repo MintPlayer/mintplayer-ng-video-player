@@ -14,7 +14,7 @@ import { VideoRequest } from '../../interfaces/video-request';
 export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   constructor(
     @Inject(VIDEO_APIS) private apis: IApiService[],
-    @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject(PLATFORM_ID) private platformId: object,
     private zone: NgZone,
     private destroy: DestroyRef,
   ) {
@@ -80,7 +80,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     const setHtml = (request: VideoRequest | null) => {
       if (request) {
         this.domId = `player${VideoPlayerComponent.playerCounter++}`;
-        this.container.nativeElement.innerHTML = request.api.prepareHtml(this.domId, this._width, this._height);
+        const html = request.api.prepareHtml(this.domId, this._width, this._height);
+        this.container.nativeElement.innerHTML = html;
       } else {
         this.container.nativeElement.innerHTML = '';
       }
@@ -98,30 +99,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           } else {
             this.playerInfo?.adapter?.destroy();
             setHtml(currentVideoRequest);
-            // this.playerInfo = {
-            //   platformId: currentVideoRequest.api.id,
-            //   videoId: currentVideoRequest.id,
-            //   adapter: currentVideoRequest.api.createPlayer({
-            //     width: this.width,
-            //     height: this.height,
-            //     autoplay: this.autoplay,
-            //     domId: this.domId,
-            //     element: this.container.nativeElement,
-            //     initialVideoId: currentVideoRequest.id,
-            //     onReady: () => {
-            //       this.isPlayerReady$.next(true);
-            //       this.isSwitchingVideo$.next(false);
-            //     },
-            //     onStateChange: (state) => this.playerStateObserver$.next(state),
-            //     onMuteChange: (mute) => this.muteObserver$.next(mute),
-            //     onVolumeChange: (volume) => this.volumeObserver$.next(volume),
-            //     onCurrentTimeChange: (progress) => this.currentTimeObserver$.next(progress),
-            //     onDurationChange: (duration) => this.durationObserver$.next(duration),
-            //     onPipChange: (isPip) => this.pipObserver$.next(isPip),
-            //     onFullscreenChange: (isFullscreen) => this.fullscreenObserver$.next(isFullscreen),
-            //   }, destroy)
-            // };
-
+            // TODO: [playerReady$, playerInfo$] => playVideo
+            // Removes .then clause which would cause a race-condition
             setTimeout(() => {
               currentVideoRequest.api.createPlayer({
                 width: this.width,
@@ -131,7 +110,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 element: this.container.nativeElement,
                 initialVideoId: currentVideoRequest.id,
                 onReady: () => {
-                  console.log('player ready');
                   this.isPlayerReady$.next(true);
                   this.isSwitchingVideo$.next(false);
                 },
@@ -143,7 +121,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 onPipChange: (isPip) => this.pipObserver$.next(isPip),
                 onFullscreenChange: (isFullscreen) => this.fullscreenObserver$.next(isFullscreen),
               }, destroy).then(adapter => {
-                console.log('adapter ready', adapter);
                 this.playerInfo = {
                   platformId: currentVideoRequest.api.id,
                   videoId: currentVideoRequest.id,

@@ -73,6 +73,10 @@ export class SpotifyApiService implements IApiService {
         return reject('The Spotify api requires the options.element to be set');
       }
 
+      // if (!options.domId) {
+      //   return reject('The Spotify api requires the options.domId to be set');
+      // }
+
       if (!this.api) {
         return reject('The Spotify api should have been set here');
       }
@@ -81,7 +85,10 @@ export class SpotifyApiService implements IApiService {
         return reject('The Spotify api requires an initial video');
       }
 
-      this.api.createController(options.element, { uri: options.initialVideoId, width: options.width, height: options.height }, (controller) => {
+      // Note: options.element is actually wrong
+      // console.log('options.element', options.element);
+
+      this.api.createController(<HTMLElement>options.element.querySelector('div'), { uri: options.initialVideoId, width: options.width, height: options.height }, (controller) => {
         controller.addListener('ready', () => {
           console.log('controller ready', controller);
           const destroyRef = new Subject();

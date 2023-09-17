@@ -9,7 +9,7 @@ import { BehaviorSubject, timer, takeUntil, Subject } from 'rxjs';
 })
 export class DailymotionApiService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: any, rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
+  constructor(@Inject(PLATFORM_ID) private platformId: object, rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
     this.document = doc;
     this.renderer = rendererFactory.createRenderer(null, null);
   }
