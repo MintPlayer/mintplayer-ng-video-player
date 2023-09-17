@@ -19,7 +19,7 @@ export class VideoDemoComponent {
   colors = Color;
   playerStates = EPlayerState;
   playerState!: EPlayerState;
-  width = 400;
+  width = 500;
   height = 300;
   volume = 0;
   isMuted = false;
@@ -42,6 +42,7 @@ export class VideoDemoComponent {
     'https://vimeo.com/82932655',
     'https://soundcloud.com/dario-g/sunchyme-radio-edit',
     'https://soundcloud.com/oasisofficial/whatever',
+    'spotify:episode:7makk4oTQel546B0PZlDM5',
   ];
 
   addToPlaylist() {

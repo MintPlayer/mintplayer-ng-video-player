@@ -1,7 +1,7 @@
 {
   "name": "@mintplayer/ng-youtube-player",
   "private": false,
-  "version": "16.2.1",
+  "version": "16.3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
@@ -10,8 +10,7 @@
   "peerDependencies": {
     "@angular/common": "^16.0.0",
     "@angular/core": "^16.0.0",
-    "@mintplayer/ng-video-player": "^16.2.0",
-    "@mintplayer/ng-player-provider": "^16.2.0",
+    "@mintplayer/ng-video-player": "^16.3.0",
     "rxjs": "^7.4.0"
   },
   "dependencies": {
@@ -19,5 +18,6 @@
   },
   "devDependencies": {
     "@types/youtube": "^0.0.46"
-  }
+  },
+  "sideEffects": false
 }

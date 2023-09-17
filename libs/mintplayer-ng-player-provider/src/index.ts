@@ -10,7 +10,7 @@ export interface IApiService {
     loadApi(): void;
     apiReady$: BehaviorSubject<boolean>;
     prepareHtml(domId: string, width: number, height: number): string;
-    createPlayer(options: PlayerOptions, destroy: DestroyRef): PlayerAdapter;
+    createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter>;
 }
 
 export interface PlayerOptions {

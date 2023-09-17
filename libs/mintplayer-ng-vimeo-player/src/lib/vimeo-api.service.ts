@@ -69,117 +69,111 @@ export class VimeoApiService implements IApiService {
     return `<div id="${domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef) {
-    if (!options.domId) {
-      throw 'The Vimeo api requires the options.domId to be set';
-    }
-
-    if (!options.initialVideoId) {
-      throw 'Vimeo requires an initial video';
-    }
-
-    const destroyRef = new Subject();
-    const player = new Vimeo.Player(options.domId, {
-      id: options.initialVideoId,
-      width: options.width,
-      height: options.height,
-      autoplay: options.autoplay,
-      pip: true,
-    });
-
-    player.ready().then(() => options.onReady());
-    player.on('loaded', () => {
-      options.onStateChange(EPlayerState.unstarted);
-      if (!isPlatformServer(this.platformId)) {
-        setTimeout(() => options.autoplay && player.play(), 600);
-        timer(0, 50)
-          .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-          .subscribe((time) => {
-            // Mute
-            player.getMuted().then((currentMute) => options.onMuteChange(currentMute));
-          });
-        player.getVolume().then((vol) => options.onVolumeChange(vol * 100));
-        player.getDuration().then((duration) => options.onDurationChange(duration));
+  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+    return new Promise((resolve, reject) => {
+      if (!options.domId) {
+        return reject('The Vimeo api requires the options.domId to be set');
       }
-    });
-    player.on('play', () => options.onStateChange(EPlayerState.playing));
-    player.on('pause', () => options.onStateChange(EPlayerState.paused));
-    player.on('ended', () => options.onStateChange(EPlayerState.ended));
-    player.on('volumechange', (ev) => options.onVolumeChange(ev.volume * 100));
-    player.on('timeupdate', (ev) => {
-      options.onCurrentTimeChange(ev.seconds);
-    });
-    player.on('enterpictureinpicture', (event) => {
-      options.onPipChange(true);
-    });
-    player.on('leavepictureinpicture', (event) => {
-      options.onPipChange(false);
-    });
-    player.on('fullscreenchange', (ev: { fullscreen: boolean }) => {
-      options.onFullscreenChange(ev.fullscreen)
-    });
 
-    return <PlayerAdapter>{
-      loadVideoById: (id: string) => player.loadVideo(id),
-      setPlayerState: (state: EPlayerState) => {
-        switch (state) {
-          case EPlayerState.playing:
-            player.play();
-            break;
-          case EPlayerState.paused:
-            player.pause();
-            break;
-          case EPlayerState.ended:
-          case EPlayerState.unstarted:
-            break;
-        }
-      },
-      setVolume: (volume) => player.setVolume(volume / 100),
-      setMute: (mute) => player.setMuted(mute),
-      setProgress: (time) => player.setCurrentTime(time),
-      setSize: (width, height) => {
-        if (options.element) {
-          const iframe = options.element.querySelector<HTMLIFrameElement>('div iframe');
-          if (iframe) {
-            iframe.width = String(width);
-            iframe.height = String(height);
-          }
-        }
-      },
-      getTitle: () => player.getVideoTitle(),
-      setFullscreen: (isFullscreen) => {
-        if (isFullscreen) {
-          player.requestFullscreen();
-        } else {
-          player.exitFullscreen();
-        }
-      },
-      getFullscreen: () => player.getFullscreen(),
-      setPip: (isPip) => {
-        if (isPip) {
-          // const iframe = options.element?.querySelector<HTMLIFrameElement>('div iframe');
-          // iframe?.click();
+      if (!options.initialVideoId) {
+        return reject('Vimeo requires an initial video');
+      }
 
-          // Below promise doesn't resolve nor reject
-          player.requestPictureInPicture();
-          setTimeout(() => {
-            player.getPictureInPicture().then((current) => {
-              if (current !== isPip) {
-                console.warn('To enable pip from outside its iframe, you need to first focus the player, then call setPip');
-                options.onPipChange(current);
-              }
+      const destroyRef = new Subject();
+      const player = new Vimeo.Player(options.domId, {
+        id: options.initialVideoId,
+        width: options.width,
+        height: options.height,
+        autoplay: options.autoplay,
+        pip: true,
+      });
+
+      player.ready().then(() => options.onReady());
+      player.on('loaded', () => {
+        options.onStateChange(EPlayerState.unstarted);
+        if (!isPlatformServer(this.platformId)) {
+          setTimeout(() => options.autoplay && player.play(), 600);
+          timer(0, 50)
+            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .subscribe((time) => {
+              // Mute
+              player.getMuted().then((currentMute) => options.onMuteChange(currentMute));
             });
-          }, 50);
-        } else {
-          player.exitPictureInPicture();
+          player.getVolume().then((vol) => options.onVolumeChange(vol * 100));
+          player.getDuration().then((duration) => options.onDurationChange(duration));
         }
-      },
-      getPip: () => player.getPictureInPicture(),
-      destroy: () => {
-        destroyRef.next(true);
-        player.destroy();
-      },
-    };
+      });
+      player.on('play', () => options.onStateChange(EPlayerState.playing));
+      player.on('pause', () => options.onStateChange(EPlayerState.paused));
+      player.on('ended', () => options.onStateChange(EPlayerState.ended));
+      player.on('volumechange', (ev) => options.onVolumeChange(ev.volume * 100));
+      player.on('timeupdate', (ev) => options.onCurrentTimeChange(ev.seconds));
+      player.on('enterpictureinpicture', (event) => options.onPipChange(true));
+      player.on('leavepictureinpicture', (event) => options.onPipChange(false));
+      player.on('fullscreenchange', (ev: { fullscreen: boolean }) => options.onFullscreenChange(ev.fullscreen));
+
+      resolve(<PlayerAdapter>{
+        loadVideoById: (id: string) => player.loadVideo(id),
+        setPlayerState: (state: EPlayerState) => {
+          switch (state) {
+            case EPlayerState.playing:
+              player.play();
+              break;
+            case EPlayerState.paused:
+              player.pause();
+              break;
+            case EPlayerState.ended:
+            case EPlayerState.unstarted:
+              break;
+          }
+        },
+        setVolume: (volume) => player.setVolume(volume / 100),
+        setMute: (mute) => player.setMuted(mute),
+        setProgress: (time) => player.setCurrentTime(time),
+        setSize: (width, height) => {
+          if (options.element) {
+            const iframe = options.element.querySelector<HTMLIFrameElement>('div iframe');
+            if (iframe) {
+              iframe.width = String(width);
+              iframe.height = String(height);
+            }
+          }
+        },
+        getTitle: () => player.getVideoTitle(),
+        setFullscreen: (isFullscreen) => {
+          if (isFullscreen) {
+            player.requestFullscreen();
+          } else {
+            player.exitFullscreen();
+          }
+        },
+        getFullscreen: () => player.getFullscreen(),
+        setPip: (isPip) => {
+          if (isPip) {
+            // const iframe = options.element?.querySelector<HTMLIFrameElement>('div iframe');
+            // iframe?.click();
+
+            // Below promise doesn't resolve nor reject
+            player.requestPictureInPicture();
+            setTimeout(() => {
+              player.getPictureInPicture().then((current) => {
+                if (current !== isPip) {
+                  console.warn('To enable pip from outside its iframe, you need to first focus the player, then call setPip');
+                  options.onPipChange(current);
+                }
+              });
+            }, 50);
+          } else {
+            player.exitPictureInPicture();
+          }
+        },
+        getPip: () => player.getPictureInPicture(),
+        destroy: () => {
+          destroyRef.next(true);
+          player.destroy();
+        },
+      });
+    });
   }
 
 }

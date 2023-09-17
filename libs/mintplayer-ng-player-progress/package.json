@@ -1,7 +1,7 @@
 {
   "name": "@mintplayer/ng-player-progress",
   "private": false,
-  "version": "16.2.1",
+  "version": "16.3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
@@ -13,5 +13,6 @@
   },
   "dependencies": {
     "tslib": "^2.3.0"
-  }
+  },
+  "sideEffects": false
 }

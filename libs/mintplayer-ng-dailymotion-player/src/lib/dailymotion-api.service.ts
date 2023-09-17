@@ -67,91 +67,93 @@ export class DailymotionApiService implements IApiService {
     return `<div id="${domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef): PlayerAdapter {
-    if (!options.element) {
-      throw 'The DailyMotion api requires the options.element to be set';
-    }
+  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+    return new Promise((resolve, reject) => {
+      if (!options.element) {
+        return reject('The DailyMotion api requires the options.element to be set');
+      }
 
-    const destroyRef = new Subject();
-    const player = DM.player(options.element.getElementsByTagName('div')[0], {
-      width: String(options.width),
-      height: String(options.height),
-      params: {
-        autoplay: options.autoplay,
-        "queue-enable": false,
-      },
-      events: {
-        apiready: () => {
-          options.onReady();
-          if (!isPlatformServer(this.platformId)) {
-            timer(0, 50)
-              .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-              .subscribe((time) => {
-                options.onMuteChange(player.muted);
-                options.onCurrentTimeChange(player.currentTime);
-              });
+      const destroyRef = new Subject();
+      const player = DM.player(options.element.getElementsByTagName('div')[0], {
+        width: String(options.width),
+        height: String(options.height),
+        params: {
+          autoplay: options.autoplay,
+          "queue-enable": false,
+        },
+        events: {
+          apiready: () => {
+            options.onReady();
+            if (!isPlatformServer(this.platformId)) {
+              timer(0, 50)
+                .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                .subscribe((time) => {
+                  options.onMuteChange(player.muted);
+                  options.onCurrentTimeChange(player.currentTime);
+                });
+            }
+          },
+          play: () => {
+            options.onStateChange(EPlayerState.playing);
+            options.onDurationChange(player.duration);
+          },
+          pause: () => options.onStateChange(EPlayerState.paused),
+          end: () => options.onStateChange(EPlayerState.ended),
+        }
+      });
+
+      player.onvolumechange = () => {
+        if (player) {
+          options.onVolumeChange(player.volume * 100);
+        }
+      }
+
+      console.log('DM player', player);
+
+      resolve({
+        loadVideoById: (id: string) => player.load({video: id}),
+        setPlayerState: (state: EPlayerState) => {
+          switch (state) {
+            case EPlayerState.playing:
+              player.play();
+              break;
+            case EPlayerState.paused:
+              player.pause();
+              break;
+            case EPlayerState.ended:
+            case EPlayerState.unstarted:
+              break;
           }
         },
-        play: () => {
-          options.onStateChange(EPlayerState.playing);
-          options.onDurationChange(player.duration);
+        setMute: (mute) => player.setMuted(mute),
+        setVolume: (volume) => player.setVolume(volume / 100),
+        setProgress: (time) => player.seek(time),
+        setSize: (width, height) => {
+          player.width = width;
+          player.height = height;
         },
-        pause: () => options.onStateChange(EPlayerState.paused),
-        end: () => options.onStateChange(EPlayerState.ended),
-      }
-    });
-
-    player.onvolumechange = () => {
-      if (player) {
-        options.onVolumeChange(player.volume * 100);
-      }
-    }
-
-    console.log('DM player', player);
-
-    return {
-      loadVideoById: (id: string) => player.load({video: id}),
-      setPlayerState: (state: EPlayerState) => {
-        switch (state) {
-          case EPlayerState.playing:
-            player.play();
-            break;
-          case EPlayerState.paused:
-            player.pause();
-            break;
-          case EPlayerState.ended:
-          case EPlayerState.unstarted:
-            break;
-        }
-      },
-      setMute: (mute) => player.setMuted(mute),
-      setVolume: (volume) => player.setVolume(volume / 100),
-      setProgress: (time) => player.seek(time),
-      setSize: (width, height) => {
-        player.width = width;
-        player.height = height;
-      },
-      getTitle: () => new Promise((resolve) => {
-        resolve(player.video.title.replace(new RegExp('\\+', 'g'), ' '));
-      }),
-      setFullscreen: (isFullscreen) => {
-        if (isFullscreen) {
+        getTitle: () => new Promise((resolve) => {
+          resolve(player.video.title.replace(new RegExp('\\+', 'g'), ' '));
+        }),
+        setFullscreen: (isFullscreen) => {
+          if (isFullscreen) {
+            console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
+            setTimeout(() => options.onFullscreenChange(false), 50);
+          }
+        },
+        getFullscreen: () => new Promise(resolve => {
           console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
-          setTimeout(() => options.onFullscreenChange(false), 50);
-        }
-      },
-      getFullscreen: () => new Promise(resolve => {
-        console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
-        resolve(false);
-      }),
-      setPip: (isPip) => {
-        if (isPip) {
-          console.warn('DailyMotion player doesn\'t support PIP mode');
-          setTimeout(() => options.onPipChange(false), 50);
-        }
-      },
-      getPip: () => new Promise(resolve => resolve(false)),
-      destroy: () => destroyRef.next(true),
-    };
+          resolve(false);
+        }),
+        setPip: (isPip) => {
+          if (isPip) {
+            console.warn('DailyMotion player doesn\'t support PIP mode');
+            setTimeout(() => options.onPipChange(false), 50);
+          }
+        },
+        getPip: () => new Promise(resolve => resolve(false)),
+        destroy: () => destroyRef.next(true),
+      });
+    });
   }
 }
