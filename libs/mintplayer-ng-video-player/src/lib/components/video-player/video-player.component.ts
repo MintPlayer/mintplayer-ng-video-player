@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/operators';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
-import { EPlayerState, IApiService, PlayerAdapter, VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, VIDEO_APIS } from '@mintplayer/ng-player-provider';
 import { VideoRequest } from '../../interfaces/video-request';
 
 @Component({
@@ -126,6 +126,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                   videoId: currentVideoRequest.id,
                   adapter: adapter,
                 };
+
+                this.capabilitiesChange.emit(adapter.capabilities);
               });
 
 
@@ -296,6 +298,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
   }
   //#endregion
+
+  @Output() capabilitiesChange = new EventEmitter<ECapability[]>();
+
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
 
   private static playerCounter = 1;

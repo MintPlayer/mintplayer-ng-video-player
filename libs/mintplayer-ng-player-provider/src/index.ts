@@ -48,6 +48,8 @@ export interface PlayerAdapter {
     setFullscreen: (isFullscreen: boolean) => void;
     getFullscreen: () => Promise<boolean>;
     destroy: () => void;
+
+    get capabilities(): ECapability[];
 }
 
 export enum EPlayerState {
@@ -55,4 +57,12 @@ export enum EPlayerState {
     playing = 2,
     paused = 3,
     ended = 4,
+}
+
+export enum ECapability {
+    fullscreen,
+    pictureInPicture,
+    volume,
+    mute,
+    getTitle,
 }

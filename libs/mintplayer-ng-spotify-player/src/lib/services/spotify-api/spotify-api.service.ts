@@ -26,7 +26,7 @@ export class SpotifyApiService implements IApiService {
 
   public urlRegexes = [
     new RegExp(/http[s]{0,1}:\/\/open\.spotify\.com\/track\/(?<id>[^&/]+)/, 'g'),
-    new RegExp(/(?<id>spotify:episode:[0-9A-Za-z]+)/, 'g'),
+    new RegExp(/spotify:episode:(?<id>[0-9A-Za-z]+)/, 'g'),
   ];
 
   public apiReady$ = new BehaviorSubject<boolean>(false);
@@ -73,10 +73,6 @@ export class SpotifyApiService implements IApiService {
         return reject('The Spotify api requires the options.element to be set');
       }
 
-      // if (!options.domId) {
-      //   return reject('The Spotify api requires the options.domId to be set');
-      // }
-
       if (!this.api) {
         return reject('The Spotify api should have been set here');
       }
@@ -88,20 +84,20 @@ export class SpotifyApiService implements IApiService {
       // Note: options.element is actually wrong
       // console.log('options.element', options.element);
 
-      this.api.createController(<HTMLElement>options.element.querySelector('div'), { uri: options.initialVideoId, width: options.width, height: options.height }, (controller) => {
+      this.api.createController(<HTMLElement>options.element.querySelector('div'), { uri: `spotify:episode:${options.initialVideoId}`, width: options.width, height: options.height }, (controller) => {
         controller.addListener('ready', () => {
           console.log('controller ready', controller);
           const destroyRef = new Subject();
 
-          // console.log('controller', controller);
-          if (options.autoplay) {
-            controller.play();
-          }
-  
           // Perhaps we can simply resolve after the onready was triggered, and remove it from our api
           options.onReady();
   
+          if (options.autoplay) {
+            setTimeout(() => controller.play(), 50);
+          }
+  
           resolve(<PlayerAdapter>{
+            capabilities: [],
             loadVideoById: (id) => {
               controller.loadUri(`spotify:episode:${id}`);
             },
@@ -128,7 +124,9 @@ export class SpotifyApiService implements IApiService {
             setProgress: (time) => controller.seek(time),
             setSize: (width, height) => controller.setIframeDimensions(width, height),
             getTitle: () => new Promise((resolve, reject) => reject('Spotify api doesn\'t allow getting the title')),
-            setFullscreen: (isFullscreen) => {},
+            setFullscreen: (isFullscreen) => {
+              throw 'Spotify doesn\'t allow fullscreen';
+            },
             getFullscreen: () => new Promise((resolve) => resolve(false)),
             setPip: (isPip) => {},
             getPip: () => new Promise(resolve => resolve(false)),

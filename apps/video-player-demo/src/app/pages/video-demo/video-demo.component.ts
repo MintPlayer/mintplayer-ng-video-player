@@ -1,8 +1,9 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { EPlayerState, IApiService, VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, VIDEO_APIS } from '@mintplayer/ng-player-provider';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 
 @Component({
   selector: 'mintplayer-ng-video-player-video-demo',
@@ -13,6 +14,11 @@ export class VideoDemoComponent {
 
   constructor(@Inject(VIDEO_APIS) players: IApiService[]) {
     console.log('VIDEO_APIS', players);
+    this.cannotFullscreen$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.fullscreen)));
+    this.cannotPip$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.pictureInPicture)));
+    this.cannotChangeVolume$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.volume)));
+    this.cannotMute$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.mute)));
+    this.cannotGetTitle$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.getTitle)));
   }
 
   title = 'video-player-demo';
@@ -89,5 +95,15 @@ export class VideoDemoComponent {
     if (event === EPlayerState.ended) {
       this.player1.setUrl(null);
     }
+  }
+
+  capabilities$ = new BehaviorSubject<ECapability[]>([]);
+  cannotFullscreen$: Observable<boolean>;
+  cannotPip$: Observable<boolean>;
+  cannotChangeVolume$: Observable<boolean>;
+  cannotMute$: Observable<boolean>;
+  cannotGetTitle$: Observable<boolean>;
+  onCapabilitiesChange(capabilities: ECapability[]) {
+    this.capabilities$.next(capabilities);
   }
 }

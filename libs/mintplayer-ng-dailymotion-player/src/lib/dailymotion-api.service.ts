@@ -1,7 +1,7 @@
 import { DOCUMENT, isPlatformServer } from '@angular/common';
 import { Injectable, DestroyRef, Inject, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, timer, takeUntil, Subject } from 'rxjs';
 
 @Injectable({
@@ -111,6 +111,7 @@ export class DailymotionApiService implements IApiService {
       console.log('DM player', player);
 
       resolve({
+        capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
         loadVideoById: (id: string) => player.load({video: id}),
         setPlayerState: (state: EPlayerState) => {
           switch (state) {

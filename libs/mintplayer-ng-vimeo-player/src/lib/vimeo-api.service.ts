@@ -1,7 +1,7 @@
 import { DOCUMENT, isPlatformServer } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 
 @Injectable({
@@ -113,6 +113,7 @@ export class VimeoApiService implements IApiService {
       player.on('fullscreenchange', (ev: { fullscreen: boolean }) => options.onFullscreenChange(ev.fullscreen));
 
       resolve(<PlayerAdapter>{
+        capabilities: [ECapability.fullscreen, ECapability.pictureInPicture, ECapability.volume, ECapability.mute, ECapability.getTitle],
         loadVideoById: (id: string) => player.loadVideo(id),
         setPlayerState: (state: EPlayerState) => {
           switch (state) {

@@ -1,7 +1,7 @@
 import { isPlatformServer, DOCUMENT } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 
 @Injectable({
@@ -133,6 +133,7 @@ export class YoutubeApiService implements IApiService {
       console.log('YT player', player);
 
       resolve({
+        capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
         loadVideoById: (id: string) => player.loadVideoById(id),
         setPlayerState: (state: EPlayerState) => {
           switch (state) {

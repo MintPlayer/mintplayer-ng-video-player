@@ -23,7 +23,7 @@
     "@angular/platform-browser": "~16.0.0",
     "@angular/platform-browser-dynamic": "~16.0.0",
     "@angular/router": "~16.0.0",
-    "@mintplayer/ng-bootstrap": "~16.4.0",
+    "@mintplayer/ng-bootstrap": "~16.11.0",
     "@nrwl/angular": "16.3.2",
     "bootstrap": "~5.3.0",
     "bootstrap-icons": "~1.9.1",
