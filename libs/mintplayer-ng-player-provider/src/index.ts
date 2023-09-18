@@ -10,7 +10,8 @@ export interface IApiService {
     loadApi(): void;
     apiReady$: BehaviorSubject<boolean>;
     prepareHtml(domId: string, width: number, height: number): string;
-    createPlayer(options: PlayerOptions, destroy: DestroyRef): PlayerAdapter;
+    createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter>;
+    match2id?: (match: RegExpExecArray) => string;
 }
 
 export interface PlayerOptions {
@@ -24,7 +25,6 @@ export interface PlayerOptions {
     initialVideoId?: string;
 
     // Events
-    onReady: () => void;
     onStateChange: (ev: EPlayerState) => void;
     onMuteChange: (ev: boolean) => void;
     onVolumeChange: (volume: number) => void;
@@ -48,6 +48,8 @@ export interface PlayerAdapter {
     setFullscreen: (isFullscreen: boolean) => void;
     getFullscreen: () => Promise<boolean>;
     destroy: () => void;
+
+    get capabilities(): ECapability[];
 }
 
 export enum EPlayerState {
@@ -55,4 +57,12 @@ export enum EPlayerState {
     playing = 2,
     paused = 3,
     ended = 4,
+}
+
+export enum ECapability {
+    fullscreen,
+    pictureInPicture,
+    volume,
+    mute,
+    getTitle,
 }

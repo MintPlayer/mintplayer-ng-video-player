@@ -1,8 +1,9 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { EPlayerState, IApiService, VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, VIDEO_APIS } from '@mintplayer/ng-player-provider';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 
 @Component({
   selector: 'mintplayer-ng-video-player-video-demo',
@@ -13,13 +14,18 @@ export class VideoDemoComponent {
 
   constructor(@Inject(VIDEO_APIS) players: IApiService[]) {
     console.log('VIDEO_APIS', players);
+    this.cannotFullscreen$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.fullscreen)));
+    this.cannotPip$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.pictureInPicture)));
+    this.cannotChangeVolume$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.volume)));
+    this.cannotMute$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.mute)));
+    this.cannotGetTitle$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.getTitle)));
   }
 
   title = 'video-player-demo';
   colors = Color;
   playerStates = EPlayerState;
   playerState!: EPlayerState;
-  width = 400;
+  width = 500;
   height = 300;
   volume = 0;
   isMuted = false;
@@ -42,6 +48,8 @@ export class VideoDemoComponent {
     'https://vimeo.com/82932655',
     'https://soundcloud.com/dario-g/sunchyme-radio-edit',
     'https://soundcloud.com/oasisofficial/whatever',
+    'https://open.spotify.com/episode/7makk4oTQel546B0PZlDM5',
+    'spotify:track:0FDzzruyVECATHXKHFs9eJ',
   ];
 
   addToPlaylist() {
@@ -88,5 +96,15 @@ export class VideoDemoComponent {
     if (event === EPlayerState.ended) {
       this.player1.setUrl(null);
     }
+  }
+
+  capabilities$ = new BehaviorSubject<ECapability[]>([]);
+  cannotFullscreen$: Observable<boolean>;
+  cannotPip$: Observable<boolean>;
+  cannotChangeVolume$: Observable<boolean>;
+  cannotMute$: Observable<boolean>;
+  cannotGetTitle$: Observable<boolean>;
+  onCapabilitiesChange(capabilities: ECapability[]) {
+    this.capabilities$.next(capabilities);
   }
 }

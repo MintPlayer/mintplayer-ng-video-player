@@ -10,7 +10,8 @@
       "outputs": ["{workspaceRoot}/dist/libs/mintplayer-ng-dailymotion-player"],
       "options": {
         "project": "libs/mintplayer-ng-dailymotion-player/ng-package.json",
-        "tsConfig": "libs/mintplayer-ng-dailymotion-player/tsconfig.lib.json"
+        "tsConfig": "libs/mintplayer-ng-dailymotion-player/tsconfig.lib.json",
+        "updateBuildableProjectDepsInPackageJson": true
       },
       "configurations": {
         "production": {

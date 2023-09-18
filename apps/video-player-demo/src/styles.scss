@@ -11,5 +11,9 @@ body {
     body { padding: 1rem 5rem; }
 }
 
+a.nav-link {
+    white-space: nowrap;
+}
+
 // This shouldn't be here
-@import "../../../node_modules/bootstrap-icons/font/bootstrap-icons";
+// @import "../../../node_modules/bootstrap-icons/font/bootstrap-icons";

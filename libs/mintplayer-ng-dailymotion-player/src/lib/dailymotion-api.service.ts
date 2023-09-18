@@ -1,7 +1,7 @@
 import { DOCUMENT, isPlatformServer } from '@angular/common';
 import { Injectable, DestroyRef, Inject, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, timer, takeUntil, Subject } from 'rxjs';
 
 @Injectable({
@@ -9,7 +9,7 @@ import { BehaviorSubject, timer, takeUntil, Subject } from 'rxjs';
 })
 export class DailymotionApiService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: any, rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
+  constructor(@Inject(PLATFORM_ID) private platformId: object, rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
     this.document = doc;
     this.renderer = rendererFactory.createRenderer(null, null);
   }
@@ -67,91 +67,92 @@ export class DailymotionApiService implements IApiService {
     return `<div id="${domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef): PlayerAdapter {
-    if (!options.element) {
-      throw 'The DailyMotion api requires the options.element to be set';
-    }
+  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+    return new Promise((resolvePlayer, rejectPlayer) => {
+      if (!options.element) {
+        return rejectPlayer('The DailyMotion api requires the options.element to be set');
+      }
 
-    const destroyRef = new Subject();
-    const player = DM.player(options.element.getElementsByTagName('div')[0], {
-      width: String(options.width),
-      height: String(options.height),
-      params: {
-        autoplay: options.autoplay,
-        "queue-enable": false,
-      },
-      events: {
-        apiready: () => {
-          options.onReady();
-          if (!isPlatformServer(this.platformId)) {
-            timer(0, 50)
-              .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-              .subscribe((time) => {
-                options.onMuteChange(player.muted);
-                options.onCurrentTimeChange(player.currentTime);
-              });
-          }
+      const destroyRef = new Subject();
+      const player = DM.player(options.element.getElementsByTagName('div')[0], {
+        width: String(options.width),
+        height: String(options.height),
+        params: {
+          autoplay: options.autoplay,
+          "queue-enable": false,
         },
-        play: () => {
-          options.onStateChange(EPlayerState.playing);
-          options.onDurationChange(player.duration);
-        },
-        pause: () => options.onStateChange(EPlayerState.paused),
-        end: () => options.onStateChange(EPlayerState.ended),
+        events: {
+          apiready: () => {
+            if (!isPlatformServer(this.platformId)) {
+              timer(0, 50)
+                .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                .subscribe((time) => {
+                  options.onMuteChange(player.muted);
+                  options.onCurrentTimeChange(player.currentTime);
+                });
+            }
+
+
+            resolvePlayer({
+              capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
+              loadVideoById: (id: string) => player.load({video: id}),
+              setPlayerState: (state: EPlayerState) => {
+                switch (state) {
+                  case EPlayerState.playing:
+                    player.play();
+                    break;
+                  case EPlayerState.paused:
+                    player.pause();
+                    break;
+                  case EPlayerState.ended:
+                  case EPlayerState.unstarted:
+                    break;
+                }
+              },
+              setMute: (mute) => player.setMuted(mute),
+              setVolume: (volume) => player.setVolume(volume / 100),
+              setProgress: (time) => player.seek(time),
+              setSize: (width, height) => {
+                player.width = width;
+                player.height = height;
+              },
+              getTitle: () => new Promise((resolve) => {
+                resolve(player.video.title.replace(new RegExp('\\+', 'g'), ' '));
+              }),
+              setFullscreen: (isFullscreen) => {
+                if (isFullscreen) {
+                  console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
+                  setTimeout(() => options.onFullscreenChange(false), 50);
+                }
+              },
+              getFullscreen: () => new Promise(resolve => {
+                console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
+                resolve(false);
+              }),
+              setPip: (isPip) => {
+                if (isPip) {
+                  console.warn('DailyMotion player doesn\'t support PIP mode');
+                  setTimeout(() => options.onPipChange(false), 50);
+                }
+              },
+              getPip: () => new Promise(resolve => resolve(false)),
+              destroy: () => destroyRef.next(true),
+            });
+          },
+          play: () => {
+            options.onStateChange(EPlayerState.playing);
+            options.onDurationChange(player.duration);
+          },
+          pause: () => options.onStateChange(EPlayerState.paused),
+          end: () => options.onStateChange(EPlayerState.ended),
+        }
+      });
+
+      player.onvolumechange = () => {
+        if (player) {
+          options.onVolumeChange(player.volume * 100);
+        }
       }
     });
-
-    player.onvolumechange = () => {
-      if (player) {
-        options.onVolumeChange(player.volume * 100);
-      }
-    }
-
-    console.log('DM player', player);
-
-    return {
-      loadVideoById: (id: string) => player.load({video: id}),
-      setPlayerState: (state: EPlayerState) => {
-        switch (state) {
-          case EPlayerState.playing:
-            player.play();
-            break;
-          case EPlayerState.paused:
-            player.pause();
-            break;
-          case EPlayerState.ended:
-          case EPlayerState.unstarted:
-            break;
-        }
-      },
-      setMute: (mute) => player.setMuted(mute),
-      setVolume: (volume) => player.setVolume(volume / 100),
-      setProgress: (time) => player.seek(time),
-      setSize: (width, height) => {
-        player.width = width;
-        player.height = height;
-      },
-      getTitle: () => new Promise((resolve) => {
-        resolve(player.video.title.replace(new RegExp('\\+', 'g'), ' '));
-      }),
-      setFullscreen: (isFullscreen) => {
-        if (isFullscreen) {
-          console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
-          setTimeout(() => options.onFullscreenChange(false), 50);
-        }
-      },
-      getFullscreen: () => new Promise(resolve => {
-        console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
-        resolve(false);
-      }),
-      setPip: (isPip) => {
-        if (isPip) {
-          console.warn('DailyMotion player doesn\'t support PIP mode');
-          setTimeout(() => options.onPipChange(false), 50);
-        }
-      },
-      getPip: () => new Promise(resolve => resolve(false)),
-      destroy: () => destroyRef.next(true),
-    };
   }
 }

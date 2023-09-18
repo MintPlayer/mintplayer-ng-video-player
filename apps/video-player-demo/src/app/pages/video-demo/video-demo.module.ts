@@ -17,6 +17,7 @@ import { YoutubePlayerModule } from '@mintplayer/ng-youtube-player';
 import { DailymotionPlayerModule } from '@mintplayer/ng-dailymotion-player';
 import { VimeoPlayerModule } from '@mintplayer/ng-vimeo-player';
 import { SoundcloudPlayerModule } from '@mintplayer/ng-soundcloud-player';
+import { SpotifyPlayerModule } from '@mintplayer/ng-spotify-player';
 
 
 @NgModule({
@@ -38,6 +39,7 @@ import { SoundcloudPlayerModule } from '@mintplayer/ng-soundcloud-player';
     DailymotionPlayerModule,
     VimeoPlayerModule,
     SoundcloudPlayerModule,
+    SpotifyPlayerModule,
     VideoDemoRoutingModule
   ]
 })

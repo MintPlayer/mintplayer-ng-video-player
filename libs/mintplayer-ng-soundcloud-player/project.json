@@ -10,7 +10,8 @@
       "outputs": ["{workspaceRoot}/dist/libs/mintplayer-ng-soundcloud-player"],
       "options": {
         "project": "libs/mintplayer-ng-soundcloud-player/ng-package.json",
-        "tsConfig": "libs/mintplayer-ng-soundcloud-player/tsconfig.lib.json"
+        "tsConfig": "libs/mintplayer-ng-soundcloud-player/tsconfig.lib.json",
+        "updateBuildableProjectDepsInPackageJson": true
       },
       "configurations": {
         "production": {

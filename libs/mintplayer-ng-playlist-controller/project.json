@@ -12,7 +12,8 @@
       ],
       "options": {
         "project": "libs/mintplayer-ng-playlist-controller/ng-package.json",
-        "tsConfig": "libs/mintplayer-ng-playlist-controller/tsconfig.lib.json"
+        "tsConfig": "libs/mintplayer-ng-playlist-controller/tsconfig.lib.json",
+        "updateBuildableProjectDepsInPackageJson": true
       },
       "configurations": {
         "production": {

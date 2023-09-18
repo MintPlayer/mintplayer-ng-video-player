@@ -18,17 +18,20 @@
       "@mintplayer/ng-dailymotion-player": [
         "libs/mintplayer-ng-dailymotion-player/src/index.ts"
       ],
-      "@mintplayer/ng-player-provider": [
-        "libs/mintplayer-ng-player-provider/src/index.ts"
-      ],
       "@mintplayer/ng-player-progress": [
         "libs/mintplayer-ng-player-progress/src/index.ts"
+      ],
+      "@mintplayer/ng-player-provider": [
+        "libs/mintplayer-ng-player-provider/src/index.ts"
       ],
       "@mintplayer/ng-playlist-controller": [
         "libs/mintplayer-ng-playlist-controller/src/index.ts"
       ],
       "@mintplayer/ng-soundcloud-player": [
         "libs/mintplayer-ng-soundcloud-player/src/index.ts"
+      ],
+      "@mintplayer/ng-spotify-player": [
+        "libs/mintplayer-ng-spotify-player/src/index.ts"
       ],
       "@mintplayer/ng-video-player": [
         "libs/mintplayer-ng-video-player/src/index.ts"

@@ -16,7 +16,8 @@
                     <div class="d-block text-center">
                         <video-player [width]="width" [height]="height" [autoplay]="true"
                             (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
-                            (playerStateChange)="onPlayerStateChange($event)" [(isPip)]="isPip" [(isFullscreen)]="isFullscreen" #player1></video-player>
+                            (playerStateChange)="onPlayerStateChange($event)" [(isPip)]="isPip" [(isFullscreen)]="isFullscreen"
+                            (capabilitiesChange)="onCapabilitiesChange($event)" #player1></video-player>
                     </div>
                     <div bsRow>
                         <div [bsColumn]="{'md': 6}" class="text-center">
@@ -33,30 +34,30 @@
                         <div [bsColumn]="{'md': 6}" class="text-center">
                             <label>
                                 <label>{{ volume | number: '0.0' }}</label>
-                                <bs-range [(ngModel)]="volume" [min]="0" [max]="100" [step]="1"></bs-range>
+                                <bs-range [(ngModel)]="volume" [disabled]="(cannotChangeVolume$ | async) ?? true" [min]="0" [max]="100" [step]="1"></bs-range>
                             </label>
                         </div>
                         <div [bsColumn]="{'md': 6}" class="text-center">
-                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isMuted" class="d-inline-block py-3">
+                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isMuted" [disabled]="(cannotMute$ | async) ?? true" class="d-inline-block py-3">
                                 Mute
                             </bs-toggle-button>
                         </div>
                     </div>
                     <div bsRow>
                         <div [bsColumn]="{'md': 6}" class="text-center">
-                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isPip" class="d-inline-block py-3">
+                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isPip" [disabled]="(cannotPip$ | async) ?? true" class="d-inline-block py-3">
                                 PiP
                             </bs-toggle-button>
                         </div>
                         <div [bsColumn]="{'md': 6}" class="text-center">
-                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isFullscreen" class="d-inline-block py-3">
+                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isFullscreen" [disabled]="(cannotFullscreen$ | async) ?? true" class="d-inline-block py-3">
                                 Fullscreen
                             </bs-toggle-button>
                         </div>
                     </div>
                     <div class="d-block text-center">
                         <bs-button-group>
-                            <button (click)="getTitle()" [color]="colors.secondary">Get Title</button>
+                            <button (click)="getTitle()" [color]="colors.secondary" [disabled]="(cannotGetTitle$ | async)">Get Title</button>
                             <button (click)="setSize()" [color]="colors.secondary">Set size</button>
                         </bs-button-group>
                     </div>

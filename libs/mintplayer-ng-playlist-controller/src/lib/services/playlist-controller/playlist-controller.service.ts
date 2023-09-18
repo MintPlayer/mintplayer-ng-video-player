@@ -186,10 +186,8 @@ export class PlaylistController<TVideo> {
       const currentPlayedIndex = this._actualPlaylist.indexOf(this._currentPlayedVideo);
 
       if (currentPlayedIndex !== -1) {
-        console.log('repeat current ?');
         // RepeatOne -> return current PlayedVideo
         if ((this.repeat === ERepeatMode.repeatOne) && !force) {
-          console.log('repeat current');
           return {
             playedVideo: this._currentPlayedVideo,
             fromActualPlaylist: true
