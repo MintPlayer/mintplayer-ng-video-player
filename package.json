@@ -25,7 +25,6 @@
     "@angular/router": "~16.0.0",
     "@mintplayer/ng-bootstrap": "~16.11.0",
     "@nrwl/angular": "16.3.2",
-    "font-awesome": "^4.7.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },
