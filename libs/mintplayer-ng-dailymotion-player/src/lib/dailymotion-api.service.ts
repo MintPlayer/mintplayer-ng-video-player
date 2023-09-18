@@ -68,9 +68,9 @@ export class DailymotionApiService implements IApiService {
   }
 
   public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolvePlayer, rejectPlayer) => {
       if (!options.element) {
-        return reject('The DailyMotion api requires the options.element to be set');
+        return rejectPlayer('The DailyMotion api requires the options.element to be set');
       }
 
       const destroyRef = new Subject();
@@ -83,7 +83,6 @@ export class DailymotionApiService implements IApiService {
         },
         events: {
           apiready: () => {
-            options.onReady();
             if (!isPlatformServer(this.platformId)) {
               timer(0, 50)
                 .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
@@ -92,6 +91,53 @@ export class DailymotionApiService implements IApiService {
                   options.onCurrentTimeChange(player.currentTime);
                 });
             }
+
+
+            resolvePlayer({
+              capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
+              loadVideoById: (id: string) => player.load({video: id}),
+              setPlayerState: (state: EPlayerState) => {
+                switch (state) {
+                  case EPlayerState.playing:
+                    player.play();
+                    break;
+                  case EPlayerState.paused:
+                    player.pause();
+                    break;
+                  case EPlayerState.ended:
+                  case EPlayerState.unstarted:
+                    break;
+                }
+              },
+              setMute: (mute) => player.setMuted(mute),
+              setVolume: (volume) => player.setVolume(volume / 100),
+              setProgress: (time) => player.seek(time),
+              setSize: (width, height) => {
+                player.width = width;
+                player.height = height;
+              },
+              getTitle: () => new Promise((resolve) => {
+                resolve(player.video.title.replace(new RegExp('\\+', 'g'), ' '));
+              }),
+              setFullscreen: (isFullscreen) => {
+                if (isFullscreen) {
+                  console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
+                  setTimeout(() => options.onFullscreenChange(false), 50);
+                }
+              },
+              getFullscreen: () => new Promise(resolve => {
+                console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
+                resolve(false);
+              }),
+              setPip: (isPip) => {
+                if (isPip) {
+                  console.warn('DailyMotion player doesn\'t support PIP mode');
+                  setTimeout(() => options.onPipChange(false), 50);
+                }
+              },
+              getPip: () => new Promise(resolve => resolve(false)),
+              destroy: () => destroyRef.next(true),
+            });
           },
           play: () => {
             options.onStateChange(EPlayerState.playing);
@@ -107,52 +153,6 @@ export class DailymotionApiService implements IApiService {
           options.onVolumeChange(player.volume * 100);
         }
       }
-
-      resolve({
-        capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
-        loadVideoById: (id: string) => player.load({video: id}),
-        setPlayerState: (state: EPlayerState) => {
-          switch (state) {
-            case EPlayerState.playing:
-              player.play();
-              break;
-            case EPlayerState.paused:
-              player.pause();
-              break;
-            case EPlayerState.ended:
-            case EPlayerState.unstarted:
-              break;
-          }
-        },
-        setMute: (mute) => player.setMuted(mute),
-        setVolume: (volume) => player.setVolume(volume / 100),
-        setProgress: (time) => player.seek(time),
-        setSize: (width, height) => {
-          player.width = width;
-          player.height = height;
-        },
-        getTitle: () => new Promise((resolve) => {
-          resolve(player.video.title.replace(new RegExp('\\+', 'g'), ' '));
-        }),
-        setFullscreen: (isFullscreen) => {
-          if (isFullscreen) {
-            console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
-            setTimeout(() => options.onFullscreenChange(false), 50);
-          }
-        },
-        getFullscreen: () => new Promise(resolve => {
-          console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
-          resolve(false);
-        }),
-        setPip: (isPip) => {
-          if (isPip) {
-            console.warn('DailyMotion player doesn\'t support PIP mode');
-            setTimeout(() => options.onPipChange(false), 50);
-          }
-        },
-        getPip: () => new Promise(resolve => resolve(false)),
-        destroy: () => destroyRef.next(true),
-      });
     });
   }
 }

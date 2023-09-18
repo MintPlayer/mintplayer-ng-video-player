@@ -76,9 +76,9 @@ export class YoutubeApiService implements IApiService {
   }
 
   public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolvePlayer, rejectPlayer) => {
       if (!options.domId) {
-        return reject('The YouTube api requires the options.domId to be set');
+        return rejectPlayer('The YouTube api requires the options.domId to be set');
       }
 
       const destroyRef = new Subject();
@@ -91,7 +91,6 @@ export class YoutubeApiService implements IApiService {
         },
         events: {
           onReady: (ev: YT.PlayerEvent) => {
-            options.onReady();
             if (!isPlatformServer(this.platformId)) {
               timer(0, 50)
                 .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
@@ -112,6 +111,54 @@ export class YoutubeApiService implements IApiService {
                   options.onMuteChange(currentMute);
                 });
             }
+
+            resolvePlayer({
+              capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
+              loadVideoById: (id: string) => player.loadVideoById(id),
+              setPlayerState: (state: EPlayerState) => {
+                switch (state) {
+                  case EPlayerState.playing:
+                    player.playVideo();
+                    break;
+                  case EPlayerState.paused:
+                    player.pauseVideo();
+                    break;
+                  case EPlayerState.ended:
+                    player.stopVideo();
+                    break;
+                  case EPlayerState.unstarted:
+                    break;
+                }
+              },
+              setMute: (mute) => mute ? player.mute() : player.unMute(),
+              setVolume: (volume) => player.setVolume(volume),
+              setProgress: (time) => player.seekTo(time, true),
+              setSize: (width, height) => player.setSize(width, height),
+              getTitle: () => new Promise((resolve) => {
+                resolve((<any>player).getVideoData().title);
+              }),
+              setFullscreen: (isFullscreen) => {
+                if (isFullscreen) {
+                  console.warn('YouTube player doesn\'t allow setting fullscreen from outside');
+                  setTimeout(() => options.onFullscreenChange(false), 50);
+                }
+              },
+              getFullscreen: () => new Promise(resolve => {
+                console.warn('YouTube player doesn\'t allow setting fullscreen from outside');
+                resolve(false);
+              }),
+              setPip: (isPip) => {
+                if (isPip) {
+                  console.warn('YouTube player doesn\'t support PIP mode');
+                  setTimeout(() => options.onPipChange(false), 50);
+                }
+              },
+              getPip: () => new Promise(resolve => resolve(false)),
+              destroy: () => {
+                destroyRef.next(true);
+                player.destroy();  
+              },
+            });
           },
           onStateChange: (ev: YT.OnStateChangeEvent) => {
             switch (ev.data) {
@@ -127,54 +174,6 @@ export class YoutubeApiService implements IApiService {
             }
           }
         }
-      });
-
-      resolve({
-        capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
-        loadVideoById: (id: string) => player.loadVideoById(id),
-        setPlayerState: (state: EPlayerState) => {
-          switch (state) {
-            case EPlayerState.playing:
-              player.playVideo();
-              break;
-            case EPlayerState.paused:
-              player.pauseVideo();
-              break;
-            case EPlayerState.ended:
-              player.stopVideo();
-              break;
-            case EPlayerState.unstarted:
-              break;
-          }
-        },
-        setMute: (mute) => mute ? player.mute() : player.unMute(),
-        setVolume: (volume) => player.setVolume(volume),
-        setProgress: (time) => player.seekTo(time, true),
-        setSize: (width, height) => player.setSize(width, height),
-        getTitle: () => new Promise((resolve) => {
-          resolve((<any>player).getVideoData().title);
-        }),
-        setFullscreen: (isFullscreen) => {
-          if (isFullscreen) {
-            console.warn('YouTube player doesn\'t allow setting fullscreen from outside');
-            setTimeout(() => options.onFullscreenChange(false), 50);
-          }
-        },
-        getFullscreen: () => new Promise(resolve => {
-          console.warn('YouTube player doesn\'t allow setting fullscreen from outside');
-          resolve(false);
-        }),
-        setPip: (isPip) => {
-          if (isPip) {
-            console.warn('YouTube player doesn\'t support PIP mode');
-            setTimeout(() => options.onPipChange(false), 50);
-          }
-        },
-        getPip: () => new Promise(resolve => resolve(false)),
-        destroy: () => {
-          destroyRef.next(true);
-          player.destroy();  
-        },
       });
     });
   }

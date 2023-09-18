@@ -117,10 +117,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 domId: this.domId,
                 element: this.container.nativeElement,
                 initialVideoId: currentVideoRequest.id,
-                onReady: () => {
-                  this.isPlayerReady$.next(true);
-                  this.isSwitchingVideo$.next(false);
-                },
                 onStateChange: (state) => this.playerStateObserver$.next(state),
                 onMuteChange: (mute) => this.muteObserver$.next(mute),
                 onVolumeChange: (volume) => this.volumeObserver$.next(volume),
@@ -135,6 +131,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                   adapter: adapter,
                 };
 
+                this.isPlayerReady$.next(true);
+                this.isSwitchingVideo$.next(false);
                 this.capabilitiesChange.emit(adapter.capabilities);
               });
 

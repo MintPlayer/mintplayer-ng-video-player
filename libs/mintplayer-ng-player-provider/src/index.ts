@@ -25,7 +25,6 @@ export interface PlayerOptions {
     initialVideoId?: string;
 
     // Events
-    onReady: () => void;
     onStateChange: (ev: EPlayerState) => void;
     onMuteChange: (ev: boolean) => void;
     onVolumeChange: (volume: number) => void;

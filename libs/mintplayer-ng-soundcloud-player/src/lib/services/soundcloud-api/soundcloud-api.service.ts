@@ -68,38 +68,15 @@ export class SoundcloudApiService implements IApiService {
   }
 
   public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolvePlayer, rejectPlayer) => {
       if (!options.element) {
-        return reject('The SoundCloud api requires the options.element to be set');
+        return rejectPlayer('The SoundCloud api requires the options.element to be set');
       }
 
       const destroyRef = new Subject();
       const player = SC.Widget(<HTMLIFrameElement>options.element.getElementsByTagName('iframe')[0]);
-      player.bind(SC.Widget.Events.READY, () => {
-        options.onReady();
-        if (!isPlatformServer(this.platformId)) {
-          timer(0, 50)
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-            .subscribe((time) => {
-              // Volume
-              player.getVolume((currentVolume) => {
-                options.onVolumeChange(currentVolume);
-                options.onMuteChange(currentVolume === 0 ? true : false);
-              });
-            });
-        }
-      });
-      player.bind(SC.Widget.Events.PLAY, () => {
-        options.onStateChange(EPlayerState.playing);
-        player.getDuration((duration) => options.onDurationChange(duration / 1000));
-      });
-      player.bind(SC.Widget.Events.PAUSE, () => options.onStateChange(EPlayerState.paused));
-      player.bind(SC.Widget.Events.FINISH, () => options.onStateChange(EPlayerState.ended));
-      player.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => {
-        options.onCurrentTimeChange(event.currentPosition / 1000);
-      });
 
-      resolve({
+      const adapter: PlayerAdapter = {
         capabilities: [ECapability.volume, ECapability.getTitle],
         loadVideoById: (id: string) => player.load(id, { auto_play: options.autoplay }),
         setPlayerState: (state: EPlayerState) => {
@@ -143,7 +120,29 @@ export class SoundcloudApiService implements IApiService {
         },
         getPip: () => new Promise(resolve => resolve(false)),
         destroy: () => destroyRef.next(true),
+      };
+      
+      player.bind(SC.Widget.Events.READY, () => {
+        resolvePlayer(adapter);
+        if (!isPlatformServer(this.platformId)) {
+          timer(0, 50)
+            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .subscribe((time) => {
+              // Volume
+              player.getVolume((currentVolume) => {
+                options.onVolumeChange(currentVolume);
+                options.onMuteChange(currentVolume === 0 ? true : false);
+              });
+            });
+        }
       });
+      player.bind(SC.Widget.Events.PLAY, () => {
+        options.onStateChange(EPlayerState.playing);
+        player.getDuration((duration) => options.onDurationChange(duration / 1000));
+      });
+      player.bind(SC.Widget.Events.PAUSE, () => options.onStateChange(EPlayerState.paused));
+      player.bind(SC.Widget.Events.FINISH, () => options.onStateChange(EPlayerState.ended));
+      player.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => options.onCurrentTimeChange(event.currentPosition / 1000));
     });
   }
 }

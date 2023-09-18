@@ -76,17 +76,17 @@ export class SpotifyApiService implements IApiService {
   }
 
   public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolvePlayer, rejectPlayer) => {
       if (!options.element) {
-        return reject('The Spotify api requires the options.element to be set');
+        return rejectPlayer('The Spotify api requires the options.element to be set');
       }
 
       if (!this.api) {
-        return reject('The Spotify api should have been set here');
+        return rejectPlayer('The Spotify api should have been set here');
       }
 
       if (!options.initialVideoId) {
-        return reject('The Spotify api requires an initial video');
+        return rejectPlayer('The Spotify api requires an initial video');
       }
 
       // Note: options.element is actually wrong
@@ -103,10 +103,7 @@ export class SpotifyApiService implements IApiService {
             isReady = true;
             const destroyRef = new Subject();
 
-            // Perhaps we can simply resolve after the onready was triggered, and remove it from our api
-            options.onReady();
-    
-            resolve(<PlayerAdapter>{
+            const adapter: PlayerAdapter = {
               capabilities: [],
               loadVideoById: (id) => {
                 controller.loadUri(id);
@@ -146,7 +143,9 @@ export class SpotifyApiService implements IApiService {
                 destroyRef.next(true);
                 controller.destroy();
               }
-            });
+            };
+
+            resolvePlayer(adapter);
           }
         });
 
