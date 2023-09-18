@@ -10,7 +10,8 @@
       "outputs": ["{workspaceRoot}/dist/libs/mintplayer-ng-youtube-player"],
       "options": {
         "project": "libs/mintplayer-ng-youtube-player/ng-package.json",
-        "tsConfig": "libs/mintplayer-ng-youtube-player/tsconfig.lib.json"
+        "tsConfig": "libs/mintplayer-ng-youtube-player/tsconfig.lib.json",
+        "updateBuildableProjectDepsInPackageJson": true
       },
       "configurations": {
         "production": {

@@ -10,7 +10,8 @@
       "outputs": ["{workspaceRoot}/dist/libs/mintplayer-ng-video-player"],
       "options": {
         "project": "libs/mintplayer-ng-video-player/ng-package.json",
-        "tsConfig": "libs/mintplayer-ng-video-player/tsconfig.lib.json"
+        "tsConfig": "libs/mintplayer-ng-video-player/tsconfig.lib.json",
+        "updateBuildableProjectDepsInPackageJson": true
       },
       "configurations": {
         "production": {
