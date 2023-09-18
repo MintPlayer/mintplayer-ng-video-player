@@ -30,6 +30,7 @@ describe('AppComponent', () => {
         // Mock components
         BsNavbarMockComponent,
         BsNavbarNavMockComponent,
+        BsNavbarBrandMockComponent,
         BsNavbarDropdownMockComponent,
         BsNavbarItemMockComponent,
         BsNavbarContentMockDirective,
@@ -140,6 +141,15 @@ class BsNavbarMockComponent {
 class BsNavbarNavMockComponent {
   @Input() collapse = true;
 }
+
+@Component({
+  selector: 'bs-navbar-brand',
+  template: `
+  <div>
+    <ng-content></ng-content>
+  </div>`
+})
+class BsNavbarBrandMockComponent {}
 
 @Component({
   selector: 'bs-navbar-dropdown',
