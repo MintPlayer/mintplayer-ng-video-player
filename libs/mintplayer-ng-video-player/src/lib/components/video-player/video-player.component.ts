@@ -107,39 +107,35 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           } else {
             this.playerInfo?.adapter?.destroy();
             setHtml(currentVideoRequest);
-            // TODO: [playerReady$, playerInfo$] => playVideo
-            // Removes .then clause which would cause a race-condition
-            setTimeout(() => {
-              currentVideoRequest.api.createPlayer({
-                width: this.width,
-                height: this.height,
-                autoplay: this.autoplay,
-                domId: this.domId,
-                element: this.container.nativeElement,
-                initialVideoId: currentVideoRequest.id,
-                onStateChange: (state) => this.playerStateObserver$.next(state),
-                onMuteChange: (mute) => this.muteObserver$.next(mute),
-                onVolumeChange: (volume) => this.volumeObserver$.next(volume),
-                onCurrentTimeChange: (progress) => this.currentTimeObserver$.next(progress),
-                onDurationChange: (duration) => this.durationObserver$.next(duration),
-                onPipChange: (isPip) => this.pipObserver$.next(isPip),
-                onFullscreenChange: (isFullscreen) => this.fullscreenObserver$.next(isFullscreen),
-              }, destroy).then(adapter => {
-                this.playerInfo = {
-                  platformId: currentVideoRequest.api.id,
-                  videoId: currentVideoRequest.id,
-                  adapter: adapter,
-                };
+            currentVideoRequest.api.createPlayer({
+              width: this.width,
+              height: this.height,
+              autoplay: this.autoplay,
+              domId: this.domId,
+              element: this.container.nativeElement,
+              initialVideoId: currentVideoRequest.id,
+              onStateChange: (state) => this.playerStateObserver$.next(state),
+              onMuteChange: (mute) => this.muteObserver$.next(mute),
+              onVolumeChange: (volume) => this.volumeObserver$.next(volume),
+              onCurrentTimeChange: (progress) => this.currentTimeObserver$.next(progress),
+              onDurationChange: (duration) => this.durationObserver$.next(duration),
+              onPipChange: (isPip) => this.pipObserver$.next(isPip),
+              onFullscreenChange: (isFullscreen) => this.fullscreenObserver$.next(isFullscreen),
+            }, destroy).then(adapter => {
+              this.playerInfo = {
+                platformId: currentVideoRequest.api.id,
+                videoId: currentVideoRequest.id,
+                adapter: adapter,
+              };
 
-                this.isPlayerReady$.next(true);
-                this.isSwitchingVideo$.next(false);
-                this.capabilitiesChange.emit(adapter.capabilities);
-              });
+              this.isPlayerReady$.next(true);
+              this.isSwitchingVideo$.next(false);
+              this.capabilitiesChange.emit(adapter.capabilities);
+            });
 
 
-              this.pipObserver$.next(false);
-              this.fullscreenObserver$.next(false);
-            }, 50);
+            this.pipObserver$.next(false);
+            this.fullscreenObserver$.next(false);
           }
         }
       });
