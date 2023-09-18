@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "types": ["node", "youtube", "dailymotion", "vimeo", "soundcloud"],
-    "typeRoots": ["src/types", "node_modules/@types"],
+    "typeRoots": ["src/types", "../../node_modules/@types"],
     "target": "ES2022",
     "useDefineForClassFields": false
   },

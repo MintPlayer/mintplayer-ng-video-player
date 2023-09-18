@@ -22,7 +22,6 @@
         ],
         "styles": [
           "node_modules/@mintplayer/ng-bootstrap/_bootstrap.scss",
-          "node_modules/font-awesome/scss/font-awesome.scss",
           "apps/video-player-demo/src/styles.scss"
         ],
         "scripts": []
