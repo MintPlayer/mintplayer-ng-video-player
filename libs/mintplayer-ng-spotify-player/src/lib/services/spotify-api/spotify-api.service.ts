@@ -25,8 +25,8 @@ export class SpotifyApiService implements IApiService {
   }
 
   public urlRegexes = [
-    new RegExp(/http[s]{0,1}:\/\/open\.spotify\.com\/track\/(?<id>[^&/]+)/, 'g'),
-    new RegExp(/spotify:episode:(?<id>[0-9A-Za-z]+)/, 'g'),
+    new RegExp(/http[s]{0,1}:\/\/open\.spotify\.com\/(?<type>track|episode)\/(?<id>[^&/]+)/, 'g'),
+    new RegExp(/spotify:(?<type>track|episode):(?<id>[0-9A-Za-z]+)/, 'g'),
   ];
 
   public apiReady$ = new BehaviorSubject<boolean>(false);
@@ -67,6 +67,14 @@ export class SpotifyApiService implements IApiService {
     return `<div id="${domId}" style="max-width:100%"></div>`;
   }
 
+  public match2id(match: RegExpExecArray) {
+    if (!match.groups) {
+      return '';
+    } else {
+      return `spotify:${match.groups['type']}:${match.groups['id']}`;
+    }
+  }
+
   public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
     return new Promise((resolve, reject) => {
       if (!options.element) {
@@ -84,58 +92,62 @@ export class SpotifyApiService implements IApiService {
       // Note: options.element is actually wrong
       // console.log('options.element', options.element);
 
-      this.api.createController(<HTMLElement>options.element.querySelector('div'), { uri: `spotify:episode:${options.initialVideoId}`, width: options.width, height: options.height }, (controller) => {
+      let isReady = false;
+      this.api.createController(<HTMLElement>options.element.querySelector('div'), { uri: options.initialVideoId, width: options.width, height: options.height }, (controller) => {
         controller.addListener('ready', () => {
-          console.log('controller ready', controller);
-          const destroyRef = new Subject();
-
-          // Perhaps we can simply resolve after the onready was triggered, and remove it from our api
-          options.onReady();
-  
           if (options.autoplay) {
-            setTimeout(() => controller.play(), 50);
+            setTimeout(() => controller.play(), 300);
           }
-  
-          resolve(<PlayerAdapter>{
-            capabilities: [],
-            loadVideoById: (id) => {
-              controller.loadUri(`spotify:episode:${id}`);
-            },
-            setPlayerState: (state: EPlayerState) => {
-              switch (state) {
-                case EPlayerState.playing:
-                  controller.resume();
-                  break;
-                case EPlayerState.paused:
-                  controller.pause();
-                  break;
-                case EPlayerState.ended:
-                  break;
-                case EPlayerState.unstarted:
-                  break;
-              }
-            },
-            setMute: (mute) => {
-              throw 'Spotify api doesn\'t allow mute'
-            },
-            setVolume: (volume) => {
-              throw 'Spotify api doesn\'t allow changing the volume'
-            },
-            setProgress: (time) => controller.seek(time),
-            setSize: (width, height) => controller.setIframeDimensions(width, height),
-            getTitle: () => new Promise((resolve, reject) => reject('Spotify api doesn\'t allow getting the title')),
-            setFullscreen: (isFullscreen) => {
-              throw 'Spotify doesn\'t allow fullscreen';
-            },
-            getFullscreen: () => new Promise((resolve) => resolve(false)),
-            setPip: (isPip) => {},
-            getPip: () => new Promise(resolve => resolve(false)),
-            destroy: () => {
-              destroyRef.next(true);
-              controller.destroy();
-            }
-          });
 
+          if (!isReady) {
+            isReady = true;
+            const destroyRef = new Subject();
+
+            // Perhaps we can simply resolve after the onready was triggered, and remove it from our api
+            options.onReady();
+    
+            resolve(<PlayerAdapter>{
+              capabilities: [],
+              loadVideoById: (id) => {
+                controller.loadUri(id);
+              },
+              setPlayerState: (state: EPlayerState) => {
+                switch (state) {
+                  case EPlayerState.playing:
+                    controller.resume();
+                    break;
+                  case EPlayerState.paused:
+                    controller.pause();
+                    break;
+                  case EPlayerState.ended:
+                    break;
+                  case EPlayerState.unstarted:
+                    break;
+                }
+              },
+              setMute: (mute) => {
+                throw 'Spotify api doesn\'t allow mute'
+              },
+              setVolume: (volume) => {
+                throw 'Spotify api doesn\'t allow changing the volume'
+              },
+              setProgress: (time) => controller.seek(time),
+              setSize: (width, height) => controller.setIframeDimensions(width, height),
+              getTitle: () => new Promise((resolve, reject) => reject('Spotify api doesn\'t allow getting the title')),
+              setFullscreen: (isFullscreen) => {
+                throw 'Spotify doesn\'t support fullscreen';
+              },
+              getFullscreen: () => new Promise((resolve) => resolve(false)),
+              setPip: (isPip) => {
+                throw 'Spotify doesn\'t support picture-in-picture'
+              },
+              getPip: () => new Promise(resolve => resolve(false)),
+              destroy: () => {
+                destroyRef.next(true);
+                controller.destroy();
+              }
+            });
+          }
         });
 
         controller.addListener('playback_update', (ev) => {

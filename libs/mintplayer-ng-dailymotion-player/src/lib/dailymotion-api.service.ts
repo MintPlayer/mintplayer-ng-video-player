@@ -108,8 +108,6 @@ export class DailymotionApiService implements IApiService {
         }
       }
 
-      console.log('DM player', player);
-
       resolve({
         capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
         loadVideoById: (id: string) => player.load({video: id}),

@@ -41,10 +41,18 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
               } else if (!matches[0].groups) {
                 return null;
               } else {
-                return <VideoRequest>{
-                  api,
-                  id: matches[0].groups['id']
-                };
+                if (api.match2id) {
+                  const realId = api.match2id(matches[0]);
+                  return <VideoRequest>{
+                    api,
+                    id: realId
+                  };
+                } else {
+                  return <VideoRequest>{
+                    api,
+                    id: matches[0].groups['id']
+                  };
+                }
               }
             })
             .filter(p => (p !== null));

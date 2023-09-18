@@ -11,6 +11,7 @@ export interface IApiService {
     apiReady$: BehaviorSubject<boolean>;
     prepareHtml(domId: string, width: number, height: number): string;
     createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter>;
+    match2id?: (match: RegExpExecArray) => string;
 }
 
 export interface PlayerOptions {

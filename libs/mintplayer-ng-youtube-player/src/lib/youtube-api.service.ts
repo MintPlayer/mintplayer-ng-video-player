@@ -92,7 +92,6 @@ export class YoutubeApiService implements IApiService {
         events: {
           onReady: (ev: YT.PlayerEvent) => {
             options.onReady();
-            console.log('onReady');
             if (!isPlatformServer(this.platformId)) {
               timer(0, 50)
                 .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
@@ -129,8 +128,6 @@ export class YoutubeApiService implements IApiService {
           }
         }
       });
-
-      console.log('YT player', player);
 
       resolve({
         capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
