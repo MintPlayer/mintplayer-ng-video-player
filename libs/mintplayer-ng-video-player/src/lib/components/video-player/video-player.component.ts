@@ -5,6 +5,7 @@ import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/oper
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, VIDEO_APIS } from '@mintplayer/ng-player-provider';
 import { VideoRequest } from '../../interfaces/video-request';
+import { VideoPlayerService } from '../../services/video-player.service';
 
 @Component({
   selector: 'video-player',
@@ -16,6 +17,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     @Inject(VIDEO_APIS) private apis: IApiService[],
     @Inject(PLATFORM_ID) private platformId: object,
     private zone: NgZone,
+    private videoPlayerService: VideoPlayerService,
     private destroy: DestroyRef,
   ) {
     //#region [isViewInited$, url$] => videoRequest$
@@ -28,36 +30,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           this.playerInfo = null;
           this.container.nativeElement.innerHTML = '';
         } else {
-          const matchingApis = apis
-            .map(api => {
-              const matches = api.urlRegexes
-                .map(rgx => new RegExp(rgx).exec(url))
-                .filter(r => r !== null);
-
-              if (matches.length === 0) {
-                return null;
-              } else if (matches[0] === null) {
-                return null;
-              } else if (!matches[0].groups) {
-                return null;
-              } else {
-                if (api.match2id) {
-                  const realId = api.match2id(matches[0]);
-                  return <VideoRequest>{
-                    api,
-                    id: realId
-                  };
-                } else {
-                  return <VideoRequest>{
-                    api,
-                    id: matches[0].groups['id']
-                  };
-                }
-              }
-            })
-            .filter(p => (p !== null));
-
-          if ((matchingApis.length === 0) || !matchingApis[0]) {
+          const matchingApis = videoPlayerService.findApis(url);
+          if (matchingApis.length === 0) {
             throw `No player found for url ${url}`;
           } else {
             this.videoRequest$.next(matchingApis[0]);
