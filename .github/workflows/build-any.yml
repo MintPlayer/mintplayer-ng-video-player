@@ -31,4 +31,4 @@ jobs:
       run: npm run nx run-many -- --target=build --configuration=production
 
     - name: Test
-      run: npm run nx run-many -- --target=test --browsers=ChromeHeadless
+      run: npm run nx run-many -- --target=test --browsers=ChromeHeadless --parallel=true
