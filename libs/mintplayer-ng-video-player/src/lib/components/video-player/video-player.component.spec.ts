@@ -1,8 +1,10 @@
+import { StaticProvider } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { MockProvider } from 'ng-mocks';
 
 import { VideoPlayerComponent } from './video-player.component';
-import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
-import { StaticProvider } from '@angular/core';
+import { VideoPlayerService } from '../../services/video-player.service';
 
 describe('VideoPlayerComponent', () => {
   let component: VideoPlayerComponent;
@@ -13,7 +15,8 @@ describe('VideoPlayerComponent', () => {
       imports: [],
       declarations: [ VideoPlayerComponent ],
       providers: [
-        <StaticProvider>{ provide: VIDEO_APIS, multi: true, useValue: [] }
+        <StaticProvider>{ provide: VIDEO_APIS, multi: true, useValue: [] },
+        MockProvider(VideoPlayerService),
       ]
     })
     .compileComponents();

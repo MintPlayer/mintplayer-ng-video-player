@@ -2,9 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { IApiService, VIDEO_APIS } from '@mintplayer/ng-player-provider';
 import { VideoRequest } from '../interfaces/video-request';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class VideoPlayerService {
 
   constructor(@Inject(VIDEO_APIS) private apis: IApiService[]) { }
