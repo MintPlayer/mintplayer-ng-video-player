@@ -32,6 +32,29 @@ jobs:
     - name: Test
       run: npm run nx run-many -- --target=test --browsers=ChromeHeadless --parallel=true
 
+    ## ng-script-loader
+    - name: Upload code coverage report
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        directory: ./coverage/libs/mintplayer-ng-script-loader
+      
+    - name: Push to NPM
+      uses: JS-DevTools/npm-publish@v2
+      with:
+        package: 'dist/libs/mintplayer-ng-script-loader/package.json'
+        registry: 'https://registry.npmjs.org'
+        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        access: 'public'
+
+    - name: Push to Github
+      uses: JS-DevTools/npm-publish@v2
+      with:
+        package: 'dist/libs/mintplayer-ng-script-loader/package.json'
+        registry: 'https://npm.pkg.github.com'
+        token: ${{ github.token }}
+        access: 'public'
+
     ## ng-player-provider
     - name: Upload code coverage report
       uses: codecov/codecov-action@v1
@@ -51,6 +74,47 @@ jobs:
       uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-player-provider/package.json'
+        registry: 'https://npm.pkg.github.com'
+        token: ${{ github.token }}
+        access: 'public'
+
+    ## ng-player-progress
+    - name: Push to NPM
+      uses: JS-DevTools/npm-publish@v2
+      with:
+        package: 'dist/libs/mintplayer-ng-player-progress/package.json'
+        registry: 'https://registry.npmjs.org'
+        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        access: 'public'
+
+    - name: Push to Github
+      uses: JS-DevTools/npm-publish@v2
+      with:
+        package: 'dist/libs/mintplayer-ng-player-progress/package.json'
+        registry: 'https://npm.pkg.github.com'
+        token: ${{ github.token }}
+        access: 'public'
+
+    ## ng-video-player
+    - name: Upload code coverage report
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        directory: ./coverage/libs/mintplayer-ng-video-player
+      
+    - name: Push to NPM
+      id: publish_ng_video_player
+      uses: JS-DevTools/npm-publish@v2
+      with:
+        package: 'dist/libs/mintplayer-ng-video-player/package.json'
+        registry: 'https://registry.npmjs.org'
+        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        access: 'public'
+
+    - name: Push to Github
+      uses: JS-DevTools/npm-publish@v2
+      with:
+        package: 'dist/libs/mintplayer-ng-video-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -170,23 +234,6 @@ jobs:
         token: ${{ github.token }}
         access: 'public'
 
-    ## ng-player-progress
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v2
-      with:
-        package: 'dist/libs/mintplayer-ng-player-progress/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
-        access: 'public'
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v2
-      with:
-        package: 'dist/libs/mintplayer-ng-player-progress/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-
     ## ng-playlist-controller
     - name: Upload code coverage report
       uses: codecov/codecov-action@v1
@@ -206,30 +253,6 @@ jobs:
       uses: JS-DevTools/npm-publish@v2
       with:
         package: 'dist/libs/mintplayer-ng-playlist-controller/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-
-    ## ng-video-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-ng-video-player
-      
-    - name: Push to NPM
-      id: publish_ng_video_player
-      uses: JS-DevTools/npm-publish@v2
-      with:
-        package: 'dist/libs/mintplayer-ng-video-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
-        access: 'public'
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v2
-      with:
-        package: 'dist/libs/mintplayer-ng-video-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
