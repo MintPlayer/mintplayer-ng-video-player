@@ -3,6 +3,7 @@ import { DestroyRef, Inject, Injectable, PLATFORM_ID, Renderer2, RendererFactory
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
+import { ScriptLoader } from '@mintplayer/ng-script-loader';
 
 @Injectable({
   providedIn: 'root'
@@ -10,13 +11,8 @@ import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 export class VimeoApiService implements IApiService {
 
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object, rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
-    this.document = doc;
-    this.renderer = rendererFactory.createRenderer(null, null);
-  }
+  constructor(private scriptLoader: ScriptLoader, @Inject(PLATFORM_ID) private platformId: object) {}
 
-  private document: Document;
-  private renderer: Renderer2;
   private hasAlreadyStartedLoadingVimeoApi = false;
   private scriptTag!: HTMLScriptElement;
 
@@ -35,34 +31,8 @@ export class VimeoApiService implements IApiService {
   );
 
   public loadApi() {
-    // If not during server-side rendering
-    if (typeof window !== 'undefined') {
-
-      if (this.apiReady$.value) {
-        this.apiReady$.next(true);
-      } else if (!this.hasAlreadyStartedLoadingVimeoApi) {
-        // Ensure the script is inserted only once
-        this.hasAlreadyStartedLoadingVimeoApi = true;
-        
-        // Invocation
-        this.scriptTag = this.renderer.createElement('script');
-        this.scriptTag.src = 'https://player.vimeo.com/api/player.js';
-        this.scriptTag.onload = () => {
-          // Callback
-          this.apiReady$.next(true);
-        };
-
-        // Insert in DOM
-        const firstScriptTag = this.document.getElementsByTagName('script')[0];
-        if (!firstScriptTag) {
-          this.renderer.appendChild(this.document.head, this.scriptTag);
-        } else if (firstScriptTag.parentNode) {
-          this.renderer.insertBefore(firstScriptTag.parentNode, this.scriptTag, firstScriptTag);
-        } else {
-          throw 'First script tag has no parent node';
-        }
-      }
-    }
+    this.scriptLoader.loadScript('https://player.vimeo.com/api/player.js')
+      .then((success) => this.apiReady$.next(true));
   }
 
   public prepareHtml(domId: string, width: number, height: number) {

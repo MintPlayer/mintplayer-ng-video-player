@@ -1,21 +1,18 @@
-import { DOCUMENT, isPlatformServer } from '@angular/common';
-import { Injectable, DestroyRef, Inject, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
+import { Injectable, DestroyRef, Inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, timer, takeUntil, Subject } from 'rxjs';
+import { ScriptLoader } from '@mintplayer/ng-script-loader';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DailymotionApiService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object, rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
-    this.document = doc;
-    this.renderer = rendererFactory.createRenderer(null, null);
+  constructor(@Inject(PLATFORM_ID) private platformId: object, private scriptLoader: ScriptLoader) {
   }
 
-  private document: Document;
-  private renderer: Renderer2;
   private hasAlreadyStartedLoadingApi = false;
   private scriptTag!: HTMLScriptElement;
 
