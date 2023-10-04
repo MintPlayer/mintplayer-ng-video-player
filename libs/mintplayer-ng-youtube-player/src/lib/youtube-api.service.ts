@@ -82,6 +82,7 @@ export class YoutubeApiService implements IApiService {
       }
 
       const destroyRef = new Subject();
+      let adapter: PlayerAdapter;
       const player = new YT.Player(options.domId, {
         width: options.width,
         height: options.height,
@@ -91,28 +92,7 @@ export class YoutubeApiService implements IApiService {
         },
         events: {
           onReady: (ev: YT.PlayerEvent) => {
-            if (!isPlatformServer(this.platformId)) {
-              timer(0, 50)
-                .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                .subscribe((time) => {
-                  // Progress
-                  const currentTime = player.getCurrentTime();
-                  options.onCurrentTimeChange(currentTime);
-                });
-              timer(0, 50)
-                .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                .subscribe((time) => {
-                  // Volume
-                  const vol = player.getVolume();
-                  options.onVolumeChange(vol);
-                  
-                  // Mute
-                  const currentMute = player.isMuted();
-                  options.onMuteChange(currentMute);
-                });
-            }
-
-            resolvePlayer({
+            adapter = {
               capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
               loadVideoById: (id: string) => player.loadVideoById(id),
               setPlayerState: (state: EPlayerState) => {
@@ -140,7 +120,7 @@ export class YoutubeApiService implements IApiService {
               setFullscreen: (isFullscreen) => {
                 if (isFullscreen) {
                   console.warn('YouTube player doesn\'t allow setting fullscreen from outside');
-                  setTimeout(() => options.onFullscreenChange(false), 50);
+                  setTimeout(() => adapter.onFullscreenChange?.(false), 50);
                 }
               },
               getFullscreen: () => new Promise(resolve => {
@@ -150,7 +130,7 @@ export class YoutubeApiService implements IApiService {
               setPip: (isPip) => {
                 if (isPip) {
                   console.warn('YouTube player doesn\'t support PIP mode');
-                  setTimeout(() => options.onPipChange(false), 50);
+                  setTimeout(() => adapter.onPipChange?.(false), 50);
                 }
               },
               getPip: () => new Promise(resolve => resolve(false)),
@@ -158,19 +138,42 @@ export class YoutubeApiService implements IApiService {
                 destroyRef.next(true);
                 player.destroy();  
               },
-            });
+            };
+
+            if (!isPlatformServer(this.platformId)) {
+              timer(0, 50)
+                .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                .subscribe((time) => {
+                  // Progress
+                  const currentTime = player.getCurrentTime();
+                  adapter.onCurrentTimeChange?.(currentTime);
+                });
+              timer(0, 50)
+                .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                .subscribe((time) => {
+                  // Volume
+                  const vol = player.getVolume();
+                  adapter.onVolumeChange?.(vol);
+                  
+                  // Mute
+                  const currentMute = player.isMuted();
+                  adapter.onMuteChange?.(currentMute);
+                });
+            }
+
+            resolvePlayer(adapter);
           },
           onStateChange: (ev: YT.OnStateChangeEvent) => {
             switch (ev.data) {
               case YT.PlayerState.PLAYING:
-                options.onDurationChange(player.getDuration());
-                return options.onStateChange(EPlayerState.playing);
+                adapter.onDurationChange?.(player.getDuration());
+                return adapter.onStateChange?.(EPlayerState.playing);
               case YT.PlayerState.PAUSED:
-                return options.onStateChange(EPlayerState.paused);
+                return adapter.onStateChange?.(EPlayerState.paused);
               case YT.PlayerState.ENDED:
-                return options.onStateChange(EPlayerState.ended);
+                return adapter.onStateChange?.(EPlayerState.ended);
               case YT.PlayerState.UNSTARTED:
-                return options.onStateChange(EPlayerState.unstarted);
+                return adapter.onStateChange?.(EPlayerState.unstarted);
             }
           }
         }

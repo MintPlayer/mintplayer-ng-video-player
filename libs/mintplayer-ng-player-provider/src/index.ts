@@ -24,14 +24,14 @@ export interface PlayerOptions {
     element?: HTMLElement;
     initialVideoId?: string;
 
-    // Events
-    onStateChange: (ev: EPlayerState) => void;
-    onMuteChange: (ev: boolean) => void;
-    onVolumeChange: (volume: number) => void;
-    onCurrentTimeChange: (currentTime: number) => void;
-    onDurationChange: (duration: number) => void;
-    onFullscreenChange: (isFullscreen: boolean) => void;
-    onPipChange: (isPip: boolean) => void;
+    // // Events
+    // onStateChange: (ev: EPlayerState) => void;
+    // onMuteChange: (ev: boolean) => void;
+    // onVolumeChange: (volume: number) => void;
+    // onCurrentTimeChange: (currentTime: number) => void;
+    // onDurationChange: (duration: number) => void;
+    // onFullscreenChange: (isFullscreen: boolean) => void;
+    // onPipChange: (isPip: boolean) => void;
 }
 
 export interface PlayerAdapter {
@@ -48,6 +48,14 @@ export interface PlayerAdapter {
     setFullscreen: (isFullscreen: boolean) => void;
     getFullscreen: () => Promise<boolean>;
     destroy: () => void;
+
+    onStateChange?: (ev: EPlayerState) => void;
+    onMuteChange?: (ev: boolean) => void;
+    onVolumeChange?: (volume: number) => void;
+    onCurrentTimeChange?: (currentTime: number) => void;
+    onDurationChange?: (duration: number) => void;
+    onFullscreenChange?: (isFullscreen: boolean) => void;
+    onPipChange?: (isPip: boolean) => void;
 
     get capabilities(): ECapability[];
 }

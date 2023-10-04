@@ -108,14 +108,14 @@ export class SoundcloudApiService implements IApiService {
         setFullscreen: (isFullscreen) => {
           if (isFullscreen) {
             console.warn('SoundCloud player doesn\'t support fullscreen mode');
-            setTimeout(() => options.onFullscreenChange(false), 50);
+            setTimeout(() => adapter.onFullscreenChange?.(false), 50);
           }
         },
         getFullscreen: () => new Promise(resolve => resolve(false)),
         setPip: (isPip) => {
           if (isPip) {
             console.warn('SoundCloud player doesn\'t support PIP mode');
-            setTimeout(() => options.onPipChange(false), 50);
+            setTimeout(() => adapter.onPipChange?.(false), 50);
           }
         },
         getPip: () => new Promise(resolve => resolve(false)),
@@ -130,19 +130,19 @@ export class SoundcloudApiService implements IApiService {
             .subscribe((time) => {
               // Volume
               player.getVolume((currentVolume) => {
-                options.onVolumeChange(currentVolume);
-                options.onMuteChange(currentVolume === 0 ? true : false);
+                adapter.onVolumeChange?.(currentVolume);
+                adapter.onMuteChange?.(currentVolume === 0 ? true : false);
               });
             });
         }
       });
       player.bind(SC.Widget.Events.PLAY, () => {
-        options.onStateChange(EPlayerState.playing);
-        player.getDuration((duration) => options.onDurationChange(duration / 1000));
+        adapter.onStateChange?.(EPlayerState.playing);
+        player.getDuration((duration) => adapter.onDurationChange?.(duration / 1000));
       });
-      player.bind(SC.Widget.Events.PAUSE, () => options.onStateChange(EPlayerState.paused));
-      player.bind(SC.Widget.Events.FINISH, () => options.onStateChange(EPlayerState.ended));
-      player.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => options.onCurrentTimeChange(event.currentPosition / 1000));
+      player.bind(SC.Widget.Events.PAUSE, () => adapter.onStateChange?.(EPlayerState.paused));
+      player.bind(SC.Widget.Events.FINISH, () => adapter.onStateChange?.(EPlayerState.ended));
+      player.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => adapter.onCurrentTimeChange?.(event.currentPosition / 1000));
     });
   }
 }

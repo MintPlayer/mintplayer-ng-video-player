@@ -74,6 +74,7 @@ export class DailymotionApiService implements IApiService {
       }
 
       const destroyRef = new Subject();
+      let adapter: PlayerAdapter;
       const player = DM.player(options.element.getElementsByTagName('div')[0], {
         width: String(options.width),
         height: String(options.height),
@@ -83,17 +84,7 @@ export class DailymotionApiService implements IApiService {
         },
         events: {
           apiready: () => {
-            if (!isPlatformServer(this.platformId)) {
-              timer(0, 50)
-                .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                .subscribe((time) => {
-                  options.onMuteChange(player.muted);
-                  options.onCurrentTimeChange(player.currentTime);
-                });
-            }
-
-
-            resolvePlayer({
+            adapter = {
               capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
               loadVideoById: (id: string) => player.load({video: id}),
               setPlayerState: (state: EPlayerState) => {
@@ -122,7 +113,7 @@ export class DailymotionApiService implements IApiService {
               setFullscreen: (isFullscreen) => {
                 if (isFullscreen) {
                   console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
-                  setTimeout(() => options.onFullscreenChange(false), 50);
+                  setTimeout(() => adapter.onFullscreenChange?.(false), 50);
                 }
               },
               getFullscreen: () => new Promise(resolve => {
@@ -132,25 +123,37 @@ export class DailymotionApiService implements IApiService {
               setPip: (isPip) => {
                 if (isPip) {
                   console.warn('DailyMotion player doesn\'t support PIP mode');
-                  setTimeout(() => options.onPipChange(false), 50);
+                  setTimeout(() => adapter.onPipChange?.(false), 50);
                 }
               },
               getPip: () => new Promise(resolve => resolve(false)),
               destroy: () => destroyRef.next(true),
-            });
+            };
+
+            if (!isPlatformServer(this.platformId)) {
+              timer(0, 50)
+                .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                .subscribe((time) => {
+                  adapter.onMuteChange?.(player.muted);
+                  adapter.onCurrentTimeChange?.(player.currentTime);
+                });
+            }
+
+
+            resolvePlayer(adapter);
           },
           play: () => {
-            options.onStateChange(EPlayerState.playing);
-            options.onDurationChange(player.duration);
+            adapter.onStateChange?.(EPlayerState.playing);
+            adapter.onDurationChange?.(player.duration);
           },
-          pause: () => options.onStateChange(EPlayerState.paused),
-          end: () => options.onStateChange(EPlayerState.ended),
+          pause: () => adapter.onStateChange?.(EPlayerState.paused),
+          end: () => adapter.onStateChange?.(EPlayerState.ended),
         }
       });
 
       player.onvolumechange = () => {
         if (player) {
-          options.onVolumeChange(player.volume * 100);
+          adapter.onVolumeChange?.(player.volume * 100);
         }
       }
     });

@@ -80,6 +80,7 @@ export class VimeoApiService implements IApiService {
       }
 
       const destroyRef = new Subject();
+      let adapter: PlayerAdapter;
       const player = new Vimeo.Player(options.domId, {
         id: options.initialVideoId,
         width: options.width,
@@ -88,8 +89,9 @@ export class VimeoApiService implements IApiService {
         pip: true,
       });
 
+
       player.ready().then(() => {
-        resolvePlayer(<PlayerAdapter>{
+        adapter = {
           capabilities: [ECapability.fullscreen, ECapability.pictureInPicture, ECapability.volume, ECapability.mute, ECapability.getTitle],
           loadVideoById: (id: string) => player.loadVideo(id),
           setPlayerState: (state: EPlayerState) => {
@@ -137,7 +139,7 @@ export class VimeoApiService implements IApiService {
                 player.getPictureInPicture().then((current) => {
                   if (current !== isPip) {
                     console.warn('To enable pip from outside its iframe, you need to first focus the player, then call setPip');
-                    options.onPipChange(current);
+                    adapter.onPipChange?.(current);
                   }
                 });
               }, 50);
@@ -150,30 +152,31 @@ export class VimeoApiService implements IApiService {
             destroyRef.next(true);
             player.destroy();
           },
-        });
+        };
+        resolvePlayer(adapter);
       });
       player.on('loaded', () => {
-        options.onStateChange(EPlayerState.unstarted);
+        adapter.onStateChange?.(EPlayerState.unstarted);
         if (!isPlatformServer(this.platformId)) {
           setTimeout(() => options.autoplay && player.play(), 600);
           timer(0, 50)
             .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
             .subscribe((time) => {
               // Mute
-              player.getMuted().then((currentMute) => options.onMuteChange(currentMute));
+              player.getMuted().then((currentMute) => adapter.onMuteChange?.(currentMute));
             });
-          player.getVolume().then((vol) => options.onVolumeChange(vol * 100));
-          player.getDuration().then((duration) => options.onDurationChange(duration));
+          player.getVolume().then((vol) => adapter.onVolumeChange?.(vol * 100));
+          player.getDuration().then((duration) => adapter.onDurationChange?.(duration));
         }
       });
-      player.on('play', () => options.onStateChange(EPlayerState.playing));
-      player.on('pause', () => options.onStateChange(EPlayerState.paused));
-      player.on('ended', () => options.onStateChange(EPlayerState.ended));
-      player.on('volumechange', (ev) => options.onVolumeChange(ev.volume * 100));
-      player.on('timeupdate', (ev) => options.onCurrentTimeChange(ev.seconds));
-      player.on('enterpictureinpicture', (event) => options.onPipChange(true));
-      player.on('leavepictureinpicture', (event) => options.onPipChange(false));
-      player.on('fullscreenchange', (ev: { fullscreen: boolean }) => options.onFullscreenChange(ev.fullscreen));
+      player.on('play', () => adapter.onStateChange?.(EPlayerState.playing));
+      player.on('pause', () => adapter.onStateChange?.(EPlayerState.paused));
+      player.on('ended', () => adapter.onStateChange?.(EPlayerState.ended));
+      player.on('volumechange', (ev) => adapter.onVolumeChange?.(ev.volume * 100));
+      player.on('timeupdate', (ev) => adapter.onCurrentTimeChange?.(ev.seconds));
+      player.on('enterpictureinpicture', (event) => adapter.onPipChange?.(true));
+      player.on('leavepictureinpicture', (event) => adapter.onPipChange?.(false));
+      player.on('fullscreenchange', (ev: { fullscreen: boolean }) => adapter.onFullscreenChange?.(ev.fullscreen));
 
     });
   }

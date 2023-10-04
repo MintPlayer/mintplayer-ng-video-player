@@ -94,6 +94,7 @@ export class SpotifyApiService implements IApiService {
 
       let isReady = false;
       this.api.createController(<HTMLElement>options.element.querySelector('div'), { uri: options.initialVideoId, width: options.width, height: options.height }, (controller) => {
+        let adapter: PlayerAdapter;
         controller.addListener('ready', () => {
           if (options.autoplay) {
             setTimeout(() => controller.play(), 300);
@@ -103,7 +104,7 @@ export class SpotifyApiService implements IApiService {
             isReady = true;
             const destroyRef = new Subject();
 
-            const adapter: PlayerAdapter = {
+            adapter = {
               capabilities: [],
               loadVideoById: (id) => {
                 controller.loadUri(id);
@@ -151,9 +152,9 @@ export class SpotifyApiService implements IApiService {
 
         controller.addListener('playback_update', (ev) => {
           const evt = <PlaybackUpdateEvent>ev;
-          options.onCurrentTimeChange(evt.data.position / 1000);
-          options.onDurationChange(evt.data.duration / 1000);
-          options.onStateChange(evt.data.isPaused ? EPlayerState.paused : EPlayerState.playing);
+          adapter.onCurrentTimeChange?.(evt.data.position / 1000);
+          adapter.onDurationChange?.(evt.data.duration / 1000);
+          adapter.onStateChange?.(evt.data.isPaused ? EPlayerState.paused : EPlayerState.playing);
         });
       });
     });
