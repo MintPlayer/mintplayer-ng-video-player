@@ -3,21 +3,14 @@ import { DestroyRef, Inject, Injectable, PLATFORM_ID, Renderer2, RendererFactory
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
+import { ScriptLoader } from '@mintplayer/ng-script-loader';
 
 @Injectable({
   providedIn: 'root'
 })
 export class YoutubeApiService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object, rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
-    this.document = doc;
-    this.renderer = rendererFactory.createRenderer(null, null);
-  }
-
-  private document: Document;
-  private renderer: Renderer2;
-  private hasAlreadyStartedLoadingIframeApi = false;
-  private scriptTag!: HTMLScriptElement;
+  constructor(private scriptLoader: ScriptLoader, @Inject(PLATFORM_ID) private platformId: any) {}
 
   public get id() {
     return 'youtube';
@@ -40,35 +33,8 @@ export class YoutubeApiService implements IApiService {
   );
 
   public loadApi() {
-    // If not during server-side rendering
-    if (typeof window !== 'undefined') {
-
-      if (this.apiReady$.value) {
-        this.apiReady$.next(true);
-      } else if (!this.hasAlreadyStartedLoadingIframeApi) {
-        // Ensure the script is inserted only once
-        this.hasAlreadyStartedLoadingIframeApi = true;
-        
-        // Setup callback
-        (<any>window)['onYouTubeIframeAPIReady'] = () => {
-          this.apiReady$.next(true);
-        };
-
-        // Invocation
-        this.scriptTag = this.renderer.createElement('script');
-        this.scriptTag.src = 'https://www.youtube.com/iframe_api';
-
-        // Insert in DOM
-        const firstScriptTag = this.document.getElementsByTagName('script')[0];
-        if (!firstScriptTag) {
-          this.renderer.appendChild(this.document.head, this.scriptTag);
-        } else if (firstScriptTag.parentNode) {
-          this.renderer.insertBefore(firstScriptTag.parentNode, this.scriptTag, firstScriptTag);
-        } else {
-          throw 'First script tag has no parent node';
-        }
-      }
-    }
+    this.scriptLoader.loadScript('https://www.youtube.com/iframe_api', 'onYouTubeIframeAPIReady')
+      .then((readyArgs) => this.apiReady$.next(true));
   }
 
   public prepareHtml(domId: string, width: number, height: number) {

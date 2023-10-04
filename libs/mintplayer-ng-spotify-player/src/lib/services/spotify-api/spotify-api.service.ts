@@ -1,7 +1,7 @@
-import { DOCUMENT } from '@angular/common';
-import { DestroyRef, Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { DestroyRef, Injectable } from '@angular/core';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { ScriptLoader } from '@mintplayer/ng-script-loader';
 import { PlaybackUpdateEvent, SpotifyIframeApi } from '../../interfaces/spotify-iframe-api';
 
 @Injectable({
@@ -9,15 +9,8 @@ import { PlaybackUpdateEvent, SpotifyIframeApi } from '../../interfaces/spotify-
 })
 export class SpotifyApiService implements IApiService {
 
-  constructor(rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
-    this.document = doc;
-    this.renderer = rendererFactory.createRenderer(null, null);
-  }
+  constructor(private scriptLoader: ScriptLoader) {}
 
-  private document: Document;
-  private renderer: Renderer2;
-  private hasAlreadyStartedLoadingIframeApi = false;
-  private scriptTag!: HTMLScriptElement;
   private api?: SpotifyIframeApi;
 
   public get id() {
@@ -32,35 +25,11 @@ export class SpotifyApiService implements IApiService {
   public apiReady$ = new BehaviorSubject<boolean>(false);
 
   public loadApi() {
-    if (typeof window !== 'undefined') {
-
-      if (this.apiReady$.value) {
+    this.scriptLoader.loadScript('https://open.spotify.com/embed-podcast/iframe-api/v1', 'onSpotifyIframeApiReady')
+      .then((readyArgs) => {
+        this.api = readyArgs[0];
         this.apiReady$.next(true);
-      } else if (!this.hasAlreadyStartedLoadingIframeApi) {
-        // Ensure the script is inserted only once
-        this.hasAlreadyStartedLoadingIframeApi = true;
-
-        // Setup callback
-        (<any>window)['onSpotifyIframeApiReady'] = (iframeApi: SpotifyIframeApi) => {
-          this.api = iframeApi;
-          this.apiReady$.next(true);
-        };
-
-        // Invocation
-        this.scriptTag = this.renderer.createElement('script');
-        this.scriptTag.src = 'https://open.spotify.com/embed-podcast/iframe-api/v1';
-
-        // Insert in DOM
-        const firstScriptTag = this.document.getElementsByTagName('script')[0];
-        if (!firstScriptTag) {
-          this.renderer.appendChild(this.document.head, this.scriptTag);
-        } else if (firstScriptTag.parentNode) {
-          this.renderer.insertBefore(firstScriptTag.parentNode, this.scriptTag, firstScriptTag);
-        } else {
-          throw 'First script tag has no parent node';
-        }
-      }
-    }
+      });
   }
 
   public prepareHtml(domId: string, width: number, height: number) {

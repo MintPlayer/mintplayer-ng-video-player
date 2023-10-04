@@ -1,23 +1,17 @@
-import { DOCUMENT, isPlatformServer } from '@angular/common';
-import { Injectable, DestroyRef, Inject, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
+import { Injectable, DestroyRef, Inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, timer, takeUntil, Subject } from 'rxjs';
+import { ScriptLoader } from '@mintplayer/ng-script-loader';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DailymotionApiService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object, rendererFactory: RendererFactory2, @Inject(DOCUMENT) doc: any) {
-    this.document = doc;
-    this.renderer = rendererFactory.createRenderer(null, null);
+  constructor(@Inject(PLATFORM_ID) private platformId: object, private scriptLoader: ScriptLoader) {
   }
-
-  private document: Document;
-  private renderer: Renderer2;
-  private hasAlreadyStartedLoadingApi = false;
-  private scriptTag!: HTMLScriptElement;
 
   public get id() {
     return 'dailymotion';
@@ -30,37 +24,8 @@ export class DailymotionApiService implements IApiService {
   public apiReady$ = new BehaviorSubject<boolean>(false);
 
   public loadApi() {
-    // If not during server-side rendering
-    if (typeof window !== 'undefined') {
-
-      if (this.apiReady$.value) {
-        this.apiReady$.next(true);
-      } else if (!this.hasAlreadyStartedLoadingApi) {
-        // Ensure the script is inserted only once
-        this.hasAlreadyStartedLoadingApi = true;
-        
-        // Create scripttag
-        this.scriptTag = this.renderer.createElement('script');
-        this.scriptTag.src = 'https://api.dmcdn.net/all.js';
-        // this.scriptTag.src = 'https://cdn.mintplayer.com/dailymotion/all.js';
-
-        // Setup callback
-        this.scriptTag.addEventListener('load', () => this.apiReady$.next(true));
-        this.scriptTag.addEventListener('error', () => {
-          throw new Error(`${this.scriptTag.src} failed to load`);
-        });
-
-        // Insert in DOM
-        const firstScriptTag = this.document.getElementsByTagName('script')[0];
-        if (!firstScriptTag) {
-          this.renderer.appendChild(this.document.head, this.scriptTag);
-        } else if (firstScriptTag.parentNode) {
-          this.renderer.insertBefore(firstScriptTag.parentNode, this.scriptTag, firstScriptTag);
-        } else {
-          throw 'First script tag has no parent node';
-        }
-      }
-    }
+    this.scriptLoader.loadScript('https://api.dmcdn.net/all.js')
+      .then((readyArgs) => this.apiReady$.next(true));
   }
 
   public prepareHtml(domId: string, width: number, height: number) {
@@ -138,7 +103,6 @@ export class DailymotionApiService implements IApiService {
                   adapter.onCurrentTimeChange(player.currentTime);
                 });
             }
-
 
             resolvePlayer(adapter);
           },
