@@ -1,6 +1,5 @@
 import { DestroyRef, InjectionToken } from "@angular/core";
 import { BehaviorSubject } from 'rxjs';
-// import { PlayerProgress } from '@mintplayer/ng-player-progress';
 
 export const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis');
 
@@ -15,7 +14,6 @@ export interface IApiService {
 }
 
 export interface PlayerOptions {
-    // Properties
     width: number;
     height: number;
     autoplay: boolean;
@@ -23,8 +21,9 @@ export interface PlayerOptions {
     domId?: string;
     element?: HTMLElement;
     initialVideoId?: string;
+}
 
-    // Events
+export interface PlayerAdapter extends PlayerAdapterRequired {
     onStateChange: (ev: EPlayerState) => void;
     onMuteChange: (ev: boolean) => void;
     onVolumeChange: (volume: number) => void;
@@ -34,8 +33,8 @@ export interface PlayerOptions {
     onPipChange: (isPip: boolean) => void;
 }
 
-export interface PlayerAdapter {
-    // Methods
+
+export interface PlayerAdapterRequired {
     loadVideoById: (id: string) => void;
     setPlayerState: (state: EPlayerState) => void;
     setMute: (mute: boolean) => void;
@@ -50,6 +49,19 @@ export interface PlayerAdapter {
     destroy: () => void;
 
     get capabilities(): ECapability[];
+}
+
+export function createPlayerAdapter(requiredProps: PlayerAdapterRequired) : PlayerAdapter {
+    return {
+        ...requiredProps,
+        onStateChange: () => console.warn('onStateChange is not registered'),
+        onMuteChange: () => console.warn('onMuteChange is not registered'),
+        onVolumeChange: () => console.warn('onVolumeChange is not registered'),
+        onCurrentTimeChange: () => console.warn('onCurrentTimeChange is not registered'),
+        onDurationChange: () => console.warn('onDurationChange is not registered'),
+        onFullscreenChange: () => console.warn('onFullscreenChange is not registered'),
+        onPipChange: () => console.warn('onPipChange is not registered'),
+    }
 }
 
 export enum EPlayerState {

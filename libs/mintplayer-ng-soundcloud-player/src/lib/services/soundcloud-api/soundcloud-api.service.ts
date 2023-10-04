@@ -1,7 +1,7 @@
 import { DOCUMENT, isPlatformServer } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 import { PlayProgressEvent } from '../../events/play-progress.event';
 
@@ -76,7 +76,7 @@ export class SoundcloudApiService implements IApiService {
       const destroyRef = new Subject();
       const player = SC.Widget(<HTMLIFrameElement>options.element.getElementsByTagName('iframe')[0]);
 
-      const adapter: PlayerAdapter = {
+      const adapter: PlayerAdapter = createPlayerAdapter({
         capabilities: [ECapability.volume, ECapability.getTitle],
         loadVideoById: (id: string) => player.load(id, { auto_play: options.autoplay }),
         setPlayerState: (state: EPlayerState) => {
@@ -108,19 +108,19 @@ export class SoundcloudApiService implements IApiService {
         setFullscreen: (isFullscreen) => {
           if (isFullscreen) {
             console.warn('SoundCloud player doesn\'t support fullscreen mode');
-            setTimeout(() => options.onFullscreenChange(false), 50);
+            setTimeout(() => adapter.onFullscreenChange(false), 50);
           }
         },
         getFullscreen: () => new Promise(resolve => resolve(false)),
         setPip: (isPip) => {
           if (isPip) {
             console.warn('SoundCloud player doesn\'t support PIP mode');
-            setTimeout(() => options.onPipChange(false), 50);
+            setTimeout(() => adapter.onPipChange(false), 50);
           }
         },
         getPip: () => new Promise(resolve => resolve(false)),
         destroy: () => destroyRef.next(true),
-      };
+      });
       
       player.bind(SC.Widget.Events.READY, () => {
         resolvePlayer(adapter);
@@ -130,19 +130,19 @@ export class SoundcloudApiService implements IApiService {
             .subscribe((time) => {
               // Volume
               player.getVolume((currentVolume) => {
-                options.onVolumeChange(currentVolume);
-                options.onMuteChange(currentVolume === 0 ? true : false);
+                adapter.onVolumeChange(currentVolume);
+                adapter.onMuteChange(currentVolume === 0 ? true : false);
               });
             });
         }
       });
       player.bind(SC.Widget.Events.PLAY, () => {
-        options.onStateChange(EPlayerState.playing);
-        player.getDuration((duration) => options.onDurationChange(duration / 1000));
+        adapter.onStateChange(EPlayerState.playing);
+        player.getDuration((duration) => adapter.onDurationChange(duration / 1000));
       });
-      player.bind(SC.Widget.Events.PAUSE, () => options.onStateChange(EPlayerState.paused));
-      player.bind(SC.Widget.Events.FINISH, () => options.onStateChange(EPlayerState.ended));
-      player.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => options.onCurrentTimeChange(event.currentPosition / 1000));
+      player.bind(SC.Widget.Events.PAUSE, () => adapter.onStateChange(EPlayerState.paused));
+      player.bind(SC.Widget.Events.FINISH, () => adapter.onStateChange(EPlayerState.ended));
+      player.bind(SC.Widget.Events.PLAY_PROGRESS, (event: PlayProgressEvent) => adapter.onCurrentTimeChange(event.currentPosition / 1000));
     });
   }
 }

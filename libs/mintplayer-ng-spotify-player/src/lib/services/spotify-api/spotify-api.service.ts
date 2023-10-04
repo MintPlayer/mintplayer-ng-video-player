@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { DestroyRef, Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
-import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
+import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { PlaybackUpdateEvent, SpotifyIframeApi } from '../../interfaces/spotify-iframe-api';
 
@@ -94,6 +94,7 @@ export class SpotifyApiService implements IApiService {
 
       let isReady = false;
       this.api.createController(<HTMLElement>options.element.querySelector('div'), { uri: options.initialVideoId, width: options.width, height: options.height }, (controller) => {
+        let adapter: PlayerAdapter;
         controller.addListener('ready', () => {
           if (options.autoplay) {
             setTimeout(() => controller.play(), 300);
@@ -103,7 +104,7 @@ export class SpotifyApiService implements IApiService {
             isReady = true;
             const destroyRef = new Subject();
 
-            const adapter: PlayerAdapter = {
+            adapter = createPlayerAdapter({
               capabilities: [],
               loadVideoById: (id) => {
                 controller.loadUri(id);
@@ -143,7 +144,7 @@ export class SpotifyApiService implements IApiService {
                 destroyRef.next(true);
                 controller.destroy();
               }
-            };
+            });
 
             resolvePlayer(adapter);
           }
@@ -151,9 +152,9 @@ export class SpotifyApiService implements IApiService {
 
         controller.addListener('playback_update', (ev) => {
           const evt = <PlaybackUpdateEvent>ev;
-          options.onCurrentTimeChange(evt.data.position / 1000);
-          options.onDurationChange(evt.data.duration / 1000);
-          options.onStateChange(evt.data.isPaused ? EPlayerState.paused : EPlayerState.playing);
+          adapter.onCurrentTimeChange(evt.data.position / 1000);
+          adapter.onDurationChange(evt.data.duration / 1000);
+          adapter.onStateChange(evt.data.isPaused ? EPlayerState.paused : EPlayerState.playing);
         });
       });
     });
