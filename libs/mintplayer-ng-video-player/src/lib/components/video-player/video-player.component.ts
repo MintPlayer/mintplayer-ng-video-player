@@ -77,9 +77,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
         if (currentVideoRequest) {
           if (currentVideoRequest.api.id === this.playerInfo?.platformId) {
-            this.playerInfo.adapter.loadVideoById(currentVideoRequest.id);
+            this.playerInfo.adapter.loadVideoById?.(currentVideoRequest.id);
           } else {
-            this.playerInfo?.adapter?.destroy();
+            this.playerInfo?.adapter?.destroy?.();
             setHtml(currentVideoRequest);
             currentVideoRequest.api.createPlayer({
               width: this.width,
@@ -88,19 +88,27 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
               domId: this.domId,
               element: this.container.nativeElement,
               initialVideoId: currentVideoRequest.id,
-              onStateChange: (state) => this.playerStateObserver$.next(state),
-              onMuteChange: (mute) => this.muteObserver$.next(mute),
-              onVolumeChange: (volume) => this.volumeObserver$.next(volume),
-              onCurrentTimeChange: (progress) => this.currentTimeObserver$.next(progress),
-              onDurationChange: (duration) => this.durationObserver$.next(duration),
-              onPipChange: (isPip) => this.pipObserver$.next(isPip),
-              onFullscreenChange: (isFullscreen) => this.fullscreenObserver$.next(isFullscreen),
+              // onStateChange: (state) => this.playerStateObserver$.next(state),
+              // onMuteChange: (mute) => this.muteObserver$.next(mute),
+              // onVolumeChange: (volume) => this.volumeObserver$.next(volume),
+              // onCurrentTimeChange: (progress) => this.currentTimeObserver$.next(progress),
+              // onDurationChange: (duration) => this.durationObserver$.next(duration),
+              // onPipChange: (isPip) => this.pipObserver$.next(isPip),
+              // onFullscreenChange: (isFullscreen) => this.fullscreenObserver$.next(isFullscreen),
             }, destroy).then(adapter => {
               this.playerInfo = {
                 platformId: currentVideoRequest.api.id,
                 videoId: currentVideoRequest.id,
                 adapter: adapter,
               };
+
+              adapter.onStateChange = (state) => this.playerStateObserver$.next(state);
+              adapter.onMuteChange = (mute) => this.muteObserver$.next(mute);
+              adapter.onVolumeChange = (volume) => this.volumeObserver$.next(volume);
+              adapter.onCurrentTimeChange = (progress) => this.currentTimeObserver$.next(progress);
+              adapter.onDurationChange = (duration) => this.durationObserver$.next(duration);
+              adapter.onPipChange = (isPip) => this.pipObserver$.next(isPip);
+              adapter.onFullscreenChange = (isFullscreen) => this.fullscreenObserver$.next(isFullscreen);
 
               this.isPlayerReady$.next(true);
               this.isSwitchingVideo$.next(false);
