@@ -27,11 +27,11 @@ export class ScriptLoader {
   allScripts = new Map<string, ScriptInformation>();
 
   public loadScript(src: string, windowCallback?: string) {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<any[]>((resolve, reject) => {
       src = src.replace('"', '');
       // Only act if in the browser
       if (isPlatformServer(this.platformId)) {
-        return resolve(false);
+        return resolve([]);
       }
 
       // Check if we're already handling this script url
@@ -39,7 +39,7 @@ export class ScriptLoader {
       if (existingScript) {
         if (existingScript.fullyLoaded) {
           // Script is already in DOM, and we already got the loaded callback
-          return resolve(true);
+          return resolve(existingScript.receivedArgs ?? []);
         } else {
           // Script is already being loaded, but we didn't get the callback yet
           existingScript.promisesToResolve.push(resolve);
@@ -62,14 +62,14 @@ export class ScriptLoader {
         if (windowCallback) {
           (<any>window)[windowCallback] = (...args: any[]) => {
             scriptInfo.fullyLoaded = true;
-            // resolve(true);
-            scriptInfo.promisesToResolve.forEach((p) => p(true));
+            scriptInfo.receivedArgs = args;
+            scriptInfo.promisesToResolve.forEach((p) => p(args));
           };
         } else {
-          scriptTag.addEventListener('load', () => {
+          scriptTag.addEventListener('load', (...args: any[]) => {
             scriptInfo.fullyLoaded = true;
-            // resolve(true);
-            scriptInfo.promisesToResolve.forEach((p) => p(true));
+            scriptInfo.receivedArgs = args;
+            scriptInfo.promisesToResolve.forEach((p) => p(args));
           });
         }
 
@@ -93,5 +93,8 @@ interface ScriptInformation {
   tag?: HTMLScriptElement;
   fullyLoaded: boolean;
   initiallyLoaded: boolean;
-  promisesToResolve: ((value: boolean | PromiseLike<boolean>) => void)[];
+  promisesToResolve: ((value: any[] | PromiseLike<any[]>) => void)[];
+
+  /** These are the parameters received from the windowCallback or script.onload method. */
+  receivedArgs?: any[];
 }

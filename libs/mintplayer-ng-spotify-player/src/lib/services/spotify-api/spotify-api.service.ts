@@ -11,8 +11,6 @@ export class SpotifyApiService implements IApiService {
 
   constructor(private scriptLoader: ScriptLoader) {}
 
-  private hasAlreadyStartedLoadingIframeApi = false;
-  private scriptTag!: HTMLScriptElement;
   private api?: SpotifyIframeApi;
 
   public get id() {
@@ -28,23 +26,10 @@ export class SpotifyApiService implements IApiService {
 
   public loadApi() {
     this.scriptLoader.loadScript('https://open.spotify.com/embed-podcast/iframe-api/v1', 'onSpotifyIframeApiReady')
-      .then((success) => this.apiReady$.next(true));
-
-    if (typeof window !== 'undefined') {
-
-      if (this.apiReady$.value) {
+      .then((readyArgs) => {
+        this.api = readyArgs[0];
         this.apiReady$.next(true);
-      } else if (!this.hasAlreadyStartedLoadingIframeApi) {
-        // Ensure the script is inserted only once
-        this.hasAlreadyStartedLoadingIframeApi = true;
-
-        // Setup callback
-        (<any>window)[''] = (iframeApi: SpotifyIframeApi) => {
-          this.api = iframeApi;
-          this.apiReady$.next(true);
-        };
-      }
-    }
+      });
   }
 
   public prepareHtml(domId: string, width: number, height: number) {

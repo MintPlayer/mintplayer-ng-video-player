@@ -1,5 +1,5 @@
-import { DOCUMENT, isPlatformServer } from '@angular/common';
-import { DestroyRef, Inject, Injectable, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
+import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
@@ -12,9 +12,6 @@ export class VimeoApiService implements IApiService {
 
 
   constructor(private scriptLoader: ScriptLoader, @Inject(PLATFORM_ID) private platformId: object) {}
-
-  private hasAlreadyStartedLoadingVimeoApi = false;
-  private scriptTag!: HTMLScriptElement;
 
   public get id() {
     return 'vimeo';
@@ -32,7 +29,7 @@ export class VimeoApiService implements IApiService {
 
   public loadApi() {
     this.scriptLoader.loadScript('https://player.vimeo.com/api/player.js')
-      .then((success) => this.apiReady$.next(true));
+      .then((readyArgs) => this.apiReady$.next(true));
   }
 
   public prepareHtml(domId: string, width: number, height: number) {
