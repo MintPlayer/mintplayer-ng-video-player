@@ -1,7 +1,7 @@
 import { DOCUMENT, isPlatformServer } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 
 @Injectable({
@@ -91,7 +91,7 @@ export class VimeoApiService implements IApiService {
 
 
       player.ready().then(() => {
-        adapter = {
+        adapter = createPlayerAdapter({
           capabilities: [ECapability.fullscreen, ECapability.pictureInPicture, ECapability.volume, ECapability.mute, ECapability.getTitle],
           loadVideoById: (id: string) => player.loadVideo(id),
           setPlayerState: (state: EPlayerState) => {
@@ -152,7 +152,7 @@ export class VimeoApiService implements IApiService {
             destroyRef.next(true);
             player.destroy();
           },
-        };
+        });
         resolvePlayer(adapter);
       });
       player.on('loaded', () => {

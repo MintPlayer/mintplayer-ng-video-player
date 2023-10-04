@@ -1,7 +1,7 @@
 import { DOCUMENT, isPlatformServer } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 import { PlayProgressEvent } from '../../events/play-progress.event';
 
@@ -76,7 +76,7 @@ export class SoundcloudApiService implements IApiService {
       const destroyRef = new Subject();
       const player = SC.Widget(<HTMLIFrameElement>options.element.getElementsByTagName('iframe')[0]);
 
-      const adapter: PlayerAdapter = {
+      const adapter: PlayerAdapter = createPlayerAdapter({
         capabilities: [ECapability.volume, ECapability.getTitle],
         loadVideoById: (id: string) => player.load(id, { auto_play: options.autoplay }),
         setPlayerState: (state: EPlayerState) => {
@@ -120,7 +120,7 @@ export class SoundcloudApiService implements IApiService {
         },
         getPip: () => new Promise(resolve => resolve(false)),
         destroy: () => destroyRef.next(true),
-      };
+      });
       
       player.bind(SC.Widget.Events.READY, () => {
         resolvePlayer(adapter);

@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { DestroyRef, Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
-import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions } from '@mintplayer/ng-player-provider';
+import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { PlaybackUpdateEvent, SpotifyIframeApi } from '../../interfaces/spotify-iframe-api';
 
@@ -104,7 +104,7 @@ export class SpotifyApiService implements IApiService {
             isReady = true;
             const destroyRef = new Subject();
 
-            adapter = {
+            adapter = createPlayerAdapter({
               capabilities: [],
               loadVideoById: (id) => {
                 controller.loadUri(id);
@@ -144,7 +144,7 @@ export class SpotifyApiService implements IApiService {
                 destroyRef.next(true);
                 controller.destroy();
               }
-            };
+            });
 
             resolvePlayer(adapter);
           }
