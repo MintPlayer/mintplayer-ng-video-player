@@ -113,7 +113,7 @@ export class DailymotionApiService implements IApiService {
               setFullscreen: (isFullscreen) => {
                 if (isFullscreen) {
                   console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
-                  setTimeout(() => adapter.onFullscreenChange?.(false), 50);
+                  setTimeout(() => adapter.onFullscreenChange(false), 50);
                 }
               },
               getFullscreen: () => new Promise(resolve => {
@@ -123,7 +123,7 @@ export class DailymotionApiService implements IApiService {
               setPip: (isPip) => {
                 if (isPip) {
                   console.warn('DailyMotion player doesn\'t support PIP mode');
-                  setTimeout(() => adapter.onPipChange?.(false), 50);
+                  setTimeout(() => adapter.onPipChange(false), 50);
                 }
               },
               getPip: () => new Promise(resolve => resolve(false)),
@@ -134,8 +134,8 @@ export class DailymotionApiService implements IApiService {
               timer(0, 50)
                 .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
                 .subscribe((time) => {
-                  adapter.onMuteChange?.(player.muted);
-                  adapter.onCurrentTimeChange?.(player.currentTime);
+                  adapter.onMuteChange(player.muted);
+                  adapter.onCurrentTimeChange(player.currentTime);
                 });
             }
 
@@ -143,17 +143,17 @@ export class DailymotionApiService implements IApiService {
             resolvePlayer(adapter);
           },
           play: () => {
-            adapter.onStateChange?.(EPlayerState.playing);
-            adapter.onDurationChange?.(player.duration);
+            adapter.onStateChange(EPlayerState.playing);
+            adapter.onDurationChange(player.duration);
           },
-          pause: () => adapter.onStateChange?.(EPlayerState.paused),
-          end: () => adapter.onStateChange?.(EPlayerState.ended),
+          pause: () => adapter.onStateChange(EPlayerState.paused),
+          end: () => adapter.onStateChange(EPlayerState.ended),
         }
       });
 
       player.onvolumechange = () => {
         if (player) {
-          adapter.onVolumeChange?.(player.volume * 100);
+          adapter.onVolumeChange(player.volume * 100);
         }
       }
     });

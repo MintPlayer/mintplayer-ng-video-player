@@ -139,7 +139,7 @@ export class VimeoApiService implements IApiService {
                 player.getPictureInPicture().then((current) => {
                   if (current !== isPip) {
                     console.warn('To enable pip from outside its iframe, you need to first focus the player, then call setPip');
-                    adapter.onPipChange?.(current);
+                    adapter.onPipChange(current);
                   }
                 });
               }, 50);
@@ -156,27 +156,27 @@ export class VimeoApiService implements IApiService {
         resolvePlayer(adapter);
       });
       player.on('loaded', () => {
-        adapter.onStateChange?.(EPlayerState.unstarted);
+        adapter.onStateChange(EPlayerState.unstarted);
         if (!isPlatformServer(this.platformId)) {
           setTimeout(() => options.autoplay && player.play(), 600);
           timer(0, 50)
             .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
             .subscribe((time) => {
               // Mute
-              player.getMuted().then((currentMute) => adapter.onMuteChange?.(currentMute));
+              player.getMuted().then((currentMute) => adapter.onMuteChange(currentMute));
             });
-          player.getVolume().then((vol) => adapter.onVolumeChange?.(vol * 100));
-          player.getDuration().then((duration) => adapter.onDurationChange?.(duration));
+          player.getVolume().then((vol) => adapter.onVolumeChange(vol * 100));
+          player.getDuration().then((duration) => adapter.onDurationChange(duration));
         }
       });
-      player.on('play', () => adapter.onStateChange?.(EPlayerState.playing));
-      player.on('pause', () => adapter.onStateChange?.(EPlayerState.paused));
-      player.on('ended', () => adapter.onStateChange?.(EPlayerState.ended));
-      player.on('volumechange', (ev) => adapter.onVolumeChange?.(ev.volume * 100));
-      player.on('timeupdate', (ev) => adapter.onCurrentTimeChange?.(ev.seconds));
-      player.on('enterpictureinpicture', (event) => adapter.onPipChange?.(true));
-      player.on('leavepictureinpicture', (event) => adapter.onPipChange?.(false));
-      player.on('fullscreenchange', (ev: { fullscreen: boolean }) => adapter.onFullscreenChange?.(ev.fullscreen));
+      player.on('play', () => adapter.onStateChange(EPlayerState.playing));
+      player.on('pause', () => adapter.onStateChange(EPlayerState.paused));
+      player.on('ended', () => adapter.onStateChange(EPlayerState.ended));
+      player.on('volumechange', (ev) => adapter.onVolumeChange(ev.volume * 100));
+      player.on('timeupdate', (ev) => adapter.onCurrentTimeChange(ev.seconds));
+      player.on('enterpictureinpicture', (event) => adapter.onPipChange(true));
+      player.on('leavepictureinpicture', (event) => adapter.onPipChange(false));
+      player.on('fullscreenchange', (ev: { fullscreen: boolean }) => adapter.onFullscreenChange(ev.fullscreen));
 
     });
   }

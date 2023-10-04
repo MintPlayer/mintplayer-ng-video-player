@@ -152,9 +152,9 @@ export class SpotifyApiService implements IApiService {
 
         controller.addListener('playback_update', (ev) => {
           const evt = <PlaybackUpdateEvent>ev;
-          adapter.onCurrentTimeChange?.(evt.data.position / 1000);
-          adapter.onDurationChange?.(evt.data.duration / 1000);
-          adapter.onStateChange?.(evt.data.isPaused ? EPlayerState.paused : EPlayerState.playing);
+          adapter.onCurrentTimeChange(evt.data.position / 1000);
+          adapter.onDurationChange(evt.data.duration / 1000);
+          adapter.onStateChange(evt.data.isPaused ? EPlayerState.paused : EPlayerState.playing);
         });
       });
     });
