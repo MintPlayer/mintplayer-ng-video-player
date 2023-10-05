@@ -1,6 +1,7 @@
 import { DestroyRef, Injectable } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, filter, pairwise } from 'rxjs';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 import { PlaybackUpdateEvent, SpotifyIframeApi } from '../../interfaces/spotify-iframe-api';
 
@@ -75,9 +76,7 @@ export class SpotifyApiService implements IApiService {
 
             adapter = createPlayerAdapter({
               capabilities: [],
-              loadVideoById: (id) => {
-                controller.loadUri(id);
-              },
+              loadVideoById: (id) => controller.loadUri(id),
               setPlayerState: (state: EPlayerState) => {
                 switch (state) {
                   case EPlayerState.playing:
@@ -119,11 +118,26 @@ export class SpotifyApiService implements IApiService {
           }
         });
 
+        const state$ = new Subject<PlaybackUpdateEvent>();
+        state$.pipe(
+          // debounceTime(200),
+          pairwise(),
+          filter(([prev, next]) => {
+            return !prev.data.isPaused && ((prev.data.duration - prev.data.position) < 0.5)
+              && next.data.isPaused && (next.data.position === 0) && (Math.abs(prev.data.duration - next.data.duration) < 3);
+          }),
+          takeUntilDestroyed(destroy)
+        ).subscribe(() => {
+          setTimeout(() => adapter.onStateChange(EPlayerState.ended), 20);
+        });
+
         controller.addListener('playback_update', (ev) => {
           const evt = <PlaybackUpdateEvent>ev;
+          state$.next(evt);
+
           adapter.onCurrentTimeChange(evt.data.position / 1000);
           adapter.onDurationChange(evt.data.duration / 1000);
-          adapter.onStateChange(!evt.data.isPaused ? EPlayerState.playing : (evt.data.position === 0) ? EPlayerState.ended : EPlayerState.paused);
+          adapter.onStateChange(!evt.data.isPaused ? EPlayerState.playing : EPlayerState.paused);
         });
       });
     });
