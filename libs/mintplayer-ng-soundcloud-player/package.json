@@ -1,7 +1,7 @@
 {
   "name": "@mintplayer/ng-soundcloud-player",
   "private": false,
-  "version": "16.6.0",
+  "version": "16.6.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
@@ -11,6 +11,7 @@
     "@angular/common": "^16.0.0",
     "@angular/core": "^16.0.0",
     "@mintplayer/ng-video-player": "^16.6.0",
+    "@mintplayer/ng-script-loader": "^16.0.0",
     "rxjs": "^7.4.0"
   },
   "dependencies": {
