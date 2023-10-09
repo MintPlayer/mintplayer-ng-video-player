@@ -96,7 +96,13 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     const setHtml = (request: VideoRequest | null) => {
       if (request) {
         this.domId = `player${VideoPlayerComponent.playerCounter++}`;
-        const html = request.api.prepareHtml(this.domId, this._width, this._height);
+        const html = request.api.prepareHtml({
+          domId: this.domId,
+          width: this._width,
+          height: this._height,
+          initialVideoId: request.id,
+          autoplay: this.autoplay,
+        });
         this.container.nativeElement.innerHTML = html;
       } else {
         this.container.nativeElement.innerHTML = '';

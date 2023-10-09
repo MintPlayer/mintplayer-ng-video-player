@@ -1,0 +1,21 @@
+{
+  "name": "@mintplayer/ng-mixcloud-player",
+  "private": false,
+  "version": "16.6.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
+    "directory": "libs/mintplayer-ng-mixcloud-player"
+  },
+  "peerDependencies": {
+    "@angular/common": "^16.2.0",
+    "@angular/core": "^16.2.0",
+    "@mintplayer/ng-video-player": "^16.6.0",
+    "@mintplayer/ng-script-loader": "^16.0.0",
+    "rxjs": "^7.4.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

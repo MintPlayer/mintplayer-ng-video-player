@@ -18,6 +18,9 @@
       "@mintplayer/ng-dailymotion-player": [
         "libs/mintplayer-ng-dailymotion-player/src/index.ts"
       ],
+      "@mintplayer/ng-mixcloud-player": [
+        "libs/mintplayer-ng-mixcloud-player/src/index.ts"
+      ],
       "@mintplayer/ng-player-progress": [
         "libs/mintplayer-ng-player-progress/src/index.ts"
       ],

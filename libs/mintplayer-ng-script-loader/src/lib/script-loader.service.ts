@@ -54,7 +54,8 @@ export class ScriptLoader {
         this.allScripts.set(src, scriptInfo);
 
         // Create scripttag
-        const scriptTag = this.renderer.createElement('script');
+        const scriptTag: HTMLScriptElement = this.renderer.createElement('script');
+        // scriptTag.type = 'text/javascript';
         scriptTag.src = src;
         scriptInfo.tag = scriptTag;
 
