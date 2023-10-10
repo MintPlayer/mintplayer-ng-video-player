@@ -69,7 +69,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       }
     };
     
-    //#region [isApiReady$, videoRequest.playerType] => isSwitchingVideo$, isPlayerReady$
+    //#region [isApiReady$, videoRequest.playerType] => isSwitchingVideo$$
     this.isApiReady$
       .pipe(filter(r => !!r), takeUntilDestroyed())
       .subscribe((value) => {
@@ -103,27 +103,19 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
               adapter.onPipChange = (isPip) => this.pipObserver$.next(isPip);
               adapter.onFullscreenChange = (isFullscreen) => this.fullscreenObserver$.next(isFullscreen);
 
-              this.isPlayerReady$.next(true);
               this.isSwitchingVideo$.next(false);
               this.capabilitiesChange.emit(adapter.capabilities);
+            }).then(() => {
+              const videoRequest = this.videoRequest$.value;
+              if (videoRequest !== null) {
+                if (typeof videoRequest.id !== 'undefined') {
+                  this.playerInfo?.adapter.loadVideoById(videoRequest.id);
+                }
+              }
             });
-
 
             this.pipObserver$.next(false);
             this.fullscreenObserver$.next(false);
-          }
-        }
-      });
-    //#endregion
-
-    //#region [isPlayerReady$] => playVideo
-    this.isPlayerReady$
-      .pipe(filter(r => !!r), takeUntilDestroyed())
-      .subscribe((ready) => {
-        const videoRequest = this.videoRequest$.value;
-        if (videoRequest !== null) {
-          if (typeof videoRequest.id !== 'undefined') {
-            this.playerInfo?.adapter.loadVideoById(videoRequest.id);
           }
         }
       });
@@ -145,25 +137,16 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         this.zone.run(() => this.playerStateChange.emit(newPlayerState));
       });
     this.pipObserver$
-      .pipe(debounceTime(20), takeUntilDestroyed())
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntilDestroyed())
       .subscribe((isPip) => {
         this.zone.run(() => this.isPipChange.emit(this._isPip = isPip));
       });
     this.fullscreenObserver$
-      .pipe(debounceTime(20), takeUntilDestroyed())
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntilDestroyed())
       .subscribe((isFullscreen) => {
         this.zone.run(() => this.isFullscreenChange.emit(this._isFullscreen = isFullscreen));
       });
     
-    // combineLatest([
-    //   this.currentTimeObserver$.pipe(debounceTime(20), distinctUntilChanged()),
-    //   this.durationObserver$.pipe(debounceTime(20), distinctUntilChanged()),
-    // ])
-    //   .pipe(takeUntil(this.destroyed$))
-    //   .subscribe(([currentTime, duration]) => {
-    //     this.zone.run(() => this.progressChange.emit({ currentTime, duration }));
-    //   });
-
     this.progressObserver$ = combineLatest([this.currentTimeObserver$, this.durationObserver$])
       .pipe(debounceTime(10), takeUntilDestroyed())
       .pipe(map(([currentTime, duration]) => <PlayerProgress>{ currentTime, duration }));
@@ -287,7 +270,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private url$ = new BehaviorSubject<string | null>(null);
   private videoRequest$ = new BehaviorSubject<VideoRequest | null>(null);
   private isApiReady$ = new Subject();
-  private isPlayerReady$ = new BehaviorSubject<boolean>(false);
   private isSwitchingVideo$ = new BehaviorSubject<boolean>(false);
   private volumeObserver$ = new Subject<number>();
   private muteObserver$ = new Subject<boolean>();
@@ -300,7 +282,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   
 
   private playerInfo: { platformId: string, videoId: string, adapter: PlayerAdapter } | null = null;
-  private hasJustLoaded = false;
 
   ngAfterViewInit() {
     this.isViewInited$.next(true);
