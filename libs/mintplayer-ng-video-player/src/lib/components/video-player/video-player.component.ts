@@ -43,11 +43,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     //#region [videoRequest$] => isApiReady$
     this.videoRequest$
       .pipe(takeUntilDestroyed())
-      .subscribe((videoRequest) => {
+      .subscribe(videoRequest => {
         if (videoRequest) {
           videoRequest?.api.apiReady$
             .pipe(filter(ready => !!ready), take(1), takeUntilDestroyed(destroy))
-            .subscribe((ready) => this.isApiReady$.next(ready));
+            .subscribe(ready => this.isApiReady$.next(ready));
           videoRequest?.api.loadApi();
         } else {
           // Cancel all timers / Clear the html
@@ -72,7 +72,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     //#region [isApiReady$, videoRequest.playerType] => isSwitchingVideo$$
     this.isApiReady$
       .pipe(filter(r => !!r), takeUntilDestroyed())
-      .subscribe((value) => {
+      .subscribe(value => {
         const currentVideoRequest = this.videoRequest$.value;
 
         if (currentVideoRequest) {
@@ -122,37 +122,31 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     //#endregion
 
     this.volumeObserver$
-      .pipe(debounceTime(20), distinctUntilChanged(), filter((volume) => volume !== null), takeUntilDestroyed())
-      .subscribe((newVolume) => {
-        this.zone.run(() => this.volumeChange.emit(this._volume = newVolume));
-      });
+      .pipe(debounceTime(20), distinctUntilChanged(), filter(volume => volume !== null), takeUntilDestroyed())
+      .subscribe(newVolume => this.zoneEmit(this.volumeChange, this._volume = newVolume));
     this.muteObserver$
       .pipe(debounceTime(20), distinctUntilChanged(), takeUntilDestroyed())
-      .subscribe((newMute) => {
-        this.zone.run(() => this.muteChange.emit(this._mute = newMute));
-      });
+      .subscribe(newMute => this.zoneEmit(this.muteChange, this._mute = newMute));
     this.playerStateObserver$
       .pipe(debounceTime(20), distinctUntilChanged(), takeUntilDestroyed())
-      .subscribe((newPlayerState) => {
-        this.zone.run(() => this.playerStateChange.emit(newPlayerState));
-      });
+      .subscribe(newPlayerState => this.zoneEmit(this.playerStateChange, newPlayerState));
     this.pipObserver$
       .pipe(debounceTime(20), distinctUntilChanged(), takeUntilDestroyed())
-      .subscribe((isPip) => {
-        this.zone.run(() => this.isPipChange.emit(this._isPip = isPip));
-      });
+      .subscribe(isPip => this.zoneEmit(this.isPipChange, this._isPip = isPip));
     this.fullscreenObserver$
       .pipe(debounceTime(20), distinctUntilChanged(), takeUntilDestroyed())
-      .subscribe((isFullscreen) => {
-        this.zone.run(() => this.isFullscreenChange.emit(this._isFullscreen = isFullscreen));
-      });
+      .subscribe(isFullscreen => this.zoneEmit(this.isFullscreenChange, this._isFullscreen = isFullscreen));
     
     this.progressObserver$ = combineLatest([this.currentTimeObserver$, this.durationObserver$])
       .pipe(debounceTime(10), takeUntilDestroyed())
       .pipe(map(([currentTime, duration]) => <PlayerProgress>{ currentTime, duration }));
       
     this.progressObserver$.pipe(takeUntilDestroyed())
-      .subscribe((progress) => this.zone.run(() => this.progressChange.emit(progress)));
+      .subscribe(progress => this.zoneEmit(this.progressChange, progress));
+  }
+
+  private zoneEmit<T>(emitter: EventEmitter<T>, value?: T) {
+    this.zone.run(() => emitter.emit(value));
   }
 
   //#region width
