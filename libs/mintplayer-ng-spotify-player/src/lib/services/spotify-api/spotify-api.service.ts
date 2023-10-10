@@ -23,14 +23,9 @@ export class SpotifyApiService implements IApiService {
     new RegExp(/spotify:(?<type>track|episode):(?<id>[0-9A-Za-z]+)/, 'g'),
   ];
 
-  public apiReady$ = new BehaviorSubject<boolean>(false);
-
   public loadApi() {
-    this.scriptLoader.loadScript('https://open.spotify.com/embed-podcast/iframe-api/v1', 'onSpotifyIframeApiReady')
-      .then((readyArgs) => {
-        this.api = readyArgs[0];
-        this.apiReady$.next(true);
-      });
+    return this.scriptLoader.loadScript('https://open.spotify.com/embed-podcast/iframe-api/v1', 'onSpotifyIframeApiReady')
+      .then(readyArgs => this.api = readyArgs[0]);
   }
 
   public prepareHtml(domId: string, width: number, height: number) {

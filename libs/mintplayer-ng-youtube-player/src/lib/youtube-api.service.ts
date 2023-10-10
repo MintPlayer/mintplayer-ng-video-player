@@ -1,8 +1,8 @@
-import { isPlatformServer, DOCUMENT } from '@angular/common';
-import { DestroyRef, Inject, Injectable, PLATFORM_ID, Renderer2, RendererFactory2 } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
+import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
+import { Subject, takeUntil, timer } from 'rxjs';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 
 @Injectable({
@@ -26,15 +26,8 @@ export class YoutubeApiService implements IApiService {
     new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}youtube\.com\/live\/(?<id>[^&?]+)/, 'g'),
   ];
 
-  public apiReady$ = new BehaviorSubject<boolean>(
-    (typeof window === 'undefined')
-      ? false
-      : (<any>window)['YT'] !== undefined
-  );
-
   public loadApi() {
-    this.scriptLoader.loadScript('https://www.youtube.com/iframe_api', 'onYouTubeIframeAPIReady')
-      .then((readyArgs) => this.apiReady$.next(true));
+    return this.scriptLoader.loadScript('https://www.youtube.com/iframe_api', 'onYouTubeIframeAPIReady');
   }
 
   public prepareHtml(domId: string, width: number, height: number) {
@@ -109,14 +102,14 @@ export class YoutubeApiService implements IApiService {
             if (!isPlatformServer(this.platformId)) {
               timer(0, 50)
                 .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                .subscribe((time) => {
+                .subscribe(() => {
                   // Progress
                   const currentTime = player.getCurrentTime();
                   adapter.onCurrentTimeChange(currentTime);
                 });
               timer(0, 50)
                 .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                .subscribe((time) => {
+                .subscribe(() => {
                   // Volume
                   const vol = player.getVolume();
                   adapter.onVolumeChange(vol);
