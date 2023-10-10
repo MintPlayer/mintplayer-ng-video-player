@@ -19,7 +19,7 @@ export class VideoDemoComponent {
     this.cannotChangeVolume$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.volume)));
     this.cannotMute$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.mute)));
     this.cannotGetTitle$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.getTitle)));
-    (<any>window)['testingPlayerApi'] = true;
+    // (<any>window)['testingPlayerApi'] = true;
   }
 
   title = 'video-player-demo';
@@ -61,7 +61,6 @@ export class VideoDemoComponent {
 
   addToPlaylist() {
     this.videos.push(this.newVideoUrl);
-    console.warn(this.videos);
     this.newVideoUrl = '';
   }
 

@@ -40,7 +40,7 @@ export class MixcloudApiService implements IApiService {
       throw 'The MixCloud api requires an initial video id';
     }
 
-    return `<iframe id="${options.domId}" style="max-width:100%" src="https://www.mixcloud.com/widget/iframe/?autoplay=${options.autoplay ? 1 : 0}&feed=${encodeURIComponent(options.initialVideoId)}"></iframe>`;
+    return `<iframe id="${options.domId}" style="max-width:100%" src="https://www.mixcloud.com/widget/iframe/?autoplay=${options.autoplay ? 1 : 0}&feed=${encodeURIComponent(options.initialVideoId)}" allow="autoplay"></iframe>`;
   }
 
   public createPlayer(options: PlayerOptions, destroy: DestroyRef) {
@@ -59,9 +59,13 @@ export class MixcloudApiService implements IApiService {
       const player = Mixcloud.PlayerWidget(frame);
       player.ready.then(() => {
         console.log('player', player);
+        let events: MixCloudEvents;
         adapter = createPlayerAdapter({
           capabilities: [],
-          loadVideoById: (id: string) => player.load(id, options.autoplay),
+          loadVideoById: (id: string) => {
+            player.load(id, options.autoplay)
+              // .then(() => this.hookEvents(player, adapter));
+          },
           setPlayerState: (state: EPlayerState) => {
             switch (state) {
               case EPlayerState.playing:
@@ -96,20 +100,47 @@ export class MixcloudApiService implements IApiService {
           },
           getPip: () => new Promise(resolve => resolve(false)),
           destroy: () => {
-            destroyRef.next(true);
+            player.events.play.off(events.playHandler);
+            player.events.pause.off(events.pauseHandler);
+            player.events.ended.off(events.endedHandler);
+            player.events.progress.off(events.progressHandler);
+            setTimeout(() => destroyRef.next(true), 50);
           }
         });
 
-        player.events.play.on(() => adapter.onStateChange(EPlayerState.playing));
-        player.events.pause.on(() => adapter.onStateChange(EPlayerState.paused));
-        player.events.ended.on(() => adapter.onStateChange(EPlayerState.ended));
-        player.events.progress.on((position: number, duration: number) => {
-          adapter.onCurrentTimeChange(position);
-          adapter.onDurationChange(duration);
-        });
+        events = this.hookEvents(player, adapter);
 
         resolvePlayer(adapter);
       });
     });
   }
+
+  private hookEvents(player: Mixcloud.Player, adapter: PlayerAdapter): MixCloudEvents {
+    const playHandler = () => adapter.onStateChange(EPlayerState.playing);
+    const pauseHandler = () => adapter.onStateChange(EPlayerState.paused);
+    const endedHandler = () => adapter.onStateChange(EPlayerState.ended);
+    const progressHandler = (position: number, duration: number) => {
+      adapter.onCurrentTimeChange(position);
+      adapter.onDurationChange(duration);
+    };
+
+    player.events.play.on(playHandler);
+    player.events.pause.on(pauseHandler);
+    player.events.ended.on(endedHandler);
+    player.events.progress.on(progressHandler);
+
+    return {
+      playHandler,
+      pauseHandler,
+      endedHandler,
+      progressHandler,
+    };
+  }
+}
+
+interface MixCloudEvents {
+  playHandler: () => void;
+  pauseHandler: () => void;
+  endedHandler: () => void;
+  progressHandler: (position: number, duration: number) => void;
 }
