@@ -2,14 +2,13 @@ import { isPlatformServer } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
+import { Subject, takeUntil, timer } from 'rxjs';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VimeoApiService implements IApiService {
-
 
   constructor(private scriptLoader: ScriptLoader, @Inject(PLATFORM_ID) private platformId: object) {}
 
@@ -21,15 +20,8 @@ export class VimeoApiService implements IApiService {
     new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}vimeo\.com\/(?<id>[0-9]+)$/, 'g'),
   ];
 
-  public apiReady$ = new BehaviorSubject<boolean>(
-    (typeof window === 'undefined')
-      ? false
-      : (<any>window)['Vimeo'] !== undefined
-  );
-
   public loadApi() {
-    this.scriptLoader.loadScript('https://player.vimeo.com/api/player.js')
-      .then((readyArgs) => this.apiReady$.next(true));
+    return this.scriptLoader.loadScript('https://player.vimeo.com/api/player.js');
   }
 
   public prepareHtml(domId: string, width: number, height: number) {
@@ -128,7 +120,7 @@ export class VimeoApiService implements IApiService {
           setTimeout(() => options.autoplay && player.play(), 600);
           timer(0, 50)
             .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-            .subscribe((time) => {
+            .subscribe(() => {
               // Mute
               player.getMuted().then((currentMute) => adapter.onMuteChange(currentMute));
             });
@@ -141,8 +133,8 @@ export class VimeoApiService implements IApiService {
       player.on('ended', () => adapter.onStateChange(EPlayerState.ended));
       player.on('volumechange', (ev) => adapter.onVolumeChange(ev.volume * 100));
       player.on('timeupdate', (ev) => adapter.onCurrentTimeChange(ev.seconds));
-      player.on('enterpictureinpicture', (event) => adapter.onPipChange(true));
-      player.on('leavepictureinpicture', (event) => adapter.onPipChange(false));
+      player.on('enterpictureinpicture', () => adapter.onPipChange(true));
+      player.on('leavepictureinpicture', () => adapter.onPipChange(false));
       player.on('fullscreenchange', (ev: { fullscreen: boolean }) => adapter.onFullscreenChange(ev.fullscreen));
 
     });

@@ -2,7 +2,7 @@ import { isPlatformServer } from '@angular/common';
 import { Injectable, DestroyRef, Inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { BehaviorSubject, timer, takeUntil, Subject } from 'rxjs';
+import { timer, takeUntil, Subject } from 'rxjs';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 
 @Injectable({
@@ -21,11 +21,9 @@ export class DailymotionApiService implements IApiService {
     new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}dailymotion\.com\/video\/(?<id>[0-9A-Za-z]+)$/, 'g'),
   ];
 
-  public apiReady$ = new BehaviorSubject<boolean>(false);
 
   public loadApi() {
-    this.scriptLoader.loadScript('https://api.dmcdn.net/all.js')
-      .then((readyArgs) => this.apiReady$.next(true));
+    return this.scriptLoader.loadScript('https://api.dmcdn.net/all.js');
   }
 
   public prepareHtml(domId: string, width: number, height: number) {
@@ -98,7 +96,7 @@ export class DailymotionApiService implements IApiService {
             if (!isPlatformServer(this.platformId)) {
               timer(0, 50)
                 .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                .subscribe((time) => {
+                .subscribe(() => {
                   adapter.onMuteChange(player.muted);
                   adapter.onCurrentTimeChange(player.currentTime);
                 });

@@ -43,7 +43,7 @@ export class VideoDemoComponent {
     'https://www.youtube.com/watch?v=yFKhgF_vkgs',
     'https://www.youtube.com/live/gCNeDWCI0vo?app=desktop&feature=share',
     'https://www.dailymotion.com/video/x2yhuhb',
-    'https://www.dailymotion.com/video/x8n41nh',
+    'https://www.dailymotion.com/video/x20zq3f',
     'https://vimeo.com/14190306',
     'https://vimeo.com/82932655',
     'https://soundcloud.com/dario-g/sunchyme-radio-edit',

@@ -2,7 +2,7 @@ import { isPlatformServer } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
+import { Subject, takeUntil, timer } from 'rxjs';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 import { PlayProgressEvent } from '../../events/play-progress.event';
 
@@ -21,11 +21,8 @@ export class SoundcloudApiService implements IApiService {
     new RegExp(/(?<id>http[s]{0,1}:\/\/(www\.){0,1}soundcloud\.com\/.+)$/, 'g'),
   ];
 
-  public apiReady$ = new BehaviorSubject<boolean>(false);
-
   public loadApi() {
-    this.scriptLoader.loadScript('https://w.soundcloud.com/player/api.js')
-      .then((readyArgs) => this.apiReady$.next(true));
+    return this.scriptLoader.loadScript('https://w.soundcloud.com/player/api.js');
   }
 
   public prepareHtml(domId: string, width: number, height: number) {
@@ -92,7 +89,7 @@ export class SoundcloudApiService implements IApiService {
         if (!isPlatformServer(this.platformId)) {
           timer(0, 50)
             .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-            .subscribe((time) => {
+            .subscribe(() => {
               // Volume
               player.getVolume((currentVolume) => {
                 adapter.onVolumeChange(currentVolume);

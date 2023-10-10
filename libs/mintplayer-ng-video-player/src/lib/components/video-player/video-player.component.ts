@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Inject, Input, NgZone, OnDestroy, Output, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Input, NgZone, OnDestroy, Output, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, take } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
-import { ECapability, EPlayerState, IApiService, PlayerAdapter, VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, PlayerAdapter } from '@mintplayer/ng-player-provider';
 import { VideoRequest } from '../../interfaces/video-request';
 import { VideoPlayerService } from '../../services/video-player.service';
 
@@ -14,17 +14,15 @@ import { VideoPlayerService } from '../../services/video-player.service';
 })
 export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   constructor(
-    @Inject(VIDEO_APIS) private apis: IApiService[],
-    @Inject(PLATFORM_ID) private platformId: object,
     private zone: NgZone,
-    private videoPlayerService: VideoPlayerService,
-    private destroy: DestroyRef,
+    videoPlayerService: VideoPlayerService,
+    destroy: DestroyRef,
   ) {
     //#region [isViewInited$, url$] => videoRequest$
     combineLatest([this.isViewInited$, this.url$])
-      .pipe(filter(([isViewInited, url]) => !!isViewInited))
+      .pipe(filter(([isViewInited]) => !!isViewInited))
       .pipe(takeUntilDestroyed())
-      .subscribe(([isViewInited, url]) => {
+      .subscribe(([, url]) => {
         if (url === null) {
           this.playerInfo?.adapter?.destroy();
           this.playerInfo = null;
@@ -40,15 +38,52 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       });
     //#endregion
 
-    //#region [videoRequest$] => isApiReady$
     this.videoRequest$
       .pipe(takeUntilDestroyed())
       .subscribe(videoRequest => {
         if (videoRequest) {
-          videoRequest?.api.apiReady$
-            .pipe(filter(ready => !!ready), take(1), takeUntilDestroyed(destroy))
-            .subscribe(ready => this.isApiReady$.next(ready));
-          videoRequest?.api.loadApi();
+          videoRequest.api.loadApi().then(() => {
+            if (videoRequest.api.id === this.playerInfo?.platformId) {
+              this.playerInfo.adapter.loadVideoById(videoRequest.id);
+            } else {
+              this.playerInfo?.adapter?.destroy();
+              setHtml(videoRequest);
+              videoRequest.api.createPlayer({
+                width: this.width,
+                height: this.height,
+                autoplay: this.autoplay,
+                domId: this.domId,
+                element: this.container.nativeElement,
+                initialVideoId: videoRequest.id,
+              }, destroy).then(adapter => {
+                this.playerInfo = {
+                  platformId: videoRequest.api.id,
+                  videoId: videoRequest.id,
+                  adapter: adapter,
+                };
+  
+                adapter.onStateChange = (state) => this.playerStateObserver$.next(state);
+                adapter.onMuteChange = (mute) => this.muteObserver$.next(mute);
+                adapter.onVolumeChange = (volume) => this.volumeObserver$.next(volume);
+                adapter.onCurrentTimeChange = (progress) => this.currentTimeObserver$.next(progress);
+                adapter.onDurationChange = (duration) => this.durationObserver$.next(duration);
+                adapter.onPipChange = (isPip) => this.pipObserver$.next(isPip);
+                adapter.onFullscreenChange = (isFullscreen) => this.fullscreenObserver$.next(isFullscreen);
+  
+                this.capabilitiesChange.emit(adapter.capabilities);
+              }).then(() => {
+                if (videoRequest !== null) {
+                  if (typeof videoRequest.id !== 'undefined') {
+                    this.playerInfo?.adapter.loadVideoById(videoRequest.id);
+                  }
+                }
+              });
+  
+              this.pipObserver$.next(false);
+              this.fullscreenObserver$.next(false);
+            }
+          });
+
         } else {
           // Cancel all timers / Clear the html
           this.playerInfo?.adapter?.destroy();
@@ -57,7 +92,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           }
         }
       });
-    //#endregion
 
     const setHtml = (request: VideoRequest | null) => {
       if (request) {
@@ -69,56 +103,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       }
     };
     
-    //#region [isApiReady$, videoRequest.playerType] => isSwitchingVideo$$
-    this.isApiReady$
-      .pipe(filter(r => !!r), takeUntilDestroyed())
-      .subscribe(value => {
-        const currentVideoRequest = this.videoRequest$.value;
-
-        if (currentVideoRequest) {
-          if (currentVideoRequest.api.id === this.playerInfo?.platformId) {
-            this.playerInfo.adapter.loadVideoById(currentVideoRequest.id);
-          } else {
-            this.playerInfo?.adapter?.destroy();
-            setHtml(currentVideoRequest);
-            currentVideoRequest.api.createPlayer({
-              width: this.width,
-              height: this.height,
-              autoplay: this.autoplay,
-              domId: this.domId,
-              element: this.container.nativeElement,
-              initialVideoId: currentVideoRequest.id,
-            }, destroy).then(adapter => {
-              this.playerInfo = {
-                platformId: currentVideoRequest.api.id,
-                videoId: currentVideoRequest.id,
-                adapter: adapter,
-              };
-
-              adapter.onStateChange = (state) => this.playerStateObserver$.next(state);
-              adapter.onMuteChange = (mute) => this.muteObserver$.next(mute);
-              adapter.onVolumeChange = (volume) => this.volumeObserver$.next(volume);
-              adapter.onCurrentTimeChange = (progress) => this.currentTimeObserver$.next(progress);
-              adapter.onDurationChange = (duration) => this.durationObserver$.next(duration);
-              adapter.onPipChange = (isPip) => this.pipObserver$.next(isPip);
-              adapter.onFullscreenChange = (isFullscreen) => this.fullscreenObserver$.next(isFullscreen);
-
-              this.isSwitchingVideo$.next(false);
-              this.capabilitiesChange.emit(adapter.capabilities);
-            }).then(() => {
-              const videoRequest = this.videoRequest$.value;
-              if (videoRequest !== null) {
-                if (typeof videoRequest.id !== 'undefined') {
-                  this.playerInfo?.adapter.loadVideoById(videoRequest.id);
-                }
-              }
-            });
-
-            this.pipObserver$.next(false);
-            this.fullscreenObserver$.next(false);
-          }
-        }
-      });
     //#endregion
 
     this.volumeObserver$
@@ -247,7 +231,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     if ((typeof url === 'undefined') || (url === null) || (url === '')) {
       this.url$.next(null);
     } else {
-      this.isSwitchingVideo$.next(true);
       this.url$.next(url);
     }
   }
@@ -263,8 +246,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private isViewInited$ = new BehaviorSubject<boolean>(false);
   private url$ = new BehaviorSubject<string | null>(null);
   private videoRequest$ = new BehaviorSubject<VideoRequest | null>(null);
-  private isApiReady$ = new Subject();
-  private isSwitchingVideo$ = new BehaviorSubject<boolean>(false);
   private volumeObserver$ = new Subject<number>();
   private muteObserver$ = new Subject<boolean>();
   private currentTimeObserver$ = new Subject<number>();
