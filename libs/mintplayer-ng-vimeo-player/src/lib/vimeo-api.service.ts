@@ -47,7 +47,7 @@ export class VimeoApiService implements IApiService {
         autoplay: options.autoplay,
         pip: true,
       });
-
+      console.log('vimeo player', player);
 
       player.ready().then(() => {
         adapter = createPlayerAdapter({

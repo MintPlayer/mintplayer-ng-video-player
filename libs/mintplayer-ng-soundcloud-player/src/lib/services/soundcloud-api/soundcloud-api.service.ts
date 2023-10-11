@@ -83,7 +83,7 @@ export class SoundcloudApiService implements IApiService {
         getPip: () => new Promise(resolve => resolve(false)),
         destroy: () => destroyRef.next(true),
       });
-      
+      console.log('SC player', player);
       player.bind(SC.Widget.Events.READY, () => {
         resolvePlayer(adapter);
         if (!isPlatformServer(this.platformId)) {

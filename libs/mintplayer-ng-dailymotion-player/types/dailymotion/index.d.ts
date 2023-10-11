@@ -51,6 +51,11 @@ declare namespace DM {
         setVolume: (volume: number) => void;
         onvolumechange: () => void;
         
+        setFullscreen: (isFullscren: boolean) => void;
+        get fullscreen(): boolean;
+        onfullscreenchange: (ev: Event) => void;
+        onfullscreenerror: () => void;
+
         video: Video;
     }
 

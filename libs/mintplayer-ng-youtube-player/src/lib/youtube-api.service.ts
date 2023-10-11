@@ -137,6 +137,7 @@ export class YoutubeApiService implements IApiService {
           }
         }
       });
+      console.log('YT player', player);
     });
   }
 }

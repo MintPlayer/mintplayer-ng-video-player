@@ -48,7 +48,7 @@ export class DailymotionApiService implements IApiService {
         events: {
           apiready: () => {
             adapter = createPlayerAdapter({
-              capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
+              capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle, ECapability.fullscreen],
               loadVideoById: (id: string) => player.load({video: id}),
               setPlayerState: (state: EPlayerState) => {
                 switch (state) {
@@ -75,13 +75,15 @@ export class DailymotionApiService implements IApiService {
               }),
               setFullscreen: (isFullscreen) => {
                 if (isFullscreen) {
-                  console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
-                  setTimeout(() => adapter.onFullscreenChange(false), 50);
+                  // console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
+                  // setTimeout(() => adapter.onFullscreenChange(false), 50);
+                  player.setFullscreen(isFullscreen);
                 }
               },
               getFullscreen: () => new Promise(resolve => {
-                console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
-                resolve(false);
+                // console.warn('DailyMotion player doesn\'t allow setting fullscreen from outside');
+                // resolve(false);
+                resolve(player.fullscreen);
               }),
               setPip: (isPip) => {
                 if (isPip) {
@@ -92,6 +94,12 @@ export class DailymotionApiService implements IApiService {
               getPip: () => new Promise(resolve => resolve(false)),
               destroy: () => destroyRef.next(true),
             });
+
+            player.onfullscreenchange = () => adapter.onFullscreenChange(player.fullscreen);
+            player.onfullscreenerror = () => {
+              console.log('err');
+              adapter.onFullscreenChange(false);
+            };
 
             if (!isPlatformServer(this.platformId)) {
               timer(0, 50)
@@ -113,6 +121,7 @@ export class DailymotionApiService implements IApiService {
         }
       });
 
+      console.log('DM player', player);
       player.onvolumechange = () => {
         if (player) {
           adapter.onVolumeChange(player.volume * 100);
