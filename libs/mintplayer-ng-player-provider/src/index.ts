@@ -18,7 +18,7 @@ export interface PlayerOptions {
     autoplay: boolean;
 
     domId?: string;
-    element?: HTMLElement;
+    element: HTMLElement;
     initialVideoId?: string;
 }
 

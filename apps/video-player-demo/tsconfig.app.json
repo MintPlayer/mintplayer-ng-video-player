@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "types": ["node", "youtube", "dailymotion", "vimeo", "soundcloud"],
+    "types": ["node", "youtube", "dailymotion", "vimeo", "soundcloud", "twitch"],
     "typeRoots": ["src/types", "../../node_modules/@types"],
     "target": "ES2022",
     "useDefineForClassFields": false

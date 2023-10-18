@@ -36,6 +36,9 @@
       "@mintplayer/ng-spotify-player": [
         "libs/mintplayer-ng-spotify-player/src/index.ts"
       ],
+      "@mintplayer/ng-twitch-player": [
+        "libs/mintplayer-ng-twitch-player/src/index.ts"
+      ],
       "@mintplayer/ng-video-player": [
         "libs/mintplayer-ng-video-player/src/index.ts"
       ],

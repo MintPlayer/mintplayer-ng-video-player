@@ -7,9 +7,10 @@
       "../../node_modules/@types",
       "../../libs/mintplayer-ng-dailymotion-player/types",
       "../../libs/mintplayer-ng-soundcloud-player/types",
-      "../../libs/mintplayer-ng-vimeo-player/types"
+      "../../libs/mintplayer-ng-vimeo-player/types",
+      "../../libs/mintplayer-ng-twitch-player/types"
     ],
-    "types": ["jest", "node", "youtube", "dailymotion", "vimeo", "soundcloud"]
+    "types": ["jest", "node", "youtube", "dailymotion", "vimeo", "soundcloud", "twitch"]
   },
   "files": ["src/test-setup.ts"],
   "include": ["**/*.test.ts", "**/*.spec.ts", "**/*.d.ts", "jest.config.ts"]

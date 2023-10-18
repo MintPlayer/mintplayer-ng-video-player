@@ -5,16 +5,15 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": ["node", "soundcloud"],
+    "types": ["node", "twitch"],
     "typeRoots": ["types", "../../node_modules/@types"],
-    "target": "ES2022",
-    "useDefineForClassFields": false
+    "target": "ES2022"
   },
   "exclude": [
+    "src/**/*.spec.ts",
     "src/test-setup.ts",
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "jest.config.ts"
+    "jest.config.ts",
+    "src/**/*.test.ts"
   ],
   "include": [
     "src/**/*.ts",

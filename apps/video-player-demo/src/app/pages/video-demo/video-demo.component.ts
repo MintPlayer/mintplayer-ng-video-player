@@ -50,6 +50,9 @@ export class VideoDemoComponent {
     'https://soundcloud.com/oasisofficial/whatever',
     'https://open.spotify.com/episode/7makk4oTQel546B0PZlDM5',
     'spotify:track:0FDzzruyVECATHXKHFs9eJ',
+    'https://www.twitch.tv/jankos',
+    'https://www.twitch.tv/dearlola1',
+    'https://www.twitch.tv/videos/1920198035',
   ];
 
   addToPlaylist() {
