@@ -1,3 +1,6 @@
+// export declare function PlayerWidget(element: HTMLElement) : MixcloudPlayerWidgetApiRPC;
+
+
 // @flow
 
 // This file acts as a shim to communicate with the widgetApi at js/player-widget/components/WidgetApi/index.js
@@ -207,7 +210,8 @@ export class MixcloudPlayerWidgetApiRPC {
         this.otherWindow.postMessage(
             JSON.stringify(data),
             '*'
-            //DEBUG ? '*' : ORIGIN
+            // DEBUG ? '*' : ORIGIN
+            // DEBUG ? '*' : location.origin
         );
     };
 
@@ -221,47 +225,29 @@ export class MixcloudPlayerWidgetApiRPC {
     }
 }
 
-// export namespace Mixcloud {
+export const Callbacks = () => {
+    let callbacks: Function[] = [];
 
-// (window => {
-//     if (!window) {
-//         return;
-//     }
-
-//     const originalMixcloud = (<any>window).Mixcloud;
-
-//     (<any>window).Mixcloud = {
-//         noConflict: () => {
-//             (<any>window).Mixcloud = originalMixcloud;
-
-//             return (<any>window).Mixcloud;
-//         },
-
-    export const Callbacks = () => {
-        let callbacks: Function[] = [];
-
-        return {
-            apply: (context: any, args: any[]) => {
-                callbacks.forEach(callback => {
-                    callback.apply(context, args);
-                });
+    return {
+        apply: (context: any, args: any[]) => {
+            callbacks.forEach(callback => {
+                callback.apply(context, args);
+            });
+        },
+        external: {
+            on: (callback: Function) => {
+                callbacks.push(callback);
             },
-            external: {
-                on: (callback: Function) => {
-                    callbacks.push(callback);
-                },
-                off: (callback: Function) => {
-                    callbacks = callbacks.filter(i => i !== callback);
-                }
+            off: (callback: Function) => {
+                callbacks = callbacks.filter(i => i !== callback);
             }
-        };
+        }
     };
+};
 
-    export const PlayerWidget = (iframe: HTMLIFrameElement) => {
-        const api = new MixcloudPlayerWidgetApiRPC(iframe);
+export const PlayerWidget = (iframe: HTMLIFrameElement) => {
+    const api = new MixcloudPlayerWidgetApiRPC(iframe);
 
-        // Only public methods
-        return api.external;
-    };
-// }
-// })(window);
+    // Only public methods
+    return api.external;
+};

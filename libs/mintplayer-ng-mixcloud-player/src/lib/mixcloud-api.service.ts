@@ -2,7 +2,7 @@ import { DestroyRef, Injectable } from '@angular/core';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { MixcloudPlayerExternalWidgetApiRPC, MixcloudPlayerWidgetApiRPC, PlayerWidget } from './remote/widgetApi';
+import { MixcloudPlayerExternalWidgetApiRPC, PlayerWidget } from './remote/widgetApi';
 
 @Injectable({
   providedIn: 'root'
@@ -34,10 +34,9 @@ export class MixcloudApiService implements IApiService {
   public loadApi() {
     // return this.scriptLoader.loadScript('//widget.mixcloud.com/media/js/widgetApi.js')
     //   .then((readyArgs) => this.apiReady$.next(true));
-    return new Promise((resolve, reject) => {
-      resolve(true);
-    })
-    .then((readyArgs) => this.apiReady$.next(true));
+
+    return new Promise(resolve => resolve(true))
+      .then((readyArgs) => this.apiReady$.next(true));
   }
 
   public prepareHtml(options: PrepareHtmlOptions): string {
@@ -114,9 +113,7 @@ export class MixcloudApiService implements IApiService {
           }
         });
 
-        setTimeout(() => {
-          events = this.hookEvents(player, adapter);
-        }, 1000);
+        events = this.hookEvents(player, adapter);
 
         resolvePlayer(adapter);
       });
