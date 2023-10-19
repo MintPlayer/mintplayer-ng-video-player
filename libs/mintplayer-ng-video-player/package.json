@@ -1,7 +1,7 @@
 {
   "name": "@mintplayer/ng-video-player",
   "private": false,
-  "version": "16.6.6",
+  "version": "16.6.7",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
