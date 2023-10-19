@@ -1,6 +1,6 @@
 {
   "name": "@mintplayer/ng-script-loader",
-  "version": "16.6.0",
+  "version": "16.7.0",
   "peerDependencies": {
     "@angular/common": "^16.2.0",
     "@angular/core": "^16.2.0"
