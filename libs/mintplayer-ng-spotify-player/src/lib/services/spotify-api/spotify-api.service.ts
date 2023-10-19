@@ -1,7 +1,7 @@
 import { DestroyRef, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { BehaviorSubject, Subject, filter, pairwise } from 'rxjs';
+import { Subject, filter, pairwise } from 'rxjs';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 import { PlaybackUpdateEvent, SpotifyIframeApi } from '../../interfaces/spotify-iframe-api';
 

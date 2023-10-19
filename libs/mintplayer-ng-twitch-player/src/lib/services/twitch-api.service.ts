@@ -3,14 +3,14 @@
 import { isPlatformServer } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ECapability, EPlayerState, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 import { Subject, takeUntil, timer } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TwitchApiService {
+export class TwitchApiService implements IApiService {
   
   constructor(@Inject(PLATFORM_ID) private platformId: object, private scriptLoader: ScriptLoader) {}
 
@@ -27,8 +27,8 @@ export class TwitchApiService {
     return this.scriptLoader.loadScript('https://player.twitch.tv/js/embed/v1.js');
   }
 
-  public prepareHtml(domId: string, width: number, height: number) {
-    return `<div id="${domId}" style="max-width:100%"></div>`;
+  public prepareHtml(options: PrepareHtmlOptions) {
+    return `<div id="${options.domId}" style="max-width:100%"></div>`;
   }
 
   public match2id(match: RegExpExecArray) {

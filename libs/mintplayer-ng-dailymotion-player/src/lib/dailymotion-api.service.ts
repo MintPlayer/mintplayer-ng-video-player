@@ -2,7 +2,7 @@ import { isPlatformServer } from '@angular/common';
 import { Injectable, DestroyRef, Inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { BehaviorSubject, timer, takeUntil, Subject } from 'rxjs';
+import { timer, takeUntil, Subject } from 'rxjs';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 
 @Injectable({
