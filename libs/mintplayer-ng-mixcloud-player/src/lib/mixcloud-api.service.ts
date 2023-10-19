@@ -2,6 +2,7 @@ import { DestroyRef, Injectable } from '@angular/core';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { MixcloudPlayerExternalWidgetApiRPC, MixcloudPlayerWidgetApiRPC, PlayerWidget } from './remote/widgetApi';
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +32,12 @@ export class MixcloudApiService implements IApiService {
   public apiReady$ = new BehaviorSubject<boolean>(false);
 
   public loadApi() {
-    return this.scriptLoader.loadScript('//widget.mixcloud.com/media/js/widgetApi.js')
-      .then((readyArgs) => this.apiReady$.next(true));
+    // return this.scriptLoader.loadScript('//widget.mixcloud.com/media/js/widgetApi.js')
+    //   .then((readyArgs) => this.apiReady$.next(true));
+    return new Promise((resolve, reject) => {
+      resolve(true);
+    })
+    .then((readyArgs) => this.apiReady$.next(true));
   }
 
   public prepareHtml(options: PrepareHtmlOptions): string {
@@ -56,23 +61,23 @@ export class MixcloudApiService implements IApiService {
 
       const destroyRef = new Subject();
       let adapter: PlayerAdapter;
-      const player = Mixcloud.PlayerWidget(frame);
+      const player = PlayerWidget(frame);
       player.ready.then(() => {
         console.log('player', player);
         let events: MixCloudEvents;
         adapter = createPlayerAdapter({
           capabilities: [],
           loadVideoById: (id: string) => {
-            player.load(id, options.autoplay)
+            player.load && player.load(id, options.autoplay)
               // .then(() => this.hookEvents(player, adapter));
           },
           setPlayerState: (state: EPlayerState) => {
             switch (state) {
               case EPlayerState.playing:
-                player.play();
+                player.play && player.play();
                 break;
               case EPlayerState.paused:
-                player.pause();
+                player.pause && player.pause();
                 break;
               case EPlayerState.ended:
               case EPlayerState.unstarted:
@@ -85,7 +90,7 @@ export class MixcloudApiService implements IApiService {
           setVolume: (mute) => {
             throw 'MixCloud doesn\'t changing the volume';
           },
-          setProgress: (time) => player.seek(time),
+          setProgress: (time) => player.seek && player.seek(time),
           setSize: (width, height) => {
             frame.width = String(width);
             frame.height = String(height);
@@ -104,18 +109,21 @@ export class MixcloudApiService implements IApiService {
             player.events.pause.off(events.pauseHandler);
             player.events.ended.off(events.endedHandler);
             player.events.progress.off(events.progressHandler);
+            player.destroy();
             setTimeout(() => destroyRef.next(true), 50);
           }
         });
 
-        events = this.hookEvents(player, adapter);
+        setTimeout(() => {
+          events = this.hookEvents(player, adapter);
+        }, 1000);
 
         resolvePlayer(adapter);
       });
     });
   }
 
-  private hookEvents(player: Mixcloud.Player, adapter: PlayerAdapter): MixCloudEvents {
+  private hookEvents(player: MixcloudPlayerExternalWidgetApiRPC, adapter: PlayerAdapter): MixCloudEvents {
     const playHandler = () => adapter.onStateChange(EPlayerState.playing);
     const pauseHandler = () => adapter.onStateChange(EPlayerState.paused);
     const endedHandler = () => adapter.onStateChange(EPlayerState.ended);
