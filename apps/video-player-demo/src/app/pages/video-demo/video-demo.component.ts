@@ -19,6 +19,7 @@ export class VideoDemoComponent {
     this.cannotChangeVolume$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.volume)));
     this.cannotMute$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.mute)));
     this.cannotGetTitle$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.getTitle)));
+    // (<any>window)['testingPlayerApi'] = true;
   }
 
   title = 'video-player-demo';
@@ -53,6 +54,9 @@ export class VideoDemoComponent {
     'https://www.twitch.tv/jankos',
     'https://www.twitch.tv/dearlola1',
     'https://www.twitch.tv/videos/1920198035',
+    'https://www.mixcloud.com/TheChilloutTent/the-chill-out-tent-warriors-of-the-dystotheque',
+    'https://www.mixcloud.com/gaby-songs/chillout-your-mind-vol32',
+    'https://www.mixcloud.com/radiomonaco/good-vibes-djm4t-29092023',
   ];
 
   addToPlaylist() {

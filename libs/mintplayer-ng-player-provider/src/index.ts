@@ -7,10 +7,12 @@ export interface IApiService {
     get id(): string;
     urlRegexes: RegExp[];
     loadApi(): Promise<any>;
-    prepareHtml(domId: string, width: number, height: number): string;
+    prepareHtml(options: PrepareHtmlOptions): string;
     createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter>;
     match2id?: (match: RegExpExecArray) => string;
 }
+
+export type PrepareHtmlOptions = Partial<Omit<PlayerOptions, 'element'>>;
 
 export interface PlayerOptions {
     width: number;

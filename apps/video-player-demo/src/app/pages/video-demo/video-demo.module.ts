@@ -19,6 +19,7 @@ import { VimeoPlayerModule } from '@mintplayer/ng-vimeo-player';
 import { SoundcloudPlayerModule } from '@mintplayer/ng-soundcloud-player';
 import { SpotifyPlayerModule } from '@mintplayer/ng-spotify-player';
 import { TwitchPlayerModule } from '@mintplayer/ng-twitch-player';
+import { MixcloudPlayerModule } from '@mintplayer/ng-mixcloud-player';
 
 
 @NgModule({
@@ -36,12 +37,15 @@ import { TwitchPlayerModule } from '@mintplayer/ng-twitch-player';
     BsButtonTypeModule,
     BsButtonGroupModule,
     BsToggleButtonModule,
+    
     YoutubePlayerModule,
     DailymotionPlayerModule,
     VimeoPlayerModule,
     SoundcloudPlayerModule,
     SpotifyPlayerModule,
     TwitchPlayerModule,
+    MixcloudPlayerModule,
+
     VideoDemoRoutingModule
   ]
 })

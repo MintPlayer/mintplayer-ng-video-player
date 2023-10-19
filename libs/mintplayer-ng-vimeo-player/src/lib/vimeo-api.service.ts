@@ -1,8 +1,8 @@
 import { isPlatformServer } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { Subject, takeUntil, timer } from 'rxjs';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
+import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 
 @Injectable({
@@ -24,8 +24,8 @@ export class VimeoApiService implements IApiService {
     return this.scriptLoader.loadScript('https://player.vimeo.com/api/player.js');
   }
 
-  public prepareHtml(domId: string, width: number, height: number) {
-    return `<div id="${domId}" style="max-width:100%"></div>`;
+  public prepareHtml(options: PrepareHtmlOptions) {
+    return `<div id="${options.domId}" style="max-width:100%"></div>`;
   }
 
   public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {

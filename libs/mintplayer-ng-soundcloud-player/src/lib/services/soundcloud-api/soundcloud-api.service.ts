@@ -1,8 +1,8 @@
 import { isPlatformServer } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { Subject, takeUntil, timer } from 'rxjs';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
+import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 import { PlayProgressEvent } from '../../events/play-progress.event';
 
@@ -25,8 +25,8 @@ export class SoundcloudApiService implements IApiService {
     return this.scriptLoader.loadScript('https://w.soundcloud.com/player/api.js');
   }
 
-  public prepareHtml(domId: string, width: number, height: number) {
-    return `<iframe id="${domId}" width="${width}" height="${height}" style="max-width:100%" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&amp;show_teaser=false&amp;" allow="autoplay"></iframe>`;
+  public prepareHtml(options: PrepareHtmlOptions) {
+    return `<iframe id="${options.domId}" width="${options.width}" height="${options.height}" style="max-width:100%" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&amp;show_teaser=false&amp;" allow="autoplay"></iframe>`;
   }
 
   public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {

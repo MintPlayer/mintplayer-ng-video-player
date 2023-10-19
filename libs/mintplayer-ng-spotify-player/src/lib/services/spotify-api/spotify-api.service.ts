@@ -1,6 +1,6 @@
 import { DestroyRef, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
+import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, filter, pairwise } from 'rxjs';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 import { PlaybackUpdateEvent, SpotifyIframeApi } from '../../interfaces/spotify-iframe-api';
@@ -28,16 +28,16 @@ export class SpotifyApiService implements IApiService {
       .then(readyArgs => this.api = readyArgs[0]);
   }
 
-  public prepareHtml(domId: string, width: number, height: number) {
-    return `<div id="${domId}" style="max-width:100%"></div>`;
+  public prepareHtml(options: PrepareHtmlOptions) {
+    return `<div id="${options.domId}" style="max-width:100%"></div>`;
   }
 
   public match2id(match: RegExpExecArray) {
     if (!match.groups) {
-      return '';
-    } else {
-      return `spotify:${match.groups['type']}:${match.groups['id']}`;
+      throw 'match2id - match.groups is undefined';
     }
+    
+    return `spotify:${match.groups['type']}:${match.groups['id']}`;
   }
 
   public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
