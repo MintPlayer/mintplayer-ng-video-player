@@ -1,8 +1,9 @@
-import { DestroyRef, Injectable } from '@angular/core';
-import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { ScriptLoader } from '@mintplayer/ng-script-loader';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
+import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 import { MixcloudPlayerExternalWidgetApiRPC, PlayerWidget } from './remote/widgetApi';
+import { isPlatformServer } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class MixcloudApiService implements IApiService {
 
   // https://www.mixcloud.com/developers/widget/
 
-  constructor(private scriptLoader: ScriptLoader) { }
+  constructor(@Inject(PLATFORM_ID) private platformId: any) { }
 
   public get id() {
     return 'mixcloud';
@@ -65,7 +66,7 @@ export class MixcloudApiService implements IApiService {
         console.log('player', player);
         let events: MixCloudEvents;
         adapter = createPlayerAdapter({
-          capabilities: [],
+          capabilities: [ECapability.volume, ECapability.getTitle],
           loadVideoById: (id: string) => {
             player.load && player.load(id, options.autoplay)
               // .then(() => this.hookEvents(player, adapter));
@@ -86,15 +87,19 @@ export class MixcloudApiService implements IApiService {
           setMute: (mute) => {
             throw 'MixCloud doesn\'t allow mute';
           },
-          setVolume: (mute) => {
-            throw 'MixCloud doesn\'t changing the volume';
-          },
+          setVolume: (volume) => player.setVolume && player.setVolume(volume / 100),
           setProgress: (time) => player.seek && player.seek(time),
           setSize: (width, height) => {
             frame.width = String(width);
             frame.height = String(height);
           },
-          getTitle: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t allow getting the title')),
+          getTitle: () => new Promise((resolve, reject) => {
+            if (player.getCurrentKey) {
+              player.getCurrentKey().then((key) => resolve(key));
+            } else {
+              reject('Player not yet initialized');
+            }
+          }),
           setFullscreen: (isFullscreen) => {
             throw 'MixCloud doesn\'t support fullscreen';
           },
@@ -114,6 +119,16 @@ export class MixcloudApiService implements IApiService {
         });
 
         events = this.hookEvents(player, adapter);
+
+        if (!isPlatformServer(this.platformId)) {
+          timer(0, 50)
+            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .subscribe(() => {
+              if (player.getVolume) {
+                player.getVolume().then((vol) => adapter.onVolumeChange(vol * 100));
+              }
+            });
+        }
 
         resolvePlayer(adapter);
       });

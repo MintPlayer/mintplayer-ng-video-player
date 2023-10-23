@@ -50,6 +50,9 @@ export interface MixcloudPlayerExternalWidgetApiRPC {
     play?(): void;
     pause?(): void;
     seek?(seconds: number): void;
+    getVolume?(): Promise<number>;
+    setVolume?(volume: number): Promise<any>;
+    getCurrentKey?(): Promise<string>;
     destroy(): void;
 }
 
