@@ -56,13 +56,13 @@ export interface PlayerAdapterRequired {
 export function createPlayerAdapter(requiredProps: PlayerAdapterRequired) : PlayerAdapter {
     return {
         ...requiredProps,
-        onStateChange: () => {}, // console.warn('onStateChange is not registered'),
-        onMuteChange: () => {}, // console.warn('onMuteChange is not registered'),
-        onVolumeChange: () => {}, // console.warn('onVolumeChange is not registered'),
-        onCurrentTimeChange: () => {}, // console.warn('onCurrentTimeChange is not registered'),
-        onDurationChange: () => {}, // console.warn('onDurationChange is not registered'),
-        onFullscreenChange: () => {}, // console.warn('onFullscreenChange is not registered'),
-        onPipChange: () => {}, // console.warn('onPipChange is not registered'),
+        onStateChange: () => console.warn('onStateChange is not registered'),
+        onMuteChange: () => console.warn('onMuteChange is not registered'),
+        onVolumeChange: () => console.warn('onVolumeChange is not registered'),
+        onCurrentTimeChange: () => console.warn('onCurrentTimeChange is not registered'),
+        onDurationChange: () => console.warn('onDurationChange is not registered'),
+        onFullscreenChange: () => console.warn('onFullscreenChange is not registered'),
+        onPipChange: () => console.warn('onPipChange is not registered'),
     }
 }
 

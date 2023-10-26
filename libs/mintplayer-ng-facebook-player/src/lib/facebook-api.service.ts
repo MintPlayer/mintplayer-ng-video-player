@@ -27,7 +27,6 @@ export class FacebookApiService implements IApiService {
 
     public loadApi() {
         return this.scriptLoader.loadScript('https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0', 'fbAsyncInit');
-            // .then(() => FB.XFBML.parse());
     }
 
     public prepareHtml(options: PrepareHtmlOptions) {
@@ -57,88 +56,12 @@ export class FacebookApiService implements IApiService {
 
             FB.Event.subscribe('xfbml.ready', (message) => {
                 // For some reason this method is triggered even up to 4 times
-                // When starting a new video
+                // When starting a new video. The last instance is the only one
+                // we can use to control the player.
                 if ((message.type === 'video') && (message.id === options.domId)) {
                     lastPlayerInstance$.next(message.instance);
                 }
-                
-                // FB.XFBML.parse();
-
-                // Below event is received twice
-                // if ((message.type === 'video') && (message.id === options.domId) && !alreadyReady) {
-                //     alreadyReady = true;
-                //     const player = (<any>window).player = message.instance;
-                //     console.log('player', player);
-                //     const destroyRef = new Subject();
-                //     let disableVolumeChange = false;
-                    
-                //     const events: FB.PlayerSubscription[] = [
-                //         player.subscribe('startedPlaying', () => adapter.onStateChange(EPlayerState.playing)),
-                //         player.subscribe('paused', () => {
-                //             console.warn('paused');
-                //             adapter.onStateChange(EPlayerState.paused);
-                //         }),
-                //         player.subscribe('finishedPlaying', () => {
-                //             console.warn('finished');
-                //             adapter.onStateChange(EPlayerState.ended);
-                //         }),
-                //     ];
-
-                //     if (!isPlatformServer(this.platformId)) {
-                //         setTimeout(() => {
-                //             timer(0, 50)
-                //                 .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                //                 .subscribe(() => {
-                //                     // Progress
-                //                     const currentTime = player.getCurrentPosition();
-                //                     adapter.onCurrentTimeChange(currentTime);
-                                    
-                //                     // Volume
-                //                     if (!disableVolumeChange) {
-                //                         const vol = player.getVolume();
-                //                         const mute = player.isMuted();
-                //                         // console.warn('invoke onCurrentTimeChange', { vol, mute });
-
-                //                         if (!mute || (vol !== 0)) {
-                //                             console.warn('invoke onVolumeChange');
-                //                             adapter.onVolumeChange(vol * 100);
-                //                         }
-                //                     }
-                                    
-                //                     // Mute
-                //                     const currentMute = player.isMuted();
-                //                     adapter.onMuteChange(currentMute);
-                //                 });
-                //         }, 200);
-                //     }
-
             });
-        // }).then((adapter) => {
-        //     FB.XFBML.parse();
-        //     return adapter;
-
-            // let events: FB.PlayerSubscription[] | undefined;
-            // lastPlayerInstance$.pipe(pairwise(), takeUntilDestroyed())
-            //     .subscribe(([previous, next]) => {
-            //         console.warn('subscribe?', {previous, next});
-            //         if (next) {
-            //             console.warn('subscribe');
-            //             events = [
-            //                 next.subscribe('startedPlaying', () => {
-            //                     console.warn('startedPlaying');
-            //                     // adapter.onStateChange(EPlayerState.playing);
-            //                 }),
-            //                 next.subscribe('paused', () => {
-            //                     console.warn('paused');
-            //                     // adapter.onStateChange(EPlayerState.paused);
-            //                 }),
-            //                 next.subscribe('finishedPlaying', () => {
-            //                     console.warn('finished');
-            //                     // adapter.onStateChange(EPlayerState.ended);
-            //                 }),
-            //             ];
-            //         }
-            //     });
 
             const adapter = createPlayerAdapter({
                 capabilities: [ECapability.mute, ECapability.volume],
@@ -223,10 +146,8 @@ export class FacebookApiService implements IApiService {
                             if (!disableVolumeChange) {
                                 const vol = player.getVolume();
                                 const mute = player.isMuted();
-                                // console.warn('invoke onCurrentTimeChange', { vol, mute });
 
                                 if (!mute || (vol !== 0)) {
-                                    // console.warn('invoke onVolumeChange');
                                     adapter.onVolumeChange(vol * 100);
                                 }
                             }
@@ -238,15 +159,13 @@ export class FacebookApiService implements IApiService {
                     });
             }
                 
-            lastPlayerInstance$.pipe(debounceTime(500), take(1), takeUntilDestroyed(destroy)).subscribe((player) => {
+            lastPlayerInstance$.pipe(debounceTime(1500), filter((p) => !!p), take(1), takeUntilDestroyed(destroy)).subscribe((player) => {
                 if (options.autoplay && player) {
-                    setTimeout(() => player.play(), 5000);
+                    setTimeout(() => player.play(), 50);
                 }
             });
 
-            //     console.warn('resolve', adapter);
             resolvePlayer(adapter);
-            // }
         });
     }
 }
