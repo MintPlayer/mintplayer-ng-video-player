@@ -63,7 +63,6 @@ export class MixcloudApiService implements IApiService {
       let adapter: PlayerAdapter;
       const player = PlayerWidget(frame);
       player.ready.then(() => {
-        console.log('player', player);
         let events: MixCloudEvents;
         adapter = createPlayerAdapter({
           capabilities: [ECapability.volume, ECapability.getTitle],
