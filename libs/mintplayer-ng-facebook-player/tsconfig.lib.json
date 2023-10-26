@@ -5,7 +5,8 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": []
+    "types": ["node", "facebook"],
+    "typeRoots": ["types", "../../node_modules/@types"],
   },
   "exclude": [
     "src/**/*.spec.ts",

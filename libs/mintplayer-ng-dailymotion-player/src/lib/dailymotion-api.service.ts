@@ -32,6 +32,7 @@ export class DailymotionApiService implements IApiService {
 
   public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
     return new Promise((resolvePlayer, rejectPlayer) => {
+      /** TODO: shouldn't this be options.domId? */
       if (!options.element) {
         return rejectPlayer('The DailyMotion api requires the options.element to be set');
       }

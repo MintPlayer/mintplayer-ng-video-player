@@ -1,7 +1,7 @@
 {
-  "name": "mintplayer-ng-script-loader",
+  "name": "mintplayer-ng-facebook-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/mintplayer-ng-script-loader/src",
+  "sourceRoot": "libs/mintplayer-ng-facebook-player/src",
   "prefix": "mintplayer-ng-video-player",
   "tags": [],
   "projectType": "library",
@@ -10,14 +10,14 @@
       "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/mintplayer-ng-script-loader/ng-package.json"
+        "project": "libs/mintplayer-ng-facebook-player/ng-package.json"
       },
       "configurations": {
         "production": {
-          "tsConfig": "libs/mintplayer-ng-script-loader/tsconfig.lib.prod.json"
+          "tsConfig": "libs/mintplayer-ng-facebook-player/tsconfig.lib.prod.json"
         },
         "development": {
-          "tsConfig": "libs/mintplayer-ng-script-loader/tsconfig.lib.json"
+          "tsConfig": "libs/mintplayer-ng-facebook-player/tsconfig.lib.json"
         }
       },
       "defaultConfiguration": "production"
@@ -26,10 +26,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "codeCoverage": true,
-        "coverageReporters": ["lcovonly"],
-        "coverageDirectory": "coverage/libs/mintplayer-ng-script-loader",
-        "jestConfig": "libs/mintplayer-ng-script-loader/jest.config.ts",
+        "jestConfig": "libs/mintplayer-ng-facebook-player/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -40,13 +37,13 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "libs/mintplayer-ng-script-loader/**/*.ts",
-          "libs/mintplayer-ng-script-loader/**/*.html",
-          "libs/mintplayer-ng-script-loader/package.json"
+          "libs/mintplayer-ng-facebook-player/**/*.ts",
+          "libs/mintplayer-ng-facebook-player/**/*.html",
+          "libs/mintplayer-ng-facebook-player/package.json"
         ]
       }
     }

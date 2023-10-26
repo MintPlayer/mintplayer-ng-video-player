@@ -10,6 +10,7 @@ export interface IApiService {
     prepareHtml(options: PrepareHtmlOptions): string;
     createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter>;
     match2id?: (match: RegExpExecArray) => string;
+    canReusePlayer?: boolean;
 }
 
 export type PrepareHtmlOptions = Partial<Omit<PlayerOptions, 'element'>>;

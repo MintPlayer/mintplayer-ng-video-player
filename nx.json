@@ -1,20 +1,9 @@
 {
-  "npmScope": "mintplayer-ng-video-player",
   "affected": {
     "defaultBase": "master"
   },
   "cli": {
     "packageManager": "npm"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx-cloud",
-      "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"],
-        "accessToken": "YjkyZDQ0ZjAtMzkxOS00ODRmLTkxNmUtY2ZmNDJhZTY2ZDA0fHJlYWQtd3JpdGU=",
-        "useDaemonProcess": false
-      }
-    }
   },
   "generators": {
     "@nrwl/angular:application": {
@@ -49,17 +38,21 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production"],
+      "cache": true
     },
     "test": {
       "dependsOn": ["^test"],
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "cache": true
     },
     "e2e": {
-      "inputs": ["default", "^production"]
+      "inputs": ["default", "^production"],
+      "cache": true
     },
     "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
+      "cache": true
     }
   },
   "namedInputs": {
@@ -73,5 +66,7 @@
       "!{projectRoot}/.eslintrc.json",
       "!{projectRoot}/src/test-setup.[jt]s"
     ]
-  }
+  },
+  "useDaemonProcess": false,
+  "nxCloudAccessToken": "YjkyZDQ0ZjAtMzkxOS00ODRmLTkxNmUtY2ZmNDJhZTY2ZDA0fHJlYWQtd3JpdGU="
 }

@@ -43,7 +43,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       .subscribe(videoRequest => {
         if (videoRequest) {
           videoRequest.api.loadApi().then(() => {
-            if (videoRequest.api.id === this.playerInfo?.platformId) {
+            if ((videoRequest.api.id === this.playerInfo?.platformId) && (videoRequest.api.canReusePlayer !== false)) {
               this.playerInfo.adapter.loadVideoById(videoRequest.id);
             } else {
               this.playerInfo?.adapter?.destroy();
@@ -69,7 +69,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 adapter.onDurationChange = (duration) => this.durationObserver$.next(duration);
                 adapter.onPipChange = (isPip) => this.pipObserver$.next(isPip);
                 adapter.onFullscreenChange = (isFullscreen) => this.fullscreenObserver$.next(isFullscreen);
-  
                 this.capabilitiesChange.emit(adapter.capabilities);
               }).then(() => {
                 if (videoRequest !== null) {

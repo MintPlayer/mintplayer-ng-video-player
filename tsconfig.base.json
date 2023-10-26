@@ -18,6 +18,9 @@
       "@mintplayer/ng-dailymotion-player": [
         "libs/mintplayer-ng-dailymotion-player/src/index.ts"
       ],
+      "@mintplayer/ng-facebook-player": [
+        "libs/mintplayer-ng-facebook-player/src/index.ts"
+      ],
       "@mintplayer/ng-mixcloud-player": [
         "libs/mintplayer-ng-mixcloud-player/src/index.ts"
       ],
@@ -29,9 +32,6 @@
       ],
       "@mintplayer/ng-playlist-controller": [
         "libs/mintplayer-ng-playlist-controller/src/index.ts"
-      ],
-      "@mintplayer/ng-script-loader": [
-        "libs/mintplayer-ng-script-loader/src/index.ts"
       ],
       "@mintplayer/ng-soundcloud-player": [
         "libs/mintplayer-ng-soundcloud-player/src/index.ts"

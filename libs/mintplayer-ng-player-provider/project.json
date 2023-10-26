@@ -10,8 +10,7 @@
       "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/mintplayer-ng-player-provider/ng-package.json",
-        "updateBuildableProjectDepsInPackageJson": true
+        "project": "libs/mintplayer-ng-player-provider/ng-package.json"
       },
       "configurations": {
         "production": {
@@ -41,7 +40,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [

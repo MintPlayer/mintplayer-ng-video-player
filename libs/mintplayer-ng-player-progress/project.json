@@ -10,8 +10,7 @@
       "outputs": ["{workspaceRoot}/dist/libs/mintplayer-ng-player-progress"],
       "options": {
         "project": "libs/mintplayer-ng-player-progress/ng-package.json",
-        "tsConfig": "libs/mintplayer-ng-player-progress/tsconfig.lib.json",
-        "updateBuildableProjectDepsInPackageJson": true
+        "tsConfig": "libs/mintplayer-ng-player-progress/tsconfig.lib.json"
       },
       "configurations": {
         "production": {

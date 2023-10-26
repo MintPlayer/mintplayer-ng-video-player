@@ -69,7 +69,6 @@ export class TwitchApiService implements IApiService {
       });
 
       player.addEventListener(Twitch.Player.READY, () => {
-        console.log('PLAYER', player);
         adapter = createPlayerAdapter({
           capabilities: [ECapability.mute, ECapability.volume, ECapability.getTitle],
           loadVideoById: (id: string) => {

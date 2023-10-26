@@ -10,8 +10,7 @@
       "outputs": ["{workspaceRoot}/dist/libs/mintplayer-ng-vimeo-player"],
       "options": {
         "project": "libs/mintplayer-ng-vimeo-player/ng-package.json",
-        "tsConfig": "libs/mintplayer-ng-vimeo-player/tsconfig.lib.json",
-        "updateBuildableProjectDepsInPackageJson": true
+        "tsConfig": "libs/mintplayer-ng-vimeo-player/tsconfig.lib.json"
       },
       "configurations": {
         "production": {
