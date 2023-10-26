@@ -43,7 +43,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       .subscribe(videoRequest => {
         if (videoRequest) {
           videoRequest.api.loadApi().then(() => {
-            if (videoRequest.api.id === this.playerInfo?.platformId) {
+            if ((videoRequest.api.id === this.playerInfo?.platformId) && (videoRequest.api.canReusePlayer !== false)) {
+            // if ((videoRequest.api.id === this.playerInfo?.platformId)) {
               this.playerInfo.adapter.loadVideoById(videoRequest.id);
             } else {
               this.playerInfo?.adapter?.destroy();
@@ -63,13 +64,16 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 };
   
                 adapter.onStateChange = (state) => this.playerStateObserver$.next(state);
-                adapter.onMuteChange = (mute) => this.muteObserver$.next(mute);
+                adapter.onMuteChange = (mute) => {
+                  // console.warn('mute change', mute);
+                  this.muteObserver$.next(mute);
+                };
                 adapter.onVolumeChange = (volume) => this.volumeObserver$.next(volume);
                 adapter.onCurrentTimeChange = (progress) => this.currentTimeObserver$.next(progress);
                 adapter.onDurationChange = (duration) => this.durationObserver$.next(duration);
                 adapter.onPipChange = (isPip) => this.pipObserver$.next(isPip);
                 adapter.onFullscreenChange = (isFullscreen) => this.fullscreenObserver$.next(isFullscreen);
-  
+                console.warn('adapter after setting', adapter);
                 this.capabilitiesChange.emit(adapter.capabilities);
               }).then(() => {
                 if (videoRequest !== null) {

@@ -23,6 +23,7 @@
     "@angular/platform-browser-dynamic": "~16.2.5",
     "@angular/router": "~16.2.5",
     "@mintplayer/ng-bootstrap": "~16.11.0",
+    "@mintplayer/ng-script-loader": "^16.8.0",
     "@nrwl/angular": "17.0.2",
     "rxjs": "~7.5.6",
     "tslib": "^2.3.0",
@@ -40,6 +41,7 @@
     "@angular/language-service": "~16.2.5",
     "@nx/angular": "17.0.2",
     "@nx/cypress": "17.0.2",
+    "@nx/eslint": "17.0.2",
     "@nx/eslint-plugin": "17.0.2",
     "@nx/jest": "17.0.2",
     "@nx/js": "17.0.2",
@@ -69,7 +71,6 @@
     "source-map-explorer": "^2.5.3",
     "ts-jest": "29.1.0",
     "ts-node": "10.9.1",
-    "typescript": "~5.1.6",
-    "@nx/eslint": "17.0.2"
+    "typescript": "~5.1.6"
   }
 }

@@ -57,6 +57,8 @@ export class VideoDemoComponent {
     'https://www.mixcloud.com/TheChilloutTent/the-chill-out-tent-warriors-of-the-dystotheque',
     'https://www.mixcloud.com/gaby-songs/chillout-your-mind-vol32',
     'https://www.mixcloud.com/radiomonaco/good-vibes-djm4t-29092023',
+    'https://www.facebook.com/MetaCanada/videos/801193189918934',
+    'https://www.facebook.com/iShareitHD/videos/1269681903839169'
   ];
 
   addToPlaylist() {

@@ -33,9 +33,6 @@
       "@mintplayer/ng-playlist-controller": [
         "libs/mintplayer-ng-playlist-controller/src/index.ts"
       ],
-      "@mintplayer/ng-script-loader": [
-        "libs/mintplayer-ng-script-loader/src/index.ts"
-      ],
       "@mintplayer/ng-soundcloud-player": [
         "libs/mintplayer-ng-soundcloud-player/src/index.ts"
       ],

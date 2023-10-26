@@ -10,6 +10,7 @@ export interface IApiService {
     prepareHtml(options: PrepareHtmlOptions): string;
     createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter>;
     match2id?: (match: RegExpExecArray) => string;
+    canReusePlayer?: boolean;
 }
 
 export type PrepareHtmlOptions = Partial<Omit<PlayerOptions, 'element'>>;
@@ -55,13 +56,13 @@ export interface PlayerAdapterRequired {
 export function createPlayerAdapter(requiredProps: PlayerAdapterRequired) : PlayerAdapter {
     return {
         ...requiredProps,
-        onStateChange: () => console.warn('onStateChange is not registered'),
-        onMuteChange: () => console.warn('onMuteChange is not registered'),
-        onVolumeChange: () => console.warn('onVolumeChange is not registered'),
-        onCurrentTimeChange: () => console.warn('onCurrentTimeChange is not registered'),
-        onDurationChange: () => console.warn('onDurationChange is not registered'),
-        onFullscreenChange: () => console.warn('onFullscreenChange is not registered'),
-        onPipChange: () => console.warn('onPipChange is not registered'),
+        onStateChange: () => {}, // console.warn('onStateChange is not registered'),
+        onMuteChange: () => {}, // console.warn('onMuteChange is not registered'),
+        onVolumeChange: () => {}, // console.warn('onVolumeChange is not registered'),
+        onCurrentTimeChange: () => {}, // console.warn('onCurrentTimeChange is not registered'),
+        onDurationChange: () => {}, // console.warn('onDurationChange is not registered'),
+        onFullscreenChange: () => {}, // console.warn('onFullscreenChange is not registered'),
+        onPipChange: () => {}, // console.warn('onPipChange is not registered'),
     }
 }
 
