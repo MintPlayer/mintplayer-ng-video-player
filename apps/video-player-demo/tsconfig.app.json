@@ -2,13 +2,14 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "types": ["node", "youtube", "dailymotion", "vimeo", "soundcloud", "twitch", "facebook"],
+    "types": ["node", "youtube", "dailymotion", "vimeo", "soundcloud", "twitch", "facebook", "vidyard"],
     "typeRoots": [
       "../../libs/mintplayer-ng-dailymotion-player/types",
       "../../libs/mintplayer-ng-soundcloud-player/types",
       "../../libs/mintplayer-ng-twitch-player/types",
       "../../libs/mintplayer-ng-vimeo-player/types",
       "../../libs/mintplayer-ng-facebook-player/types",
+      "../../libs/mintplayer-ng-vidyard-player/types",
       "../../node_modules/@types",
     ],
     "target": "ES2022",

@@ -21,6 +21,7 @@ import { SpotifyPlayerModule } from '@mintplayer/ng-spotify-player';
 import { TwitchPlayerModule } from '@mintplayer/ng-twitch-player';
 import { MixcloudPlayerModule } from '@mintplayer/ng-mixcloud-player';
 import { FacebookPlayerModule } from '@mintplayer/ng-facebook-player';
+import { VidyardPlayerModule } from '@mintplayer/ng-vidyard-player';
 
 
 @NgModule({
@@ -47,6 +48,7 @@ import { FacebookPlayerModule } from '@mintplayer/ng-facebook-player';
     TwitchPlayerModule,
     MixcloudPlayerModule,
     FacebookPlayerModule,
+    VidyardPlayerModule,
 
     VideoDemoRoutingModule
   ]
