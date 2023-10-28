@@ -41,7 +41,18 @@ declare module '@vidyard/embed-code' {
         currentTime(): number;
     }
 
-    export type PlayerEvent = 'ready' | 'play' | 'pause' | 'beforeSeek' | 'seek' | 'playerComplete' | 'videoComplete' | 'timeUpdate' | 'volumeChange' | 'lightboxClose' | 'metadata';
+    export type PlayerEvent = 
+        'ready' |
+        'play' |
+        'pause' |
+        'beforeSeek' |
+        'seek' |
+        'playerComplete' |
+        'videoComplete' |
+        'timeUpdate' |
+        'volumeChange' |
+        'lightboxClose' |
+        'metadata';
     
     
 
@@ -53,7 +64,27 @@ declare module '@vidyard/embed-code' {
     export default surface;
 }
 
-const GlobalEventHandlersEventMap = {
-    ready: [],
-    play: <[string, VidyardPlayer]>[0, null],
+interface PlayerReadyEvent extends Event {
+    readyData: any;
+}
+
+interface PlayerStateChangeEvent extends Event {
+    stateChangeData: any;
+}
+
+interface GlobalEventHandlersEventMap {
+    ready: PlayerReadyEvent;
+    stateChange: PlayerStateChangeEvent;
+    // play: <[string, VidyardPlayer]>[0, null],
 };
+
+
+class test {
+    constructor() {
+        this.on('stateChange', ())
+    }
+
+    on<K extends keyof GlobalEventHandlersEventMap>(type: K, listener: (e: GlobalEventHandlersEventMap[K]) => void) {
+
+    }
+}
