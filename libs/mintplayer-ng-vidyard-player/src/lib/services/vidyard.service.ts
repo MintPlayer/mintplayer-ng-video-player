@@ -17,8 +17,6 @@ export class VidyardService implements IApiService {
     return 'vidyard';
   }
 
-  // <script type="text/javascript" async src=""></script>
-
   public urlRegexes = [
     new RegExp(/https?:\/\/video\.vidyard\.com\/watch\/(?<id>[0-9A-Za-z]{5,})/),
     new RegExp(/https?:\/\/play\.vidyard\.com\/(?<id>[0-9A-Za-z]{5,})\.jpg/),
@@ -34,7 +32,7 @@ export class VidyardService implements IApiService {
     }
 
     const w = options.width ? `${options.width}px` : '100%';
-    // return `<img style="width: ${w}; margin: auto; display: block; max-width: 100%" class="vidyard-player-embed" src="https://play.vidyard.com/${options.initialVideoId}.jpg" data-uuid="${options.initialVideoId}" data-v="4" data-type="lightbox" />`;
+    
     return `
       <div style="width: ${w}; margin: auto; display: block; max-width: 100%" class="vidyard-player-embed" data-uuid="${options.initialVideoId}" data-v="4" data-type="lightbox">
         <img src="https://play.vidyard.com/${options.initialVideoId}.jpg">
@@ -85,17 +83,17 @@ export class VidyardService implements IApiService {
           destroy: () => VidyardEmbed.api.destroyPlayer(player)
         });
 
-        player.on('ready', (e, f) => {
-          console.log('event', {e,f});
+        // window.addEventListener( "mousedown", (e) => obj.onClick(e) );
+
+        player.on('ready', (_, plr) => {
           VidyardEmbed.api.getPlayerMetadata(options.initialVideoId!).then(meta => {
-            console.log('META', meta);
             adapter.onDurationChange(meta.length_in_seconds);
           });
           resolvePlayer(adapter);
           //   options.autoplay && player.play();
           // });
-          // player.on('play', (seconds: number, player: VidyardPlayer) => adapter.onStateChange(EPlayerState.playing));
-          // player.on('pause', (_: any, player: VidyardPlayer) => adapter.onStateChange(EPlayerState.paused));
+          player.on('play', (seconds, plr) => adapter.onStateChange(EPlayerState.playing));
+          player.on('pause', (_, plr) => adapter.onStateChange(EPlayerState.paused));
           // player.on('seek', ([previous, next]: number[], player: VidyardPlayer) => adapter.onCurrentTimeChange(next));
           // player.on('playerComplete', (_: any, player: VidyardPlayer) => adapter.onStateChange(EPlayerState.ended));
 

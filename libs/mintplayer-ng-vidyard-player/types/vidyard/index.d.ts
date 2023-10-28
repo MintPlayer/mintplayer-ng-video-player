@@ -35,7 +35,7 @@ declare module '@vidyard/embed-code' {
     //     play(): void;
     //     pause(): void;
     //     seek(seconds: number): void;
-        on<K = keyof GlobalEventHandlersEventMap>(ev = K, handler: (...args: GlobalEventHandlersEventMap[K]) => void): void;
+        on<K extends keyof VidyardEventMap>(ev: K, handler: (...args: VidyardEventMap[K]) => void): void;
     //     off(ev: PlayerEvent, handler: (...args: any[]) => void): void;
     //     setVolume(volume: number): void;
     //     currentTime(): number;
@@ -61,10 +61,11 @@ declare module '@vidyard/embed-code' {
     }
 
 
-    export class GlobalEventHandlersEventMap {
-        ready: [undefined, VidyardPlayer];
+    export interface VidyardEventMap {
+        "ready": [undefined, VidyardPlayer];
         // stateChange: PlayerStateChangeEvent;
-        // play: <[string, VidyardPlayer]>[0, null],
+        "play": [number, VidyardPlayer];
+        "pause": [undefined, VidyardPlayer];
     };
 
     const surface: Surface;
