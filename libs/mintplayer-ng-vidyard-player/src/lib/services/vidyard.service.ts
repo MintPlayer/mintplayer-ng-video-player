@@ -55,60 +55,61 @@ export class VidyardService implements IApiService {
       const destroyRef = new Subject();
       let adapter: PlayerAdapter;
 
-      VidyardEmbed.api.addReadyListener((a, player) => {
-        adapter = createPlayerAdapter({
-          capabilities: [ECapability.volume],
-          loadVideoById: (id: string) => {
+      VidyardEmbed.api.addReadyListener((_: any, player: VidyardPlayer) => {
+        // adapter = createPlayerAdapter({
+        //   capabilities: [ECapability.volume],
+        //   loadVideoById: (id: string) => {
 
-          },
-          setPlayerState: (state: EPlayerState) => {
-            switch (state) {
-              case EPlayerState.playing:
-                player.play();
-                break;
-              case EPlayerState.paused:
-                player.pause();
-                break;
-            }
-          },
-          setMute: (mute) => {},
-          setVolume: (volume) => player.setVolume(volume / 100),
-          setProgress: (time) => {},
-          setSize: (width, heigt) => {},
-          getTitle: () => new Promise((resolve) => resolve('')),
-          setFullscreen: (fullscreen) => {},
-          getFullscreen: () => new Promise((resolve) => resolve(false)),
-          setPip: (pip) => {},
-          getPip: () => new Promise((resolve) => resolve(false)),
-          destroy: () => VidyardEmbed.api.destroyPlayer(player)
-        });
+        //   },
+        //   setPlayerState: (state: EPlayerState) => {
+        //     switch (state) {
+        //       case EPlayerState.playing:
+        //         player.play();
+        //         break;
+        //       case EPlayerState.paused:
+        //         player.pause();
+        //         break;
+        //     }
+        //   },
+        //   setMute: (mute) => {},
+        //   setVolume: (volume) => player.setVolume(volume / 100),
+        //   setProgress: (time) => {},
+        //   setSize: (width, heigt) => {},
+        //   getTitle: () => new Promise((resolve) => resolve('')),
+        //   setFullscreen: (fullscreen) => {},
+        //   getFullscreen: () => new Promise((resolve) => resolve(false)),
+        //   setPip: (pip) => {},
+        //   getPip: () => new Promise((resolve) => resolve(false)),
+        //   destroy: () => VidyardEmbed.api.destroyPlayer(player)
+        // });
 
-        player.on('ready', (...args) => {
-          console.warn('ready', args);
+        player.on('ready', (x) => {
+          console.warn('ready', { _, player });
+          x.readyData
               
-          VidyardEmbed.api.getPlayerMetadata(options.initialVideoId!).then(meta => {
-            console.log('META', meta);
-            adapter.onDurationChange(meta.length_in_seconds);
-          });
-          resolvePlayer(adapter);
-          options.autoplay && player.play();
+          //   VidyardEmbed.api.getPlayerMetadata(options.initialVideoId!).then(meta => {
+          //     console.log('META', meta);
+          //     adapter.onDurationChange(meta.length_in_seconds);
+          //   });
+          //   resolvePlayer(adapter);
+          //   options.autoplay && player.play();
+          // });
+          // player.on('play', (seconds: number, player: VidyardPlayer) => adapter.onStateChange(EPlayerState.playing));
+          // player.on('pause', (_: any, player: VidyardPlayer) => adapter.onStateChange(EPlayerState.paused));
+          // player.on('seek', ([previous, next]: number[], player: VidyardPlayer) => adapter.onCurrentTimeChange(next));
+          // player.on('playerComplete', (_: any, player: VidyardPlayer) => adapter.onStateChange(EPlayerState.ended));
+
+          // if (!isPlatformServer(this.platformId)) {
+          //   timer(0, 50)
+          //     .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+          //     .subscribe(() => {
+          //       const time = player.currentTime();
+          //       adapter.onCurrentTimeChange(time);
+          //     });
+
+          options.element.querySelector(':scope > div > img')?.remove();
         });
-        player.on('play', (seconds: number, player: VidyardPlayer) => adapter.onStateChange(EPlayerState.playing));
-        player.on('pause', (_: any, player: VidyardPlayer) => adapter.onStateChange(EPlayerState.paused));
-        player.on('seek', ([previous, next]: number[], player: VidyardPlayer) => adapter.onCurrentTimeChange(next));
-        player.on('playerComplete', (_: any, player: VidyardPlayer) => adapter.onStateChange(EPlayerState.ended));
 
-        if (!isPlatformServer(this.platformId)) {
-          timer(0, 50)
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-            .subscribe(() => {
-              const time = player.currentTime();
-              adapter.onCurrentTimeChange(time);
-            });
-        }
-
-        options.element.querySelector(':scope > div > img')?.remove();
-        // if (player.container === options.element)
       });
 
       VidyardEmbed.api.renderPlayer({
