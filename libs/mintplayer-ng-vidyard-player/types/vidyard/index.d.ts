@@ -35,24 +35,24 @@ declare module '@vidyard/embed-code' {
     //     play(): void;
     //     pause(): void;
     //     seek(seconds: number): void;
-        on<K = keyof GlobalEventHandlersEventMap>(ev = K, handler: (args: Map[K]) => void): void;
+        on<K = keyof GlobalEventHandlersEventMap>(ev = K, handler: (...args: Map[K]) => void): void;
     //     off(ev: PlayerEvent, handler: (...args: any[]) => void): void;
     //     setVolume(volume: number): void;
     //     currentTime(): number;
     }
 
-    export type PlayerEvent = 
-        'ready' |
-        'play' |
-        'pause' |
-        'beforeSeek' |
-        'seek' |
-        'playerComplete' |
-        'videoComplete' |
-        'timeUpdate' |
-        'volumeChange' |
-        'lightboxClose' |
-        'metadata';
+    // export type PlayerEvent = 
+    //     'ready' |
+    //     'play' |
+    //     'pause' |
+    //     'beforeSeek' |
+    //     'seek' |
+    //     'playerComplete' |
+    //     'videoComplete' |
+    //     'timeUpdate' |
+    //     'volumeChange' |
+    //     'lightboxClose' |
+    //     'metadata';
     
     
 
@@ -62,7 +62,8 @@ declare module '@vidyard/embed-code' {
 
 
     export class GlobalEventHandlersEventMap {
-        ready: PlayerReadyEvent;
+        // ready: [player: VidyardPlayer, ev: PlayerReadyEvent];
+        ready: [any, PlayerReadyEvent];
         // stateChange: PlayerStateChangeEvent;
         // play: <[string, VidyardPlayer]>[0, null],
     };

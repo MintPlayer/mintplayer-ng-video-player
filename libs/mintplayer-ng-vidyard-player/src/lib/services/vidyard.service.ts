@@ -83,9 +83,9 @@ export class VidyardService implements IApiService {
         //   destroy: () => VidyardEmbed.api.destroyPlayer(player)
         // });
 
-        player.on('ready', (x) => {
-          console.warn('ready', { _, player });
-          x.readyData
+        player.on('ready', (e, f) => {
+          console.warn('ready', {e, f});
+          // x.readyData
               
           //   VidyardEmbed.api.getPlayerMetadata(options.initialVideoId!).then(meta => {
           //     console.log('META', meta);
