@@ -23,12 +23,6 @@ declare module '@vidyard/embed-code' {
         [x: string | number | symbol]: unknown;
     }
 
-    // export interface ProgressEventsEvent {
-    //     chapter: number;
-    //     event: any;
-    //     player: VidyardPlayer;
-    // }
-
     export interface VidyardPlayer {
         get container(): HTMLElement;
         get element(): HTMLElement;
@@ -84,8 +78,3 @@ declare module '@vidyard/embed-code' {
 interface BeforeSeekEvent {
     start: number;
 }
-
-// interface PlayerStateChangeEvent extends Event {
-//     stateChangeData: any;
-// }
-

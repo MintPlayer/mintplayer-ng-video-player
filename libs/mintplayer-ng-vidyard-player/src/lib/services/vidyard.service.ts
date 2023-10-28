@@ -1,10 +1,10 @@
-import { isPlatformServer } from '@angular/common';
 import { Injectable, DestroyRef, Inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 import VidyardEmbed, { VidyardApi, VidyardPlayer } from '@vidyard/embed-code';
-import { Subject, BehaviorSubject, timer } from 'rxjs';
+import { Subject, BehaviorSubject, map, filter, take, takeUntil, fromEvent } from 'rxjs';
+// import { fromEventX } from '../extensions';
 
 @Injectable({
   providedIn: 'root'
@@ -56,83 +56,103 @@ export class VidyardService implements IApiService {
 
       const destroyRef = new Subject();
       // let adapter: PlayerAdapter;
-      const adapter$ = new BehaviorSubject<PlayerAdapter | null>(null);
-      const playerReady$ = new BehaviorSubject<boolean>(false);
+      const playerReady$ = new BehaviorSubject<[boolean, VidyardPlayer?]>([false, undefined]);
+      const adapter$ = new BehaviorSubject<[PlayerAdapter, VidyardPlayer] | null>(null);
+
+      adapter$.pipe(filter(a => !!a), map(a => a!), take(1), takeUntil(destroyRef), takeUntilDestroyed(destroy))
+        .subscribe(([adapter, player]) => {
+          VidyardEmbed.api.getPlayerMetadata(options.initialVideoId!).then(meta => {
+            adapter.onDurationChange(meta.length_in_seconds);
+          });
+
+
+          // fromEventX(player, 'play')
+          //   .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+          //   .subscribe((...args) => {
+              
+          //   })
+
+
+          // fromEvent(player, 'play').pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+          //   .subscribe((a) => {
+          //   })
+
+          // player.setVolume(0.5);
+
+          player.on('play', (seconds, plr) => adapter.onStateChange(EPlayerState.playing));
+          player.on('pause', (_, plr) => adapter.onStateChange(EPlayerState.paused));
+          player.on('seek', ([previous, next], plr) => adapter.onCurrentTimeChange(next));
+          // player.on('playerComplete', (_, plr) => adapter.onStateChange(EPlayerState.ended));
+          // player.on('videoComplete', (index, plr) => {
+          //   debugger;
+          //   if (index === plr.metadata.chapters_attributes.length - 1) {
+          //     adapter.onStateChange(EPlayerState.ended);
+          //   }
+          // });
+          player.on('volumeChange', (volume, plr) => adapter.onVolumeChange(volume * 100));
+          player.on('timeupdate', (seconds, plr) => {
+            adapter.onCurrentTimeChange(seconds);
+            const chapters = plr.metadata.chapters_attributes;
+            const duration = chapters[chapters.length - 1].video_attributes.length_in_seconds;
+            if ((seconds >= duration) || (Math.abs(seconds - duration) < 0.2)) {
+              // Prevents us to have to wait for ads at the end
+              adapter.onStateChange(EPlayerState.ended);
+            }
+          });
+          player.on('metadata', (...args: any[]) => console.log('metadata', args));
+          
+          resolvePlayer(adapter);
+        });
+
+      playerReady$.pipe(filter(([ready]) => ready), take(1), takeUntil(destroyRef), takeUntilDestroyed(destroy))
+        .subscribe(([_, plr]) => {
+          const player = plr!;
+          const adapter = createPlayerAdapter({
+            capabilities: [ECapability.volume],
+            loadVideoById: (id: string) => {
+              throw 'The Vidyard player cannot be reused';
+            },
+            setPlayerState: (state: EPlayerState) => {
+              switch (state) {
+                case EPlayerState.playing:
+                  player.play();
+                  break;
+                case EPlayerState.paused:
+                  player.pause();
+                  break;
+              }
+            },
+            setMute: (mute) => {
+              throw 'The Vidyard player doesn\'t support mute';
+            },
+            setVolume: (volume) => player.setVolume(volume / 100),
+            setProgress: (time) => player.seek(time),
+            setSize: (width, heigt) => {
+              player.iframe.width = `${width}px`;
+              player.iframe.height = `${heigt}px`;
+            },
+            getTitle: () => new Promise((resolve) => {
+              player.metadata.name ?? player.metadata.description;
+            }),
+            setFullscreen: (fullscreen) => {
+              throw 'The Vidyard player doesn\'t support fullscreen';
+            },
+            getFullscreen: () => new Promise((resolve) => resolve(false)),
+            setPip: (pip) => {
+              throw 'The Vidyard player doesn\'t support PiP';
+            },
+            getPip: () => new Promise((resolve) => resolve(false)),
+            destroy: () => VidyardEmbed.api.destroyPlayer(player)
+          });
+
+          adapter$.next([adapter, player]);
+        });
 
       VidyardEmbed.api.addReadyListener((_: any, player: VidyardPlayer) => {
-        adapter = createPlayerAdapter({
-          capabilities: [ECapability.volume],
-          loadVideoById: (id: string) => {
-
-          },
-          setPlayerState: (state: EPlayerState) => {
-            switch (state) {
-              case EPlayerState.playing:
-                player.play();
-                break;
-              case EPlayerState.paused:
-                player.pause();
-                break;
-            }
-          },
-          setMute: (mute) => {},
-          setVolume: (volume) => player.setVolume(volume / 100),
-          setProgress: (time) => player.seek(time),
-          setSize: (width, heigt) => {
-            player.iframe.width = `${width}px`;
-            player.iframe.height = `${heigt}px`;
-          },
-          getTitle: () => new Promise((resolve) => {
-            player.metadata.name ?? player.metadata.description;
-          }),
-          setFullscreen: (fullscreen) => {},
-          getFullscreen: () => new Promise((resolve) => resolve(false)),
-          setPip: (pip) => {
-            throw 'The Vidyard player doesn\'t support PiP';
-          },
-          getPip: () => new Promise((resolve) => resolve(false)),
-          destroy: () => VidyardEmbed.api.destroyPlayer(player)
-        });
-
-        // window.addEventListener( "mousedown", (e) => obj.onClick(e) );
-
         player.on('ready', (_, plr) => {
-          console.log('player', player);
-          playerReady$.next(true);
-
-          setTimeout(() => {
-            VidyardEmbed.api.getPlayerMetadata(options.initialVideoId!).then(meta => {
-              adapter.onDurationChange(meta.length_in_seconds);
-            });
-            resolvePlayer(adapter);
-
-            // player.setVolume(0.5);
-
-            player.on('play', (seconds, plr) => adapter.onStateChange(EPlayerState.playing));
-            player.on('pause', (_, plr) => adapter.onStateChange(EPlayerState.paused));
-            player.on('seek', ([previous, next], plr) => adapter.onCurrentTimeChange(next));
-            // player.on('playerComplete', (_, plr) => adapter.onStateChange(EPlayerState.ended));
-            // player.on('videoComplete', (index, plr) => {
-            //   debugger;
-            //   if (index === plr.metadata.chapters_attributes.length - 1) {
-            //     adapter.onStateChange(EPlayerState.ended);
-            //   }
-            // });
-            player.on('volumeChange', (volume, plr) => adapter.onVolumeChange(volume * 100));
-            player.on('timeupdate', (seconds, plr) => {
-              adapter.onCurrentTimeChange(seconds);
-              const chapters = plr.metadata.chapters_attributes;
-              const duration = chapters[chapters.length - 1].video_attributes.length_in_seconds;
-              if ((seconds >= duration) || (Math.abs(seconds - duration) < 0.2)) {
-                adapter.onStateChange(EPlayerState.ended);
-              }
-            });
-            player.on('metadata', (...args: any[]) => console.log('metadata', args));
-          }, 500);
-
+          playerReady$.next([true, player]);
           options.element.querySelector(':scope > div > img')?.remove();
         });
-
       });
 
       VidyardEmbed.api.renderPlayer({
