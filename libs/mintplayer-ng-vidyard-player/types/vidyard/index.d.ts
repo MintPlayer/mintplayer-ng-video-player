@@ -12,15 +12,16 @@ declare module '@vidyard/embed-code' {
         destroyPlayer(player: VidyardPlayer): void;
     }
 
-    // export interface RenderPlayerOptions {
-    //     uuid: string,
-    //     container: HTMLElement;
-    //     // optional
-    //     type?: 'lightbox' | 'inline';
-    //     aspect?: 'landscape' | 'portrait' | number,
+    export interface RenderPlayerOptions {
+        uuid: string,
+        container: HTMLElement;
+        // optional
+        type?: 'lightbox' | 'inline';
+        aspect?: 'landscape' | 'portrait' | number,
+        autoplay?: 1 | 0;
 
-    //     [x: string | number | symbol]: unknown;
-    // }
+        [x: string | number | symbol]: unknown;
+    }
 
     // export interface ProgressEventsEvent {
     //     chapter: number;
@@ -29,65 +30,62 @@ declare module '@vidyard/embed-code' {
     // }
 
     export interface VidyardPlayer {
-        container: HTMLElement;
-    //     element: HTMLElement;
-    //     get uuid(): string;
-    //     play(): void;
-    //     pause(): void;
-    //     seek(seconds: number): void;
+        get container(): HTMLElement;
+        get element(): HTMLElement;
+        get iframe(): HTMLIFrameElement;
+        get uuid(): string;
+        get metadata(): VidyardMetadata;
+        get placeholder(): HTMLElement;
+        play(): void;
+        pause(): void;
+        seek(seconds: number): void;
         on<K extends keyof VidyardEventMap>(ev: K, handler: (...args: VidyardEventMap[K]) => void): void;
-    //     off(ev: PlayerEvent, handler: (...args: any[]) => void): void;
-    //     setVolume(volume: number): void;
-    //     currentTime(): number;
+        off<K extends keyof VidyardEventMap>(ev: K, handler: (...args: VidyardEventMap[K]) => void): void;
+        setVolume(volume: number): void;
+        currentTime(): number;
     }
 
-    // export type PlayerEvent = 
-    //     'ready' |
-    //     'play' |
-    //     'pause' |
-    //     'beforeSeek' |
-    //     'seek' |
-    //     'playerComplete' |
-    //     'videoComplete' |
-    //     'timeUpdate' |
-    //     'volumeChange' |
-    //     'lightboxClose' |
-    //     'metadata';
-    
-    
 
     export interface VidyardMetadata {
         length_in_seconds: number;
+        width: number;
+        height: number;
+        name: string;
+        description: string;
+        chapters_attributes: VidyardChapter[];
     }
 
+    export interface VidyardChapter {
+        video_attributes: VidyardChapterAttribute;
+    }
+
+    export interface VidyardChapterAttribute {
+        length_in_seconds: number;
+        name: string;
+    }
 
     export interface VidyardEventMap {
-        "ready": [undefined, VidyardPlayer];
-        // stateChange: PlayerStateChangeEvent;
-        "play": [number, VidyardPlayer];
-        "pause": [undefined, VidyardPlayer];
+        'ready': [undefined, VidyardPlayer];
+        'play': [number, VidyardPlayer];
+        'pause': [undefined, VidyardPlayer];
+        'seek': [[previous: number, next: number], VidyardPlayer];
+        'beforeSeek': [BeforeSeekEvent, VidyardPlayer];
+        'metadata': [VidyardMetadata[], VidyardPlayer];
+        'playerComplete': [undefined, VidyardPlayer];
+        'videoComplete': [number, VidyardPlayer];
+        'timeupdate': [seconds: number, VidyardPlayer];
+        'volumeChange': [number, VidyardPlayer];
     };
 
     const surface: Surface;
     export default surface;
 }
 
-interface PlayerReadyEvent extends Event {
-    readyData: any;
+interface BeforeSeekEvent {
+    start: number;
 }
 
 // interface PlayerStateChangeEvent extends Event {
 //     stateChangeData: any;
 // }
 
-
-
-// class test {
-//     constructor() {
-//         this.on('stateChange', ())
-//     }
-
-//     on<K extends keyof GlobalEventHandlersEventMap>(type: K, listener: (e: GlobalEventHandlersEventMap[K]) => void) {
-
-//     }
-// }
