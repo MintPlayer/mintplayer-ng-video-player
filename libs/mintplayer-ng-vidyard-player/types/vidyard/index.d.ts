@@ -8,8 +8,8 @@ declare module '@vidyard/embed-code' {
         renderPlayer(el: HTMLElement | RenderPlayerOptions): void;
         addReadyListener(callback: (_, player: VidyardPlayer) => void): void;
         // progressEvents(callback: (ev: ProgressEventsEvent) => void):void;
-        // getPlayerMetadata(id: string): Promise<VidyardMetadata>;
-        // destroyPlayer(player: VidyardPlayer): void;
+        getPlayerMetadata(id: string): Promise<VidyardMetadata>;
+        destroyPlayer(player: VidyardPlayer): void;
     }
 
     // export interface RenderPlayerOptions {
@@ -28,14 +28,14 @@ declare module '@vidyard/embed-code' {
     //     player: VidyardPlayer;
     // }
 
-    export interface VidyardPlayer<Map = GlobalEventHandlersEventMap> {
+    export interface VidyardPlayer {
         container: HTMLElement;
     //     element: HTMLElement;
     //     get uuid(): string;
     //     play(): void;
     //     pause(): void;
     //     seek(seconds: number): void;
-        on<K = keyof GlobalEventHandlersEventMap>(ev = K, handler: (...args: Map[K]) => void): void;
+        on<K = keyof GlobalEventHandlersEventMap>(ev = K, handler: (...args: GlobalEventHandlersEventMap[K]) => void): void;
     //     off(ev: PlayerEvent, handler: (...args: any[]) => void): void;
     //     setVolume(volume: number): void;
     //     currentTime(): number;
@@ -56,14 +56,13 @@ declare module '@vidyard/embed-code' {
     
     
 
-    // export interface VidyardMetadata {
-    //     length_in_seconds: number;
-    // }
+    export interface VidyardMetadata {
+        length_in_seconds: number;
+    }
 
 
     export class GlobalEventHandlersEventMap {
-        // ready: [player: VidyardPlayer, ev: PlayerReadyEvent];
-        ready: [any, PlayerReadyEvent];
+        ready: [undefined, VidyardPlayer];
         // stateChange: PlayerStateChangeEvent;
         // play: <[string, VidyardPlayer]>[0, null],
     };
