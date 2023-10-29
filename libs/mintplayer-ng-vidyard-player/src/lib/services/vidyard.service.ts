@@ -2,9 +2,9 @@ import { Injectable, DestroyRef, Inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
-import VidyardEmbed, { VidyardApi, VidyardPlayer } from '@vidyard/embed-code';
+import VidyardEmbed, { VidyardApi, VidyardEventMap, VidyardPlayer } from '@vidyard/embed-code';
 import { Subject, BehaviorSubject, map, filter, take, takeUntil, fromEvent } from 'rxjs';
-import { fromEventX } from '../extensions';
+import { fromVidyardEvent } from '../extensions';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +46,7 @@ export class VidyardService implements IApiService {
   public createPlayer(options: PlayerOptions, destroy: DestroyRef) : Promise<PlayerAdapter> {
     return new Promise((resolvePlayer, rejectPlayer) => {
       const div = options.element.querySelector<HTMLDivElement>('div.vidyard-player-embed');
+      
       if (!div) {
         return rejectPlayer('Something went wrong');
       }
@@ -65,8 +66,7 @@ export class VidyardService implements IApiService {
             adapter.onDurationChange(meta.length_in_seconds);
           });
 
-
-          fromEventX(player, 'play')
+          fromVidyardEvent(player, 'play')
             .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
             .subscribe(([sec, plr]) => {
               

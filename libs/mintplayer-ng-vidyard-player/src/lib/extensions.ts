@@ -1,17 +1,17 @@
 // import { Observable } from 'rxjs';
 
 import { VidyardEventMap } from "@vidyard/embed-code";
-import { Observable } from "rxjs";
+import { Observable, fromEvent } from "rxjs";
+import { HasEventTargetAddRemove, JQueryStyleEventEmitter } from "rxjs/internal/observable/fromEvent";
 
-// export interface JQueryStyleEventEmitter<TContext, T> {
-//     on<K extends keyof U, U, V = U[K], V extends ArrayLike<any>>(eventName: K, handler: (...args: U[K]) => any): void;
-//     off<K extends keyof U, U>(eventName: K, handler: (...args: U[K]) => any): void;
-// }
-
-// export function fromEventX<T>(target: JQueryStyleEventEmitter<any, T>, eventName: string) : Observable<T> {
-
-// }
-
-export function fromEventX<E extends keyof VidyardEventMap>(target: any, name: E): Observable<VidyardEventMap[E]> {
-
+export function fromVidyardEvent<E extends keyof VidyardEventMap>(
+    target: HasEventTargetAddRemove<VidyardEventMap[E]> | ArrayLike<HasEventTargetAddRemove<VidyardEventMap[E]>>,
+    name: E): Observable<VidyardEventMap[E]> {
+    return fromEvent(target, name);
 }
+
+// export function fromVidyardEvent<E extends keyof VidyardEventMap>(
+//     target: JQueryStyleEventEmitter<any, VidyardEventMap[E]> | ArrayLike<HasEventTargetAddRemove<VidyardEventMap[E]>>,
+//     name: E): Observable<VidyardEventMap[E]> {
+//     return fromEvent(target, name);
+// }
