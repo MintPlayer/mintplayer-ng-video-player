@@ -4,7 +4,7 @@ import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, P
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 import VidyardEmbed, { VidyardApi, VidyardPlayer } from '@vidyard/embed-code';
 import { Subject, BehaviorSubject, map, filter, take, takeUntil, fromEvent } from 'rxjs';
-// import { fromEventX } from '../extensions';
+import { fromEventX } from '../extensions';
 
 @Injectable({
   providedIn: 'root'
@@ -66,11 +66,11 @@ export class VidyardService implements IApiService {
           });
 
 
-          // fromEventX(player, 'play')
-          //   .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-          //   .subscribe((...args) => {
+          fromEventX(player, 'play')
+            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .subscribe(([sec, plr]) => {
               
-          //   })
+            })
 
 
           // fromEvent(player, 'play').pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
