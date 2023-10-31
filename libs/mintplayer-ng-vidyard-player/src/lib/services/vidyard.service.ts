@@ -68,20 +68,38 @@ export class VidyardService implements IApiService {
 
           fromVidyardEvent(player, 'play')
             .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-            .subscribe(([sec, plr]) => {
-              
-            })
+            .subscribe(([sec, plr]) => adapter.onStateChange(EPlayerState.playing));
 
+          fromVidyardEvent(player, 'pause')
+            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .subscribe(([_, plr]) => adapter.onStateChange(EPlayerState.paused));
 
-          // fromEvent(player, 'play').pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-          //   .subscribe((a) => {
-          //   })
+          fromVidyardEvent(player, 'seek')
+            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .subscribe(([[previous, next], plr]) => adapter.onCurrentTimeChange(next));
+
+          fromVidyardEvent(player, 'volumeChange')
+            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .subscribe(([volume, plr]) => adapter.onVolumeChange(volume * 100));
+
+          fromVidyardEvent(player, 'timeupdate')
+            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .subscribe(([seconds, plr]) => {
+              adapter.onCurrentTimeChange(seconds);
+              const chapters = plr.metadata.chapters_attributes;
+              const duration = chapters[chapters.length - 1].video_attributes.length_in_seconds;
+              if ((seconds >= duration) || (Math.abs(seconds - duration) < 0.2)) {
+                // Prevents us to have to wait for ads at the end
+                adapter.onStateChange(EPlayerState.ended);
+              }
+            });
+
+          fromVidyardEvent(player, 'metadata')
+            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .subscribe(([meta, plr]) => console.log('metadata', meta));
 
           // player.setVolume(0.5);
 
-          player.on('play', (seconds, plr) => adapter.onStateChange(EPlayerState.playing));
-          player.on('pause', (_, plr) => adapter.onStateChange(EPlayerState.paused));
-          player.on('seek', ([previous, next], plr) => adapter.onCurrentTimeChange(next));
           // player.on('playerComplete', (_, plr) => adapter.onStateChange(EPlayerState.ended));
           // player.on('videoComplete', (index, plr) => {
           //   debugger;
@@ -89,17 +107,6 @@ export class VidyardService implements IApiService {
           //     adapter.onStateChange(EPlayerState.ended);
           //   }
           // });
-          player.on('volumeChange', (volume, plr) => adapter.onVolumeChange(volume * 100));
-          player.on('timeupdate', (seconds, plr) => {
-            adapter.onCurrentTimeChange(seconds);
-            const chapters = plr.metadata.chapters_attributes;
-            const duration = chapters[chapters.length - 1].video_attributes.length_in_seconds;
-            if ((seconds >= duration) || (Math.abs(seconds - duration) < 0.2)) {
-              // Prevents us to have to wait for ads at the end
-              adapter.onStateChange(EPlayerState.ended);
-            }
-          });
-          player.on('metadata', (...args: any[]) => console.log('metadata', args));
           
           resolvePlayer(adapter);
         });
@@ -107,6 +114,7 @@ export class VidyardService implements IApiService {
       playerReady$.pipe(filter(([ready]) => ready), take(1), takeUntil(destroyRef), takeUntilDestroyed(destroy))
         .subscribe(([_, plr]) => {
           const player = plr!;
+          console.warn('player', plr);
           const adapter = createPlayerAdapter({
             capabilities: [ECapability.volume],
             loadVideoById: (id: string) => {
