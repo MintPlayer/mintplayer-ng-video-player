@@ -24,7 +24,7 @@ export class SpotifyApiService implements IApiService {
   ];
 
   public loadApi() {
-    return this.scriptLoader.loadScript('https://open.spotify.com/embed-podcast/iframe-api/v1', 'onSpotifyIframeApiReady')
+    return this.scriptLoader.loadScript('https://open.spotify.com/embed-podcast/iframe-api/v1', { windowCallback: 'onSpotifyIframeApiReady' })
       .then(readyArgs => this.api = readyArgs[0]);
   }
 

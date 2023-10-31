@@ -27,7 +27,7 @@ export class YoutubeApiService implements IApiService {
   ];
 
   public loadApi() {
-    return this.scriptLoader.loadScript('https://www.youtube.com/iframe_api', 'onYouTubeIframeAPIReady');
+    return this.scriptLoader.loadScript('https://www.youtube.com/iframe_api', { windowCallback: 'onYouTubeIframeAPIReady' });
   }
 
   public prepareHtml(options: PrepareHtmlOptions) {
