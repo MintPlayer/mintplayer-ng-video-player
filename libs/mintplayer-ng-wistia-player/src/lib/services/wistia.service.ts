@@ -1,7 +1,9 @@
 import { DestroyRef, Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
-import { IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions } from '@mintplayer/ng-player-provider';
+import { ECapability, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { isPlatformServer } from '@angular/common';
+
+// https://wistia.com/support/developers/player-api#volumechange
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +39,7 @@ export class WistiaService implements IApiService {
     return `<div id="${options.domId}" key="${options.initialVideoId}" class="wistia_embed wistia_async_${options.initialVideoId}" style="width:640px;height:360px;max-width:100%"></div>`;
   }
 
+  // requests: WistiaRequest[] = [];
   createPlayer(options: PlayerOptions, destroy: DestroyRef) {
     return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
       if (isPlatformServer(this.platformId)) {
@@ -54,9 +57,31 @@ export class WistiaService implements IApiService {
 
       // TODO: this can probably be moved to a variable on this class
       const wq: WistiaRequest[] = (<any>window)._wq = (<any>window)._wq || [];
-      wq.push({ id: options.domId, onReady: (handle) => {
-        console.log('hi there', handle);
+      wq.push({ id: options.domId, onReady: (player) => {
+        // console.log('hi there', handle);
+        const adapter = createPlayerAdapter({
+          capabilities: [ECapability.mute],
+          setMute: (mute) => {
+            if (mute) player.mute();
+            else player.unmute();
+          },
+          getFullscreen: () => new Promise(resolve => resolve(false)),
+          setVolume: (volume) => player.volume(volume / 100),
+        });
+
+        player.volume()
+
+        resolvePlayer(adapter);
       } });
+
+      // this.requests.push({
+      //   id: options.domId,
+      //   onReady: (handle) => {
+      //     console.log('hi there', handle);
+      //   }
+      // });
+
+
       // const wq: WistiaRequest[] = (<any>window)._wq = (<any>window)._wq || [];
       // wq.push({ id: 'my_video', onReady: (handle) => {
       //   console.log('hi there', handle);
@@ -73,5 +98,11 @@ export class WistiaService implements IApiService {
 
 export interface WistiaRequest {
   id: string;
-  onReady: (video: any) => void;
+  onReady: (video: WistiaPlayer) => void;
+}
+
+export  interface WistiaPlayer {
+  mute: () => void;
+  unmute: () => void;
+  volume: ((vol: number) => void) | (() => number);
 }
