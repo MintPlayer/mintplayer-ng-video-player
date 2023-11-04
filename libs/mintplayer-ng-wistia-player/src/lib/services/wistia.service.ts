@@ -34,10 +34,7 @@ export class WistiaService implements IApiService {
       throw 'The Wistia api requires an initial video id';
     }
 
-    // id="${options.domId}"
-    //  wistia_async_${options.domId}
-    // return `<div id="${options.domId}" style="width:${options.width ?? 640}px;height:${options.height ?? 360}px" class="wistia_embed"></div>`;
-    return `<div id="${options.domId}" key="${options.initialVideoId}" class="wistia_embed wistia_async_${options.initialVideoId}" style="width:640px;height:360px;max-width:100%"></div>`;
+    return `<div id="${options.domId}" key="${options.initialVideoId}" class="wistia_embed wistia_async_${options.initialVideoId}" style="width:${options.width ?? 640}px;height:${options.height ?? 360}px;max-width:100%"></div>`;
   }
 
   public get canReusePlayer() {
@@ -63,8 +60,7 @@ export class WistiaService implements IApiService {
       const wq: (WistiaRequest | WistiaRevokeRequest)[] = (<any>window)._wq = (<any>window)._wq || [];
       const request: WistiaRequest = {
         id: options.domId,
-        onReady: (player, ...args: any[]) => {
-          console.warn('new player', { player, args });
+        onReady: (player) => {
           const destroyRef = new Subject();
           const adapter = createPlayerAdapter({
             capabilities: [ECapability.mute, ECapability.volume, ECapability.fullscreen, ECapability.getTitle],
@@ -74,10 +70,6 @@ export class WistiaService implements IApiService {
                 setTimeout(() => player.play(), 20);
               }
               adapter.onVolumeChange(player.volume() * 100);
-              // const d = player.duration();
-              // console.warn('duration', d);
-              // adapter.onCurrentTimeChange(2);
-              // adapter.onDurationChange(39);
             },
             setPlayerState: (state) => {
               switch (state) {
