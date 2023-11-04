@@ -2,6 +2,7 @@ import { DestroyRef, Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { ScriptLoader } from '@mintplayer/ng-script-loader';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { isPlatformServer } from '@angular/common';
+import { Subject } from 'rxjs';
 
 // https://wistia.com/support/developers/player-api#volumechange
 
@@ -43,7 +44,6 @@ export class WistiaService implements IApiService {
     return false;
   }
 
-  // requests: WistiaRequest[] = [];
   createPlayer(options: PlayerOptions, destroy: DestroyRef) {
     return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
       if (isPlatformServer(this.platformId)) {
@@ -61,81 +61,110 @@ export class WistiaService implements IApiService {
 
       // TODO: this can probably be moved to a variable on this class
       const wq: (WistiaRequest | WistiaRevokeRequest)[] = (<any>window)._wq = (<any>window)._wq || [];
-      wq.push({ id: options.domId, onReady: (player) => {
-        // console.log('hi there', handle);
-        const adapter = createPlayerAdapter({
-          capabilities: [ECapability.mute, ECapability.volume, ECapability.fullscreen],
-          loadVideoById: (id: string) => {
-            player.addToPlaylist(id);
-          },
-          setPlayerState: (state) => {
-            switch (state) {
-              case EPlayerState.playing:
-                player.play();
-                break;
-              case EPlayerState.paused:
-                player.pause();
-                break;
+      const request: WistiaRequest = {
+        id: options.domId,
+        onReady: (player, ...args: any[]) => {
+          console.warn('new player', { player, args });
+          const destroyRef = new Subject();
+          const adapter = createPlayerAdapter({
+            capabilities: [ECapability.mute, ECapability.volume, ECapability.fullscreen, ECapability.getTitle],
+            loadVideoById: (id: string) => {
+              player.addToPlaylist(id);
+              if (options.autoplay) {
+                setTimeout(() => player.play(), 20);
+              }
+              adapter.onVolumeChange(player.volume() * 100);
+              // const d = player.duration();
+              // console.warn('duration', d);
+              // adapter.onCurrentTimeChange(2);
+              // adapter.onDurationChange(39);
+            },
+            setPlayerState: (state) => {
+              switch (state) {
+                case EPlayerState.playing:
+                  player.play();
+                  break;
+                case EPlayerState.paused:
+                  player.pause();
+                  break;
+                }
+            },
+            setMute: (mute) => {
+              if (mute) player.mute();
+              else player.unmute();
+            },
+            setVolume: (volume) => player.volume(volume / 100),
+            setProgress: (time) => player.time(time),
+            setSize: (width, height) => {
+              player.width(width);
+              player.height(height);
+            },
+            getTitle: () => new Promise(resolve => resolve(player.name())),
+            setFullscreen: (isFullscreen) => {
+              if (isFullscreen) {
+                player.requestFullscreen();
+              } else {
+                player.cancelFullscreen();
+              }
+            },
+            getFullscreen: () => new Promise(resolve => resolve(player.inFullscreen())),
+            setPip: (isPip) => {
+              if (isPip) {
+                console.warn('Wistia player doesn\'t support PIP mode');
+                setTimeout(() => adapter.onPipChange(false), 50);
+              }
+            },
+            getPip: () => new Promise((resolve) => resolve(false)),
+            destroy: () => {
+              player.unbind('play', handlers.get('play'));
+              player.unbind('pause', handlers.get('pause'));
+              player.unbind('end', handlers.get('end'));
+              player.unbind('mutechange', handlers.get('mutechange'));
+              player.unbind('volumechange', handlers.get('volumechange'));
+              player.unbind('timechange', handlers.get('timechange'));
+              player.unbind('enterfullscreen', handlers.get('enterfullscreen'));
+              player.unbind('cancelfullscreen', handlers.get('cancelfullscreen'));
+              // player.unbind('betweentimes', handlers.get('betweentimes'));
+              // player.unbind('crosstime', handlers.get('crosstime'));
+      
+              player.remove();
+              destroyRef.next(true);
+              wq.push({ revoke: request });
             }
-          },
-          setMute: (mute) => {
-            if (mute) player.mute();
-            else player.unmute();
-          },
-          setVolume: (volume) => player.volume(volume / 100),
-          setProgress: (time) => player.time(time),
-          setSize: (width, height) => {
-            player.width(width);
-            player.height(height);
-          },
-          getTitle: () => new Promise((resolve, reject) => reject('The Wistia player doesn\'t allow getting the title')),
-          setFullscreen: (isFullscreen) => {
-            if (isFullscreen) {
-              player.requestFullscreen();
-            } else {
-              player.cancelFullscreen();
-            }
-          },
-          getFullscreen: () => new Promise(resolve => resolve(player.inFullscreen())),
-          setPip: (isPip) => {
-            if (isPip) {
-              console.warn('Wistia player doesn\'t support PIP mode');
-              setTimeout(() => adapter.onPipChange(false), 50);
-            }
-          },
-          getPip: () => new Promise((resolve) => resolve(false)),
-          destroy: () => {
-            player.destroy();
-            destroyRef.next(true);
-          }
-        });
+          });
+          
+          const handlers = new Map<keyof Wistia.WistiaEventMap, any>();
+          handlers.set('play', () => {
+            adapter.onStateChange(EPlayerState.playing);
+            adapter.onDurationChange(player.duration());
+          });
+          handlers.set('pause', () => adapter.onStateChange(EPlayerState.paused));
+          handlers.set('end', () => adapter.onStateChange(EPlayerState.ended));
+          handlers.set('volumechange', (volume: number) => adapter.onVolumeChange(volume * 100));
+          handlers.set('timechange', (seconds: number) => adapter.onCurrentTimeChange(seconds));
+          handlers.set('mutechange', (isMuted: boolean) => adapter.onMuteChange(isMuted));
+          handlers.set('enterfullscreen', () => adapter.onFullscreenChange(true));
+          handlers.set('cancelfullscreen', () => adapter.onFullscreenChange(false));
+          // handlers.set('betweentimes', (val: any) => console.log('val', val));
+          // handlers.set('crosstime', () => console.log('crosstime'));
 
-        player.bind('enterfullscreen', () => adapter.onFullscreenChange(true));
-        player.bind('cancelfullscreen', () => adapter.onFullscreenChange(false));
-        player.bind('crosstime', 30, () => {
+          player.bind('play', handlers.get('play'));
+          player.bind('pause', handlers.get('pause'));
+          player.bind('end', handlers.get('end'));
+          player.bind('timechange', handlers.get('timechange'));
+          player.bind('mutechange', handlers.get('mutechange'));
+          player.bind('volumechange', handlers.get('volumechange'));
+          player.bind('enterfullscreen', handlers.get('enterfullscreen'));
+          player.bind('cancelfullscreen', handlers.get('cancelfullscreen'));
+          // player.bind('betweentimes', 30, 60, handlers.get('betweentimes'));
+          // player.bind('crosstime', 30, handlers.get('crosstime'));
 
-        });
+          console.warn('player', player);
 
-        resolvePlayer(adapter);
-      } });
-
-      // this.requests.push({
-      //   id: options.domId,
-      //   onReady: (handle) => {
-      //     console.log('hi there', handle);
-      //   }
-      // });
-
-
-      // const wq: WistiaRequest[] = (<any>window)._wq = (<any>window)._wq || [];
-      // wq.push({ id: 'my_video', onReady: (handle) => {
-      //   console.log('hi there', handle);
-      // } });
-
-      // setTimeout(() => {
-      //   const player = Wistia.api('abcde12345');
-      //   console.log('player', player);
-      // }, 1000);
+          resolvePlayer(adapter);
+        }
+      };
+      wq.push(request);
     });
   }
 
@@ -143,122 +172,19 @@ export class WistiaService implements IApiService {
 
 export interface WistiaRequest {
   id: string;
-  onReady: (video: WistiaPlayer) => void;
+  onReady: (video: Wistia.Player) => void;
 }
 
 export interface WistiaRevokeRequest {
   revoke: WistiaRequest;
 }
 
-export interface WistiaPlayer {
-  addToPlaylist(hashedId: string, options?: AddToPlaylistOptions, position?: AddToPlaylistPosition): void;
-  aspect(): number;
-  bind<K extends keyof WistiaEventMap>(eventType: K, ...inArgs: WistiaEventMap[K][0], callback: (...args: WistiaEventMap[K][1]) => void): void;
-  unbind<K extends keyof WistiaEventMap>(eventType: K, callback: (...args: WistiaEventMap[K][1]) => void): void;
-  cancelFullscreen(): void;
-  duration(): number;
-  email(): string | null;
-  email(val: string): void;
-  embedded(): boolean;
-  eventKey(): string;
-  getSubtitlesScale(): number;
-  setSubtitlesScale(scale: number): void;
-  hasData(): boolean;
-  hashedId(): string;
-  height(): number;
-  height(val: number, options?: SizeOptions): void;
-  inFullscreen(): boolean;
-  look(): WistiaLook;
-  look(options: Partial<WistiaLook>): void;
-  isMuted(): boolean;
-  mute(): void;
-  unmute(): void;
-  name(): string;
-  pause(): void;
-  /** Value between 0 and 1. */
-  percentWatched(): number;
-  play(): void;
-  playbackRate(rate: number): void;
-  ready(): boolean;
-  remove(): void;
-  replaceWith(hashedId: string, options?: ReplaceWithOptions): void;
-  requestFullscreen(): void;
-  secondsWatched(): number;
-  secondsWatchedVector(): number[];
-  state(): WistiaPlayerState;
-  time(): number;
-  time(val: number): void;
-  videoHeight(val: number, options?: SizeOptions): void;
-  videoQuality(): number | 'auto';
-  videoWidth(): number;
-  videoWidth(val: number, options?: SizeOptions): void;
-  visitorKey(): any;
-  volume(): number;
-  volume(vol: number): void;
-  width(): number;
-  width(w: number): void;
-}
-
-export type WistiaPlayerState = 'beforeplay' | 'playing' | 'paused' | 'ended';
 
 export interface AddToPlaylistOptions {
   playerColor: HtmlColor;
-}
-
-export interface AddToPlaylistPosition {
-  before?: string;
-  after?: string;
-}
-
-export interface SizeOptions {
-  constrain: boolean;
-}
-
-export interface ReplaceWithOptions {
-  transition: 'slide' | 'fade' | 'crossfade' | 'none';
 }
 
 export type HtmlColor = 
   `#${string}` |
   `rgb(${number}, ${number}, ${number})` |
   `rgba(${number}, ${number}, ${number}, ${number})`;
-
-export interface WistiaEventMap {
-  'beforeremove': [[], []];
-  'beforereplace': [[], []];
-  'betweentimes': [[], [boolean]]; // TODO: There's input parameters here
-  'cancelfullscreen': [[], []];
-  'captionschange': [[], [CaptionsChangeEvent]];
-  'conversion': [[], [type: 'pre-roll-email' | 'mid-roll-email' | 'post-roll-email', email: string, firstName: string, lastName: string]];
-  'crosstime': [[], []]; // TODO: Input parameter
-  'end': [[], []];
-  'enterfullscreen': [[], []];
-  'heightchange': [[], []];
-  'lookchange': [[], [WistiaLook]];
-  'mutechange': [[], [boolean]];
-  'pause': [[], []];
-  'percentwatchedchanged': [[], [percent: number, lastPercent: number]];
-  'play': [[], []];
-  'playbackratechange': [[], [playbackRate: number]];
-  'secondchange': [[], [s: number]];
-  'seek': [[], [currentTime: number, lastTime: number]];
-  'silentplaybackmodechange': [[], [boolean]];
-  'timechange': [[], [number]];
-  'volumechange': [[], [volume: number, isMuted: boolean]];
-  'widthchange': [[], [number]];
-}
-
-// export interface InOutEvent<TIn, TOut> {
-  
-// }
-
-export interface CaptionsChangeEvent {
-  visible: boolean;
-  language: string;
-}
-
-export interface WistiaLook {
-  heading: string;
-  pitch: string;
-  fov: string;
-}
