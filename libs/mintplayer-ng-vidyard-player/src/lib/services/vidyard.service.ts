@@ -140,7 +140,7 @@ export class VidyardService implements IApiService {
               player.iframe.height = `${heigt}px`;
             },
             getTitle: () => new Promise((resolve) => {
-              player.metadata.name ?? player.metadata.description;
+              resolve(player.metadata.name ?? player.metadata.description);
             }),
             setFullscreen: (fullscreen) => {
               throw 'The Vidyard player doesn\'t support fullscreen';
