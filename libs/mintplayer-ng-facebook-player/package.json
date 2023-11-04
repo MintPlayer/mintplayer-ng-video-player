@@ -1,11 +1,11 @@
 {
   "name": "@mintplayer/ng-facebook-player",
-  "version": "16.8.0",
+  "version": "16.9.0",
   "peerDependencies": {
     "@angular/common": "^16.2.0",
     "@angular/core": "^16.2.0",
-    "@mintplayer/ng-video-player": "^16.8.0",
-    "@mintplayer/ng-script-loader": "^16.0.0"
+    "@mintplayer/ng-video-player": "^16.9.0",
+    "@mintplayer/ng-script-loader": "^16.9.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

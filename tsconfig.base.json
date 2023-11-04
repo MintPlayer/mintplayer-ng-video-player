@@ -54,6 +54,9 @@
       "@mintplayer/ng-vimeo-player": [
         "libs/mintplayer-ng-vimeo-player/src/index.ts"
       ],
+      "@mintplayer/ng-wistia-player": [
+        "libs/mintplayer-ng-wistia-player/src/index.ts"
+      ],
       "@mintplayer/ng-youtube-player": [
         "libs/mintplayer-ng-youtube-player/src/index.ts"
       ]

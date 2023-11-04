@@ -27,7 +27,7 @@ export class VidyardService implements IApiService {
   ];
 
   public loadApi() {
-    return this.scriptLoader.loadScript('https://play.vidyard.com/embed/v4.js', 'onVidyardAPI');
+    return this.scriptLoader.loadScript('https://play.vidyard.com/embed/v4.js', { windowCallback: 'onVidyardAPI' });
   }
 
   public prepareHtml(options: PrepareHtmlOptions) {

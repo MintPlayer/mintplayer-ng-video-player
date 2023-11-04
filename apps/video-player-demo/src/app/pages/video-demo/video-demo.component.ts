@@ -60,7 +60,9 @@ export class VideoDemoComponent {
     'https://www.facebook.com/MetaCanada/videos/801193189918934',
     'https://www.facebook.com/iShareitHD/videos/1269681903839169',
     'https://video.vidyard.com/watch/6eK8VUFScWLqX2PqgF5S44?',
-    'https://video.vidyard.com/watch/TKMKV6sdGhz3Fz5vgAAAw9?'
+    'https://video.vidyard.com/watch/TKMKV6sdGhz3Fz5vgAAAw9?',
+    'https://home.wistia.com/medias/e4a27b971d',
+    'https://home.wistia.com/medias/29b0fbf547'
   ];
 
   addToPlaylist() {

@@ -26,7 +26,7 @@ export class FacebookApiService implements IApiService {
     ];
 
     public loadApi() {
-        return this.scriptLoader.loadScript('https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0', 'fbAsyncInit');
+        return this.scriptLoader.loadScript('https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0', { windowCallback: 'fbAsyncInit' });
     }
 
     public prepareHtml(options: PrepareHtmlOptions) {

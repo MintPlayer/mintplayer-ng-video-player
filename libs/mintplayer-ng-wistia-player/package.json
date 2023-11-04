@@ -1,15 +1,15 @@
 {
-  "name": "@mintplayer/ng-spotify-player",
+  "name": "@mintplayer/ng-wistia-player",
   "private": false,
   "version": "16.9.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
-    "directory": "libs/mintplayer-ng-spotify-player"
+    "directory": "libs/mintplayer-ng-wistia-player"
   },
   "peerDependencies": {
-    "@angular/common": "^16.0.0",
-    "@angular/core": "^16.0.0",
+    "@angular/common": "^16.2.0",
+    "@angular/core": "^16.2.0",
     "@mintplayer/ng-video-player": "^16.9.0",
     "@mintplayer/ng-script-loader": "^16.9.0",
     "rxjs": "^7.4.0"
