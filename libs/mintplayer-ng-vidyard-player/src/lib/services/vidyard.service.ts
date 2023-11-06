@@ -150,7 +150,10 @@ export class VidyardService implements IApiService {
               throw 'The Vidyard player doesn\'t support PiP';
             },
             getPip: () => new Promise((resolve) => resolve(false)),
-            destroy: () => VidyardEmbed.api.destroyPlayer(player)
+            destroy: () => {
+              VidyardEmbed.api.destroyPlayer(player);
+              destroyRef.next(true);
+            }
           });
 
           adapter$.next([adapter, player]);
