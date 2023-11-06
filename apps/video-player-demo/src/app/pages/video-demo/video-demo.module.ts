@@ -23,6 +23,7 @@ import { MixcloudPlayerModule } from '@mintplayer/ng-mixcloud-player';
 import { FacebookPlayerModule } from '@mintplayer/ng-facebook-player';
 import { VidyardPlayerModule } from '@mintplayer/ng-vidyard-player';
 import { WistiaPlayerModule } from '@mintplayer/ng-wistia-player';
+import { StreamablePlayerModule } from '@mintplayer/ng-streamable-player';
 
 
 @NgModule({
@@ -51,6 +52,7 @@ import { WistiaPlayerModule } from '@mintplayer/ng-wistia-player';
     FacebookPlayerModule,
     VidyardPlayerModule,
     WistiaPlayerModule,
+    StreamablePlayerModule,
 
     VideoDemoRoutingModule
   ]

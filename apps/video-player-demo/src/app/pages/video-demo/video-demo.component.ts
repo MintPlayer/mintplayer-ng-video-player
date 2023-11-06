@@ -62,7 +62,9 @@ export class VideoDemoComponent {
     'https://video.vidyard.com/watch/6eK8VUFScWLqX2PqgF5S44?',
     'https://video.vidyard.com/watch/TKMKV6sdGhz3Fz5vgAAAw9?',
     'https://home.wistia.com/medias/e4a27b971d',
-    'https://home.wistia.com/medias/29b0fbf547'
+    'https://home.wistia.com/medias/29b0fbf547',
+    'https://streamable.com/moo',
+    'https://streamable.com/ifjh'
   ];
 
   addToPlaylist() {
