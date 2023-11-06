@@ -28,8 +28,8 @@
       "options": {
         "codeCoverage": true,
         "coverageReporters": ["lcovonly"],
-        "coverageDirectory": "coverage/libs/{projectRoot}",
-        "jestConfig": "libs/mintplayer-ng-streamable-player/jest.config.ts",
+        "coverageDirectory": "coverage/{projectRoot}",
+        "jestConfig": "{projectRoot}/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {

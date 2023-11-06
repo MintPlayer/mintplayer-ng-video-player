@@ -28,8 +28,8 @@
       "options": {
         "codeCoverage": true,
         "coverageReporters": ["lcovonly"],
-        "coverageDirectory": "coverage/libs/mintplayer-ng-wistia-player",
-        "jestConfig": "libs/mintplayer-ng-wistia-player/jest.config.ts",
+        "coverageDirectory": "coverage/{projectRoot}",
+        "jestConfig": "{projectRoot}/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
