@@ -33,7 +33,7 @@
                     <bs-list-group-item *ngFor="let vid of playlistController.playlist">
                         <div class="d-flex">
                             <label class="d-flex flex-grow-1 float-start">
-                                <span class="align-self-center uc-icon">&#9654;</span>
+                                <span class="align-self-center uc-icon" *ngIf="(playlistController.video$ | async) === vid">&#9654;</span>
                                 <span class="align-self-center flex-grow-1 mx-2" *ngIf="vid">{{ vid.url }}</span>
                             </label>
                             <button (click)="removeVideo(vid)" [color]="colors.secondary" title="Remove" class="float-end">
