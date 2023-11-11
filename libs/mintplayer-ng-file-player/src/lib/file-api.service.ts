@@ -133,6 +133,12 @@ export class FileApiService implements IApiService {
                     },
                     getPip: () => new Promise((resolve) => resolve(false)),
                     destroy: () => {
+                        mediaElement.pause();
+                        mediaElement.removeAttribute('src');
+                        mediaElement.load();
+                        if (this.document.pictureInPictureElement === mediaElement) {
+                            this.document.exitPictureInPicture();
+                        }
                         destroyRef.next(true);
                     }
                 });
