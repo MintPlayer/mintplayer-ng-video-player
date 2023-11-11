@@ -37,6 +37,13 @@ The code is included in the git repository.
 | @mintplayer/ng-vimeo-player         | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-vimeo-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-vimeo-player)               |
 | @mintplayer/ng-soundcloud-player    | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-soundcloud-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-soundcloud-player)     |
 | @mintplayer/ng-spotify-player       | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-spotify-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-spotify-player)           |
+| @mintplayer/ng-twitch-player        | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-twitch-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-twitch-player)             |
+| @mintplayer/ng-facebook-player      | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-facebook-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-facebook-player)         |
+| @mintplayer/ng-mixcloud-player      | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-mixcloud-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-mixcloud-player)         |
+| @mintplayer/ng-streamable-player    | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-streamable-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-streamable-player)     |
+| @mintplayer/ng-vidyard-player       | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-vidyard-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-vidyard-player)           |
+| @mintplayer/ng-wistia-player        | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-wistia-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-wistia-player)             |
+| @mintplayer/ng-file-player          | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-file-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-file-player)                 |
 | @mintplayer/ng-playlist-controller  | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-playlist-controller.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-playlist-controller) |
 | @mintplayer/ng-video-player         | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-video-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-video-player)               |
 
@@ -54,6 +61,13 @@ Run the corresponding commands, depending on what players you want to support in
     npm i @mintplayer/ng-vimeo-player
     npm i @mintplayer/ng-soundcloud-player
     npm i @mintplayer/ng-spotify-player
+    npm i @mintplayer/ng-twitch-player
+    npm i @mintplayer/ng-facebook-player
+    npm i @mintplayer/ng-mixcloud-player
+    npm i @mintplayer/ng-streamable-player
+    npm i @mintplayer/ng-vidyard-player
+    npm i @mintplayer/ng-wistia-player
+    npm i @mintplayer/ng-file-player
 
 This should also install the peerDependencies (like `@mintplayer/ng-video-player`) in your project.
 
@@ -70,6 +84,13 @@ Import the modules for which you want to support a player:
         VimeoPlayerModule,
         SoundcloudPlayerModule,
         SpotifyPlayerModule,
+        TwitchPlayerModule,
+        FacebookPlayerModule,
+        MixcloudPlayerModule,
+        StreamablePlayerModule,
+        VidyardPlayerModule,
+        WistiaPlayerModule,
+        FilePlayerModule,
     ]
 })
 ```
