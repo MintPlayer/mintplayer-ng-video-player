@@ -31,7 +31,7 @@ export class FacebookApiService implements IApiService {
 
     public prepareHtml(options: PrepareHtmlOptions) {
         if (!options.initialVideoId) {
-          throw 'The Facebook api requires an initial video id';
+            throw 'The Facebook api requires an initial video id';
         }
     
         if (/[\s<>"]/.exec(options.initialVideoId)) {

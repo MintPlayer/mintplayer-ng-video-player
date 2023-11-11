@@ -2,7 +2,7 @@
     <h2 class="text-center">Welcome to {{ title }}!</h2>
     <bs-form>
         <bs-grid>
-            <div bsRow>
+            <div bsRow class="mb-3">
                 <div [bsColumn]="{lg: 6}">
                     <bs-list-group class="d-block mb-3">
                         <bs-list-group-item (click)="playVideo(video)" class="cursor-pointer overflow-hidden text-truncate truncate-start" *ngFor="let video of videos">{{ video }}</bs-list-group-item>
@@ -13,6 +13,22 @@
                     </bs-input-group>
                 </div>
                 <div [bsColumn]="{lg: 6}">
+                    <div class="d-block" *ngIf="url === 'https://mintplayer.com/Modern-iMovie-8ot-eJxH2yc.mp4'">
+                        <bs-alert [type]="colors.warning">
+                            <a href="https://www.youtube.com/watch?v=8ot-eJxH2yc" target="_blank">Modern</a> is a melody from <a href="https://apps.apple.com/nl/app/imovie/id377298193" target="_blank">IMovie</a> by <a href="https://www.apple.com" target="_blank">Apple Inc</a>.
+                        </bs-alert>
+                    </div>
+                    <div class="d-block" *ngIf="url === 'https://mintplayer.com/Jim_Yosef_Firefly_pt_II.mp3'">
+                        <bs-alert [type]="colors.warning">
+                            Song: <a href="https://ncs.io/Fireflypt2" target="_blank">Jim Yosef - Firefly pt. II (ft. STARLYTE)</a> [NCS Release]
+                            <br>
+                            Music provided by <a href="https://ncs.io" target="_blank">NoCopyrightSounds</a>
+                            <br>
+                            Free Download/Stream: <a href="http://NCS.io/Fireflypt2" target="_blank">http://NCS.io/Fireflypt2</a>
+                            <br>
+                            <a href="http://youtu.be/Q7E4Hiqe1s4" target="_blank">Watch</a>
+                        </bs-alert>
+                    </div>
                     <div class="d-block text-center">
                         <video-player [width]="width" [height]="height" [autoplay]="true"
                             (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
