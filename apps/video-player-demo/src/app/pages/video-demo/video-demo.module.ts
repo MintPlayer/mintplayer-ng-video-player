@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
 import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
 import { BsRangeModule } from '@mintplayer/ng-bootstrap/range';
+import { BsAlertModule } from '@mintplayer/ng-bootstrap/alert';
 import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
 import { BsInputGroupModule } from '@mintplayer/ng-bootstrap/input-group';
 import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
@@ -24,6 +25,7 @@ import { FacebookPlayerModule } from '@mintplayer/ng-facebook-player';
 import { VidyardPlayerModule } from '@mintplayer/ng-vidyard-player';
 import { WistiaPlayerModule } from '@mintplayer/ng-wistia-player';
 import { StreamablePlayerModule } from '@mintplayer/ng-streamable-player';
+import { FilePlayerModule } from '@mintplayer/ng-file-player';
 
 
 @NgModule({
@@ -41,6 +43,7 @@ import { StreamablePlayerModule } from '@mintplayer/ng-streamable-player';
     BsButtonTypeModule,
     BsButtonGroupModule,
     BsToggleButtonModule,
+    BsAlertModule,
     
     YoutubePlayerModule,
     DailymotionPlayerModule,
@@ -53,6 +56,7 @@ import { StreamablePlayerModule } from '@mintplayer/ng-streamable-player';
     VidyardPlayerModule,
     WistiaPlayerModule,
     StreamablePlayerModule,
+    FilePlayerModule,
 
     VideoDemoRoutingModule
   ]

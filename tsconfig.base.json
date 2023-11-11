@@ -21,6 +21,9 @@
       "@mintplayer/ng-facebook-player": [
         "libs/mintplayer-ng-facebook-player/src/index.ts"
       ],
+      "@mintplayer/ng-file-player": [
+        "libs/mintplayer-ng-file-player/src/index.ts"
+      ],
       "@mintplayer/ng-mixcloud-player": [
         "libs/mintplayer-ng-mixcloud-player/src/index.ts"
       ],
