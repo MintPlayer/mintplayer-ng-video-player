@@ -23,7 +23,7 @@
     "@angular/platform-browser-dynamic": "~16.2.5",
     "@angular/router": "~16.2.5",
     "@mintplayer/ng-bootstrap": "~16.11.0",
-    "@mintplayer/ng-script-loader": "^16.9.0",
+    "@mintplayer/script-loader": "^1.0.0",
     "@nrwl/angular": "17.0.3",
     "@vidyard/embed-code": "^4.3.14",
     "rxjs": "~7.5.6",

@@ -18,15 +18,19 @@
       "@mintplayer/ng-dailymotion-player": [
         "libs/mintplayer-ng-dailymotion-player/src/index.ts"
       ],
+      "@mintplayer/ng-dailymotion-player/*": ["libs/mintplayer-ng-dailymotion-player/*"],
       "@mintplayer/ng-facebook-player": [
         "libs/mintplayer-ng-facebook-player/src/index.ts"
       ],
+      "@mintplayer/ng-facebook-player/*": ["libs/mintplayer-ng-facebook-player/*"],
       "@mintplayer/ng-file-player": [
         "libs/mintplayer-ng-file-player/src/index.ts"
       ],
+      "@mintplayer/ng-file-player/*": ["libs/mintplayer-ng-file-player/*"],
       "@mintplayer/ng-mixcloud-player": [
         "libs/mintplayer-ng-mixcloud-player/src/index.ts"
       ],
+      "@mintplayer/ng-mixcloud-player/*": ["libs/mintplayer-ng-mixcloud-player/*"],
       "@mintplayer/ng-player-progress": [
         "libs/mintplayer-ng-player-progress/src/index.ts"
       ],
@@ -39,15 +43,19 @@
       "@mintplayer/ng-soundcloud-player": [
         "libs/mintplayer-ng-soundcloud-player/src/index.ts"
       ],
+      "@mintplayer/ng-soundcloud-player/*": ["libs/mintplayer-ng-soundcloud-player/*"],
       "@mintplayer/ng-spotify-player": [
         "libs/mintplayer-ng-spotify-player/src/index.ts"
       ],
+      "@mintplayer/ng-spotify-player/*": ["libs/mintplayer-ng-spotify-player/*"],
       "@mintplayer/ng-streamable-player": [
         "libs/mintplayer-ng-streamable-player/src/index.ts"
       ],
+      "@mintplayer/ng-streamable-player/*": ["libs/mintplayer-ng-streamable-player/*"],
       "@mintplayer/ng-twitch-player": [
         "libs/mintplayer-ng-twitch-player/src/index.ts"
       ],
+      "@mintplayer/ng-twitch-player/*": ["libs/mintplayer-ng-twitch-player/*"],
       "@mintplayer/ng-video-player": [
         "libs/mintplayer-ng-video-player/src/index.ts"
       ],
@@ -57,15 +65,19 @@
       "@mintplayer/ng-vidyard-player": [
         "libs/mintplayer-ng-vidyard-player/src/index.ts"
       ],
+      "@mintplayer/ng-vidyard-player/*": ["libs/mintplayer-ng-vidyard-player/*"],
       "@mintplayer/ng-vimeo-player": [
         "libs/mintplayer-ng-vimeo-player/src/index.ts"
       ],
+      "@mintplayer/ng-vimeo-player/*": ["libs/mintplayer-ng-vimeo-player/*"],
       "@mintplayer/ng-wistia-player": [
         "libs/mintplayer-ng-wistia-player/src/index.ts"
       ],
+      "@mintplayer/ng-wistia-player/*": ["libs/mintplayer-ng-wistia-player/*"],
       "@mintplayer/ng-youtube-player": [
         "libs/mintplayer-ng-youtube-player/src/index.ts"
-      ]
+      ],
+      "@mintplayer/ng-youtube-player/*": ["libs/mintplayer-ng-youtube-player/*"],
     }
   },
   "exclude": ["node_modules", "tmp"]
