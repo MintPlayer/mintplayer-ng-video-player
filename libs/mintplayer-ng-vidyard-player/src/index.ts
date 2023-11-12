@@ -1,1 +1,2 @@
-export * from './lib/vidyard-api';
+const m = import('./lib/vidyard-api');
+export default m;

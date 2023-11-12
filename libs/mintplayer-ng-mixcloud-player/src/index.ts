@@ -1,1 +1,2 @@
-export * from './lib/mixcloud-api';
+const m = import('./lib/mixcloud-api');
+export default m;

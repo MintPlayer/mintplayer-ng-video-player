@@ -1,1 +1,2 @@
-export * from './lib/vimeo-api';
+const m = import('./lib/vimeo-api');
+export default m;

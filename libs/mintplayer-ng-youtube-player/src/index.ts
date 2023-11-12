@@ -1,4 +1,2 @@
-console.warn('hi there 3');
-
-import('./lib/youtube-api');
-export const a = 5;
+const m = import('./lib/youtube-api');
+export default m;

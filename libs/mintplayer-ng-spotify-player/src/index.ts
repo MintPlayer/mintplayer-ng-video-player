@@ -1,1 +1,2 @@
-export * from './lib/spotify-api';
+const m = import('./lib/spotify-api');
+export default m;

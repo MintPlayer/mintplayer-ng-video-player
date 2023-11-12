@@ -1,1 +1,2 @@
-export * from './lib/soundcloud-api';
+const m = import('./lib/soundcloud-api');
+export default m;

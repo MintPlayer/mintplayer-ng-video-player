@@ -1,1 +1,2 @@
-export * from './lib/facebook-api';
+const m = import('./lib/facebook-api');
+export default m;

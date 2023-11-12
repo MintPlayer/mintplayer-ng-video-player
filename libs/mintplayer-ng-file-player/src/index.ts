@@ -1,2 +1,2 @@
-export * from './lib/file-api';
-// import './lib/file-api';
+const m = import('./lib/file-api');
+export default m;

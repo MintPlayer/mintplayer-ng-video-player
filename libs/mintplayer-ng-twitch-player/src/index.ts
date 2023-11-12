@@ -1,1 +1,2 @@
-export * from './lib/twitch-api';
+const m = import('./lib/twitch-api');
+export default m;

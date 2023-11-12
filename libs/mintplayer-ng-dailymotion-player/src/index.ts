@@ -1,1 +1,2 @@
-export * from './lib/dailymotion-api';
+const m = import('./lib/dailymotion-api');
+export default m;

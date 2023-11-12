@@ -1,1 +1,2 @@
-export * from './lib/streamable-api';
+const m = import('./lib/streamable-api');
+export default m;
