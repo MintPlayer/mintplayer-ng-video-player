@@ -1,2 +1,2 @@
-export * from './lib/file-player.module';
-export * from './lib/file-api.service';
+export * from './lib/file-api';
+// import './lib/file-api';

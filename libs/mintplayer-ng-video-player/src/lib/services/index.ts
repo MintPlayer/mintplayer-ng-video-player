@@ -1,1 +1,1 @@
-export * from './video-player.service';
+export * from './find-player-apis';

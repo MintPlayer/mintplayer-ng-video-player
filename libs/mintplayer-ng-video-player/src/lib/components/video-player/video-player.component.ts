@@ -5,7 +5,7 @@ import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators'
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { ECapability, EPlayerState, PlayerAdapter } from '@mintplayer/ng-player-provider';
 import { VideoRequest } from '../../interfaces/video-request';
-import { VideoPlayerService } from '../../services/video-player.service';
+import { findPlayerApis } from '../../services/find-player-apis';
 
 @Component({
   selector: 'video-player',
@@ -15,7 +15,6 @@ import { VideoPlayerService } from '../../services/video-player.service';
 export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   constructor(
     private zone: NgZone,
-    videoPlayerService: VideoPlayerService,
     destroy: DestroyRef,
   ) {
     //#region [isViewInited$, url$] => videoRequest$
@@ -28,7 +27,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           this.playerInfo = null;
           this.container.nativeElement.innerHTML = '';
         } else {
-          const matchingApis = videoPlayerService.findApis(url);
+          const matchingApis = findPlayerApis(url);
           if (matchingApis.length === 0) {
             throw `No player found for url ${url}`;
           } else {

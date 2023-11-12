@@ -1,15 +1,15 @@
 import { DestroyRef, Inject } from "@angular/core";
-import { DOCUMENT } from "@angular/common";
+// import { DOCUMENT } from "@angular/common";
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from "@mintplayer/ng-player-provider";
 import { Subject, fromEvent, take, takeUntil, timer } from 'rxjs';
 
 export class FileApiService implements IApiService {
-    constructor(@Inject(DOCUMENT) doc: any) {
-        this.document = doc;
-    }
+    // constructor(@Inject(DOCUMENT) doc: any) {
+    //     this.document = doc;
+    // }
 
-    private document: Document;
+    // private document: Document;
 
     public get id() {
         return 'file';
@@ -111,8 +111,8 @@ export class FileApiService implements IApiService {
                                 // navigationUI: 'hide'
                             });
                         } else {
-                            if (this.document.fullscreenElement === mediaElement) {
-                                this.document.exitFullscreen();
+                            if (document.fullscreenElement === mediaElement) {
+                                document.exitFullscreen();
                             }
                         }
                     },
@@ -122,8 +122,8 @@ export class FileApiService implements IApiService {
                             if (isPip) {
                                 mediaElement.requestPictureInPicture();
                             } else {
-                                if (this.document.pictureInPictureElement === mediaElement) {
-                                    this.document.exitPictureInPicture();
+                                if (document.pictureInPictureElement === mediaElement) {
+                                    document.exitPictureInPicture();
                                 }
                             }
                         }
@@ -133,8 +133,8 @@ export class FileApiService implements IApiService {
                         mediaElement.pause();
                         mediaElement.removeAttribute('src');
                         mediaElement.load();
-                        if (this.document.pictureInPictureElement === mediaElement) {
-                            this.document.exitPictureInPicture();
+                        if (document.pictureInPictureElement === mediaElement) {
+                            document.exitPictureInPicture();
                         }
                         destroyRef.next(true);
                     }
@@ -157,7 +157,7 @@ export class FileApiService implements IApiService {
                 
                 fromEvent(mediaElement, 'fullscreenchange')
                     .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                    .subscribe(() => adapter.onFullscreenChange(this.document.fullscreenElement === mediaElement));
+                    .subscribe(() => adapter.onFullscreenChange(document.fullscreenElement === mediaElement));
 
                 fromEvent(mediaElement, 'play')
                     .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))

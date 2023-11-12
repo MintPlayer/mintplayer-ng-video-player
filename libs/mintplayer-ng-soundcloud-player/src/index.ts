@@ -1,4 +1,1 @@
-export * from './lib/soundcloud-player.module';
-export * from './lib/events';
-export * from './lib/enums';
-export * from './lib/services';
+export * from './lib/soundcloud-api';

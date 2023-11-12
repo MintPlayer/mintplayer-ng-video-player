@@ -1,2 +1,1 @@
-export * from './lib/dailymotion-player.module';
-export * from './lib/dailymotion-api.service';
+export * from './lib/dailymotion-api';

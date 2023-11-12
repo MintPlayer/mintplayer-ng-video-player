@@ -1,3 +1,8 @@
+console.warn('hi there 2');
+
 import { loadApi } from "@mintplayer/ng-video-player";
 
-loadApi(() => import('@mintplayer/ng-youtube-player/service').then(m => new m.YoutubeApiService()));
+(function() {
+    console.warn('hi there');
+    loadApi(() => import('@mintplayer/ng-youtube-player/service').then(m => new m.YoutubeApiService()));
+})();

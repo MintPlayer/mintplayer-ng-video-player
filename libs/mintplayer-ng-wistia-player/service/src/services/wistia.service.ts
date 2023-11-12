@@ -1,6 +1,7 @@
 import { DestroyRef } from '@angular/core';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { Subject } from 'rxjs';
+import { loadScript } from '@mintplayer/script-loader';
 
 // https://wistia.com/support/developers/player-api#volumechange
 
