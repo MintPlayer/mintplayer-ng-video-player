@@ -1,35 +1,84 @@
-<bs-navbar [color]="colors.dark" [breakpoint]="'md'" #nav>
-    <bs-navbar-brand>
-        <a [routerLink]='["/"]'>
-            <span class="brand d-block px-3 pb-3 pt-3">
-                ng-video-player
-            </span>
-        </a>
-    </bs-navbar-brand>
-    <bs-navbar-nav [collapse]="true">
-        <bs-navbar-item>
-            <a [routerLink]='["/video"]'>Video player</a>
-        </bs-navbar-item>
-        <bs-navbar-item>
-            <a [routerLink]='["/playlist"]'>Playlist</a>
-        </bs-navbar-item>
-    </bs-navbar-nav>
-    <bs-navbar-nav class="me-0">
-        <bs-navbar-item>
-            <a class="nav-link text-nowrap" href="https://github.com/MintPlayer/mintplayer-ng-video-player" title="@mintplayer/ng-video-player on GitHub">
-                <span class="me-2 align-middle">{{ versionInfo }}</span>
-                <img src="/assets/github.svg" alt="@mintplayer/ng-video-player on GitHub">
-            </a>
-        </bs-navbar-item>
-    </bs-navbar-nav>
-</bs-navbar>
-<div [bsNavbarContent]="nav" style="padding-top:10px">
-    <h1 class="text-center">{{ title }}</h1>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <router-outlet></router-outlet>
+<body>
+    <h2 class="text-center">Welcome to {{ title }}!</h2>
+    <bs-form>
+        <bs-grid>
+            <div bsRow class="mb-3">
+                <div [bsColumn]="{lg: 6}">
+                    <bs-list-group class="d-block mb-3">
+                        <bs-list-group-item (click)="playVideo(video)" class="cursor-pointer overflow-hidden text-truncate truncate-start" *ngFor="let video of videos">{{ video }}</bs-list-group-item>
+                    </bs-list-group>
+                    <bs-input-group>
+                        <input type="text" [(ngModel)]="newVideoUrl" class="form-control">
+                        <button [color]="colors.primary" (click)="addToPlaylist()">Add</button>
+                    </bs-input-group>
+                </div>
+                <div [bsColumn]="{lg: 6}">
+                    <div class="d-block" *ngIf="url === 'https://mintplayer.com/Modern-iMovie-8ot-eJxH2yc.mp4'">
+                        <bs-alert [type]="colors.warning">
+                            <a href="https://www.youtube.com/watch?v=8ot-eJxH2yc" target="_blank">Modern</a> is a melody from <a href="https://apps.apple.com/nl/app/imovie/id377298193" target="_blank">IMovie</a> by <a href="https://www.apple.com" target="_blank">Apple Inc</a>.
+                        </bs-alert>
+                    </div>
+                    <div class="d-block" *ngIf="url === 'https://mintplayer.com/Jim_Yosef_Firefly_pt_II.mp3'">
+                        <bs-alert [type]="colors.warning">
+                            Song: <a href="https://ncs.io/Fireflypt2" target="_blank">Jim Yosef - Firefly pt. II (ft. STARLYTE)</a> [NCS Release]
+                            <br>
+                            Music provided by <a href="https://ncs.io" target="_blank">NoCopyrightSounds</a>
+                            <br>
+                            Free Download/Stream: <a href="http://NCS.io/Fireflypt2" target="_blank">http://NCS.io/Fireflypt2</a>
+                            <br>
+                            <a href="http://youtu.be/Q7E4Hiqe1s4" target="_blank">Watch</a>
+                        </bs-alert>
+                    </div>
+                    <div class="d-block text-center">
+                        <video-player [width]="width" [height]="height" [autoplay]="true"
+                            (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
+                            (playerStateChange)="onPlayerStateChange($event)" [(isPip)]="isPip" [(isFullscreen)]="isFullscreen"
+                            (capabilitiesChange)="onCapabilitiesChange($event)" #player1></video-player>
+                    </div>
+                    <div bsRow>
+                        <div [bsColumn]="{'md': 6}" class="text-center">
+                            <label>{{ progress.currentTime }} / {{ progress.duration }}</label>
+                        </div>
+                        <div [bsColumn]="{'md': 6}" class="text-center">
+                            {{ playerStates[playerState] }}
+                            <br>
+                            <button (click)="play()" [color]="colors.secondary" *ngIf="playerState === playerStates['paused']">Play</button>
+                            <button (click)="pause()" [color]="colors.secondary" *ngIf="playerState === playerStates['playing']">Pause</button>
+                        </div>
+                    </div>
+                    <div bsRow>
+                        <div [bsColumn]="{'md': 6}" class="text-center">
+                            <label>
+                                <label>{{ volume | number: '0.0' }}</label>
+                                <bs-range [(ngModel)]="volume" [disabled]="(cannotChangeVolume$ | async) ?? true" [min]="0" [max]="100" [step]="1"></bs-range>
+                            </label>
+                        </div>
+                        <div [bsColumn]="{'md': 6}" class="text-center">
+                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isMuted" [disabled]="(cannotMute$ | async) ?? true" class="d-inline-block py-3">
+                                Mute
+                            </bs-toggle-button>
+                        </div>
+                    </div>
+                    <div bsRow>
+                        <div [bsColumn]="{'md': 6}" class="text-center">
+                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isPip" [disabled]="(cannotPip$ | async) ?? true" class="d-inline-block py-3">
+                                PiP
+                            </bs-toggle-button>
+                        </div>
+                        <div [bsColumn]="{'md': 6}" class="text-center">
+                            <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isFullscreen" [disabled]="(cannotFullscreen$ | async) ?? true" class="d-inline-block py-3">
+                                Fullscreen
+                            </bs-toggle-button>
+                        </div>
+                    </div>
+                    <div class="d-block text-center">
+                        <bs-button-group>
+                            <button (click)="getTitle()" [color]="colors.secondary" [disabled]="(cannotGetTitle$ | async)">Get Title</button>
+                            <button (click)="setSize()" [color]="colors.secondary">Set size</button>
+                        </bs-button-group>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
+        </bs-grid>
+    </bs-form>
+</body>
