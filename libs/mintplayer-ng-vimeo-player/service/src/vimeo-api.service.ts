@@ -1,5 +1,3 @@
-import { DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { Subject, takeUntil, timer } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
@@ -22,7 +20,7 @@ export class VimeoApiService implements IApiService {
     return `<div id="${options.domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+  public createPlayer(options: PlayerOptions, componentDestroy: Subject<boolean>): Promise<PlayerAdapter> {
     return new Promise((resolvePlayer, rejectPlayer) => {
       if (!options.domId) {
         return rejectPlayer('The Vimeo api requires the options.domId to be set');
@@ -113,7 +111,7 @@ export class VimeoApiService implements IApiService {
         if (typeof window !== 'undefined') {
           setTimeout(() => options.autoplay && player.play(), 600);
           timer(0, 50)
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(componentDestroy))
             .subscribe(() => {
               // Mute
               player.getMuted().then((currentMute) => adapter.onMuteChange(currentMute));

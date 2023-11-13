@@ -1,6 +1,3 @@
-import { DestroyRef, Inject } from "@angular/core";
-// import { DOCUMENT } from "@angular/common";
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from "@mintplayer/ng-player-provider";
 import { Subject, fromEvent, take, takeUntil, timer } from 'rxjs';
 
@@ -62,7 +59,7 @@ export class FileApiService implements IApiService {
         }
     }
 
-    public createPlayer(options: PlayerOptions, destroy: DestroyRef) {
+    public createPlayer(options: PlayerOptions, componentDestroy: Subject<boolean>) {
         return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
             if (!options.element) {
                 return rejectPlayer('The FilePlayer requires the options.element to be set');
@@ -76,7 +73,7 @@ export class FileApiService implements IApiService {
             const destroyRef = new Subject();
             let adapter: PlayerAdapter;
             fromEvent(mediaElement, 'canplay')
-                .pipe(take(1), takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                .pipe(take(1), takeUntil(destroyRef), takeUntil(componentDestroy))
                 .subscribe(() => {
                 adapter = createPlayerAdapter({
                     capabilities: [ECapability.volume, ECapability.mute, ECapability.fullscreen, ECapability.pictureInPicture],
@@ -141,39 +138,39 @@ export class FileApiService implements IApiService {
                 });
 
                 fromEvent(mediaElement, 'volumechange')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(componentDestroy))
                     .subscribe(() => {
                         adapter.onVolumeChange(mediaElement.volume * 100);
                         adapter.onMuteChange(mediaElement.muted);
                     });
 
                 fromEvent(mediaElement, 'enterpictureinpicture')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(componentDestroy))
                     .subscribe(() => adapter.onPipChange(true));
                     
                 fromEvent(mediaElement, 'leavepictureinpicture')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(componentDestroy))
                     .subscribe(() => adapter.onPipChange(false));
                 
                 fromEvent(mediaElement, 'fullscreenchange')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(componentDestroy))
                     .subscribe(() => adapter.onFullscreenChange(document.fullscreenElement === mediaElement));
 
                 fromEvent(mediaElement, 'play')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(componentDestroy))
                     .subscribe(() => adapter.onStateChange(EPlayerState.playing));
                     
                 fromEvent(mediaElement, 'pause')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(componentDestroy))
                     .subscribe(() => adapter.onStateChange(EPlayerState.paused));
             
                 fromEvent(mediaElement, 'ended')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(componentDestroy))
                     .subscribe(() => adapter.onStateChange(EPlayerState.ended));
                 
                 if (typeof window !== 'undefined') {
                     timer(0, 50)
-                        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                        .pipe(takeUntil(destroyRef), takeUntil(componentDestroy))
                         .subscribe(() => {
                             adapter.onCurrentTimeChange(mediaElement.currentTime);
                             adapter.onDurationChange(mediaElement.duration);

@@ -1,4 +1,3 @@
-import { DestroyRef } from '@angular/core';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { Subject } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
@@ -35,7 +34,7 @@ export class WistiaService implements IApiService {
     return false;
   }
 
-  createPlayer(options: PlayerOptions, destroy: DestroyRef) {
+  createPlayer(options: PlayerOptions, componentDestroy: Subject<boolean>) {
     return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
       if (typeof window !== 'undefined') {
         // Do not resolve this promise during SSR

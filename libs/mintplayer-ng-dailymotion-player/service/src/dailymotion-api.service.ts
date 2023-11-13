@@ -1,5 +1,3 @@
-import { DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { timer, takeUntil, Subject } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
@@ -23,7 +21,7 @@ export class DailymotionApiService implements IApiService {
     return `<div id="${options.domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+  public createPlayer(options: PlayerOptions, componentDestroy: Subject<boolean>): Promise<PlayerAdapter> {
     return new Promise((resolvePlayer, rejectPlayer) => {
       /** TODO: shouldn't this be options.domId? */
       if (!options.element) {
@@ -89,7 +87,7 @@ export class DailymotionApiService implements IApiService {
 
             if (typeof window !== 'undefined') {
               timer(0, 50)
-                .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                .pipe(takeUntil(destroyRef), takeUntil(componentDestroy))
                 .subscribe(() => {
                   adapter.onMuteChange(player.muted);
                   adapter.onCurrentTimeChange(player.currentTime);

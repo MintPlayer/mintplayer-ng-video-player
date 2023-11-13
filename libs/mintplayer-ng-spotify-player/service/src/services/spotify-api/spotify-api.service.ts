@@ -1,7 +1,5 @@
-import { DestroyRef, Injectable } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { Subject, filter, pairwise } from 'rxjs';
+import { Subject, filter, pairwise, takeUntil } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
 import { PlaybackUpdateEvent, SpotifyIframeApi } from '../../interfaces/spotify-iframe-api';
 
@@ -35,7 +33,7 @@ export class SpotifyApiService implements IApiService {
     return `spotify:${match.groups['type']}:${match.groups['id']}`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+  public createPlayer(options: PlayerOptions, componentDestroy: Subject<boolean>): Promise<PlayerAdapter> {
     return new Promise((resolvePlayer, rejectPlayer) => {
       if (!options.element) {
         return rejectPlayer('The Spotify api requires the options.element to be set');
@@ -116,7 +114,7 @@ export class SpotifyApiService implements IApiService {
             return !prev.data.isPaused && ((prev.data.duration - prev.data.position) < 0.5)
               && next.data.isPaused && (next.data.position === 0) && (Math.abs(prev.data.duration - next.data.duration) < 3);
           }),
-          takeUntilDestroyed(destroy)
+          takeUntil(componentDestroy)
         ).subscribe(() => {
           setTimeout(() => adapter.onStateChange(EPlayerState.ended), 20);
         });

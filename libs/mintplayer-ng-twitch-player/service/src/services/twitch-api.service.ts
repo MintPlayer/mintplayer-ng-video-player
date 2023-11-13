@@ -1,7 +1,5 @@
 // https://dev.twitch.tv/docs/embed/video-and-clips/#interactive-frames-for-live-streams-and-vods
 
-import { DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { loadScript } from '@mintplayer/script-loader';
 import { Subject, takeUntil, timer } from 'rxjs';
@@ -37,7 +35,7 @@ export class TwitchApiService implements IApiService {
     }
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+  public createPlayer(options: PlayerOptions, componentDestroy: Subject<boolean>): Promise<PlayerAdapter> {
     return new Promise((resolvePlayer, rejectPlayer) => {
       if (!options.domId) {
         return rejectPlayer('The Twitch api requires the options.domId to be set');
@@ -121,7 +119,7 @@ export class TwitchApiService implements IApiService {
 
         if (typeof window !== 'undefined') {
           timer(0, 50)
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(componentDestroy))
             .subscribe(() => {
               adapter.onMuteChange(player.getMuted());
               adapter.onVolumeChange(player.getVolume() * 100);

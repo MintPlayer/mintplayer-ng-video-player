@@ -1,14 +1,11 @@
-import { DestroyRef, InjectionToken } from "@angular/core";
-// import { BehaviorSubject } from 'rxjs';
-
-export const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis');
+import { Subject } from "rxjs";
 
 export interface IApiService {
     get id(): string;
     urlRegexes: RegExp[];
     loadApi(): Promise<any>;
     prepareHtml(options: PrepareHtmlOptions): string;
-    createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter>;
+    createPlayer(options: PlayerOptions, componentDestroy: Subject<boolean>): Promise<PlayerAdapter>;
     match2id?: (match: RegExpExecArray) => string;
     canReusePlayer?: boolean;
 }

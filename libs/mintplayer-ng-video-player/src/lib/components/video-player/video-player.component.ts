@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Input, NgZone, OnDestroy, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Input, NgZone, Output, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
@@ -12,13 +12,13 @@ import { findPlayerApis } from '../../services/find-player-apis';
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss']
 })
-export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
+export class VideoPlayerComponent implements AfterViewInit {
   constructor(
     private zone: NgZone,
     destroy: DestroyRef,
   ) {
-    //#region [isViewInited$, url$] => videoRequest$
-    combineLatest([this.isViewInited$, this.url$])
+    //#region [isViewReady$, url$] => videoRequest$
+    combineLatest([this.isViewReady$, this.url$])
       .pipe(filter(([isViewInited]) => !!isViewInited))
       .pipe(takeUntilDestroyed())
       .subscribe(([, url]) => {
@@ -54,7 +54,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 domId: this.domId,
                 element: this.container.nativeElement,
                 initialVideoId: videoRequest.id,
-              }, destroy).then(adapter => {
+              }, this.destroyed$).then(adapter => {
                 this.playerInfo = {
                   platformId: videoRequest.api.id,
                   videoId: videoRequest.id,
@@ -131,8 +131,14 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       
     this.progressObserver$.pipe(takeUntilDestroyed())
       .subscribe(progress => this.zoneEmit(this.progressChange, progress));
+
+    destroy.onDestroy(() => {
+      this.playerInfo?.adapter?.destroy();
+      this.destroyed$.next(true);
+    });
   }
 
+  destroyed$ = new Subject<boolean>();
   private zoneEmit<T>(emitter: EventEmitter<T>, value?: T) {
     this.zone.run(() => emitter.emit(value));
   }
@@ -247,7 +253,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private static playerCounter = 1;
   domId = 'player';
 
-  private isViewInited$ = new BehaviorSubject<boolean>(false);
+  private isViewReady$ = new BehaviorSubject<boolean>(false);
   private url$ = new BehaviorSubject<string | null>(null);
   private videoRequest$ = new BehaviorSubject<VideoRequest | null>(null);
   private volumeObserver$ = new Subject<number>();
@@ -263,10 +269,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private playerInfo: { platformId: string, videoId: string, adapter: PlayerAdapter } | null = null;
 
   ngAfterViewInit() {
-    this.isViewInited$.next(true);
-  }
-
-  ngOnDestroy() {
-    this.playerInfo?.adapter?.destroy();
+    this.isViewReady$.next(true);
   }
 }
