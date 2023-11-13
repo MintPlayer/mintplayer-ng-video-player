@@ -1,7 +1,7 @@
 {
   "name": "@mintplayer/ng-vimeo-player",
   "private": false,
-  "version": "16.9.0",
+  "version": "16.9.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
