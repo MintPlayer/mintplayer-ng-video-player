@@ -20,5 +20,5 @@
   "devDependencies": {
     "@types/youtube": "^0.0.46"
   },
-  "sideEffects": false
+  "sideEffects": true
 }

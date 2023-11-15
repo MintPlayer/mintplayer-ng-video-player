@@ -47,6 +47,19 @@
  */
 import 'zone.js'; // Included with Angular CLI.
 
+import '@mintplayer/ng-youtube-player';
+import '@mintplayer/ng-dailymotion-player';
+import '@mintplayer/ng-vimeo-player';
+import '@mintplayer/ng-soundcloud-player';
+import '@mintplayer/ng-spotify-player';
+import '@mintplayer/ng-twitch-player';
+import '@mintplayer/ng-mixcloud-player';
+import '@mintplayer/ng-facebook-player';
+import '@mintplayer/ng-vidyard-player';
+import '@mintplayer/ng-wistia-player';
+import '@mintplayer/ng-streamable-player';
+import '@mintplayer/ng-file-player';
+
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
