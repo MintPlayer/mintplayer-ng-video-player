@@ -10,8 +10,6 @@ import { PlaybackUpdateEvent, SpotifyIframeApi } from '../../interfaces/spotify-
 })
 export class SpotifyApiService implements IApiService {
 
-  constructor(private scriptLoader: ScriptLoader) {}
-
   private api?: SpotifyIframeApi;
 
   public get id() {

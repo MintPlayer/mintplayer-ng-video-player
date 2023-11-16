@@ -2,7 +2,7 @@ import { isPlatformServer } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
+import { Subject, takeUntil, timer } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { loadScript } from '@mintplayer/script-loader';
 })
 export class YoutubeApiService implements IApiService {
 
-  constructor(private scriptLoader: ScriptLoader, @Inject(PLATFORM_ID) private platformId: any) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: any) {}
 
   public get id() {
     return 'youtube';

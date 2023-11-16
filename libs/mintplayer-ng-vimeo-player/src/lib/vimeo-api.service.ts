@@ -10,7 +10,7 @@ import { loadScript } from '@mintplayer/script-loader';
 })
 export class VimeoApiService implements IApiService {
 
-  constructor(private scriptLoader: ScriptLoader, @Inject(PLATFORM_ID) private platformId: object) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
   public get id() {
     return 'vimeo';

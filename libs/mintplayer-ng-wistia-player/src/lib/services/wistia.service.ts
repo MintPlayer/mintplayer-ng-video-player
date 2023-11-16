@@ -11,7 +11,7 @@ import { Subject } from 'rxjs';
 })
 export class WistiaService implements IApiService {
 
-  constructor(private scriptLoader: ScriptLoader, @Inject(PLATFORM_ID) private platformId: any) { }
+  constructor(@Inject(PLATFORM_ID) private platformId: any) { }
 
   public get id() {
     return 'wistia';
