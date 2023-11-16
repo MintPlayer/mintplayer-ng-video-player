@@ -2,7 +2,7 @@ import { isPlatformServer } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { ScriptLoader } from '@mintplayer/ng-script-loader';
+import { loadScript } from '@mintplayer/script-loader';
 import { Subject, fromEvent, fromEventPattern, takeUntil, timer } from 'rxjs';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { Subject, fromEvent, fromEventPattern, takeUntil, timer } from 'rxjs';
 })
 export class StreamableService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object, private scriptLoader: ScriptLoader) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
   public get id() {
     return 'streamable';
@@ -23,7 +23,7 @@ export class StreamableService implements IApiService {
   canReusePlayer = false;
 
   public loadApi() {
-    return this.scriptLoader.loadScript('https://cdn.embed.ly/player-0.1.0.min.js');
+    return loadScript('https://cdn.embed.ly/player-0.1.0.min.js');
   }
 
   public prepareHtml(options: Partial<Omit<PlayerOptions, 'element'>>): string {

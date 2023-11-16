@@ -3,7 +3,7 @@ import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
-import { ScriptLoader } from '@mintplayer/ng-script-loader';
+import { loadScript } from '@mintplayer/script-loader';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +27,7 @@ export class YoutubeApiService implements IApiService {
   ];
 
   public loadApi() {
-    return this.scriptLoader.loadScript('https://www.youtube.com/iframe_api', { windowCallback: 'onYouTubeIframeAPIReady' });
+    return loadScript('https://www.youtube.com/iframe_api', { windowCallback: 'onYouTubeIframeAPIReady' });
   }
 
   public prepareHtml(options: PrepareHtmlOptions) {

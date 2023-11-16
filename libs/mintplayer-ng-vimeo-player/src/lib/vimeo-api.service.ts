@@ -3,7 +3,7 @@ import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { Subject, takeUntil, timer } from 'rxjs';
-import { ScriptLoader } from '@mintplayer/ng-script-loader';
+import { loadScript } from '@mintplayer/script-loader';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ export class VimeoApiService implements IApiService {
   ];
 
   public loadApi() {
-    return this.scriptLoader.loadScript('https://player.vimeo.com/api/player.js');
+    return loadScript('https://player.vimeo.com/api/player.js');
   }
 
   public prepareHtml(options: PrepareHtmlOptions) {

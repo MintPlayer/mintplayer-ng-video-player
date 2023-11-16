@@ -3,7 +3,7 @@ import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
-import { ScriptLoader } from '@mintplayer/ng-script-loader';
+import { loadScript } from '@mintplayer/script-loader';
 import { PlayProgressEvent } from '../../events/play-progress.event';
 
 @Injectable({
@@ -11,7 +11,7 @@ import { PlayProgressEvent } from '../../events/play-progress.event';
 })
 export class SoundcloudApiService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object, private scriptLoader: ScriptLoader) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
   public get id() {
     return 'soundcloud';
@@ -22,7 +22,7 @@ export class SoundcloudApiService implements IApiService {
   ];
 
   public loadApi() {
-    return this.scriptLoader.loadScript('https://w.soundcloud.com/player/api.js');
+    return loadScript('https://w.soundcloud.com/player/api.js');
   }
 
   public prepareHtml(options: PrepareHtmlOptions) {

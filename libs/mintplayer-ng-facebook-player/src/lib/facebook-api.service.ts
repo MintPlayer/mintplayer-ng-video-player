@@ -1,7 +1,7 @@
 import { isPlatformServer } from '@angular/common';
 import { Inject, Injectable, DestroyRef, PLATFORM_ID } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ScriptLoader } from '@mintplayer/ng-script-loader';
+import { loadScript } from '@mintplayer/script-loader';
 import { takeUntil, timer, Subject, BehaviorSubject, debounceTime, pairwise, combineLatest, filter, take } from 'rxjs';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from "@mintplayer/ng-player-provider";
 
@@ -10,7 +10,7 @@ import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, P
 })
 export class FacebookApiService implements IApiService {
 
-    constructor(@Inject(PLATFORM_ID) private platformId: any, private scriptLoader: ScriptLoader) {
+    constructor(@Inject(PLATFORM_ID) private platformId: any) {
     }
 
     public get id() {
@@ -26,7 +26,7 @@ export class FacebookApiService implements IApiService {
     ];
 
     public loadApi() {
-        return this.scriptLoader.loadScript('https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0', { windowCallback: 'fbAsyncInit' });
+        return loadScript('https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0', { windowCallback: 'fbAsyncInit' });
     }
 
     public prepareHtml(options: PrepareHtmlOptions) {

@@ -1,5 +1,5 @@
 import { DestroyRef, Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { ScriptLoader } from '@mintplayer/ng-script-loader';
+import { loadScript } from '@mintplayer/script-loader';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { isPlatformServer } from '@angular/common';
 import { Subject } from 'rxjs';
@@ -22,7 +22,7 @@ export class WistiaService implements IApiService {
   ];
 
   loadApi() {
-    return this.scriptLoader.loadScript('https://fast.wistia.com/assets/external/E-v1.js', { async: true });
+    return loadScript('https://fast.wistia.com/assets/external/E-v1.js', { async: true });
   }
 
   prepareHtml(options: PrepareHtmlOptions) {

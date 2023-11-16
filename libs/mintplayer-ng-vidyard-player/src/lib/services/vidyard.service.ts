@@ -1,7 +1,7 @@
 import { Injectable, DestroyRef, Inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { ScriptLoader } from '@mintplayer/ng-script-loader';
+import { loadScript } from '@mintplayer/script-loader';
 import VidyardEmbed, { VidyardApi, VidyardEventMap, VidyardPlayer } from '@vidyard/embed-code';
 import { Subject, BehaviorSubject, map, filter, take, takeUntil, fromEvent } from 'rxjs';
 import { fromVidyardEvent } from '../extensions';
@@ -27,7 +27,7 @@ export class VidyardService implements IApiService {
   ];
 
   public loadApi() {
-    return this.scriptLoader.loadScript('https://play.vidyard.com/embed/v4.js', { windowCallback: 'onVidyardAPI' });
+    return loadScript('https://play.vidyard.com/embed/v4.js', { windowCallback: 'onVidyardAPI' });
   }
 
   public prepareHtml(options: PrepareHtmlOptions) {
