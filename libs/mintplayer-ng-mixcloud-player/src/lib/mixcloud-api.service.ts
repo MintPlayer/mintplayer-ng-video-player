@@ -33,7 +33,7 @@ export class MixcloudApiService implements IApiService {
   public apiReady$ = new BehaviorSubject<boolean>(false);
 
   public loadApi() {
-    // return this.scriptLoader.loadScript('//widget.mixcloud.com/media/js/widgetApi.js')
+    // return loadScript('//widget.mixcloud.com/media/js/widgetApi.js')
     //   .then((readyArgs) => this.apiReady$.next(true));
 
     return new Promise(resolve => resolve(true))

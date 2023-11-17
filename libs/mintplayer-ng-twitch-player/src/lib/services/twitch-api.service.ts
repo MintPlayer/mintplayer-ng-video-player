@@ -4,7 +4,7 @@ import { isPlatformServer } from '@angular/common';
 import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { ScriptLoader } from '@mintplayer/ng-script-loader';
+import { loadScript } from '@mintplayer/script-loader';
 import { Subject, takeUntil, timer } from 'rxjs';
 
 @Injectable({
@@ -12,7 +12,7 @@ import { Subject, takeUntil, timer } from 'rxjs';
 })
 export class TwitchApiService implements IApiService {
   
-  constructor(@Inject(PLATFORM_ID) private platformId: object, private scriptLoader: ScriptLoader) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
   public get id() {
     return 'twitch';
@@ -24,7 +24,7 @@ export class TwitchApiService implements IApiService {
   ];
 
   public loadApi() {
-    return this.scriptLoader.loadScript('https://player.twitch.tv/js/embed/v1.js');
+    return loadScript('https://player.twitch.tv/js/embed/v1.js');
   }
 
   public prepareHtml(options: PrepareHtmlOptions) {

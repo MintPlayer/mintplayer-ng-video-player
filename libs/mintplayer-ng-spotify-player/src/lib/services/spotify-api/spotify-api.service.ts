@@ -2,15 +2,13 @@ import { DestroyRef, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { Subject, filter, pairwise } from 'rxjs';
-import { ScriptLoader } from '@mintplayer/ng-script-loader';
+import { loadScript } from '@mintplayer/script-loader';
 import { PlaybackUpdateEvent, SpotifyIframeApi } from '../../interfaces/spotify-iframe-api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpotifyApiService implements IApiService {
-
-  constructor(private scriptLoader: ScriptLoader) {}
 
   private api?: SpotifyIframeApi;
 
@@ -24,7 +22,7 @@ export class SpotifyApiService implements IApiService {
   ];
 
   public loadApi() {
-    return this.scriptLoader.loadScript('https://open.spotify.com/embed-podcast/iframe-api/v1', { windowCallback: 'onSpotifyIframeApiReady' })
+    return loadScript('https://open.spotify.com/embed-podcast/iframe-api/v1', { windowCallback: 'onSpotifyIframeApiReady' })
       .then(readyArgs => this.api = readyArgs[0]);
   }
 
