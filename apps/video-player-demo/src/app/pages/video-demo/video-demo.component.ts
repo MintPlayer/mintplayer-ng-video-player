@@ -37,7 +37,7 @@ export class VideoDemoComponent {
     currentTime: 0,
     duration: 0
   };
-  
+
   newVideoUrl = '';
   videos: string[] = [
     'https://www.youtube.com/watch?v=tt2k8PGm-TI',
@@ -60,6 +60,7 @@ export class VideoDemoComponent {
     'https://www.mixcloud.com/radiomonaco/good-vibes-djm4t-29092023',
     'https://www.facebook.com/MetaCanada/videos/801193189918934',
     'https://www.facebook.com/iShareitHD/videos/1269681903839169',
+    'https://www.facebook.com/watch/?v=379257177188135',
     'https://video.vidyard.com/watch/6eK8VUFScWLqX2PqgF5S44?',
     'https://video.vidyard.com/watch/TKMKV6sdGhz3Fz5vgAAAw9?',
     'https://home.wistia.com/medias/e4a27b971d',
