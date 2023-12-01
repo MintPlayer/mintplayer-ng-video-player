@@ -23,6 +23,7 @@ export class FacebookApiService implements IApiService {
 
     public urlRegexes: RegExp[] = [
         new RegExp(/^(?<id>https?:\/\/(www\.)?facebook\.com\/(?<user>[^/?]+)\/videos\/(?<video>[0-9]+)[/?]*)/, 'g'),
+        new RegExp(/^(?<id>https?:\/\/(www\.)?facebook\.com\/watch\/\?v=[0-9]+)/, 'g'),
     ];
 
     public loadApi() {
@@ -33,7 +34,7 @@ export class FacebookApiService implements IApiService {
         if (!options.initialVideoId) {
             throw 'The Facebook api requires an initial video id';
         }
-    
+
         if (/[\s<>"]/.exec(options.initialVideoId)) {
             // Using encodeURIComponent here doesn't work, so fend off injection manually.
             throw `The url contains invalid characters:\n${options.initialVideoId}`;
@@ -117,7 +118,7 @@ export class FacebookApiService implements IApiService {
                     destroyRef.next(true);
                 }
             });
-            
+
             lastPlayerInstance$.pipe(debounceTime(500), pairwise()).subscribe(([previous, next]) => {
                 if (previous && events) {
                     events.forEach((ev) => ev.release());
@@ -131,7 +132,7 @@ export class FacebookApiService implements IApiService {
                     ];
                 }
             });
-            
+
             if (!isPlatformServer(this.platformId)) {
                 combineLatest([lastPlayerInstance$.pipe(debounceTime(500)), timer(0, 50)])
                     .pipe(filter(([player]) => !!player))
@@ -141,7 +142,7 @@ export class FacebookApiService implements IApiService {
                             // Progress
                             const currentTime = player.getCurrentPosition();
                             adapter.onCurrentTimeChange(currentTime);
-                            
+
                             // Volume
                             if (!disableVolumeChange) {
                                 const vol = player.getVolume();
@@ -151,14 +152,14 @@ export class FacebookApiService implements IApiService {
                                     adapter.onVolumeChange(vol * 100);
                                 }
                             }
-                            
+
                             // Mute
                             const currentMute = player.isMuted();
                             adapter.onMuteChange(currentMute);
                         }
                     });
             }
-                
+
             lastPlayerInstance$.pipe(debounceTime(1500), filter((p) => !!p), take(1), takeUntilDestroyed(destroy)).subscribe((player) => {
                 if (options.autoplay && player) {
                     setTimeout(() => player.play(), 50);
