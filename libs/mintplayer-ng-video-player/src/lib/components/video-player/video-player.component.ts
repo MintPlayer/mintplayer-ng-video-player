@@ -61,7 +61,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                   videoId: videoRequest.id,
                   adapter: adapter,
                 };
-  
+
                 adapter.onStateChange = (state) => this.playerStateObserver$.next(state);
                 adapter.onMuteChange = (mute) => this.muteObserver$.next(mute);
                 adapter.onVolumeChange = (volume) => this.volumeObserver$.next(volume);
@@ -77,7 +77,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                   }
                 }
               });
-  
+
               this.pipObserver$.next(false);
               this.fullscreenObserver$.next(false);
             }
@@ -107,7 +107,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         this.container.nativeElement.innerHTML = '';
       }
     };
-    
+
     //#endregion
 
     this.volumeObserver$
@@ -125,11 +125,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     this.fullscreenObserver$
       .pipe(debounceTime(20), distinctUntilChanged(), takeUntilDestroyed())
       .subscribe(isFullscreen => this.zoneEmit(this.isFullscreenChange, this._isFullscreen = isFullscreen));
-    
+
     this.progressObserver$ = combineLatest([this.currentTimeObserver$, this.durationObserver$])
       .pipe(debounceTime(10), takeUntilDestroyed())
       .pipe(map(([currentTime, duration]) => <PlayerProgress>{ currentTime, duration }));
-      
+
     this.progressObserver$.pipe(takeUntilDestroyed())
       .subscribe(progress => this.zoneEmit(this.progressChange, progress));
   }
@@ -169,8 +169,13 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   //#endregion
   //#region title
   public getTitle() {
-    return new Promise((resolve) => {
-      resolve(this.playerInfo?.adapter?.getTitle() ?? null);
+    return new Promise<string | null>((resolve) => {
+      const adapter = this.playerInfo?.adapter;
+      if (adapter) {
+        adapter.getTitle().then(t => resolve(t));
+      } else {
+        resolve(null);
+      }
     });
   }
   //#endregion
@@ -259,7 +264,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   private playerStateObserver$ = new Subject<EPlayerState>();
   private pipObserver$ = new Subject<boolean>();
   private fullscreenObserver$ = new Subject<boolean>();
-  
+
 
   private playerInfo: { platformId: string, videoId: string, adapter: PlayerAdapter } | null = null;
 
