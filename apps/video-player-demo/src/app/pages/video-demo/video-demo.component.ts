@@ -4,7 +4,7 @@ import { ECapability, EPlayerState, IApiService, VIDEO_APIS } from '@mintplayer/
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { BehaviorSubject, Observable, map } from 'rxjs';
-import { DOCUMENT } from '@angular/common';
+import { APP_BASE_HREF } from '@angular/common';
 
 @Component({
   selector: 'mintplayer-ng-video-player-video-demo',
@@ -13,7 +13,7 @@ import { DOCUMENT } from '@angular/common';
 })
 export class VideoDemoComponent {
 
-  constructor(@Inject(VIDEO_APIS) players: IApiService[], @Inject(DOCUMENT) doc: any) {
+  constructor(@Inject(VIDEO_APIS) players: IApiService[], @Inject(APP_BASE_HREF) baseUrl: string) {
     console.log('VIDEO_APIS', players);
     this.cannotFullscreen$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.fullscreen)));
     this.cannotPip$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.pictureInPicture)));
@@ -22,7 +22,6 @@ export class VideoDemoComponent {
     this.cannotGetTitle$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.getTitle)));
     // (<any>window)['testingPlayerApi'] = true;
 
-    const baseUrl = (<Document>doc).querySelector('base')!.href.slice(0, -1);
     this.videos.push(
       `${baseUrl}/assets/Modern-iMovie-8ot-eJxH2yc.mp4`,
       `${baseUrl}/assets/Jim_Yosef_Firefly_pt_II.mp3`

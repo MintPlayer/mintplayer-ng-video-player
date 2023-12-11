@@ -34,14 +34,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/mintplayer-ng-streamable-player/**/*.ts",
-          "libs/mintplayer-ng-streamable-player/**/*.html",
-          "libs/mintplayer-ng-streamable-player/package.json"
-        ]
-      }
+      "outputs": ["{options.outputFile}"]
     }
   }
 }
