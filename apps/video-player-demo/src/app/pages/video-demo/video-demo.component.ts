@@ -4,6 +4,7 @@ import { ECapability, EPlayerState, IApiService, VIDEO_APIS } from '@mintplayer/
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { BehaviorSubject, Observable, map } from 'rxjs';
+import { APP_BASE_HREF } from '@angular/common';
 
 @Component({
   selector: 'mintplayer-ng-video-player-video-demo',
@@ -12,7 +13,7 @@ import { BehaviorSubject, Observable, map } from 'rxjs';
 })
 export class VideoDemoComponent {
 
-  constructor(@Inject(VIDEO_APIS) players: IApiService[]) {
+  constructor(@Inject(VIDEO_APIS) players: IApiService[], @Inject(APP_BASE_HREF) baseUrl: string) {
     console.log('VIDEO_APIS', players);
     this.cannotFullscreen$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.fullscreen)));
     this.cannotPip$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.pictureInPicture)));
@@ -20,6 +21,11 @@ export class VideoDemoComponent {
     this.cannotMute$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.mute)));
     this.cannotGetTitle$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.getTitle)));
     // (<any>window)['testingPlayerApi'] = true;
+
+    this.videos.push(
+      `${baseUrl}/assets/Modern-iMovie-8ot-eJxH2yc.mp4`,
+      `${baseUrl}/assets/Jim_Yosef_Firefly_pt_II.mp3`
+    );
   }
 
   url?: string;
@@ -67,8 +73,6 @@ export class VideoDemoComponent {
     'https://home.wistia.com/medias/29b0fbf547',
     'https://streamable.com/moo',
     'https://streamable.com/ifjh',
-    'https://mintplayer.com/Modern-iMovie-8ot-eJxH2yc.mp4',
-    'https://mintplayer.com/Jim_Yosef_Firefly_pt_II.mp3'
   ];
 
   addToPlaylist() {

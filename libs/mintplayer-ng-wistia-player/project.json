@@ -34,14 +34,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/mintplayer-ng-wistia-player/**/*.ts",
-          "libs/mintplayer-ng-wistia-player/**/*.html",
-          "libs/mintplayer-ng-wistia-player/package.json"
-        ]
-      }
+      "outputs": ["{options.outputFile}"]
     }
   }
 }

@@ -17,6 +17,7 @@ import { YoutubePlayerModule } from '@mintplayer/ng-youtube-player';
 import { DailymotionPlayerModule } from '@mintplayer/ng-dailymotion-player';
 import { VimeoPlayerModule } from '@mintplayer/ng-vimeo-player';
 import { SoundcloudPlayerModule } from '@mintplayer/ng-soundcloud-player';
+import { APP_BASE_HREF } from '@angular/common';
 
 describe('VideoDemoComponent', () => {
   let component: VideoDemoComponent;
@@ -41,11 +42,12 @@ describe('VideoDemoComponent', () => {
         MockModule(SoundcloudPlayerModule)
       ],
       declarations: [
-        // Unit to test  
+        // Unit to test
         VideoDemoComponent,
       ],
-      providers: [
-        <StaticProvider>{ provide: VIDEO_APIS, multi: true, useValue: [] }
+      providers: <StaticProvider[]>[
+        { provide: APP_BASE_HREF, useValue: 'http://example.com' },
+        { provide: VIDEO_APIS, multi: true, useValue: [] }
       ]
     })
     .compileComponents();
@@ -60,7 +62,7 @@ describe('VideoDemoComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  
+
   it(`should have as title 'video-player-demo'`, () => {
     expect(component.title).toEqual('video-player-demo');
   });
