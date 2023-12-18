@@ -154,8 +154,16 @@ export class FileApiService implements IApiService {
                 if (mediaElement instanceof HTMLAudioElement) {
                     const canvases = options.element.getElementsByTagName('canvas');
                     if (canvases.length > 0) {
-                      this.createEqualizer(mediaElement, canvases[0], destroy);
+                        this.createEqualizer(mediaElement, canvases[0], destroy);
                     }
+
+                    fromEvent(divElement, 'fullscreenchange')
+                        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                        .subscribe(() => adapter.onFullscreenChange(this.document.fullscreenElement === divElement));
+                } else {
+                    fromEvent(mediaElement, 'fullscreenchange')
+                        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                        .subscribe(() => adapter.onFullscreenChange(this.document.fullscreenElement === mediaElement));
                 }
 
                 fromEvent(mediaElement, 'volumechange')
@@ -172,10 +180,6 @@ export class FileApiService implements IApiService {
                 fromEvent(mediaElement, 'leavepictureinpicture')
                     .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
                     .subscribe(() => adapter.onPipChange(false));
-
-                fromEvent(divElement, 'fullscreenchange')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                    .subscribe(() => adapter.onFullscreenChange(this.document.fullscreenElement === divElement));
 
                 fromEvent(mediaElement, 'play')
                     .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
