@@ -8,24 +8,24 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
-permissions: 
+permissions:
   contents: read
 
 jobs:
   build:
-  
+
     name: npm-publish
     runs-on: ubuntu-latest
-    
-    permissions: 
+
+    permissions:
       contents: read
       id-token: write
-      packages: write 
-    
+      packages: write
+
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    
+
     - name: Setup node
       uses: actions/setup-node@v2
       with:
@@ -33,20 +33,45 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-    
+
     - name: Build
       run: npm run nx run-many -- --target=build --configuration=production
 
     - name: Test
       run: npm run nx run-many -- --target=test --browsers=ChromeHeadless --parallel=true
-      
+
+    ## ng-canvas-resizer
+    - name: Upload code coverage report
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        directory: ./coverage/libs/mintplayer-ng-canvas-resizer
+
+    - name: Push to NPM
+      uses: JS-DevTools/npm-publish@v3
+      with:
+        package: 'dist/libs/mintplayer-ng-canvas-resizer/package.json'
+        registry: 'https://registry.npmjs.org'
+        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        access: 'public'
+        provenance: true
+
+    - name: Push to Github
+      uses: JS-DevTools/npm-publish@v3
+      with:
+        package: 'dist/libs/mintplayer-ng-canvas-resizer/package.json'
+        registry: 'https://npm.pkg.github.com'
+        token: ${{ github.token }}
+        access: 'public'
+        provenance: true
+
     ## ng-player-provider
     - name: Upload code coverage report
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-player-provider
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -90,7 +115,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-video-player
-      
+
     - name: Push to NPM
       id: publish_ng_video_player
       uses: JS-DevTools/npm-publish@v3
@@ -116,7 +141,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-dailymotion-player
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -141,7 +166,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-facebook-player
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -166,7 +191,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-mixcloud-player
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -191,7 +216,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-soundcloud-player
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -216,7 +241,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-spotify-player
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -241,7 +266,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-streamable-player
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -266,7 +291,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-twitch-player
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -291,7 +316,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-vidyard-player
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -316,7 +341,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-vimeo-player
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -341,7 +366,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-wistia-player
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -366,7 +391,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-youtube-player
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -391,7 +416,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-file-player
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -416,7 +441,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-playlist-controller
-      
+
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:

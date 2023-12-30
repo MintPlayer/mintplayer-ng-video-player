@@ -1,0 +1,17 @@
+<h1 class="text-center">Canvas-resizer</h1>
+<!-- <bs-grid>
+  <div bsRow>
+    <div [bsColumn]="{ _: 2, sm: 8 }"></div>
+    <div [bsColumn]="{ _: 4, sm: 4 }">
+      <canvas canvasResizer []></canvas>
+    </div>
+  </div>
+</bs-grid> -->
+<bs-grid>
+  <div bsRow>
+    <div [bsColumn]="{ sm: 4 }"></div>
+    <div [bsColumn]="{ sm: 4 }">
+      <canvas canvasResizer [style.width.px]="500" class="mw-100 border"></canvas>
+    </div>
+  </div>
+</bs-grid>
