@@ -58,9 +58,9 @@ export class FileApiService implements IApiService {
         switch (info.tagType) {
             case 'audio':
                 return `
-                    <div style="width:${options.width}px;height:${options.height}px;position:relative;margin:0 auto">
+                    <div style="width:${options.width}px;height:${options.height}px;max-width:100%;overflow:hidden;position:relative;margin:0 auto">
                         <div style="height:100%;display:flex;width:100%;flex-direction:column;align-items:center;justify-content:space-around;position:absolute">
-                            <audio src="${id}" autoplay="${options.autoplay ? 'on' : 'off'}" controls="on" style="z-index:5"></audio>
+                            <audio src="${id}" autoplay="${options.autoplay ? 'on' : 'off'}" controls="on" style="z-index:5;max-width:100%"></audio>
                         </div>
                         <div style="height:100%;display:flex;width:100%;flex-direction:column;align-items:center;justify-content:space-around;position:absolute">
                             <canvas width="${options.width}" height="${options.height}"></canvas>
@@ -215,6 +215,18 @@ export class FileApiService implements IApiService {
     private createEqualizer(audio: HTMLAudioElement, canvas: HTMLCanvasElement, destroy: DestroyRef) {
         const audioContext = new AudioContext();
         const analyzer = audioContext.createAnalyser();
+        const setFftSize = (width: number) => {
+            const exp = Math.log(width / 4) / Math.log(2);
+            const rounded = Math.round(exp);
+            analyzer.fftSize = Math.pow(2, rounded);
+        }
+
+        const resizeObserver = new ResizeObserver((entries) => {
+            const width = entries[0].contentRect.width;
+            setFftSize(width);
+        });
+        resizeObserver.observe(canvas);
+        setFftSize(canvas.width);
 
         const source = audioContext.createMediaElementSource(audio);
         source.connect(analyzer);
@@ -225,6 +237,7 @@ export class FileApiService implements IApiService {
             analyzer.disconnect();
             source.disconnect();
             audioContext.close();
+            resizeObserver.unobserve(canvas);
         });
     }
 
@@ -248,21 +261,28 @@ export class FileApiService implements IApiService {
                     anyWindow.webkitRequestAnimationFrame(callback);
 
                 const fbc_array = new Uint8Array(analyser.frequencyBinCount);
-                const bar_count = window.innerWidth / 2;
+                const bar_count = canvas.clientWidth / 4;
 
                 analyser.getByteFrequencyData(fbc_array);
 
                 drawContext.clearRect(0, 0, canvas.width, canvas.height);
                 drawContext.fillStyle = "#888888";
 
-                for (let i = 0; i < bar_count; i++) {
-                    const bar_pos = i * 4;
+                // for (let i = 0; i < bar_count; i++) {
+                //     const bar_pos = i * 4;
+                //     const bar_width = 2;
+                //     const bar_height = -(fbc_array[i] / 2);
+
+                //     drawContext.fillRect(bar_pos, canvas.height, bar_width, bar_height);
+                // }
+
+                for (let i = 0; i < fbc_array.length; i++) {
+                    const bar_pos = i * canvas.clientWidth / fbc_array.length;
                     const bar_width = 2;
                     const bar_height = -(fbc_array[i] / 2);
 
                     drawContext.fillRect(bar_pos, canvas.height, bar_width, bar_height);
                 }
-
             }
 
             if (!cancelled) {
