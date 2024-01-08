@@ -63,7 +63,7 @@ export class FileApiService implements IApiService {
                             <audio src="${id}" autoplay="${options.autoplay ? 'on' : 'off'}" controls="on" style="z-index:5;max-width:100%"></audio>
                         </div>
                         <div style="height:100%;display:flex;width:100%;flex-direction:column;align-items:center;justify-content:space-around;position:absolute">
-                            <canvas width="${options.width}" height="${options.height}"></canvas>
+                            <canvas width="${options.width}" height="${options.height}" style="max-width:100%" canvasResizer></canvas>
                         </div>
                     </div>`
             case 'video':
@@ -219,6 +219,7 @@ export class FileApiService implements IApiService {
             const exp = Math.log(width / 4) / Math.log(2);
             const rounded = Math.round(exp);
             analyzer.fftSize = Math.pow(2, rounded);
+            console.warn('fft size', analyzer.fftSize);
         }
 
         const resizeObserver = new ResizeObserver((entries) => {
@@ -260,29 +261,31 @@ export class FileApiService implements IApiService {
                     anyWindow.mozRequestAnimationFrame(callback) ||
                     anyWindow.webkitRequestAnimationFrame(callback);
 
-                const fbc_array = new Uint8Array(analyser.frequencyBinCount);
-                const bar_count = canvas.clientWidth / 4;
+                const bar_count = analyser.fftSize;
+                const fbc_array = new Uint8Array(bar_count);
+                // const bar_count = canvas.clientWidth / 4;
 
                 analyser.getByteFrequencyData(fbc_array);
 
                 drawContext.clearRect(0, 0, canvas.width, canvas.height);
                 drawContext.fillStyle = "#888888";
 
-                // for (let i = 0; i < bar_count; i++) {
-                //     const bar_pos = i * 4;
-                //     const bar_width = 2;
-                //     const bar_height = -(fbc_array[i] / 2);
-
-                //     drawContext.fillRect(bar_pos, canvas.height, bar_width, bar_height);
-                // }
-
-                for (let i = 0; i < fbc_array.length; i++) {
+                for (let i = 0; i < bar_count; i++) {
+                    // const bar_pos = i * 4;
                     const bar_pos = i * canvas.clientWidth / fbc_array.length;
                     const bar_width = 2;
                     const bar_height = -(fbc_array[i] / 2);
 
                     drawContext.fillRect(bar_pos, canvas.height, bar_width, bar_height);
                 }
+
+                // for (let i = 0; i < fbc_array.length; i++) {
+                //     const bar_pos = i * canvas.clientWidth / fbc_array.length;
+                //     const bar_width = 2;
+                //     const bar_height = -(fbc_array[i] / 2);
+
+                //     drawContext.fillRect(bar_pos, canvas.height, bar_width, bar_height);
+                // }
             }
 
             if (!cancelled) {

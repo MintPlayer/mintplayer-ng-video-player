@@ -6,6 +6,7 @@ import { AfterViewInit, Directive, ElementRef, HostBinding, OnDestroy } from '@a
 })
 export class CanvasResizerDirective implements AfterViewInit, OnDestroy {
   constructor(private element: ElementRef) {
+    console.log('CanvasResizerDirective');
     this.observer = new ResizeObserver((entries) => {
       requestAnimationFrame(() => this.onResize(entries));
     });
