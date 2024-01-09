@@ -24,10 +24,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Setup node
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: 18
 
@@ -42,7 +42,7 @@ jobs:
 
     ## ng-canvas-resizer
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-canvas-resizer
@@ -67,7 +67,7 @@ jobs:
 
     ## ng-player-provider
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-player-provider
@@ -111,7 +111,7 @@ jobs:
 
     ## ng-video-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-video-player
@@ -137,7 +137,7 @@ jobs:
 
     ## ng-dailymotion-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-dailymotion-player
@@ -162,7 +162,7 @@ jobs:
 
     ## ng-facebook-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-facebook-player
@@ -187,7 +187,7 @@ jobs:
 
     ## ng-mixcloud-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-mixcloud-player
@@ -212,7 +212,7 @@ jobs:
 
     ## ng-soundcloud-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-soundcloud-player
@@ -237,7 +237,7 @@ jobs:
 
     ## ng-spotify-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-spotify-player
@@ -262,7 +262,7 @@ jobs:
 
     ## ng-streamable-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-streamable-player
@@ -287,7 +287,7 @@ jobs:
 
     ## ng-twitch-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-twitch-player
@@ -312,7 +312,7 @@ jobs:
 
     ## ng-vidyard-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-vidyard-player
@@ -337,7 +337,7 @@ jobs:
 
     ## ng-vimeo-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-vimeo-player
@@ -362,7 +362,7 @@ jobs:
 
     ## ng-wistia-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-wistia-player
@@ -387,7 +387,7 @@ jobs:
 
     ## ng-youtube-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-youtube-player
@@ -412,7 +412,7 @@ jobs:
 
     ## ng-file-player
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-file-player
@@ -437,7 +437,7 @@ jobs:
 
     ## ng-playlist-controller
     - name: Upload code coverage report
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/libs/mintplayer-ng-playlist-controller
