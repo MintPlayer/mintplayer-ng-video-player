@@ -1,1 +1,1 @@
-export * from './lib/dailymotion-api.service';
+export const dailymotionApiLoader = () => import('@mintplayer/ng-dailymotion-player/service').then(m => new m.DailymotionApiService());

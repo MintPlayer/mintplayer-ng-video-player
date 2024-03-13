@@ -4,8 +4,9 @@ import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { ERepeatMode, PlaylistController } from '@mintplayer/ng-playlist-controller';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { Video } from '../../interfaces/video';
-import { EPlayerState } from '@mintplayer/ng-player-provider';
+import { EPlayerState, registerApi } from '@mintplayer/ng-player-provider';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { youtubeApiLoader } from '@mintplayer/ng-youtube-player';
 
 @Component({
   selector: 'mintplayer-ng-video-player-playlist-demo',
@@ -18,6 +19,8 @@ export class PlaylistDemoComponent implements AfterViewInit {
     private ref: ChangeDetectorRef,
     private zone: NgZone
   ) {
+    registerApi(youtubeApiLoader);
+
     this.playlistController = playlistController;
     this.playlistController.video$
       .pipe(takeUntilDestroyed())

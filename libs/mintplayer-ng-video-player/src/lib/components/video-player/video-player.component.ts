@@ -55,7 +55,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 domId: this.domId,
                 element: this.container.nativeElement,
                 initialVideoId: videoRequest.id,
-              }, destroy).then(adapter => {
+              }, this.destroyed$).then(adapter => {
                 this.playerInfo = {
                   platformId: videoRequest.api.id,
                   videoId: videoRequest.id,
@@ -272,7 +272,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     this.isViewInited$.next(true);
   }
 
+  destroyed$ = new Subject<boolean>();
   ngOnDestroy() {
     this.playerInfo?.adapter?.destroy();
+    this.destroyed$.next(true);
   }
 }

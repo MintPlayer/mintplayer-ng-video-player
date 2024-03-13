@@ -1,1 +1,1 @@
-export * from './lib/vimeo-api.service';
+export const vimeoApiLoader = () => import('@mintplayer/ng-vimeo-player/service').then(m => new m.VimeoApiService());

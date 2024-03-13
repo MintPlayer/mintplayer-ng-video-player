@@ -1,3 +1,1 @@
-export * from './lib/events';
-export * from './lib/enums';
-export * from './lib/services';
+export const soundcloudApiLoader = () => import('@mintplayer/ng-soundcloud-player/service').then(m => new m.SoundcloudApiService());

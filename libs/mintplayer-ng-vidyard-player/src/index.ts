@@ -1,1 +1,1 @@
-export * from './lib/services/vidyard.service';
+export const vidyardApiLoader = () => import('@mintplayer/ng-vidyard-player/service').then(m => new m.VidyardService());

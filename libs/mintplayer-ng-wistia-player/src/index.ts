@@ -1,1 +1,1 @@
-export * from './lib/services/wistia.service';
+export const wistiaApiLoader = () => import('@mintplayer/ng-wistia-player/service').then(m => new m.WistiaService());

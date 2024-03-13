@@ -1,10 +1,12 @@
 import { Subject } from "rxjs";
 // import { BehaviorSubject } from 'rxjs';
 
-export const VIDEO_APIS: (typeof IApiService)[] = [];
+export type ApiLoader<T extends IApiService = IApiService> = () => Promise<T>;
 
-export function registerApi(...t: (new (...args: any[]) => IApiService)[]) {
-    VIDEO_APIS.push(...t);
+export const VIDEO_APIS: IApiService[] = [];
+
+export function registerApi(...t: ApiLoader[]) {
+    Promise.all(t.map(x => x())).then(apis => VIDEO_APIS.push(...apis));
 }
 
 export interface IApiService {

@@ -13,6 +13,7 @@ import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
 
 import { VideoDemoRoutingModule } from './video-demo-routing.module';
 import { VideoDemoComponent } from './video-demo.component';
+import { VideoPlayerModule } from '@mintplayer/ng-video-player';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,8 @@ import { VideoDemoComponent } from './video-demo.component';
     BsToggleButtonModule,
     BsAlertModule,
     
+    VideoPlayerModule,
+
     VideoDemoRoutingModule
   ]
 })

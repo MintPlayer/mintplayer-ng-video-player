@@ -1,14 +1,10 @@
-import { Inject, Injectable } from '@angular/core';
-import { IApiService, VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
 import { VideoRequest } from '../interfaces/video-request';
 
-@Injectable()
 export class VideoPlayerService {
 
-  constructor(@Inject(VIDEO_APIS) private apis: IApiService[]) { }
-
   public findApis(url: string) {
-    const matchingApis = this.apis
+    const matchingApis = VIDEO_APIS
       .map(api => {
         const matches = api.urlRegexes
           .map(rgx => new RegExp(rgx).exec(url))

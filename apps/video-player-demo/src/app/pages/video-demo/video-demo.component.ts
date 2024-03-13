@@ -5,18 +5,18 @@ import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { APP_BASE_HREF } from '@angular/common';
-import { YoutubeApiService } from '@mintplayer/ng-youtube-player';
-import { DailymotionApiService } from '@mintplayer/ng-dailymotion-player';
-import { VimeoApiService } from '@mintplayer/ng-vimeo-player';
-import { SoundcloudApiService } from '@mintplayer/ng-soundcloud-player';
-import { MixcloudApiService } from '@mintplayer/ng-mixcloud-player';
-import { FacebookApiService } from '@mintplayer/ng-facebook-player';
-import { FileApiService } from '@mintplayer/ng-file-player';
-import { SpotifyApiService } from '@mintplayer/ng-spotify-player';
-import { StreamableService } from '@mintplayer/ng-streamable-player';
-import { TwitchApiService } from '@mintplayer/ng-twitch-player';
-import { VidyardService } from '@mintplayer/ng-vidyard-player';
-import { WistiaService } from '@mintplayer/ng-wistia-player';
+import { youtubeApiLoader } from '@mintplayer/ng-youtube-player';
+import { dailymotionApiLoader } from '@mintplayer/ng-dailymotion-player';
+import { vimeoApiLoader } from '@mintplayer/ng-vimeo-player';
+import { soundcloudApiLoader } from '@mintplayer/ng-soundcloud-player';
+import { mixcloudApiLoader } from '@mintplayer/ng-mixcloud-player';
+import { facebookApiLoader } from '@mintplayer/ng-facebook-player';
+import { fileApiLoader } from '@mintplayer/ng-file-player';
+import { spotifyApiLoader } from '@mintplayer/ng-spotify-player';
+import { streamableApiLoader } from '@mintplayer/ng-streamable-player';
+import { twitchApiLoader } from '@mintplayer/ng-twitch-player';
+import { vidyardApiLoader } from '@mintplayer/ng-vidyard-player';
+import { wistiaApiLoader } from '@mintplayer/ng-wistia-player';
 
 @Component({
   selector: 'mintplayer-ng-video-player-video-demo',
@@ -25,10 +25,21 @@ import { WistiaService } from '@mintplayer/ng-wistia-player';
 })
 export class VideoDemoComponent {
 
-  constructor(@Inject(VIDEO_APIS) players: IApiService[], @Inject(APP_BASE_HREF) baseUrl: string) {
-    registerApi(YoutubeApiService, DailymotionApiService, VimeoApiService, SoundcloudApiService, MixcloudApiService, FacebookApiService, FileApiService, SpotifyApiService, StreamableService, TwitchApiService, VidyardService, WistiaService);
+  constructor(@Inject(APP_BASE_HREF) baseUrl: string) {
+    registerApi(
+      youtubeApiLoader,
+      dailymotionApiLoader,
+      vimeoApiLoader,
+      soundcloudApiLoader,
+      mixcloudApiLoader,
+      facebookApiLoader,
+      fileApiLoader,
+      spotifyApiLoader,
+      streamableApiLoader,
+      twitchApiLoader,
+      vidyardApiLoader,
+      wistiaApiLoader);
 
-    console.log('VIDEO_APIS', players);
     this.cannotFullscreen$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.fullscreen)));
     this.cannotPip$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.pictureInPicture)));
     this.cannotChangeVolume$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.volume)));
