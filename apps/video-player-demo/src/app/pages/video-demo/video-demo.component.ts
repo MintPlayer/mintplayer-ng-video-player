@@ -1,22 +1,22 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { ECapability, EPlayerState, IApiService, VIDEO_APIS, registerApi } from '@mintplayer/ng-player-provider';
-import { PlayerProgress } from '@mintplayer/ng-player-progress';
+import { ECapability, EPlayerState, registerApi } from '@mintplayer/player-provider';
+import { PlayerProgress } from '@mintplayer/player-progress';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { APP_BASE_HREF } from '@angular/common';
-import { youtubeApiLoader } from '@mintplayer/ng-youtube-player';
-import { dailymotionApiLoader } from '@mintplayer/ng-dailymotion-player';
-import { vimeoApiLoader } from '@mintplayer/ng-vimeo-player';
-import { soundcloudApiLoader } from '@mintplayer/ng-soundcloud-player';
-import { mixcloudApiLoader } from '@mintplayer/ng-mixcloud-player';
-import { facebookApiLoader } from '@mintplayer/ng-facebook-player';
-import { fileApiLoader } from '@mintplayer/ng-file-player';
-import { spotifyApiLoader } from '@mintplayer/ng-spotify-player';
-import { streamableApiLoader } from '@mintplayer/ng-streamable-player';
-import { twitchApiLoader } from '@mintplayer/ng-twitch-player';
-import { vidyardApiLoader } from '@mintplayer/ng-vidyard-player';
-import { wistiaApiLoader } from '@mintplayer/ng-wistia-player';
+import { youtubeApiLoader } from '@mintplayer/youtube-player';
+import { dailymotionApiLoader } from '@mintplayer/dailymotion-player';
+import { vimeoApiLoader } from '@mintplayer/vimeo-player';
+import { soundcloudApiLoader } from '@mintplayer/soundcloud-player';
+import { mixcloudApiLoader } from '@mintplayer/mixcloud-player';
+import { facebookApiLoader } from '@mintplayer/facebook-player';
+import { fileApiLoader } from '@mintplayer/file-player';
+import { spotifyApiLoader } from '@mintplayer/spotify-player';
+import { streamableApiLoader } from '@mintplayer/streamable-player';
+import { twitchApiLoader } from '@mintplayer/twitch-player';
+import { vidyardApiLoader } from '@mintplayer/vidyard-player';
+import { wistiaApiLoader } from '@mintplayer/wistia-player';
 
 @Component({
   selector: 'mintplayer-ng-video-player-video-demo',

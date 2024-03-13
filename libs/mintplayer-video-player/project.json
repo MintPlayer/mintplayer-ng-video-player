@@ -1,0 +1,36 @@
+{
+  "name": "mintplayer-video-player",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/mintplayer-video-player/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/mintplayer-video-player",
+        "main": "libs/mintplayer-video-player/src/index.ts",
+        "tsConfig": "libs/mintplayer-video-player/tsconfig.lib.json",
+        "assets": ["libs/mintplayer-video-player/*.md"],
+        "generatePackageJson": true,
+        "format": ["cjs"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs mintplayer-video-player {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/mintplayer-video-player/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

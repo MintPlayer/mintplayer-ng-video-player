@@ -1,6 +1,6 @@
 import { StaticProvider } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { VIDEO_APIS } from '@mintplayer/player-provider';
 import { MockProvider } from 'ng-mocks';
 
 import { VideoPlayerComponent } from './video-player.component';

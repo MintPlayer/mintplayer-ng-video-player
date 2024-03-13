@@ -10,7 +10,7 @@ import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
 import { PlaylistDemoComponent } from './playlist-demo.component';
 import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
-import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { VIDEO_APIS } from '@mintplayer/player-provider';
 
 interface Video {}
 

@@ -1,1 +1,0 @@
-export const twitchApiLoader = () => import('@mintplayer/ng-twitch-player/service').then(m => new m.TwitchApiService());

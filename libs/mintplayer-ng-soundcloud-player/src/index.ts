@@ -1,1 +1,0 @@
-export const soundcloudApiLoader = () => import('@mintplayer/ng-soundcloud-player/service').then(m => new m.SoundcloudApiService());

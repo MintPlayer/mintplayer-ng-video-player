@@ -1,1 +1,0 @@
-export const dailymotionApiLoader = () => import('@mintplayer/ng-dailymotion-player/service').then(m => new m.DailymotionApiService());

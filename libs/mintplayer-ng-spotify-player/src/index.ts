@@ -1,1 +1,0 @@
-export const spotifyApiLoader = () => import('@mintplayer/ng-spotify-player/service').then(m => new m.SpotifyApiService());

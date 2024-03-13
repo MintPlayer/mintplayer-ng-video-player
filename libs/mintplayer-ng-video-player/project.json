@@ -1,5 +1,5 @@
 {
-  "name": "mintplayer-ng-video-player",
+  "name": "@mintplayer/ng-video-player",
   "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/mintplayer-ng-video-player/src",

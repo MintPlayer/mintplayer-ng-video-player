@@ -2,22 +2,24 @@ import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Input, 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
-import { PlayerProgress } from '@mintplayer/ng-player-progress';
-import { ECapability, EPlayerState, PlayerAdapter } from '@mintplayer/ng-player-provider';
+import { PlayerProgress } from '@mintplayer/player-progress';
+import { VideoPlayerCoreComponent } from '@mintplayer/video-player';
+import { ECapability, EPlayerState, PlayerAdapter } from '@mintplayer/player-provider';
 import { VideoRequest } from '../../interfaces/video-request';
-import { VideoPlayerService } from '../../services/video-player.service';
+import { findApis } from '../../services/video-player.service';
 
 @Component({
   selector: 'video-player',
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss']
 })
-export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
+export class VideoPlayerComponent extends VideoPlayerCoreComponent implements AfterViewInit, OnDestroy {
   constructor(
     private zone: NgZone,
-    videoPlayerService: VideoPlayerService,
     destroy: DestroyRef,
   ) {
+    super();
+
     //#region [isViewInited$, url$] => videoRequest$
     combineLatest([this.isViewInited$, this.url$])
       .pipe(filter(([isViewInited]) => !!isViewInited))
@@ -28,7 +30,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           this.playerInfo = null;
           this.container.nativeElement.innerHTML = '';
         } else {
-          const matchingApis = videoPlayerService.findApis(url);
+          const matchingApis = findApis(url);
           if (matchingApis.length === 0) {
             throw `No player found for url ${url}`;
           } else {
@@ -44,7 +46,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         if (videoRequest) {
           videoRequest.api.loadApi().then(() => {
             if ((videoRequest.api.id === this.playerInfo?.platformId) && (videoRequest.api.canReusePlayer !== false)) {
-              this.playerInfo.adapter.loadVideoById(videoRequest.id);
+              this.playerInfo?.adapter.loadVideoById(videoRequest.id);
             } else {
               this.playerInfo?.adapter?.destroy();
               setHtml(videoRequest);
