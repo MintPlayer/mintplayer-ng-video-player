@@ -13,12 +13,11 @@ import { findApis } from '../../services/video-player.service';
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss']
 })
-export class VideoPlayerComponent extends VideoPlayerCoreComponent implements AfterViewInit, OnDestroy {
+export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   constructor(
     private zone: NgZone,
     destroy: DestroyRef,
   ) {
-    super();
 
     //#region [isViewInited$, url$] => videoRequest$
     combineLatest([this.isViewInited$, this.url$])
@@ -135,6 +134,8 @@ export class VideoPlayerComponent extends VideoPlayerCoreComponent implements Af
     this.progressObserver$.pipe(takeUntilDestroyed())
       .subscribe(progress => this.zoneEmit(this.progressChange, progress));
   }
+
+  player?: VideoPlayerCoreComponent;
 
   private zoneEmit<T>(emitter: EventEmitter<T>, value?: T) {
     this.zone.run(() => emitter.emit(value));

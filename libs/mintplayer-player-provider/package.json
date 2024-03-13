@@ -9,7 +9,7 @@
     "directory": "libs/mintplayer-ng-player-provider"
   },
   "peerDependencies": {
-    "@mintplayer/ng-player-progress": "^17.0.0",
+    "@mintplayer/player-progress": "^17.0.0",
     "rxjs": "^7.4.0"
   },
   "dependencies": {

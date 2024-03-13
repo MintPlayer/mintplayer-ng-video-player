@@ -31,8 +31,8 @@ The code is included in the git repository.
 
 | Package                             | Version                                                                                                                                                |
 |-------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| @mintplayer/ng-player-progress      | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-player-progress.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-player-progress)         |
-| @mintplayer/ng-youtube-player       | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-youtube-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-youtube-player)           |
+| @mintplayer/player-progress      | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-player-progress.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-player-progress)         |
+| @mintplayer/youtube-player       | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-youtube-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-youtube-player)           |
 | @mintplayer/ng-dailymotion-player   | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-dailymotion-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-dailymotion-player)   |
 | @mintplayer/ng-vimeo-player         | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-vimeo-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-vimeo-player)               |
 | @mintplayer/ng-soundcloud-player    | [![npm version](https://badge.fury.io/js/%40mintplayer%2Fng-soundcloud-player.svg)](https://badge.fury.io/js/%40mintplayer%2Fng-soundcloud-player)     |
@@ -56,7 +56,7 @@ The `ng-video-player` package no longer depends on `ng-youtube-player`, `ng-dail
 
 Run the corresponding commands, depending on what players you want to support in your application:
 
-    npm i @mintplayer/ng-youtube-player
+    npm i @mintplayer/youtube-player
     npm i @mintplayer/ng-dailymotion-player
     npm i @mintplayer/ng-vimeo-player
     npm i @mintplayer/ng-soundcloud-player
