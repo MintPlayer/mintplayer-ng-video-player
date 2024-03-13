@@ -1,17 +1,10 @@
-import { Injectable, DestroyRef, Inject, PLATFORM_ID } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { loadScript } from '@mintplayer/script-loader';
 import VidyardEmbed, { VidyardApi, VidyardEventMap, VidyardPlayer } from '@vidyard/embed-code';
 import { Subject, BehaviorSubject, map, filter, take, takeUntil, fromEvent } from 'rxjs';
 import { fromVidyardEvent } from '../extensions';
 
-@Injectable({
-  providedIn: 'root'
-})
 export class VidyardService implements IApiService {
-
-  constructor(@Inject(PLATFORM_ID) private platformId: any) { }
 
   public get id() {
     return 'vidyard';
@@ -43,7 +36,7 @@ export class VidyardService implements IApiService {
       </div>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef) : Promise<PlayerAdapter> {
+  public createPlayer(options: PlayerOptions, destroy: Subject<boolean>) : Promise<PlayerAdapter> {
     return new Promise((resolvePlayer, rejectPlayer) => {
       const div = options.element.querySelector<HTMLDivElement>('div.vidyard-player-embed');
       
@@ -60,30 +53,30 @@ export class VidyardService implements IApiService {
       const playerReady$ = new BehaviorSubject<[boolean, VidyardPlayer?]>([false, undefined]);
       const adapter$ = new BehaviorSubject<[PlayerAdapter, VidyardPlayer] | null>(null);
 
-      adapter$.pipe(filter(a => !!a), map(a => a!), take(1), takeUntil(destroyRef), takeUntilDestroyed(destroy))
+      adapter$.pipe(filter(a => !!a), map(a => a!), take(1), takeUntil(destroyRef), takeUntil(destroy))
         .subscribe(([adapter, player]) => {
           VidyardEmbed.api.getPlayerMetadata(options.initialVideoId!).then(meta => {
             adapter.onDurationChange(meta.length_in_seconds);
           });
 
           fromVidyardEvent(player, 'play')
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(([sec, plr]) => adapter.onStateChange(EPlayerState.playing));
 
           fromVidyardEvent(player, 'pause')
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(([_, plr]) => adapter.onStateChange(EPlayerState.paused));
 
           fromVidyardEvent(player, 'seek')
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(([[previous, next], plr]) => adapter.onCurrentTimeChange(next));
 
           fromVidyardEvent(player, 'volumeChange')
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(([volume, plr]) => adapter.onVolumeChange(volume * 100));
 
           fromVidyardEvent(player, 'timeupdate')
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(([seconds, plr]) => {
               adapter.onCurrentTimeChange(seconds);
               const chapters = plr.metadata.chapters_attributes;
@@ -95,7 +88,7 @@ export class VidyardService implements IApiService {
             });
 
           fromVidyardEvent(player, 'metadata')
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(([meta, plr]) => console.log('metadata', meta));
 
           // player.setVolume(0.5);
@@ -111,7 +104,7 @@ export class VidyardService implements IApiService {
           resolvePlayer(adapter);
         });
 
-      playerReady$.pipe(filter(([ready]) => ready), take(1), takeUntil(destroyRef), takeUntilDestroyed(destroy))
+      playerReady$.pipe(filter(([ready]) => ready), take(1), takeUntil(destroyRef), takeUntil(destroy))
         .subscribe(([_, plr]) => {
           const player = plr!;
           console.warn('player', plr);

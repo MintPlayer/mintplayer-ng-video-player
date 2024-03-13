@@ -1,6 +1,7 @@
 {
   "name": "@mintplayer/ng-file-player",
   "private": false,
+  "type": "module",
   "version": "17.0.3",
   "repository": {
     "type": "git",
@@ -8,9 +9,6 @@
     "directory": "libs/mintplayer-ng-file-player"
   },
   "peerDependencies": {
-    "@angular/common": "^17.0.0",
-    "@angular/core": "^17.0.0",
-    "@mintplayer/ng-video-player": "^17.0.0",
     "@mintplayer/ng-canvas-resizer": "^17.0.0",
     "rxjs": "^7.4.0"
   },

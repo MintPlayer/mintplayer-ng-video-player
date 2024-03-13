@@ -1,18 +1,10 @@
-import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 import { MixcloudPlayerExternalWidgetApiRPC, PlayerWidget } from './remote/widgetApi';
-import { isPlatformServer } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-@Injectable({
-  providedIn: 'root'
-})
 export class MixcloudApiService implements IApiService {
 
   // https://www.mixcloud.com/developers/widget/
-
-  constructor(@Inject(PLATFORM_ID) private platformId: any) { }
 
   public get id() {
     return 'mixcloud';
@@ -48,7 +40,7 @@ export class MixcloudApiService implements IApiService {
     return `<iframe id="${options.domId}" style="max-width:100%" src="https://www.mixcloud.com/widget/iframe/?autoplay=${options.autoplay ? 1 : 0}&feed=${encodeURIComponent(options.initialVideoId)}" allow="autoplay"></iframe>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef) {
+  public createPlayer(options: PlayerOptions, destroy: Subject<boolean>) {
     return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
       if (!options.element) {
         return rejectPlayer('The MixCloud api requires the options.element to be set');
@@ -119,9 +111,9 @@ export class MixcloudApiService implements IApiService {
 
         events = this.hookEvents(player, adapter);
 
-        if (!isPlatformServer(this.platformId)) {
+        if (typeof window !== 'undefined') {
           timer(0, 50)
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(() => {
               if (player.getVolume) {
                 player.getVolume().then((vol) => adapter.onVolumeChange(vol * 100));

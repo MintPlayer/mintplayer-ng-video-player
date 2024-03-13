@@ -1,17 +1,8 @@
-import { isPlatformServer } from '@angular/common';
-import { Injectable, DestroyRef, Inject, PLATFORM_ID } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { timer, takeUntil, Subject } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
 
-@Injectable({
-  providedIn: 'root'
-})
 export class DailymotionApiService implements IApiService {
-
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {
-  }
 
   public get id() {
     return 'dailymotion';
@@ -30,7 +21,7 @@ export class DailymotionApiService implements IApiService {
     return `<div id="${options.domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+  public createPlayer(options: PlayerOptions, destroy: Subject<boolean>): Promise<PlayerAdapter> {
     return new Promise((resolvePlayer, rejectPlayer) => {
       /** TODO: shouldn't this be options.domId? */
       if (!options.element) {
@@ -94,9 +85,9 @@ export class DailymotionApiService implements IApiService {
               destroy: () => destroyRef.next(true),
             });
 
-            if (!isPlatformServer(this.platformId)) {
+            if (typeof window !== 'undefined') {
               timer(0, 50)
-                .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                .pipe(takeUntil(destroyRef), takeUntil(destroy))
                 .subscribe(() => {
                   adapter.onMuteChange(player.muted);
                   adapter.onCurrentTimeChange(player.currentTime);

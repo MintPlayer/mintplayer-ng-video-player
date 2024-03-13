@@ -1,16 +1,8 @@
-import { isPlatformServer } from '@angular/common';
-import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { Subject, takeUntil, timer } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
 
-@Injectable({
-  providedIn: 'root'
-})
 export class YoutubeApiService implements IApiService {
-
-  constructor(@Inject(PLATFORM_ID) private platformId: any) {}
 
   public get id() {
     return 'youtube';
@@ -34,7 +26,7 @@ export class YoutubeApiService implements IApiService {
     return `<div id="${options.domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+  public createPlayer(options: PlayerOptions, destroy: Subject<boolean>): Promise<PlayerAdapter> {
     return new Promise((resolvePlayer, rejectPlayer) => {
       if (!options.domId) {
         return rejectPlayer('The YouTube api requires the options.domId to be set');
@@ -99,16 +91,16 @@ export class YoutubeApiService implements IApiService {
               },
             });
 
-            if (!isPlatformServer(this.platformId)) {
+            if (typeof window !== 'undefined') {
               timer(0, 50)
-                .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                .pipe(takeUntil(destroyRef), takeUntil(destroy))
                 .subscribe(() => {
                   // Progress
                   const currentTime = player.getCurrentTime();
                   adapter.onCurrentTimeChange(currentTime);
                 });
               timer(0, 50)
-                .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                .pipe(takeUntil(destroyRef), takeUntil(destroy))
                 .subscribe(() => {
                   // Volume
                   const vol = player.getVolume();

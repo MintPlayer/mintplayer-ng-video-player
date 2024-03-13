@@ -14,20 +14,6 @@ import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
 import { VideoDemoRoutingModule } from './video-demo-routing.module';
 import { VideoDemoComponent } from './video-demo.component';
 
-import { YoutubePlayerModule } from '@mintplayer/ng-youtube-player';
-import { DailymotionPlayerModule } from '@mintplayer/ng-dailymotion-player';
-import { VimeoPlayerModule } from '@mintplayer/ng-vimeo-player';
-import { SoundcloudPlayerModule } from '@mintplayer/ng-soundcloud-player';
-import { SpotifyPlayerModule } from '@mintplayer/ng-spotify-player';
-import { TwitchPlayerModule } from '@mintplayer/ng-twitch-player';
-import { MixcloudPlayerModule } from '@mintplayer/ng-mixcloud-player';
-import { FacebookPlayerModule } from '@mintplayer/ng-facebook-player';
-import { VidyardPlayerModule } from '@mintplayer/ng-vidyard-player';
-import { WistiaPlayerModule } from '@mintplayer/ng-wistia-player';
-import { StreamablePlayerModule } from '@mintplayer/ng-streamable-player';
-import { FilePlayerModule } from '@mintplayer/ng-file-player';
-
-
 @NgModule({
   declarations: [
     VideoDemoComponent
@@ -45,19 +31,6 @@ import { FilePlayerModule } from '@mintplayer/ng-file-player';
     BsToggleButtonModule,
     BsAlertModule,
     
-    YoutubePlayerModule,
-    DailymotionPlayerModule,
-    VimeoPlayerModule,
-    SoundcloudPlayerModule,
-    SpotifyPlayerModule,
-    TwitchPlayerModule,
-    MixcloudPlayerModule,
-    FacebookPlayerModule,
-    VidyardPlayerModule,
-    WistiaPlayerModule,
-    StreamablePlayerModule,
-    FilePlayerModule,
-
     VideoDemoRoutingModule
   ]
 })

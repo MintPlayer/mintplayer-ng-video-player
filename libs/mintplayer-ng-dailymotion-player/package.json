@@ -1,6 +1,7 @@
 {
   "name": "@mintplayer/ng-dailymotion-player",
   "private": false,
+  "type": "module",
   "version": "17.0.0",
   "repository": {
     "type": "git",
@@ -8,9 +9,6 @@
     "directory": "libs/mintplayer-ng-dailymotion-player"
   },
   "peerDependencies": {
-    "@angular/common": "^17.0.0",
-    "@angular/core": "^17.0.0",
-    "@mintplayer/ng-video-player": "^17.0.0",
     "@mintplayer/script-loader": "^1.1.0",
     "rxjs": "^7.4.0"
   },

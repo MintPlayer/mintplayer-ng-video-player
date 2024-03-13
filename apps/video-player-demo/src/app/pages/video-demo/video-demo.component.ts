@@ -1,10 +1,22 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { ECapability, EPlayerState, IApiService, VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, VIDEO_APIS, registerApi } from '@mintplayer/ng-player-provider';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { APP_BASE_HREF } from '@angular/common';
+import { YoutubeApiService } from '@mintplayer/ng-youtube-player';
+import { DailymotionApiService } from '@mintplayer/ng-dailymotion-player';
+import { VimeoApiService } from '@mintplayer/ng-vimeo-player';
+import { SoundcloudApiService } from '@mintplayer/ng-soundcloud-player';
+import { MixcloudApiService } from '@mintplayer/ng-mixcloud-player';
+import { FacebookApiService } from '@mintplayer/ng-facebook-player';
+import { FileApiService } from '@mintplayer/ng-file-player';
+import { SpotifyApiService } from '@mintplayer/ng-spotify-player';
+import { StreamableService } from '@mintplayer/ng-streamable-player';
+import { TwitchApiService } from '@mintplayer/ng-twitch-player';
+import { VidyardService } from '@mintplayer/ng-vidyard-player';
+import { WistiaService } from '@mintplayer/ng-wistia-player';
 
 @Component({
   selector: 'mintplayer-ng-video-player-video-demo',
@@ -14,6 +26,8 @@ import { APP_BASE_HREF } from '@angular/common';
 export class VideoDemoComponent {
 
   constructor(@Inject(VIDEO_APIS) players: IApiService[], @Inject(APP_BASE_HREF) baseUrl: string) {
+    registerApi(YoutubeApiService, DailymotionApiService, VimeoApiService, SoundcloudApiService, MixcloudApiService, FacebookApiService, FileApiService, SpotifyApiService, StreamableService, TwitchApiService, VidyardService, WistiaService);
+
     console.log('VIDEO_APIS', players);
     this.cannotFullscreen$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.fullscreen)));
     this.cannotPip$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.pictureInPicture)));
@@ -26,6 +40,8 @@ export class VideoDemoComponent {
       `${baseUrl}/assets/Modern-iMovie-8ot-eJxH2yc.mp4`,
       `${baseUrl}/assets/Jim_Yosef_Firefly_pt_II.mp3`
     );
+
+
   }
 
   url?: string;
