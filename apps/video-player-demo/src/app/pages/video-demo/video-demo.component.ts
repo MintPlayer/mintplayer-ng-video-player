@@ -109,9 +109,9 @@ export class VideoDemoComponent {
   }
 
   getTitle() {
-    this.player1.getTitle().then((title) => {
-      alert('title\r\n' + title);
-    });
+    // this.player1.getTitle().then((title) => {
+    //   alert('title\r\n' + title);
+    // });
   }
 
   setSize() {
