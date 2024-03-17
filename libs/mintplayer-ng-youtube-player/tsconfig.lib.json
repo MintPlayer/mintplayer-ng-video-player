@@ -6,14 +6,8 @@
     "declarationMap": true,
     "inlineSources": true,
     "types": ["node", "youtube"],
-    "target": "ES2022",
     "useDefineForClassFields": false
   },
-  "exclude": [
-    "src/test-setup.ts",
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "jest.config.ts"
-  ],
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
   "include": ["**/*.ts"]
 }

@@ -6,15 +6,9 @@
     "declarationMap": true,
     "inlineSources": true,
     "types": ["node", "twitch"],
-    "typeRoots": ["types", "../../node_modules/@types"],
-    "target": "ES2022"
+    "typeRoots": ["types", "../../node_modules/@types"]
   },
-  "exclude": [
-    "src/**/*.spec.ts",
-    "src/test-setup.ts",
-    "jest.config.ts",
-    "src/**/*.test.ts"
-  ],
+  "exclude": ["src/**/*.spec.ts", "jest.config.ts", "src/**/*.test.ts"],
   "include": [
     "src/**/*.ts",
     "types/**/*.d.ts"

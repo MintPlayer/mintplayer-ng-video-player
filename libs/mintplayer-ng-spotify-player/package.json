@@ -1,15 +1,16 @@
 {
   "name": "@mintplayer/ng-spotify-player",
   "private": false,
+  "type": "module",
   "version": "17.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
     "directory": "libs/mintplayer-ng-spotify-player"
   },
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
   "peerDependencies": {
-    "@angular/common": "^17.0.0",
-    "@angular/core": "^17.0.0",
     "@mintplayer/ng-video-player": "^17.0.0",
     "@mintplayer/script-loader": "^1.1.0",
     "rxjs": "^7.4.0"

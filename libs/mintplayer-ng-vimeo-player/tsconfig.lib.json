@@ -7,15 +7,9 @@
     "inlineSources": true,
     "types": ["node", "vimeo"],
     "typeRoots": ["types", "../../node_modules/@types"],
-    "target": "ES2022",
     "useDefineForClassFields": false
   },
-  "exclude": [
-    "src/test-setup.ts",
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "jest.config.ts"
-  ],
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
   "include": [
     "src/**/*.ts",
     "types/**/*.d.ts"
