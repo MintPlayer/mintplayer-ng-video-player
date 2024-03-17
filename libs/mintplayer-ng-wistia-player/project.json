@@ -2,22 +2,23 @@
   "name": "mintplayer-ng-wistia-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/mintplayer-ng-wistia-player/src",
-  "prefix": "lib",
   "tags": [],
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/angular:package",
-      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "project": "libs/mintplayer-ng-wistia-player/ng-package.json"
+        "outputPath": "{workspaceRoot}/dist/{projectRoot}",
+        "main": "{sourceRoot}/index.ts",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json"
       },
       "configurations": {
         "production": {
-          "tsConfig": "libs/mintplayer-ng-wistia-player/tsconfig.lib.prod.json"
+          "tsConfig": "{projectRoot}/tsconfig.lib.prod.json"
         },
         "development": {
-          "tsConfig": "libs/mintplayer-ng-wistia-player/tsconfig.lib.json"
+          "tsConfig": "{projectRoot}/tsconfig.lib.json"
         }
       },
       "defaultConfiguration": "production"

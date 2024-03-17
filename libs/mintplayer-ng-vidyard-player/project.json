@@ -2,22 +2,23 @@
   "name": "mintplayer-ng-vidyard-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/mintplayer-ng-vidyard-player/src",
-  "prefix": "lib",
   "tags": [],
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/angular:package",
-      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "project": "libs/mintplayer-ng-vidyard-player/ng-package.json"
+        "outputPath": "{workspaceRoot}/dist/{projectRoot}",
+        "main": "{sourceRoot}/index.ts",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json"
       },
       "configurations": {
         "production": {
-          "tsConfig": "libs/mintplayer-ng-vidyard-player/tsconfig.lib.prod.json"
+          "tsConfig": "{projectRoot}/tsconfig.lib.prod.json"
         },
         "development": {
-          "tsConfig": "libs/mintplayer-ng-vidyard-player/tsconfig.lib.json"
+          "tsConfig": "{projectRoot}/tsconfig.lib.json"
         }
       },
       "defaultConfiguration": "production"
