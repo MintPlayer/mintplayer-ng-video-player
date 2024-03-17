@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { IApiService, VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { IApiService, VIDEO_APIS } from '@mintplayer/player-provider';
 import { VideoRequest } from '../interfaces/video-request';
 
 @Injectable()

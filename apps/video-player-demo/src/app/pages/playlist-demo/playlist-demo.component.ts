@@ -4,7 +4,7 @@ import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { ERepeatMode, PlaylistController } from '@mintplayer/ng-playlist-controller';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { Video } from '../../interfaces/video';
-import { EPlayerState } from '@mintplayer/ng-player-provider';
+import { EPlayerState } from '@mintplayer/player-provider';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({

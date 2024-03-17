@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
-import { ECapability, EPlayerState, PlayerAdapter } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, PlayerAdapter } from '@mintplayer/player-provider';
 import { VideoRequest } from '../../interfaces/video-request';
 import { VideoPlayerService } from '../../services/video-player.service';
 

@@ -1,4 +1,4 @@
-import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/player-provider';
 import { loadScript } from '@mintplayer/script-loader';
 import { Subject, fromEvent, fromEventPattern, takeUntil, timer } from 'rxjs';
 

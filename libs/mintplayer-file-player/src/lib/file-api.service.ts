@@ -1,4 +1,4 @@
-import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from "@mintplayer/ng-player-provider";
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from "@mintplayer/player-provider";
 import { BehaviorSubject, Subject, filter, fromEvent, take, takeUntil, timer } from 'rxjs';
 
 export class FileApiService implements IApiService {

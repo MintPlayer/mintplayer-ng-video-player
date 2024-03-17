@@ -1,6 +1,6 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { ECapability, EPlayerState, IApiService, VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, VIDEO_APIS } from '@mintplayer/player-provider';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { BehaviorSubject, Observable, map } from 'rxjs';

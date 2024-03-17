@@ -1,5 +1,5 @@
 import { loadScript } from '@mintplayer/script-loader';
-import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/player-provider';
 import { Subject } from 'rxjs';
 
 // https://wistia.com/support/developers/player-api#volumechange

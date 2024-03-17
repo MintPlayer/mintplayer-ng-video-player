@@ -1,4 +1,4 @@
-import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/player-provider';
 import { loadScript } from '@mintplayer/script-loader';
 import VidyardEmbed, { VidyardApi, VidyardEventMap, VidyardPlayer } from '@vidyard/embed-code';
 import { Subject, BehaviorSubject, map, filter, take, takeUntil, fromEvent } from 'rxjs';

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoPlayerModule } from '@mintplayer/ng-video-player';
-import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { VIDEO_APIS } from '@mintplayer/player-provider';
 import { FileApiService } from './file-api.service';
 
 @NgModule({

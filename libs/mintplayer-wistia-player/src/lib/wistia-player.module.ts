@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { VIDEO_APIS } from '@mintplayer/player-provider';
 import { WistiaService } from './services/wistia.service';
 
 @NgModule({

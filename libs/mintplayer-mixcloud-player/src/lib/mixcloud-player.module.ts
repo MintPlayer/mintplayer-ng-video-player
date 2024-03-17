@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VideoPlayerComponent, VideoPlayerModule } from '@mintplayer/ng-video-player';
-import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
+import { VIDEO_APIS } from '@mintplayer/player-provider';
 import { MixcloudApiService } from './mixcloud-api.service';
 
 @NgModule({

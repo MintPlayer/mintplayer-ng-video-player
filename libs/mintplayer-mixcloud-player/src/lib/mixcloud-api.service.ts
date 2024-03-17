@@ -1,4 +1,4 @@
-import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 import { MixcloudPlayerExternalWidgetApiRPC, PlayerWidget } from './remote/widgetApi';
 
