@@ -1,5 +1,5 @@
 import { EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { Subject, filter, pairwise } from 'rxjs';
+import { Subject, filter, pairwise, takeUntil } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
 import { PlaybackUpdateEvent, SpotifyIframeApi } from '../../interfaces/spotify-iframe-api';
 

@@ -222,11 +222,12 @@ export class FileApiService implements IApiService {
         analyzer.connect(audioContext.destination);
         this.frameLooper(analyzer, canvas, destroy);
 
-        destroy.onDestroy(() => {
+        const subscription = destroy.pipe(filter(d => d)).subscribe(() => {
             analyzer.disconnect();
             source.disconnect();
             audioContext.close();
             resizeObserver.unobserve(canvas);
+            subscription.unsubscribe();
         });
     }
 
@@ -237,7 +238,10 @@ export class FileApiService implements IApiService {
         }
 
         let cancelled = false;
-        destroy.onDestroy(() => cancelled = true);
+        const subscription = destroy.pipe(filter(d => d)).subscribe(() => {
+            cancelled = true;
+            subscription.unsubscribe();
+        });
 
         if (typeof window !== 'undefined') {
             const anyWindow = <any>window;

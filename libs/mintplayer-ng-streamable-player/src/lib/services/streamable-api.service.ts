@@ -133,7 +133,7 @@ export class StreamableService implements IApiService {
             });
 
             
-          if (!isPlatformServer(this.platformId)) {
+          if (typeof window !== 'undefined') {
             timer(0, 50)
               .pipe(takeUntil(destroyRef), takeUntil(destroy))
               .subscribe(() => {
