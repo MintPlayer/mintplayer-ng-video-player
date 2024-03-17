@@ -1,17 +1,10 @@
-import { DestroyRef, Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { loadScript } from '@mintplayer/script-loader';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { isPlatformServer } from '@angular/common';
 import { Subject } from 'rxjs';
 
 // https://wistia.com/support/developers/player-api#volumechange
 
-@Injectable({
-  providedIn: 'root'
-})
 export class WistiaService implements IApiService {
-
-  constructor(@Inject(PLATFORM_ID) private platformId: any) { }
 
   public get id() {
     return 'wistia';
@@ -41,9 +34,9 @@ export class WistiaService implements IApiService {
     return false;
   }
 
-  createPlayer(options: PlayerOptions, destroy: DestroyRef) {
+  createPlayer(options: PlayerOptions, destroy: Subject<boolean>) {
     return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
-      if (isPlatformServer(this.platformId)) {
+      if (typeof window !== 'undefined') {
         // Do not resolve this promise during SSR
         return;
       }
@@ -61,7 +54,7 @@ export class WistiaService implements IApiService {
       const request: WistiaRequest = {
         id: options.domId,
         onReady: (player) => {
-          const destroyRef = new Subject();
+          const destroyRef = new Subject<boolean>();
           const adapter = createPlayerAdapter({
             capabilities: [ECapability.mute, ECapability.volume, ECapability.fullscreen, ECapability.getTitle],
             loadVideoById: (id: string) => {

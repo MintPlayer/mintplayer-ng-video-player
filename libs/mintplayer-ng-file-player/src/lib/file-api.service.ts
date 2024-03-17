@@ -1,18 +1,7 @@
-import { DestroyRef, EventEmitter, Inject, Injectable, PLATFORM_ID } from "@angular/core";
-import { DOCUMENT, isPlatformServer } from "@angular/common";
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from "@mintplayer/ng-player-provider";
 import { BehaviorSubject, Subject, filter, fromEvent, take, takeUntil, timer } from 'rxjs';
 
-@Injectable({
-    providedIn: 'root'
-})
 export class FileApiService implements IApiService {
-    constructor(@Inject(PLATFORM_ID) private platformId: object, @Inject(DOCUMENT) doc: any) {
-        this.document = doc;
-    }
-
-    private document: Document;
 
     public get id() {
         return 'file';
@@ -73,7 +62,7 @@ export class FileApiService implements IApiService {
         }
     }
 
-    public createPlayer(options: PlayerOptions, destroy: DestroyRef) {
+    public createPlayer(options: PlayerOptions, destroy: Subject<boolean>) {
         return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
             if (!options.element) {
                 return rejectPlayer('The FilePlayer requires the options.element to be set');
@@ -86,10 +75,10 @@ export class FileApiService implements IApiService {
 
             const divElement = options.element.querySelector('div')!;
 
-            const destroyRef = new Subject();
+            const destroyRef = new Subject<boolean>();
             let adapter: PlayerAdapter;
             fromEvent(mediaElement, 'canplay')
-                .pipe(take(1), takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                .pipe(take(1), takeUntil(destroyRef), takeUntil(destroy))
                 .subscribe(() => {
                 adapter = createPlayerAdapter({
                     capabilities: [ECapability.volume, ECapability.mute, ECapability.fullscreen, ECapability.pictureInPicture],
@@ -122,8 +111,8 @@ export class FileApiService implements IApiService {
                         if (isFullscreen) {
                             divElement.requestFullscreen();
                         } else {
-                            if (this.document.fullscreenElement === divElement) {
-                                this.document.exitFullscreen();
+                            if (document.fullscreenElement === divElement) {
+                                document.exitFullscreen();
                             }
                         }
                     },
@@ -133,8 +122,8 @@ export class FileApiService implements IApiService {
                             if (isPip) {
                                 mediaElement.requestPictureInPicture();
                             } else {
-                                if (this.document.pictureInPictureElement === mediaElement) {
-                                    this.document.exitPictureInPicture();
+                                if (document.pictureInPictureElement === mediaElement) {
+                                    document.exitPictureInPicture();
                                 }
                             }
                         }
@@ -144,8 +133,8 @@ export class FileApiService implements IApiService {
                         mediaElement.pause();
                         mediaElement.removeAttribute('src');
                         mediaElement.load();
-                        if (this.document.pictureInPictureElement === mediaElement) {
-                            this.document.exitPictureInPicture();
+                        if (document.pictureInPictureElement === mediaElement) {
+                            document.exitPictureInPicture();
                         }
                         destroyRef.next(true);
                     }
@@ -158,44 +147,44 @@ export class FileApiService implements IApiService {
                     }
 
                     fromEvent(divElement, 'fullscreenchange')
-                        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                        .subscribe(() => adapter.onFullscreenChange(this.document.fullscreenElement === divElement));
+                        .pipe(takeUntil(destroyRef), takeUntil(destroy))
+                        .subscribe(() => adapter.onFullscreenChange(document.fullscreenElement === divElement));
                 } else {
                     fromEvent(mediaElement, 'fullscreenchange')
-                        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                        .subscribe(() => adapter.onFullscreenChange(this.document.fullscreenElement === mediaElement));
+                        .pipe(takeUntil(destroyRef), takeUntil(destroy))
+                        .subscribe(() => adapter.onFullscreenChange(document.fullscreenElement === mediaElement));
                 }
 
                 fromEvent(mediaElement, 'volumechange')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(() => {
                         adapter.onVolumeChange(mediaElement.volume * 100);
                         adapter.onMuteChange(mediaElement.muted);
                     });
 
                 fromEvent(mediaElement, 'enterpictureinpicture')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(() => adapter.onPipChange(true));
 
                 fromEvent(mediaElement, 'leavepictureinpicture')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(() => adapter.onPipChange(false));
 
                 fromEvent(mediaElement, 'play')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(() => adapter.onStateChange(EPlayerState.playing));
 
                 fromEvent(mediaElement, 'pause')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(() => adapter.onStateChange(EPlayerState.paused));
 
                 fromEvent(mediaElement, 'ended')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(() => adapter.onStateChange(EPlayerState.ended));
 
-                if (!isPlatformServer(this.platformId)) {
+                    if (typeof window !== 'undefined') {
                     timer(0, 50)
-                        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                        .pipe(takeUntil(destroyRef), takeUntil(destroy))
                         .subscribe(() => {
                             adapter.onCurrentTimeChange(mediaElement.currentTime);
                             adapter.onDurationChange(mediaElement.duration);
@@ -212,7 +201,7 @@ export class FileApiService implements IApiService {
         });
     }
 
-    private createEqualizer(audio: HTMLAudioElement, canvas: HTMLCanvasElement, destroy: DestroyRef) {
+    private createEqualizer(audio: HTMLAudioElement, canvas: HTMLCanvasElement, destroy: Subject<boolean>) {
         const audioContext = new AudioContext();
         const analyzer = audioContext.createAnalyser();
         const setFftSize = (width: number) => {
@@ -241,7 +230,7 @@ export class FileApiService implements IApiService {
         });
     }
 
-    private frameLooper(analyser: AnalyserNode, canvas: HTMLCanvasElement, destroy: DestroyRef) {
+    private frameLooper(analyser: AnalyserNode, canvas: HTMLCanvasElement, destroy: Subject<boolean>) {
         const drawContext = canvas.getContext('2d');
         if (!drawContext) {
             throw 'Could not get drawing context';
