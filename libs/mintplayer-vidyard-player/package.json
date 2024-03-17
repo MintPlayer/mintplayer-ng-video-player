@@ -1,18 +1,19 @@
 {
-  "name": "@mintplayer/ng-file-player",
+  "name": "@mintplayer/vidyard-player",
   "private": false,
   "type": "module",
-  "version": "17.0.3",
+  "version": "17.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
-    "directory": "libs/mintplayer-ng-file-player"
+    "directory": "libs/mintplayer-vidyard-player"
   },
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "peerDependencies": {
     "@mintplayer/ng-video-player": "^17.0.0",
-    "@mintplayer/ng-canvas-resizer": "^17.0.0",
+    "@mintplayer/script-loader": "^1.1.0",
+    "@vidyard/embed-code": "^4.0.0",
     "rxjs": "^7.4.0"
   },
   "dependencies": {
