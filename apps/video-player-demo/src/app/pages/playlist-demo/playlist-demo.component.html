@@ -4,7 +4,7 @@
         <div [bsColumn]="{'xl': 9}" class="text-center">
             <!-- <video-player [width]="400" [height]="300" (playerStateChange)="onPlayerStateChange($event)"
                 (progressChange)="onProgressChange($event)" #player></video-player> -->
-            <video-player [width]="400" [height]="300" #player></video-player>
+            <video-player [width]="400" [height]="300" (playerStateChange)="onPlayerStateChange($event)" #player></video-player>
             <div class="d-block">
                 <button class="float-start" [color]="colors.secondary" (click)="onPrevious()">Previous</button>
                 <button class="float-end" [color]="colors.secondary" (click)="onNext()">Next</button>

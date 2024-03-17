@@ -33,7 +33,7 @@
                         (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
                         (playerStateChange)="onPlayerStateChange($event)" [(isPip)]="isPip" [(isFullscreen)]="isFullscreen"
                         (capabilitiesChange)="onCapabilitiesChange($event)" #player1></video-player> -->
-                    <video-player [width]="width" [height]="height" #player1></video-player>
+                    <video-player [width]="width" [height]="height" [(playerState)]="playerState" #player1></video-player>
                 </div>
                 <div bsRow>
                     <div [bsColumn]="{'md': 6}" class="text-center">

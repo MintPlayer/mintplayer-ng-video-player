@@ -1,5 +1,7 @@
-import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Input, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import { VideoPlayer } from "@mintplayer/video-player";
+import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Input, NgZone, OnDestroy, Output, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EPlayerState } from '@mintplayer/player-provider';
+import { VideoPlayer, fromVideoEvent } from "@mintplayer/video-player";
 
 @Component({
   selector: 'video-player',
@@ -11,7 +13,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   constructor(
     private zone: NgZone,
     // videoPlayerService: VideoPlayerService,
-    destroy: DestroyRef,
+    private destroy: DestroyRef,
   ) {
     // //#region [isViewInited$, url$] => videoRequest$
     // combineLatest([this.isViewInited$, this.url$])
@@ -158,12 +160,14 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   // //#region progress
   // @Output() public progressChange = new EventEmitter<PlayerProgress>();
   // //#endregion
-  // //#region playerState
-  // @Input() set playerState(value: EPlayerState) {
-  //   this.playerInfo?.adapter.setPlayerState(value);
-  // }
-  // @Output() public playerStateChange = new EventEmitter<EPlayerState>();
-  // //#endregion
+  //#region playerState
+  @Input() set playerState(value: EPlayerState) {
+    if (this.player) {
+      this.player.playerState = value;
+    }
+  }
+  @Output() public playerStateChange = new EventEmitter<EPlayerState>();
+  //#endregion
   // //#region title
   // public getTitle() {
   //   return new Promise<string | null>((resolve) => {
@@ -275,6 +279,11 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     // this.isViewInited$.next(true);
     this.player = new VideoPlayer(this.container.nativeElement);
+    fromVideoEvent(this.player, 'stateChange').pipe(takeUntilDestroyed(this.destroy))
+      .subscribe(([state]) => {
+        console.warn('stateChange', state);
+        this.playerStateChange.emit(state);
+      });
   }
 
   ngOnDestroy() {
