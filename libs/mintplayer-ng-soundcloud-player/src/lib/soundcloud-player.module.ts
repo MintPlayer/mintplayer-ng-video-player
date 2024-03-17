@@ -14,4 +14,8 @@ import { SoundcloudApiService } from './services/soundcloud-api/soundcloud-api.s
   }],
   exports: [VideoPlayerComponent]
 })
-export class SoundcloudPlayerModule { }
+export class SoundcloudPlayerModule {
+  constructor() {
+    console.log('hello world');
+  }
+}
