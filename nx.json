@@ -1,7 +1,4 @@
 {
-  "affected": {
-    "defaultBase": "master"
-  },
   "cli": {
     "packageManager": "npm"
   },
@@ -62,6 +59,10 @@
           "codeCoverage": true
         }
       }
+    },
+    "@nx/eslint:lint": {
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
+      "cache": true
     }
   },
   "namedInputs": {
@@ -77,5 +78,7 @@
     ]
   },
   "useDaemonProcess": false,
-  "nxCloudAccessToken": "YjkyZDQ0ZjAtMzkxOS00ODRmLTkxNmUtY2ZmNDJhZTY2ZDA0fHJlYWQtd3JpdGU="
+  "nxCloudAccessToken": "YjkyZDQ0ZjAtMzkxOS00ODRmLTkxNmUtY2ZmNDJhZTY2ZDA0fHJlYWQtd3JpdGU=",
+  "useInferencePlugins": false,
+  "defaultBase": "master"
 }
