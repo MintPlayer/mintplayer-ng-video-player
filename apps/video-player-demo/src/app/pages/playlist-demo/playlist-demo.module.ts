@@ -8,6 +8,8 @@ import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
 import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
 
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
+
 import { PlaylistDemoRoutingModule } from './playlist-demo-routing.module';
 import { PlaylistDemoComponent } from './playlist-demo.component';
 
@@ -25,6 +27,9 @@ import { PlaylistDemoComponent } from './playlist-demo.component';
     BsListGroupModule,
     BsButtonTypeModule,
     BsToggleButtonModule,
+
+    VideoPlayerComponent,
+
     PlaylistDemoRoutingModule
   ]
 })

@@ -11,6 +11,8 @@ import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
 import { BsButtonGroupModule } from '@mintplayer/ng-bootstrap/button-group';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
 
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
+
 import { VideoDemoRoutingModule } from './video-demo-routing.module';
 import { VideoDemoComponent } from './video-demo.component';
 
@@ -30,6 +32,8 @@ import { VideoDemoComponent } from './video-demo.component';
     BsButtonGroupModule,
     BsToggleButtonModule,
     BsAlertModule,
+   
+    VideoPlayerComponent,
     
     VideoDemoRoutingModule
   ]
