@@ -2,7 +2,7 @@
   "name": "mintplayer-ng-player-progress",
   "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
-  "sourceRoot": "libs/mintplayer-ng-player-progress/src",
+  "sourceRoot": "libs/mintplayer-player-progress/src",
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",

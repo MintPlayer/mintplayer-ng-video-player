@@ -1,7 +1,7 @@
 {
   "name": "mintplayer-ng-twitch-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/mintplayer-ng-twitch-player/src",
+  "sourceRoot": "libs/mintplayer-twitch-player/src",
   "tags": [],
   "projectType": "library",
   "targets": {

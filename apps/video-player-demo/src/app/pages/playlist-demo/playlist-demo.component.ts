@@ -1,11 +1,24 @@
 import { AfterViewInit, ChangeDetectorRef, Component, NgZone, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { PlayerProgress } from '@mintplayer/ng-player-progress';
-import { ERepeatMode, PlaylistController } from '@mintplayer/ng-playlist-controller';
+import { PlayerProgress } from '@mintplayer/player-progress';
+import { ERepeatMode, PlaylistController } from '@mintplayer/playlist-controller';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { Video } from '../../interfaces/video';
-import { EPlayerState } from '@mintplayer/player-provider';
+import { EPlayerState, loadApi } from '@mintplayer/player-provider';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { youtubeLoader } from '@mintplayer/youtube-player';
+import { dailyMotionLoader } from '@mintplayer/dailymotion-player';
+import { vimeoLoader } from '@mintplayer/vimeo-player';
+import { soundCloudLoader } from '@mintplayer/soundcloud-player';
+import { mixCloudLoader } from '@mintplayer/mixcloud-player';
+import { twitchLoader } from '@mintplayer/twitch-player';
+import { spotifyLoader } from '@mintplayer/spotify-player';
+import { streamableLoader } from '@mintplayer/streamable-player';
+import { facebookLoader } from '@mintplayer/facebook-player';
+import { fileLoader } from '@mintplayer/file-player';
+import { vidyardLoader } from '@mintplayer/vidyard-player';
+import { wistiaLoader } from '@mintplayer/wistia-player';
 
 @Component({
   selector: 'mintplayer-ng-video-player-playlist-demo',
@@ -18,6 +31,9 @@ export class PlaylistDemoComponent implements AfterViewInit {
     private ref: ChangeDetectorRef,
     private zone: NgZone
   ) {
+    loadApi(youtubeLoader, dailyMotionLoader, vimeoLoader, soundCloudLoader, mixCloudLoader, twitchLoader,
+      spotifyLoader, streamableLoader, facebookLoader, fileLoader, vidyardLoader, wistiaLoader);
+
     this.playlistController = playlistController;
     this.playlistController.video$
       .pipe(takeUntilDestroyed())

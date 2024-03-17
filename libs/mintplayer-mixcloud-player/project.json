@@ -1,7 +1,7 @@
 {
   "name": "mintplayer-ng-mixcloud-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/mintplayer-ng-mixcloud-player/src",
+  "sourceRoot": "libs/mintplayer-mixcloud-player/src",
   "tags": [],
   "projectType": "library",
   "targets": {

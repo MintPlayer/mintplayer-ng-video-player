@@ -2,7 +2,7 @@
   "name": "mintplayer-ng-youtube-player",
   "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
-  "sourceRoot": "libs/mintplayer-ng-youtube-player/src",
+  "sourceRoot": "libs/mintplayer-youtube-player/src",
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",

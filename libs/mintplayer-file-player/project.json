@@ -1,7 +1,7 @@
 {
   "name": "mintplayer-ng-file-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/mintplayer-ng-file-player/src",
+  "sourceRoot": "libs/mintplayer-file-player/src",
   "tags": [],
   "projectType": "library",
   "targets": {

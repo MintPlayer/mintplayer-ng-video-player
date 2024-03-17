@@ -7,7 +7,6 @@
     "types": ["jest", "node", "vidyard"],
     "typeRoots": ["types", "../../node_modules/@types"]
   },
-  "files": ["src/test-setup.ts"],
   "include": [
     "jest.config.ts",
     "src/**/*.test.ts",

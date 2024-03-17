@@ -2,7 +2,7 @@ import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Input, 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
-import { PlayerProgress } from '@mintplayer/ng-player-progress';
+import { PlayerProgress } from '@mintplayer/player-progress';
 import { ECapability, EPlayerState, PlayerAdapter } from '@mintplayer/player-provider';
 import { VideoRequest } from '../../interfaces/video-request';
 import { VideoPlayerService } from '../../services/video-player.service';
@@ -55,7 +55,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 domId: this.domId,
                 element: this.container.nativeElement,
                 initialVideoId: videoRequest.id,
-              }, destroy).then(adapter => {
+              }, this.destroyed$).then(adapter => {
                 this.playerInfo = {
                   platformId: videoRequest.api.id,
                   videoId: videoRequest.id,
@@ -133,6 +133,8 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     this.progressObserver$.pipe(takeUntilDestroyed())
       .subscribe(progress => this.zoneEmit(this.progressChange, progress));
   }
+
+  destroyed$ = new Subject<boolean>();
 
   private zoneEmit<T>(emitter: EventEmitter<T>, value?: T) {
     this.zone.run(() => emitter.emit(value));
@@ -274,5 +276,6 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.playerInfo?.adapter?.destroy();
+    this.destroyed$.next(true);
   }
 }

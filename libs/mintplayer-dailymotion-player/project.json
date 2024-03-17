@@ -2,7 +2,7 @@
   "name": "mintplayer-ng-dailymotion-player",
   "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
-  "sourceRoot": "libs/mintplayer-ng-dailymotion-player/src",
+  "sourceRoot": "libs/mintplayer-dailymotion-player/src",
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",

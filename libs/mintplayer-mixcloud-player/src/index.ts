@@ -1,2 +1,3 @@
-export * from './lib/mixcloud-player.module';
-export * from './lib/mixcloud-api.service';
+import { ApiLoader } from "@mintplayer/player-provider";
+
+export const mixCloudLoader: ApiLoader = () => import('@mintplayer/mixcloud-player/api').then(m => new m.MixcloudApiService());

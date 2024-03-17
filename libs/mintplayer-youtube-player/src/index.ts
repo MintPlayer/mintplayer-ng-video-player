@@ -1,2 +1,3 @@
-export * from './lib/youtube-player.module';
-export * from './lib/youtube-api.service';
+import { ApiLoader } from "@mintplayer/player-provider";
+
+export const youtubeLoader: ApiLoader = () => import('@mintplayer/youtube-player/api').then(m => new m.YoutubeApiService());

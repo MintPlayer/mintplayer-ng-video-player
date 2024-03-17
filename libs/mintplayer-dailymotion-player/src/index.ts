@@ -1,2 +1,3 @@
-export * from './lib/dailymotion-player.module';
-export * from './lib/dailymotion-api.service';
+import { ApiLoader } from "@mintplayer/player-provider";
+
+export const dailyMotionLoader: ApiLoader = () => import('@mintplayer/dailymotion-player/api').then(m => new m.DailymotionApiService());

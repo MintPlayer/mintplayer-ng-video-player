@@ -2,7 +2,7 @@
   "name": "mintplayer-ng-playlist-controller",
   "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
-  "sourceRoot": "libs/mintplayer-ng-playlist-controller/src",
+  "sourceRoot": "libs/mintplayer-playlist-controller/src",
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",

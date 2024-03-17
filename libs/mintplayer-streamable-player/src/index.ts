@@ -1,2 +1,3 @@
-export * from './lib/streamable-player.module';
-export * from './lib/services/streamable-api.service';
+import { ApiLoader } from "@mintplayer/player-provider";
+
+export const streamableLoader: ApiLoader = () => import('@mintplayer/streamable-player/api').then(m => new m.StreamableService());

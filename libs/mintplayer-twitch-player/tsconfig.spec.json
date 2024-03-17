@@ -7,7 +7,6 @@
     "typeRoots": ["../../node_modules/@types", "./types"],
     "types": ["jest", "node", "twitch"]
   },
-  "files": ["src/test-setup.ts"],
   "include": [
     "jest.config.ts",
     "src/**/*.test.ts",

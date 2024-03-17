@@ -1,2 +1,3 @@
-export * from './lib/twitch-player.module';
-export * from './lib/services/twitch-api.service';
+import { ApiLoader } from "@mintplayer/player-provider";
+
+export const twitchLoader: ApiLoader = () => import('@mintplayer/twitch-player/api').then(m => new m.TwitchApiService());
