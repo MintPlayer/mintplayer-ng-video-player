@@ -2,7 +2,7 @@
   "name": "@mintplayer/facebook-player",
   "private": false,
   "type": "module",
-  "version": "17.0.1",
+  "version": "17.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
@@ -15,7 +15,7 @@
     "./api": "./api/src/index.js"
   },
   "peerDependencies": {
-    "@mintplayer/ng-video-player": "^17.0.0",
+    "@mintplayer/player-provider": "^17.0.0",
     "@mintplayer/script-loader": "^1.1.0",
     "rxjs": "^7.4.0"
   },

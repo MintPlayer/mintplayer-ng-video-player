@@ -1,10 +1,8 @@
-import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ERepeatMode } from '../../enums/repeat-mode';
 import { NextVideoResult } from '../../interfaces/next-video-result';
 import { PlayedVideo } from '../../interfaces/played-video';
 
-@Injectable()
 export class PlaylistController<TVideo> {
 
   private _playlist: TVideo[] = [];

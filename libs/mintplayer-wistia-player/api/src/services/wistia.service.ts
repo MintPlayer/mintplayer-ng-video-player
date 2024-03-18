@@ -146,8 +146,6 @@ export class WistiaService implements IApiService {
           // player.bind('betweentimes', 30, 60, handlers.get('betweentimes'));
           // player.bind('crosstime', 30, handlers.get('crosstime'));
 
-          console.warn('player', player);
-
           resolvePlayer(adapter);
         }
       };

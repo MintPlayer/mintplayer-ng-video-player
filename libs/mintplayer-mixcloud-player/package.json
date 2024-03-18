@@ -15,7 +15,7 @@
     "./api": "./api/src/index.js"
   },
   "peerDependencies": {
-    "@mintplayer/ng-video-player": "^17.0.0",
+    "@mintplayer/player-provider": "^17.0.0",
     "rxjs": "^7.4.0"
   },
   "dependencies": {

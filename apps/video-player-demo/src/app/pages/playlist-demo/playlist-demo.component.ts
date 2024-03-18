@@ -27,14 +27,13 @@ import { wistiaLoader } from '@mintplayer/wistia-player';
 })
 export class PlaylistDemoComponent implements AfterViewInit {
   constructor(
-    playlistController: PlaylistController<Video>,
     private ref: ChangeDetectorRef,
     private zone: NgZone
   ) {
     loadApi(youtubeLoader, dailyMotionLoader, vimeoLoader, soundCloudLoader, mixCloudLoader, twitchLoader,
       spotifyLoader, streamableLoader, facebookLoader, fileLoader, vidyardLoader, wistiaLoader);
 
-    this.playlistController = playlistController;
+    this.playlistController = new PlaylistController<Video>();
     this.playlistController.video$
       .pipe(takeUntilDestroyed())
       .subscribe((video) => {

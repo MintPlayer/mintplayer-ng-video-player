@@ -134,7 +134,6 @@ export class VideoPlayer {
 
   //#region Event handling
   public on<K extends keyof VideoEventMap>(event: K, handler: (...args: VideoEventMap[K]) => void) {
-    console.warn('on');
     this.handlers.push({ event, handler });
   }
   public off<K extends keyof VideoEventMap>(ev: K, handler: (...args: VideoEventMap[K]) => void) {

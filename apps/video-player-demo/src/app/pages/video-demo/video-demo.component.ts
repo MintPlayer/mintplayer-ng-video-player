@@ -102,7 +102,7 @@ export class VideoDemoComponent {
   @ViewChild('player1') player1!: VideoPlayerComponent;
   playVideo(video: string) {
     // Pick one here
-    this.url = video; // This will not replay the video when the url is the same.
+    // this.url = video; // This will not replay the video when the url is the same.
     this.player1.setUrl(video); // This will replay the video when the url is the same.
 
     return false;

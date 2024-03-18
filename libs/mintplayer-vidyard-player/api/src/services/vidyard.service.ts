@@ -107,7 +107,6 @@ export class VidyardService implements IApiService {
       playerReady$.pipe(filter(([ready]) => ready), take(1), takeUntil(destroyRef), takeUntil(destroy))
         .subscribe(([_, plr]) => {
           const player = plr!;
-          console.warn('player', plr);
           const adapter = createPlayerAdapter({
             capabilities: [ECapability.volume],
             loadVideoById: (id: string) => {
