@@ -1,5 +1,5 @@
 {
-  "name": "mintplayer-ng-facebook-player",
+  "name": "mintplayer-facebook-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/mintplayer-facebook-player/src",
   "tags": [],

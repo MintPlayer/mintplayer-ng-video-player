@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'mintplayer-ng-soundcloud-player',
+  displayName: 'mintplayer-soundcloud-player',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   transform: {

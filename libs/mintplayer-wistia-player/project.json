@@ -1,5 +1,5 @@
 {
-  "name": "mintplayer-ng-wistia-player",
+  "name": "mintplayer-wistia-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/mintplayer-wistia-player/src",
   "tags": [],

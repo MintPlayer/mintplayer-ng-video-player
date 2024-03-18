@@ -1,5 +1,5 @@
 {
-  "name": "mintplayer-ng-soundcloud-player",
+  "name": "mintplayer-soundcloud-player",
   "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/mintplayer-soundcloud-player/src",

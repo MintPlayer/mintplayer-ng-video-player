@@ -1,9 +1,9 @@
 /* eslint-disable */
 export default {
-  displayName: 'mintplayer-ng-facebook-player',
+  displayName: 'mintplayer-facebook-player',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-facebook-player',
+  coverageDirectory: '../../coverage/libs/mintplayer-facebook-player',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

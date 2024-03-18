@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'mintplayer-ng-playlist-controller',
+  displayName: 'mintplayer-playlist-controller',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   transform: {

@@ -1,7 +1,7 @@
-# mintplayer-ng-wistia-player
+# mintplayer-wistia-player
 
 This library was generated with [Nx](https://nx.dev).
 
 ## Running unit tests
 
-Run `nx test mintplayer-ng-wistia-player` to execute the unit tests.
+Run `nx test mintplayer-wistia-player` to execute the unit tests.

@@ -1,9 +1,9 @@
 /* eslint-disable */
 export default {
-  displayName: 'mintplayer-ng-mixcloud-player',
+  displayName: 'mintplayer-mixcloud-player',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-mixcloud-player',
+  coverageDirectory: '../../coverage/libs/mintplayer-mixcloud-player',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

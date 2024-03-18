@@ -1,9 +1,9 @@
 /* eslint-disable */
 export default {
-  displayName: 'mintplayer-ng-wistia-player',
+  displayName: 'mintplayer-wistia-player',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-wistia-player',
+  coverageDirectory: '../../coverage/libs/mintplayer-wistia-player',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

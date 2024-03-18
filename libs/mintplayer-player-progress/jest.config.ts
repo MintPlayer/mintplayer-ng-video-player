@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'mintplayer-ng-player-progress',
+  displayName: 'mintplayer-player-progress',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   transform: {

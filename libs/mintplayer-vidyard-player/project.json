@@ -1,5 +1,5 @@
 {
-  "name": "mintplayer-ng-vidyard-player",
+  "name": "mintplayer-vidyard-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/mintplayer-vidyard-player/src",
   "tags": [],

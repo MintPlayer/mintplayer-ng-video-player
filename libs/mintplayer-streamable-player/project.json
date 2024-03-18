@@ -1,5 +1,5 @@
 {
-  "name": "mintplayer-ng-streamable-player",
+  "name": "mintplayer-streamable-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/mintplayer-streamable-player/src",
   "tags": [],

@@ -1,9 +1,9 @@
 /* eslint-disable */
 export default {
-  displayName: 'mintplayer-ng-spotify-player',
+  displayName: 'mintplayer-spotify-player',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-spotify-player',
+  coverageDirectory: '../../coverage/libs/mintplayer-spotify-player',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

@@ -1,9 +1,9 @@
 /* eslint-disable */
 export default {
-  displayName: 'mintplayer-ng-streamable-player',
+  displayName: 'mintplayer-streamable-player',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/libs/mintplayer-ng-streamable-player',
+  coverageDirectory: '../../coverage/libs/mintplayer-streamable-player',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

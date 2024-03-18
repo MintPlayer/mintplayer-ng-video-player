@@ -1,5 +1,5 @@
 {
-  "name": "mintplayer-ng-vimeo-player",
+  "name": "mintplayer-vimeo-player",
   "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/mintplayer-vimeo-player/src",
