@@ -5,10 +5,10 @@
     "module": "commonjs",
     "typeRoots": [
       "../../node_modules/@types",
-      "../../libs/mintplayer-ng-dailymotion-player/types",
-      "../../libs/mintplayer-ng-soundcloud-player/types",
-      "../../libs/mintplayer-ng-vimeo-player/types",
-      "../../libs/mintplayer-ng-twitch-player/types"
+      "../../libs/mintplayer-dailymotion-player/types",
+      "../../libs/mintplayer-soundcloud-player/types",
+      "../../libs/mintplayer-vimeo-player/types",
+      "../../libs/mintplayer-twitch-player/types"
     ],
     "types": ["jest", "node", "youtube", "dailymotion", "vimeo", "soundcloud", "twitch"]
   },
