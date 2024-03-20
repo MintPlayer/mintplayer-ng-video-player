@@ -1,41 +1,46 @@
 {
   "name": "mintplayer-dailymotion-player",
-  "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
-  "projectType": "library",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/mintplayer-dailymotion-player/src",
+  "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/mintplayer-dailymotion-player",
         "main": "libs/mintplayer-dailymotion-player/src/index.ts",
-        "tsConfig": "libs/mintplayer-dailymotion-player/tsconfig.lib.json"
-      },
-      "configurations": {
-        "production": {
-          "tsConfig": "libs/mintplayer-dailymotion-player/tsconfig.lib.prod.json"
-        },
-        "development": {
-          "tsConfig": "libs/mintplayer-dailymotion-player/tsconfig.lib.json"
-        }
-      },
-      "defaultConfiguration": "production"
+        "tsConfig": "libs/mintplayer-dailymotion-player/tsconfig.lib.json",
+        "assets": ["libs/mintplayer-dailymotion-player/*.md"],
+        "generatePackageJson": true,
+        "format": ["cjs"]
+      }
     },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["coverage/libs/mintplayer-dailymotion-player"],
+    "nx-release-publish": {
       "options": {
-        "codeCoverage": true,
-        "coverageReporters": ["lcovonly"],
-        "coverageDirectory": "coverage/libs/mintplayer-dailymotion-player",
-        "jestConfig": "libs/mintplayer-dailymotion-player/jest.config.ts"
+        "packageRoot": "dist\\{projectRoot}"
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "codeCoverage": true,
+        "coverageReporters": ["lcovonly"],
+        "jestConfig": "libs/mintplayer-dailymotion-player/jest.config.ts"
+      }
     }
   },
-  "tags": []
+  "tags": [],
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist\\{projectRoot}",
+        "currentVersionResolver": "git-tag"
+      }
+    }
+  }
 }
