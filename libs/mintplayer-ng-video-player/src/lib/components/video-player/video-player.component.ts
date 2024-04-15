@@ -12,34 +12,20 @@ import { CommonModule } from '@angular/common';
   selector: 'video-player',
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.scss'],
-  standalone: false,
-  // imports: [CommonModule],
-  // // providers: [VideoPlayerService],
-  // providers: [{
-  //   provide: VIDEO_APIS,
-  //   useValue: []
-  // }]
+  standalone: true,
+  imports: [CommonModule],
 })
 export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
-  // static withPlatforms(...platforms: Type<IApiService>[]): ModuleWithProviders<VideoPlayerComponent> {
-  //   return {
-  //     ngModule: VideoPlayerComponent,
-  //     // providers: platforms.map(p => ({
-  //     //   provide: VIDEO_APIS,
-  //     //   multi: true,
-  //     //   useClass: p
-  //     // }))
-  //     providers: [{
-  //       provide: VIDEO_APIS,
-  //       multi: true,
-  //       // useFactory: (injector: Injector) => {
-  //       //   return platforms.map(p => injector.get(p));
-  //       // },
-  //       useValue: []
-  //     }]
-  //   };
-  // }
+  static withPlatforms(...platforms: Type<IApiService>[]): ModuleWithProviders<VideoPlayerComponent> {
+    return {
+      ngModule: VideoPlayerComponent,
+      providers: [{
+        provide: VIDEO_APIS,
+        useFactory: () => platforms.map(p => new p()),
+      }]
+    };
+  }
 
   findApis(url: string) {
     const matchingApis = this.apis
@@ -345,36 +331,3 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 }
 
 
-@NgModule({
-  imports: [CommonModule],
-  declarations: [VideoPlayerComponent],
-  exports: [VideoPlayerComponent],
-  providers: [{
-    provide: VIDEO_APIS,
-    useValue: []
-  }]
-})
-export class VideoPlayerModule {
-  static withPlatforms(...platforms: Type<IApiService>[]): ModuleWithProviders<VideoPlayerModule> {
-    return {
-      ngModule: VideoPlayerModule,
-      // providers: platforms.map(p => ({
-      //   provide: VIDEO_APIS,
-      //   multi: true,
-      //   useClass: p
-      // }))
-      providers: [{
-        provide: VIDEO_APIS,
-        // // multi: true,
-        // useFactory: (injector: Injector) => {
-        //   return platforms.map(p => injector.get(p));
-        // },
-        // deps: [Injector]
-        // useValue: []
-        useFactory: () => {
-          return platforms.map(p => new p());
-        },
-      }]
-    };
-  }
-}

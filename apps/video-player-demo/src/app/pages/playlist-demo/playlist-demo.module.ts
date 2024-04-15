@@ -12,7 +12,7 @@ import { PlaylistControllerModule } from '@mintplayer/ng-playlist-controller';
 import { PlaylistDemoRoutingModule } from './playlist-demo-routing.module';
 import { PlaylistDemoComponent } from './playlist-demo.component';
 import { YoutubeApiService } from '@mintplayer/ng-youtube-player';
-import { VideoPlayerModule } from '@mintplayer/ng-video-player';
+import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 
 
 @NgModule({
@@ -28,7 +28,7 @@ import { VideoPlayerModule } from '@mintplayer/ng-video-player';
     BsListGroupModule,
     BsButtonTypeModule,
     BsToggleButtonModule,
-    VideoPlayerModule.withPlatforms(YoutubeApiService),
+    VideoPlayerComponent.withPlatforms(YoutubeApiService),
     PlaylistControllerModule,
     PlaylistDemoRoutingModule
   ]
