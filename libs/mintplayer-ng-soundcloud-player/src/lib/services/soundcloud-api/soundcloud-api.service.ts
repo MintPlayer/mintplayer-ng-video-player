@@ -1,5 +1,3 @@
-import { isPlatformServer } from '@angular/common';
-import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
@@ -30,7 +28,7 @@ export class SoundcloudApiService implements IApiService {
     return `<iframe id="${options.domId}" width="${options.width}" height="${options.height}" style="max-width:100%" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&amp;show_teaser=false&amp;" allow="autoplay"></iframe>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+  public createPlayer(options: PlayerOptions, destroy: Subject<boolean>): Promise<PlayerAdapter> {
     return new Promise((resolvePlayer, rejectPlayer) => {
       if (!options.element) {
         return rejectPlayer('The SoundCloud api requires the options.element to be set');
@@ -90,7 +88,7 @@ export class SoundcloudApiService implements IApiService {
         // if (!isPlatformServer(this.platformId)) {
         if (typeof window !== 'undefined') {
           timer(0, 50)
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(() => {
               // Volume
               player.getVolume((currentVolume) => {

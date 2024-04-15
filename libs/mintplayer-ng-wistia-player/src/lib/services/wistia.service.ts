@@ -1,7 +1,5 @@
-import { DestroyRef, Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { loadScript } from '@mintplayer/script-loader';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
-import { isPlatformServer } from '@angular/common';
 import { Subject } from 'rxjs';
 
 // https://wistia.com/support/developers/player-api#volumechange
@@ -41,7 +39,7 @@ export class WistiaService implements IApiService {
     return false;
   }
 
-  createPlayer(options: PlayerOptions, destroy: DestroyRef) {
+  createPlayer(options: PlayerOptions, destroy: Subject<boolean>) {
     return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
       // if (isPlatformServer(this.platformId)) {
       if (typeof window === 'undefined') {

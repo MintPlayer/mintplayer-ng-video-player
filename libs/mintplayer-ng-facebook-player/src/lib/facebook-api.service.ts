@@ -1,6 +1,3 @@
-import { isPlatformServer } from '@angular/common';
-import { Inject, Injectable, DestroyRef, PLATFORM_ID } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { loadScript } from '@mintplayer/script-loader';
 import { takeUntil, timer, Subject, BehaviorSubject, debounceTime, pairwise, combineLatest, filter, take } from 'rxjs';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from "@mintplayer/ng-player-provider";
@@ -42,7 +39,7 @@ export class FacebookApiService implements IApiService {
         return `<div id="${options.domId}" class="fb-video" data-href="${options.initialVideoId}" data-width="${options.width}" data-height="${options.height}" data-autoplay="true" data-allowfullscreen="true" data-controls="true"></div>`;
     }
 
-    public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+    public createPlayer(options: PlayerOptions, destroy: Subject<boolean>): Promise<PlayerAdapter> {
         return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
             const lastPlayerInstance$ = new BehaviorSubject<FB.Player | undefined>(undefined);
             let events: FB.PlayerSubscription[] | undefined;
@@ -136,7 +133,7 @@ export class FacebookApiService implements IApiService {
             if (typeof window !== 'undefined') {
                 combineLatest([lastPlayerInstance$.pipe(debounceTime(500)), timer(0, 50)])
                     .pipe(filter(([player]) => !!player))
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(([player]) => {
                         if (player) {
                             // Progress
@@ -160,7 +157,7 @@ export class FacebookApiService implements IApiService {
                     });
             }
 
-            lastPlayerInstance$.pipe(debounceTime(1500), filter((p) => !!p), take(1), takeUntilDestroyed(destroy)).subscribe((player) => {
+            lastPlayerInstance$.pipe(debounceTime(1500), filter((p) => !!p), take(1), takeUntil(destroy)).subscribe((player) => {
                 if (options.autoplay && player) {
                     setTimeout(() => player.play(), 50);
                 }

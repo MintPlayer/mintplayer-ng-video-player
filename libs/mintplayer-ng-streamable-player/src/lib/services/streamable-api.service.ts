@@ -1,6 +1,3 @@
-import { isPlatformServer } from '@angular/common';
-import { DestroyRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/ng-player-provider';
 import { loadScript } from '@mintplayer/script-loader';
 import { Subject, fromEvent, fromEventPattern, takeUntil, timer } from 'rxjs';
@@ -38,7 +35,7 @@ export class StreamableService implements IApiService {
       ></iframe>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef) {
+  public createPlayer(options: PlayerOptions, destroy: Subject<boolean>) {
     return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
       const iframe = options.element.querySelector('iframe');
 
@@ -53,7 +50,7 @@ export class StreamableService implements IApiService {
         (handler: () => void) => player.on('ready', handler),
         (handler: () => void) => player.off('ready', handler),
       )
-        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+        .pipe(takeUntil(destroyRef), takeUntil(destroy))
         .subscribe(() => {
           const adapter = createPlayerAdapter({
             capabilities: [ECapability.volume, ECapability.mute],
@@ -113,28 +110,28 @@ export class StreamableService implements IApiService {
             (handler: () => void) => player.on('play', handler),
             (handler: () => void) => player.off('play', handler),
           )
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(() => adapter.onStateChange(EPlayerState.playing));
             
           fromEventPattern(
             (handler: () => void) => player.on('pause', handler),
             (handler: () => void) => player.off('pause', handler),
           )
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(() => adapter.onStateChange(EPlayerState.paused));
 
           fromEventPattern(
             (handler: () => void) => player.on('ended', handler),
             (handler: () => void) => player.off('ended', handler),
           )
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(() => adapter.onStateChange(EPlayerState.ended));
 
           fromEventPattern<playerjs.StreamableEventMap['timeupdate']>(
             (handler: () => void) => player.on('timeupdate', handler),
             (handler: () => void) => player.off('timeupdate', handler),
           )
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(({seconds, duration}) => {
               adapter.onCurrentTimeChange(seconds);
               adapter.onDurationChange(duration);
@@ -144,7 +141,7 @@ export class StreamableService implements IApiService {
           // if (!isPlatformServer(this.platformId)) {
           if (typeof window !== 'undefined') {
             timer(0, 50)
-              .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+              .pipe(takeUntil(destroyRef), takeUntil(destroy))
               .subscribe(() => {
                 player.getVolume((volume) => adapter.onVolumeChange(volume));
                 player.getMuted((mute) => adapter.onMuteChange(mute));

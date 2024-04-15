@@ -1,8 +1,5 @@
-import { DestroyRef, EventEmitter, Inject, Injectable, PLATFORM_ID } from "@angular/core";
-import { DOCUMENT, isPlatformServer } from "@angular/common";
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from "@mintplayer/ng-player-provider";
-import { BehaviorSubject, Subject, filter, fromEvent, take, takeUntil, timer } from 'rxjs';
+import { BehaviorSubject, Subject, filter, first, fromEvent, take, takeUntil, timer } from 'rxjs';
 
 // @Injectable({
 //     providedIn: 'root'
@@ -73,7 +70,7 @@ export class FileApiService implements IApiService {
         }
     }
 
-    public createPlayer(options: PlayerOptions, destroy: DestroyRef) {
+    public createPlayer(options: PlayerOptions, destroy: Subject<boolean>) {
         return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
             if (!options.element) {
                 return rejectPlayer('The FilePlayer requires the options.element to be set');
@@ -89,7 +86,7 @@ export class FileApiService implements IApiService {
             const destroyRef = new Subject();
             let adapter: PlayerAdapter;
             fromEvent(mediaElement, 'canplay')
-                .pipe(take(1), takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                .pipe(take(1), takeUntil(destroyRef), takeUntil(destroy))
                 .subscribe(() => {
                 adapter = createPlayerAdapter({
                     capabilities: [ECapability.volume, ECapability.mute, ECapability.fullscreen, ECapability.pictureInPicture],
@@ -158,45 +155,45 @@ export class FileApiService implements IApiService {
                     }
 
                     fromEvent(divElement, 'fullscreenchange')
-                        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                        .pipe(takeUntil(destroyRef), takeUntil(destroy))
                         .subscribe(() => adapter.onFullscreenChange(document.fullscreenElement === divElement));
                 } else {
                     fromEvent(mediaElement, 'fullscreenchange')
-                        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                        .pipe(takeUntil(destroyRef), takeUntil(destroy))
                         .subscribe(() => adapter.onFullscreenChange(document.fullscreenElement === mediaElement));
                 }
 
                 fromEvent(mediaElement, 'volumechange')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(() => {
                         adapter.onVolumeChange(mediaElement.volume * 100);
                         adapter.onMuteChange(mediaElement.muted);
                     });
 
                 fromEvent(mediaElement, 'enterpictureinpicture')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(() => adapter.onPipChange(true));
 
                 fromEvent(mediaElement, 'leavepictureinpicture')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(() => adapter.onPipChange(false));
 
                 fromEvent(mediaElement, 'play')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(() => adapter.onStateChange(EPlayerState.playing));
 
                 fromEvent(mediaElement, 'pause')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(() => adapter.onStateChange(EPlayerState.paused));
 
                 fromEvent(mediaElement, 'ended')
-                    .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                    .pipe(takeUntil(destroyRef), takeUntil(destroy))
                     .subscribe(() => adapter.onStateChange(EPlayerState.ended));
 
                 // if (!isPlatformServer(this.platformId)) {
                 if (typeof window !== 'undefined') {
                     timer(0, 50)
-                        .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+                        .pipe(takeUntil(destroyRef), takeUntil(destroy))
                         .subscribe(() => {
                             adapter.onCurrentTimeChange(mediaElement.currentTime);
                             adapter.onDurationChange(mediaElement.duration);
@@ -213,7 +210,7 @@ export class FileApiService implements IApiService {
         });
     }
 
-    private createEqualizer(audio: HTMLAudioElement, canvas: HTMLCanvasElement, destroy: DestroyRef) {
+    private createEqualizer(audio: HTMLAudioElement, canvas: HTMLCanvasElement, destroy: Subject<boolean>) {
         const audioContext = new AudioContext();
         const analyzer = audioContext.createAnalyser();
         const setFftSize = (width: number) => {
@@ -234,7 +231,7 @@ export class FileApiService implements IApiService {
         analyzer.connect(audioContext.destination);
         this.frameLooper(analyzer, canvas, destroy);
 
-        destroy.onDestroy(() => {
+        destroy.pipe(first()).subscribe(() => {
             analyzer.disconnect();
             source.disconnect();
             audioContext.close();
@@ -242,14 +239,14 @@ export class FileApiService implements IApiService {
         });
     }
 
-    private frameLooper(analyser: AnalyserNode, canvas: HTMLCanvasElement, destroy: DestroyRef) {
+    private frameLooper(analyser: AnalyserNode, canvas: HTMLCanvasElement, destroy: Subject<boolean>) {
         const drawContext = canvas.getContext('2d');
         if (!drawContext) {
             throw 'Could not get drawing context';
         }
 
         let cancelled = false;
-        destroy.onDestroy(() => cancelled = true);
+        destroy.pipe(first()).subscribe(() => cancelled = true);
 
         if (typeof window !== 'undefined') {
             const anyWindow = <any>window;

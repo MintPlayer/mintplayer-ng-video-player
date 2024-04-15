@@ -102,6 +102,9 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
       });
     //#endregion
 
+    const destroySubject = new Subject<boolean>();
+    destroy.onDestroy(() => destroySubject.next(true));
+
     this.videoRequest$
       .pipe(takeUntilDestroyed())
       .subscribe(videoRequest => {
@@ -119,7 +122,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
                 domId: this.domId,
                 element: this.container.nativeElement,
                 initialVideoId: videoRequest.id,
-              }, destroy).then(adapter => {
+              }, destroySubject).then(adapter => {
                 this.playerInfo = {
                   platformId: videoRequest.api.id,
                   videoId: videoRequest.id,

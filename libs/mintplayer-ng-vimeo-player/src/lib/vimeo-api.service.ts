@@ -28,7 +28,7 @@ export class VimeoApiService implements IApiService {
     return `<div id="${options.domId}" style="max-width:100%"></div>`;
   }
 
-  public createPlayer(options: PlayerOptions, destroy: DestroyRef): Promise<PlayerAdapter> {
+  public createPlayer(options: PlayerOptions, destroy: Subject<boolean>): Promise<PlayerAdapter> {
     return new Promise((resolvePlayer, rejectPlayer) => {
       if (!options.domId) {
         return rejectPlayer('The Vimeo api requires the options.domId to be set');
@@ -120,7 +120,7 @@ export class VimeoApiService implements IApiService {
         if (typeof window !== 'undefined') {
           setTimeout(() => options.autoplay && player.play(), 600);
           timer(0, 50)
-            .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
+            .pipe(takeUntil(destroyRef), takeUntil(destroy))
             .subscribe(() => {
               // Mute
               player.getMuted().then((currentMute) => adapter.onMuteChange(currentMute));
