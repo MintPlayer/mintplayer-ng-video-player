@@ -5,14 +5,14 @@ import { MixcloudPlayerExternalWidgetApiRPC, PlayerWidget } from './remote/widge
 import { isPlatformServer } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-@Injectable({
-  providedIn: 'root'
-})
+// @Injectable({
+//   providedIn: 'root'
+// })
 export class MixcloudApiService implements IApiService {
 
   // https://www.mixcloud.com/developers/widget/
 
-  constructor(@Inject(PLATFORM_ID) private platformId: any) { }
+  // constructor(@Inject(PLATFORM_ID) private platformId: any) { }
 
   public get id() {
     return 'mixcloud';
@@ -119,7 +119,8 @@ export class MixcloudApiService implements IApiService {
 
         events = this.hookEvents(player, adapter);
 
-        if (!isPlatformServer(this.platformId)) {
+        // if (!isPlatformServer(this.platformId)) {
+        if (typeof window !== 'undefined') {
           timer(0, 50)
             .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
             .subscribe(() => {

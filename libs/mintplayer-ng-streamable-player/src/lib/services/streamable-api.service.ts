@@ -5,12 +5,12 @@ import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, c
 import { loadScript } from '@mintplayer/script-loader';
 import { Subject, fromEvent, fromEventPattern, takeUntil, timer } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+// @Injectable({
+//   providedIn: 'root'
+// })
 export class StreamableService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  // constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
   public get id() {
     return 'streamable';
@@ -141,7 +141,8 @@ export class StreamableService implements IApiService {
             });
 
             
-          if (!isPlatformServer(this.platformId)) {
+          // if (!isPlatformServer(this.platformId)) {
+          if (typeof window !== 'undefined') {
             timer(0, 50)
               .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
               .subscribe(() => {

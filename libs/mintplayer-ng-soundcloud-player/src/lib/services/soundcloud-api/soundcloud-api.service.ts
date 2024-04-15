@@ -6,12 +6,13 @@ import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
 import { PlayProgressEvent } from '../../events/play-progress.event';
 
-@Injectable({
-  providedIn: 'root'
-})
+// @Injectable({
+//   providedIn: 'root'
+// })
 export class SoundcloudApiService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  // constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  // constructor() {}
 
   public get id() {
     return 'soundcloud';
@@ -86,7 +87,8 @@ export class SoundcloudApiService implements IApiService {
       
       player.bind(SC.Widget.Events.READY, () => {
         resolvePlayer(adapter);
-        if (!isPlatformServer(this.platformId)) {
+        // if (!isPlatformServer(this.platformId)) {
+        if (typeof window !== 'undefined') {
           timer(0, 50)
             .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
             .subscribe(() => {

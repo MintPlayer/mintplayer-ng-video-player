@@ -4,6 +4,7 @@ import { DestroyRef, InjectionToken } from "@angular/core";
 export const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis');
 
 export interface IApiService {
+    // constructor: IApiService;
     get id(): string;
     urlRegexes: RegExp[];
     loadApi(): Promise<any>;

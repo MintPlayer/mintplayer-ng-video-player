@@ -5,13 +5,12 @@ import { loadScript } from '@mintplayer/script-loader';
 import { takeUntil, timer, Subject, BehaviorSubject, debounceTime, pairwise, combineLatest, filter, take } from 'rxjs';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from "@mintplayer/ng-player-provider";
 
-@Injectable({
-    providedIn: 'root'
-})
+// @Injectable({
+//     providedIn: 'root'
+// })
 export class FacebookApiService implements IApiService {
 
-    constructor(@Inject(PLATFORM_ID) private platformId: any) {
-    }
+    // constructor(@Inject(PLATFORM_ID) private platformId: any) {}
 
     public get id() {
         return 'facebook';
@@ -133,7 +132,8 @@ export class FacebookApiService implements IApiService {
                 }
             });
 
-            if (!isPlatformServer(this.platformId)) {
+            // if (!isPlatformServer(this.platformId)) {
+            if (typeof window !== 'undefined') {
                 combineLatest([lastPlayerInstance$.pipe(debounceTime(500)), timer(0, 50)])
                     .pipe(filter(([player]) => !!player))
                     .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))

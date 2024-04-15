@@ -4,15 +4,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from "@mintplayer/ng-player-provider";
 import { BehaviorSubject, Subject, filter, fromEvent, take, takeUntil, timer } from 'rxjs';
 
-@Injectable({
-    providedIn: 'root'
-})
+// @Injectable({
+//     providedIn: 'root'
+// })
 export class FileApiService implements IApiService {
-    constructor(@Inject(PLATFORM_ID) private platformId: object, @Inject(DOCUMENT) doc: any) {
-        this.document = doc;
-    }
+    // constructor(@Inject(PLATFORM_ID) private platformId: object, @Inject(DOCUMENT) doc: any) {
+    //     this.document = doc;
+    // }
 
-    private document: Document;
+    // private document: Document;
 
     public get id() {
         return 'file';
@@ -122,8 +122,8 @@ export class FileApiService implements IApiService {
                         if (isFullscreen) {
                             divElement.requestFullscreen();
                         } else {
-                            if (this.document.fullscreenElement === divElement) {
-                                this.document.exitFullscreen();
+                            if (document.fullscreenElement === divElement) {
+                                document.exitFullscreen();
                             }
                         }
                     },
@@ -133,8 +133,8 @@ export class FileApiService implements IApiService {
                             if (isPip) {
                                 mediaElement.requestPictureInPicture();
                             } else {
-                                if (this.document.pictureInPictureElement === mediaElement) {
-                                    this.document.exitPictureInPicture();
+                                if (document.pictureInPictureElement === mediaElement) {
+                                    document.exitPictureInPicture();
                                 }
                             }
                         }
@@ -144,8 +144,8 @@ export class FileApiService implements IApiService {
                         mediaElement.pause();
                         mediaElement.removeAttribute('src');
                         mediaElement.load();
-                        if (this.document.pictureInPictureElement === mediaElement) {
-                            this.document.exitPictureInPicture();
+                        if (document.pictureInPictureElement === mediaElement) {
+                            document.exitPictureInPicture();
                         }
                         destroyRef.next(true);
                     }
@@ -159,11 +159,11 @@ export class FileApiService implements IApiService {
 
                     fromEvent(divElement, 'fullscreenchange')
                         .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                        .subscribe(() => adapter.onFullscreenChange(this.document.fullscreenElement === divElement));
+                        .subscribe(() => adapter.onFullscreenChange(document.fullscreenElement === divElement));
                 } else {
                     fromEvent(mediaElement, 'fullscreenchange')
                         .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
-                        .subscribe(() => adapter.onFullscreenChange(this.document.fullscreenElement === mediaElement));
+                        .subscribe(() => adapter.onFullscreenChange(document.fullscreenElement === mediaElement));
                 }
 
                 fromEvent(mediaElement, 'volumechange')
@@ -193,7 +193,8 @@ export class FileApiService implements IApiService {
                     .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
                     .subscribe(() => adapter.onStateChange(EPlayerState.ended));
 
-                if (!isPlatformServer(this.platformId)) {
+                // if (!isPlatformServer(this.platformId)) {
+                if (typeof window !== 'undefined') {
                     timer(0, 50)
                         .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
                         .subscribe(() => {

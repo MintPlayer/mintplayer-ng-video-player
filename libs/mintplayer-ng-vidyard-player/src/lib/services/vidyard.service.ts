@@ -6,12 +6,12 @@ import VidyardEmbed, { VidyardApi, VidyardEventMap, VidyardPlayer } from '@vidya
 import { Subject, BehaviorSubject, map, filter, take, takeUntil, fromEvent } from 'rxjs';
 import { fromVidyardEvent } from '../extensions';
 
-@Injectable({
-  providedIn: 'root'
-})
+// @Injectable({
+//   providedIn: 'root'
+// })
 export class VidyardService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: any) { }
+  // constructor(@Inject(PLATFORM_ID) private platformId: any) { }
 
   public get id() {
     return 'vidyard';

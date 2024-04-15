@@ -5,9 +5,9 @@ import { Subject, filter, pairwise } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
 import { PlaybackUpdateEvent, SpotifyIframeApi } from '../../interfaces/spotify-iframe-api';
 
-@Injectable({
-  providedIn: 'root'
-})
+// @Injectable({
+//   providedIn: 'root'
+// })
 export class SpotifyApiService implements IApiService {
 
   private api?: SpotifyIframeApi;

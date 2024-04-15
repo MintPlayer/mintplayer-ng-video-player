@@ -14,7 +14,6 @@ import { VideoDemoComponent } from './video-demo.component';
 import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
 import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
 import { YoutubePlayerModule } from '@mintplayer/ng-youtube-player';
-import { DailymotionPlayerModule } from '@mintplayer/ng-dailymotion-player';
 import { VimeoPlayerModule } from '@mintplayer/ng-vimeo-player';
 import { SoundcloudPlayerModule } from '@mintplayer/ng-soundcloud-player';
 import { APP_BASE_HREF } from '@angular/common';
@@ -37,7 +36,6 @@ describe('VideoDemoComponent', () => {
         MockModule(BsToggleButtonModule),
 
         MockModule(YoutubePlayerModule),
-        MockModule(DailymotionPlayerModule),
         MockModule(VimeoPlayerModule),
         MockModule(SoundcloudPlayerModule)
       ],

@@ -1,21 +1,85 @@
-import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Input, NgZone, OnDestroy, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Inject, Injector, Input, ModuleWithProviders, NgModule, NgZone, OnDestroy, Output, Type, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { PlayerProgress } from '@mintplayer/ng-player-progress';
-import { ECapability, EPlayerState, PlayerAdapter } from '@mintplayer/ng-player-provider';
+import { ECapability, EPlayerState, PlayerAdapter, IApiService, VIDEO_APIS } from '@mintplayer/ng-player-provider';
 import { VideoRequest } from '../../interfaces/video-request';
-import { VideoPlayerService } from '../../services/video-player.service';
+// import { VideoPlayerService } from '../../services/video-player.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'video-player',
   templateUrl: './video-player.component.html',
-  styleUrls: ['./video-player.component.scss']
+  styleUrls: ['./video-player.component.scss'],
+  standalone: false,
+  // imports: [CommonModule],
+  // // providers: [VideoPlayerService],
+  // providers: [{
+  //   provide: VIDEO_APIS,
+  //   useValue: []
+  // }]
 })
 export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
+
+  // static withPlatforms(...platforms: Type<IApiService>[]): ModuleWithProviders<VideoPlayerComponent> {
+  //   return {
+  //     ngModule: VideoPlayerComponent,
+  //     // providers: platforms.map(p => ({
+  //     //   provide: VIDEO_APIS,
+  //     //   multi: true,
+  //     //   useClass: p
+  //     // }))
+  //     providers: [{
+  //       provide: VIDEO_APIS,
+  //       multi: true,
+  //       // useFactory: (injector: Injector) => {
+  //       //   return platforms.map(p => injector.get(p));
+  //       // },
+  //       useValue: []
+  //     }]
+  //   };
+  // }
+
+  findApis(url: string) {
+    const matchingApis = this.apis
+      .map(api => {
+        const matches = api.urlRegexes
+          .map(rgx => new RegExp(rgx).exec(url))
+          .filter(r => r !== null);
+
+        if (matches.length === 0) {
+          return null;
+        } else if (matches[0] === null) {
+          return null;
+        } else if (!matches[0].groups) {
+          return null;
+        } else {
+          if (api.match2id) {
+            const realId = api.match2id(matches[0]);
+            return <VideoRequest>{
+              api,
+              id: realId
+            };
+          } else {
+            return <VideoRequest>{
+              api,
+              id: matches[0].groups['id']
+            };
+          }
+        }
+      })
+      .filter(p => (p !== null))
+      .map(p => p!);
+    
+    return matchingApis;
+  }
+
+
   constructor(
     private zone: NgZone,
-    videoPlayerService: VideoPlayerService,
+    // videoPlayerService: VideoPlayerService,
+    @Inject(VIDEO_APIS) private apis: IApiService[],
     destroy: DestroyRef,
   ) {
     //#region [isViewInited$, url$] => videoRequest$
@@ -28,7 +92,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
           this.playerInfo = null;
           this.container.nativeElement.innerHTML = '';
         } else {
-          const matchingApis = videoPlayerService.findApis(url);
+          const matchingApis = this.findApis(url);
           if (matchingApis.length === 0) {
             throw `No player found for url ${url}`;
           } else {
@@ -274,5 +338,40 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.playerInfo?.adapter?.destroy();
+  }
+}
+
+
+@NgModule({
+  imports: [CommonModule],
+  declarations: [VideoPlayerComponent],
+  exports: [VideoPlayerComponent],
+  providers: [{
+    provide: VIDEO_APIS,
+    useValue: []
+  }]
+})
+export class VideoPlayerModule {
+  static withPlatforms(...platforms: Type<IApiService>[]): ModuleWithProviders<VideoPlayerModule> {
+    return {
+      ngModule: VideoPlayerModule,
+      // providers: platforms.map(p => ({
+      //   provide: VIDEO_APIS,
+      //   multi: true,
+      //   useClass: p
+      // }))
+      providers: [{
+        provide: VIDEO_APIS,
+        // // multi: true,
+        // useFactory: (injector: Injector) => {
+        //   return platforms.map(p => injector.get(p));
+        // },
+        // deps: [Injector]
+        // useValue: []
+        useFactory: () => {
+          return platforms.map(p => new p());
+        },
+      }]
+    };
   }
 }

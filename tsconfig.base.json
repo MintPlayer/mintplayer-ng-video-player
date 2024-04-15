@@ -18,9 +18,6 @@
       "@mintplayer/ng-canvas-resizer": [
         "libs/mintplayer-ng-canvas-resizer/src/index.ts"
       ],
-      "@mintplayer/ng-dailymotion-player": [
-        "libs/mintplayer-ng-dailymotion-player/src/index.ts"
-      ],
       "@mintplayer/ng-facebook-player": [
         "libs/mintplayer-ng-facebook-player/src/index.ts"
       ],

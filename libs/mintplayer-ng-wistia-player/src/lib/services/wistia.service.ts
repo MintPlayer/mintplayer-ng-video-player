@@ -6,12 +6,12 @@ import { Subject } from 'rxjs';
 
 // https://wistia.com/support/developers/player-api#volumechange
 
-@Injectable({
-  providedIn: 'root'
-})
+// @Injectable({
+//   providedIn: 'root'
+// })
 export class WistiaService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: any) { }
+  // constructor(@Inject(PLATFORM_ID) private platformId: any) { }
 
   public get id() {
     return 'wistia';
@@ -43,7 +43,8 @@ export class WistiaService implements IApiService {
 
   createPlayer(options: PlayerOptions, destroy: DestroyRef) {
     return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
-      if (isPlatformServer(this.platformId)) {
+      // if (isPlatformServer(this.platformId)) {
+      if (typeof window === 'undefined') {
         // Do not resolve this promise during SSR
         return;
       }

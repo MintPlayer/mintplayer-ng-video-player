@@ -5,12 +5,12 @@ import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, P
 import { Subject, takeUntil, timer } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
 
-@Injectable({
-  providedIn: 'root'
-})
+// @Injectable({
+//   providedIn: 'root'
+// })
 export class YoutubeApiService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: any) {}
+  // constructor(@Inject(PLATFORM_ID) private platformId: any) {}
 
   public get id() {
     return 'youtube';
@@ -99,7 +99,8 @@ export class YoutubeApiService implements IApiService {
               },
             });
 
-            if (!isPlatformServer(this.platformId)) {
+            // if (!isPlatformServer(this.platformId)) {
+            if (typeof window !== 'undefined') {
               timer(0, 50)
                 .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
                 .subscribe(() => {

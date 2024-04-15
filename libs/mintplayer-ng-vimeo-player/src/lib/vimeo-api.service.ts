@@ -5,12 +5,12 @@ import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, P
 import { Subject, takeUntil, timer } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
 
-@Injectable({
-  providedIn: 'root'
-})
+// @Injectable({
+//   providedIn: 'root'
+// })
 export class VimeoApiService implements IApiService {
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  // constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
   public get id() {
     return 'vimeo';
@@ -116,7 +116,8 @@ export class VimeoApiService implements IApiService {
       });
       player.on('loaded', () => {
         adapter.onStateChange(EPlayerState.unstarted);
-        if (!isPlatformServer(this.platformId)) {
+        // if (!isPlatformServer(this.platformId)) {
+        if (typeof window !== 'undefined') {
           setTimeout(() => options.autoplay && player.play(), 600);
           timer(0, 50)
             .pipe(takeUntil(destroyRef), takeUntilDestroyed(destroy))
