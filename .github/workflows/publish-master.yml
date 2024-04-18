@@ -65,7 +65,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-player-provider
+    ## player-provider
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
       with:
@@ -90,7 +90,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-player-progress
+    ## player-progress
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -117,7 +117,6 @@ jobs:
         directory: ./coverage/libs/mintplayer-video-player
 
     - name: Push to NPM
-      id: publish_ng_video_player
       uses: JS-DevTools/npm-publish@v3
       with:
         package: 'dist/libs/mintplayer-video-player/package.json'
@@ -161,31 +160,6 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## dailymotion-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-dailymotion-player
-
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
-      with:
-        package: 'dist/libs/mintplayer-dailymotion-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
-      with:
-        package: 'dist/libs/mintplayer-dailymotion-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
     ## facebook-player
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
@@ -211,7 +185,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-mixcloud-player
+    ## mixcloud-player
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
       with:
@@ -236,7 +210,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-soundcloud-player
+    ## soundcloud-player
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
       with:
@@ -261,7 +235,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-spotify-player
+    ## spotify-player
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
       with:
@@ -286,7 +260,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-streamable-player
+    ## streamable-player
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
       with:
@@ -311,7 +285,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-twitch-player
+    ## twitch-player
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
       with:
@@ -336,7 +310,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-vidyard-player
+    ## vidyard-player
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
       with:
@@ -361,7 +335,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-vimeo-player
+    ## vimeo-player
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
       with:
@@ -386,7 +360,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-wistia-player
+    ## wistia-player
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
       with:
@@ -411,7 +385,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-youtube-player
+    ## youtube-player
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
       with:
@@ -436,7 +410,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-file-player
+    ## file-player
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
       with:
@@ -461,7 +435,7 @@ jobs:
         access: 'public'
         provenance: true
 
-    ## ng-playlist-controller
+    ## playlist-controller
     - name: Upload code coverage report
       uses: codecov/codecov-action@v3
       with:

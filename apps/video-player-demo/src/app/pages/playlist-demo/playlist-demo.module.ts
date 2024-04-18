@@ -8,7 +8,6 @@ import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
 import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
 import { youtubeLoader } from '@mintplayer/youtube-player';
-import { dailyMotionLoader } from '@mintplayer/dailymotion-player';
 import { vimeoLoader } from '@mintplayer/vimeo-player';
 import { soundCloudLoader } from '@mintplayer/soundcloud-player';
 import { mixCloudLoader } from '@mintplayer/mixcloud-player';
@@ -47,7 +46,6 @@ import { PlaylistDemoComponent } from './playlist-demo.component';
   providers: [
     provideVideoApis(
       youtubeLoader,
-      dailyMotionLoader,
       vimeoLoader,
       soundCloudLoader,
       mixCloudLoader,
