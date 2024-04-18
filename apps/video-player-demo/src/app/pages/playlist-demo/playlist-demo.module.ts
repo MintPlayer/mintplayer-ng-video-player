@@ -7,8 +7,19 @@ import { BsSelectModule } from '@mintplayer/ng-bootstrap/select';
 import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
 import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
+import { YoutubeApiService } from '@mintplayer/youtube-player/api';
+import { VimeoApiService } from '@mintplayer/vimeo-player/api';
+import { SoundcloudApiService } from '@mintplayer/soundcloud-player/api';
+import { MixcloudApiService } from '@mintplayer/mixcloud-player/api';
+import { TwitchApiService } from '@mintplayer/twitch-player/api';
+import { SpotifyApiService } from '@mintplayer/spotify-player/api';
+import { StreamableService } from '@mintplayer/streamable-player/api';
+import { FacebookApiService } from '@mintplayer/facebook-player/api';
+import { FileApiService } from '@mintplayer/file-player/api';
+import { VidyardService } from '@mintplayer/vidyard-player/api';
+import { WistiaService } from '@mintplayer/wistia-player/api';
 
-import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
+import { VideoPlayerComponent, provideVideoApis } from '@mintplayer/ng-video-player';
 
 import { PlaylistDemoRoutingModule } from './playlist-demo-routing.module';
 import { PlaylistDemoComponent } from './playlist-demo.component';
@@ -31,6 +42,21 @@ import { PlaylistDemoComponent } from './playlist-demo.component';
     VideoPlayerComponent,
 
     PlaylistDemoRoutingModule
+  ],
+  providers: [
+    provideVideoApis(
+      YoutubeApiService,
+      VimeoApiService,
+      SoundcloudApiService,
+      MixcloudApiService,
+      TwitchApiService,
+      SpotifyApiService,
+      StreamableService,
+      FacebookApiService,
+      FileApiService,
+      VidyardService,
+      WistiaService
+    )
   ]
 })
 export class PlaylistDemoModule { }

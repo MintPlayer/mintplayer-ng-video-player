@@ -1,8 +1,9 @@
-import { VIDEO_APIS } from '@mintplayer/player-provider';
+// import { VIDEO_APIS } from '@mintplayer/player-provider';
+import { IApiService } from '@mintplayer/player-provider';
 import { VideoRequest } from './video-request';
 
-export function findApis(url: string) {
-    const matchingApis = VIDEO_APIS
+export function findApis(url: string, apis: IApiService[]) {
+    const matchingApis = apis
         .map(api => {
             const matches = api.urlRegexes
                 .map(rgx => new RegExp(rgx).exec(url))

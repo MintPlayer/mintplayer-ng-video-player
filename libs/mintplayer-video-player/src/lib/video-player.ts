@@ -1,20 +1,20 @@
 import { BehaviorSubject, Observable, Subject, combineLatest, debounceTime, distinctUntilChanged, filter, map, takeUntil } from "rxjs";
 import { PlayerProgress } from "@mintplayer/player-progress";
-import { EPlayerState, PlayerAdapter } from "@mintplayer/player-provider";
+import { EPlayerState, IApiService, PlayerAdapter } from "@mintplayer/player-provider";
 import { findApis } from "./player-type-finder";
 import { VideoRequest } from "./video-request";
 import { VideoEventMap } from "./event-map";
 import { EventHandler } from "./event-handler";
 
 export class VideoPlayer {
-  constructor(host: HTMLElement) {
+  constructor(host: HTMLElement, apis: IApiService[]) {
     this.url$.pipe(takeUntil(this.destroyed$)).subscribe(url => {
       if (url === null) {
         this.playerInfo?.adapter?.destroy();
         this.playerInfo = null;
         host.innerHTML = '';
       } else {
-        const matchingApis = findApis(url);
+        const matchingApis = findApis(url, apis);
         if (matchingApis.length === 0) {
           throw `No player found for url ${url}`;
         } else {

@@ -4,10 +4,10 @@ import { Subject } from "rxjs";
 
 // export const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis');
 export type ApiLoader = () => Promise<IApiService>;
-export const VIDEO_APIS: IApiService[] = [];
-export function loadApi(...loaders: ApiLoader[]) {
-    loaders.forEach(loader => loader().then(api => VIDEO_APIS.push(api)));
-}
+// export const VIDEO_APIS: IApiService[] = [];
+// export function loadApi(...loaders: ApiLoader[]) {
+//     loaders.forEach(loader => loader().then(api => VIDEO_APIS.push(api)));
+// }
 
 export interface IApiService {
     get id(): string;

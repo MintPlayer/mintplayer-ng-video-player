@@ -1,23 +1,23 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { ECapability, EPlayerState, IApiService, VIDEO_APIS, loadApi } from '@mintplayer/player-provider';
+import { ECapability, EPlayerState } from '@mintplayer/player-provider';
 import { PlayerProgress } from '@mintplayer/player-progress';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { APP_BASE_HREF } from '@angular/common';
 
-import { youtubeLoader } from '@mintplayer/youtube-player';
-import { dailyMotionLoader } from '@mintplayer/dailymotion-player';
-import { vimeoLoader } from '@mintplayer/vimeo-player';
-import { soundCloudLoader } from '@mintplayer/soundcloud-player';
-import { mixCloudLoader } from '@mintplayer/mixcloud-player';
-import { twitchLoader } from '@mintplayer/twitch-player';
-import { spotifyLoader } from '@mintplayer/spotify-player';
-import { streamableLoader } from '@mintplayer/streamable-player';
-import { facebookLoader } from '@mintplayer/facebook-player';
-import { fileLoader } from '@mintplayer/file-player';
-import { vidyardLoader } from '@mintplayer/vidyard-player';
-import { wistiaLoader } from '@mintplayer/wistia-player';
+// import { youtubeLoader } from '@mintplayer/youtube-player';
+// import { dailyMotionLoader } from '@mintplayer/dailymotion-player';
+// import { vimeoLoader } from '@mintplayer/vimeo-player';
+// import { soundCloudLoader } from '@mintplayer/soundcloud-player';
+// import { mixCloudLoader } from '@mintplayer/mixcloud-player';
+// import { twitchLoader } from '@mintplayer/twitch-player';
+// import { spotifyLoader } from '@mintplayer/spotify-player';
+// import { streamableLoader } from '@mintplayer/streamable-player';
+// import { facebookLoader } from '@mintplayer/facebook-player';
+// import { fileLoader } from '@mintplayer/file-player';
+// import { vidyardLoader } from '@mintplayer/vidyard-player';
+// import { wistiaLoader } from '@mintplayer/wistia-player';
 
 @Component({
   selector: 'mintplayer-ng-video-player-video-demo',
@@ -27,8 +27,8 @@ import { wistiaLoader } from '@mintplayer/wistia-player';
 export class VideoDemoComponent {
 
   constructor(@Inject(APP_BASE_HREF) baseUrl: string) {
-    loadApi(youtubeLoader, dailyMotionLoader, vimeoLoader, soundCloudLoader, mixCloudLoader, twitchLoader,
-      spotifyLoader, streamableLoader, facebookLoader, fileLoader, vidyardLoader, wistiaLoader);
+    // loadApi(youtubeLoader, dailyMotionLoader, vimeoLoader, soundCloudLoader, mixCloudLoader, twitchLoader,
+    //   spotifyLoader, streamableLoader, facebookLoader, fileLoader, vidyardLoader, wistiaLoader);
 
     this.cannotFullscreen$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.fullscreen)));
     this.cannotPip$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.pictureInPicture)));
