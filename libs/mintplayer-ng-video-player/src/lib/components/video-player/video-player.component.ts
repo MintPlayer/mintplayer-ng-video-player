@@ -1,15 +1,15 @@
 import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Inject, InjectionToken, Input, ModuleWithProviders, NgZone, OnDestroy, Output, StaticProvider, Type, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PlayerProgress } from '@mintplayer/player-progress';
-import { ECapability, EPlayerState, IApiService } from '@mintplayer/player-provider';
+import { ApiLoader, ECapability, EPlayerState, IApiService } from '@mintplayer/player-provider';
 import { VideoPlayer, fromVideoEvent } from "@mintplayer/video-player";
 
-const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis')
+const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis');
 
-export function provideVideoApis(...platforms: Type<IApiService>[]): StaticProvider {
+export function provideVideoApis(...platforms: ApiLoader[]): StaticProvider {
   return {
     provide: VIDEO_APIS,
-    useFactory: () => platforms.map(p => new p()),
+    useFactory: () => Promise.all(platforms.map(loader => loader())),
   }
 }
 
@@ -23,7 +23,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private zone: NgZone,
-    @Inject(VIDEO_APIS) private apis: IApiService[],
+    @Inject(VIDEO_APIS) private apis: Promise<IApiService[]>,
     private destroy: DestroyRef,
   ) { }
 
@@ -62,18 +62,17 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   }
   @Output() public playerStateChange = new EventEmitter<EPlayerState>();
   //#endregion
-  // //#region title
-  // public getTitle() {
-  //   return new Promise<string | null>((resolve) => {
-  //     const adapter = this.playerInfo?.adapter;
-  //     if (adapter) {
-  //       adapter.getTitle().then(t => resolve(t));
-  //     } else {
-  //       resolve(null);
-  //     }
-  //   });
-  // }
-  // //#endregion
+  //#region title
+  public getTitle() {
+    return new Promise<string | null>((resolve) => {
+      if (this.player) {
+        this.player.getTitle().then(t => resolve(t));
+      } else {
+        resolve(null);
+      }
+    });
+  }
+  //#endregion
   //#region volume
   get volume() {
     return this.player?.volume ?? 50;
@@ -157,21 +156,23 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
   player?: VideoPlayer;
   ngAfterViewInit() {
-    this.player = new VideoPlayer(this.container.nativeElement, this.apis);
-    fromVideoEvent(this.player, 'stateChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([state]) => this.playerStateChange.emit(state));
-    fromVideoEvent(this.player, 'isPipChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([isPip]) => this.isPipChange.emit(isPip));
-    fromVideoEvent(this.player, 'isFullscreenChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([isFullscreen]) => this.isFullscreenChange.emit(isFullscreen));
-    fromVideoEvent(this.player, 'muteChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([mute]) => this.muteChange.emit(mute));
-    fromVideoEvent(this.player, 'volumeChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([volume]) => this.volumeChange.emit(volume));
-    fromVideoEvent(this.player, 'capabilitiesChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([capabilities]) => this.capabilitiesChange.emit(capabilities));
-    fromVideoEvent(this.player, 'progressChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([progress]) => this.progressChange.emit(progress));
+    this.apis.then((apis) => {
+      this.player = new VideoPlayer(this.container.nativeElement, apis);
+      fromVideoEvent(this.player, 'stateChange').pipe(takeUntilDestroyed(this.destroy))
+        .subscribe(([state]) => this.playerStateChange.emit(state));
+      fromVideoEvent(this.player, 'isPipChange').pipe(takeUntilDestroyed(this.destroy))
+        .subscribe(([isPip]) => this.isPipChange.emit(isPip));
+      fromVideoEvent(this.player, 'isFullscreenChange').pipe(takeUntilDestroyed(this.destroy))
+        .subscribe(([isFullscreen]) => this.isFullscreenChange.emit(isFullscreen));
+      fromVideoEvent(this.player, 'muteChange').pipe(takeUntilDestroyed(this.destroy))
+        .subscribe(([mute]) => this.muteChange.emit(mute));
+      fromVideoEvent(this.player, 'volumeChange').pipe(takeUntilDestroyed(this.destroy))
+        .subscribe(([volume]) => this.volumeChange.emit(volume));
+      fromVideoEvent(this.player, 'capabilitiesChange').pipe(takeUntilDestroyed(this.destroy))
+        .subscribe(([capabilities]) => this.capabilitiesChange.emit(capabilities));
+      fromVideoEvent(this.player, 'progressChange').pipe(takeUntilDestroyed(this.destroy))
+        .subscribe(([progress]) => this.progressChange.emit(progress));
+    });
   }
 
   ngOnDestroy() {

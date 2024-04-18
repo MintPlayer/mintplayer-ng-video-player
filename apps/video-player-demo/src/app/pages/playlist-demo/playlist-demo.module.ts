@@ -7,17 +7,18 @@ import { BsSelectModule } from '@mintplayer/ng-bootstrap/select';
 import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
 import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
-import { YoutubeApiService } from '@mintplayer/youtube-player/api';
-import { VimeoApiService } from '@mintplayer/vimeo-player/api';
-import { SoundcloudApiService } from '@mintplayer/soundcloud-player/api';
-import { MixcloudApiService } from '@mintplayer/mixcloud-player/api';
-import { TwitchApiService } from '@mintplayer/twitch-player/api';
-import { SpotifyApiService } from '@mintplayer/spotify-player/api';
-import { StreamableService } from '@mintplayer/streamable-player/api';
-import { FacebookApiService } from '@mintplayer/facebook-player/api';
-import { FileApiService } from '@mintplayer/file-player/api';
-import { VidyardService } from '@mintplayer/vidyard-player/api';
-import { WistiaService } from '@mintplayer/wistia-player/api';
+import { youtubeLoader } from '@mintplayer/youtube-player';
+import { dailyMotionLoader } from '@mintplayer/dailymotion-player';
+import { vimeoLoader } from '@mintplayer/vimeo-player';
+import { soundCloudLoader } from '@mintplayer/soundcloud-player';
+import { mixCloudLoader } from '@mintplayer/mixcloud-player';
+import { twitchLoader } from '@mintplayer/twitch-player';
+import { spotifyLoader } from '@mintplayer/spotify-player';
+import { streamableLoader } from '@mintplayer/streamable-player';
+import { facebookLoader } from '@mintplayer/facebook-player';
+import { fileLoader } from '@mintplayer/file-player';
+import { vidyardLoader } from '@mintplayer/vidyard-player';
+import { wistiaLoader } from '@mintplayer/wistia-player';
 
 import { VideoPlayerComponent, provideVideoApis } from '@mintplayer/ng-video-player';
 
@@ -45,17 +46,18 @@ import { PlaylistDemoComponent } from './playlist-demo.component';
   ],
   providers: [
     provideVideoApis(
-      YoutubeApiService,
-      VimeoApiService,
-      SoundcloudApiService,
-      MixcloudApiService,
-      TwitchApiService,
-      SpotifyApiService,
-      StreamableService,
-      FacebookApiService,
-      FileApiService,
-      VidyardService,
-      WistiaService
+      youtubeLoader,
+      dailyMotionLoader,
+      vimeoLoader,
+      soundCloudLoader,
+      mixCloudLoader,
+      twitchLoader,
+      spotifyLoader,
+      streamableLoader,
+      facebookLoader,
+      fileLoader,
+      vidyardLoader,
+      wistiaLoader
     )
   ]
 })
