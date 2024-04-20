@@ -6,8 +6,8 @@
     "declarationMap": true,
     "inlineSources": true,
     "types": ["node", "playerjs"],
-    "typeRoots": ["types", "../../node_modules/@types"],
+    "typeRoots": ["./types", "../../node_modules/@types"],
   },
-  "exclude": ["src/**/*.spec.ts", "jest.config.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts"]
+  "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"],
+  "include": ["./**/*.ts"]
 }

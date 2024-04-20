@@ -7,19 +7,6 @@ import { Video } from '../../interfaces/video';
 import { EPlayerState } from '@mintplayer/player-provider';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-// import { youtubeLoader } from '@mintplayer/youtube-player';
-// import { dailyMotionLoader } from '@mintplayer/dailymotion-player';
-// import { vimeoLoader } from '@mintplayer/vimeo-player';
-// import { soundCloudLoader } from '@mintplayer/soundcloud-player';
-// import { mixCloudLoader } from '@mintplayer/mixcloud-player';
-// import { twitchLoader } from '@mintplayer/twitch-player';
-// import { spotifyLoader } from '@mintplayer/spotify-player';
-// import { streamableLoader } from '@mintplayer/streamable-player';
-// import { facebookLoader } from '@mintplayer/facebook-player';
-// import { fileLoader } from '@mintplayer/file-player';
-// import { vidyardLoader } from '@mintplayer/vidyard-player';
-// import { wistiaLoader } from '@mintplayer/wistia-player';
-
 @Component({
   selector: 'mintplayer-ng-video-player-playlist-demo',
   templateUrl: './playlist-demo.component.html',
@@ -30,9 +17,6 @@ export class PlaylistDemoComponent implements AfterViewInit {
     private ref: ChangeDetectorRef,
     private zone: NgZone
   ) {
-    // loadApi(youtubeLoader, dailyMotionLoader, vimeoLoader, soundCloudLoader, mixCloudLoader, twitchLoader,
-    //   spotifyLoader, streamableLoader, facebookLoader, fileLoader, vidyardLoader, wistiaLoader);
-
     this.playlistController = new PlaylistController<Video>();
     this.playlistController.video$
       .pipe(takeUntilDestroyed())

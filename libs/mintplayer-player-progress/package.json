@@ -8,6 +8,9 @@
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
     "directory": "libs/mintplayer-player-progress"
   },
+  "exports": {
+    ".": "./src/index.js"
+  },
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "peerDependencies": {},

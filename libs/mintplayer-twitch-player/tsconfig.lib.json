@@ -6,11 +6,11 @@
     "declarationMap": true,
     "inlineSources": true,
     "types": ["node", "twitch"],
-    "typeRoots": ["types", "../../node_modules/@types"]
+    "typeRoots": ["./types", "../../node_modules/@types"]
   },
-  "exclude": ["src/**/*.spec.ts", "jest.config.ts", "src/**/*.test.ts"],
+  "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"],
   "include": [
-    "src/**/*.ts",
+    "**/*.ts",
     "types/**/*.d.ts"
   ]
 }

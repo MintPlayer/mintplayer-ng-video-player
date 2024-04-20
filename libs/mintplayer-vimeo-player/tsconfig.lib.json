@@ -6,12 +6,12 @@
     "declarationMap": true,
     "inlineSources": true,
     "types": ["node", "vimeo"],
-    "typeRoots": ["types", "../../node_modules/@types"],
+    "typeRoots": ["./types", "../../node_modules/@types"],
     "useDefineForClassFields": false
   },
   "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
   "include": [
-    "src/**/*.ts",
+    "**/*.ts",
     "types/**/*.d.ts"
   ]
 }

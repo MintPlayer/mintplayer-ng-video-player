@@ -15,12 +15,6 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@mintplayer/dailymotion-player": [
-        "libs/mintplayer-dailymotion-player/src/index.ts"
-      ],
-      "@mintplayer/dailymotion-player/*": [
-        "libs/mintplayer-dailymotion-player/*/index.ts"
-      ],
       "@mintplayer/facebook-player": [
         "libs/mintplayer-facebook-player/src/index.ts"
       ],

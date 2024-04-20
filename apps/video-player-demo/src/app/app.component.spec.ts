@@ -9,7 +9,6 @@ describe('AppComponent', () => {
       imports: [
         RouterTestingModule.withRoutes([
           { path: 'youtube', component: YoutubeMockComponent },
-          { path: 'dailymotion', component: DailymotionMockComponent },
           { path: 'vimeo', component: VimeoMockComponent },
           { path: 'soundcloud', component: SoundcloudMockComponent },
           { path: 'video', component: VideoMockComponent },
@@ -21,7 +20,6 @@ describe('AppComponent', () => {
       
         // Mock pages
         YoutubeMockComponent,
-        DailymotionMockComponent,
         VimeoMockComponent,
         SoundcloudMockComponent,
         VideoMockComponent,
@@ -84,12 +82,6 @@ enum Color {
   template: `<div>Youtube</div>`
 })
 class YoutubeMockComponent { }
-
-@Component({
-  selector: 'dailymotion-mock-page',
-  template: `<div>Dailymotion</div>`
-})
-class DailymotionMockComponent { }
 
 @Component({
   selector: 'vimeo-mock-page',

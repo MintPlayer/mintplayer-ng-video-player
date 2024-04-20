@@ -2,9 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "types": ["node", "youtube", "dailymotion", "vimeo", "soundcloud", "twitch", "facebook", "vidyard", "wistia", "playerjs"],
+    "types": ["node", "youtube", "vimeo", "soundcloud", "twitch", "facebook", "vidyard", "wistia", "playerjs"],
     "typeRoots": [
-      "../../libs/mintplayer-dailymotion-player/types",
       "../../libs/mintplayer-soundcloud-player/types",
       "../../libs/mintplayer-twitch-player/types",
       "../../libs/mintplayer-vimeo-player/types",

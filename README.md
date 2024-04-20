@@ -31,7 +31,7 @@ The code is included in the git repository.
 ## Important note
 
 Since version 16.1, the dependency graph between the project has changed.
-The `ng-video-player` package no longer depends on `ng-youtube-player`, `ng-dailymotion-player`, `ng-vimeo-player` and `ng-soundcloud-player`. But now it's the other way around. See the installation instructions below for the updated packages.
+The `ng-video-player` package no longer depends on `ng-youtube-player`, `ng-vimeo-player` and `ng-soundcloud-player`. But now it's the other way around. See the installation instructions below for the updated packages.
 
 ## Installation
 
@@ -40,7 +40,6 @@ Run the corresponding commands, depending on what players you want to support in
     npm i @mintplayer/ng-video-player
 
     npm i @mintplayer/youtube-player
-    npm i @mintplayer/dailymotion-player
     npm i @mintplayer/vimeo-player
     npm i @mintplayer/soundcloud-player
     npm i @mintplayer/spotify-player

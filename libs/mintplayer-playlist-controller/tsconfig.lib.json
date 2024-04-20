@@ -9,5 +9,5 @@
     "useDefineForClassFields": false
   },
   "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
-  "include": ["**/*.ts"]
+  "include": ["./**/*.ts"]
 }
