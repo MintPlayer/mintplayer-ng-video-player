@@ -470,5 +470,5 @@ jobs:
         server: mintplayer.com
         username: ${{ secrets.PUBLISH_FTP_USER }}
         password: ${{ secrets.PUBLISH_FTP_PWD }}
-        local-dir: ./dist/apps/video-player-demo/
+        local-dir: ./dist/apps/video-player-demo/browser/
         server-dir: ./
