@@ -1,6 +1,7 @@
 {
   "name": "@mintplayer/playlist-controller",
   "private": false,
+  "type": "module",
   "version": "17.3.0",
   "repository": {
     "type": "git",
