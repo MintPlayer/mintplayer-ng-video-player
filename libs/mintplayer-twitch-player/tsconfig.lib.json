@@ -8,9 +8,9 @@
     "types": ["node", "twitch"],
     "typeRoots": ["./types", "../../node_modules/@types"]
   },
-  "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"],
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
   "include": [
-    "**/*.ts",
+    "src/**/*.ts",
     "types/**/*.d.ts"
   ]
 }

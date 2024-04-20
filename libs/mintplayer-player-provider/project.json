@@ -1,7 +1,7 @@
 {
   "name": "mintplayer-player-provider",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/mintplayer-player-provider/src",
+  "sourceRoot": "{projectRoot}/src",
   "tags": [],
   "projectType": "library",
   "targets": {
@@ -12,16 +12,7 @@
         "outputPath": "{workspaceRoot}/dist/{projectRoot}",
         "main": "{sourceRoot}/index.ts",
         "tsConfig": "{projectRoot}/tsconfig.lib.json"
-      },
-      "configurations": {
-        "production": {
-          "tsConfig": "{projectRoot}/tsconfig.lib.prod.json"
-        },
-        "development": {
-          "tsConfig": "{projectRoot}/tsconfig.lib.json"
-        }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",

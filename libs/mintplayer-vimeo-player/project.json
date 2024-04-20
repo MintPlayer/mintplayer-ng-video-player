@@ -11,16 +11,7 @@
         "outputPath": "{workspaceRoot}/dist/{projectRoot}",
         "main": "{sourceRoot}/index.ts",
         "tsConfig": "{projectRoot}/tsconfig.lib.json"
-      },
-      "configurations": {
-        "production": {
-          "tsConfig": "{projectRoot}/tsconfig.lib.prod.json"
-        },
-        "development": {
-          "tsConfig": "{projectRoot}/tsconfig.lib.json"
-        }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",

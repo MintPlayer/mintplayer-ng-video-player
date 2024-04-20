@@ -7,9 +7,8 @@
   "targets": {
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "outputPath": "{workspaceRoot}/dist/{projectRoot}",
         "project": "{projectRoot}/ng-package.json",
         "tsConfig": "{projectRoot}/tsconfig.lib.json"
       },

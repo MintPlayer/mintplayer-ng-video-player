@@ -13,5 +13,5 @@
     "jest.config.ts",
     "src/**/*.test.ts"
   ],
-  "include": ["./**/*.ts"]
+  "include": ["src/**/*.ts"]
 }

@@ -3,11 +3,8 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "declaration": true,
-    "declarationMap": true,
-    "inlineSources": true,
-    "types": ["node", "youtube"],
-    "useDefineForClassFields": false
+    "types": ["node", "youtube"]
   },
-  "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
-  "include": ["./**/*.ts"]
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts", "jest.config.ts"],
+  "include": ["src/**/*.ts"]
 }
