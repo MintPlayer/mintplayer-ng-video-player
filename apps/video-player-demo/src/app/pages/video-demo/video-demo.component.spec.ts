@@ -12,7 +12,7 @@ import { MockComponent, MockModule } from 'ng-mocks';
 
 import { VideoDemoComponent } from './video-demo.component';
 import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
-import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
+import { VideoPlayerComponent, provideVideoApis } from '@mintplayer/ng-video-player';
 import { APP_BASE_HREF } from '@angular/common';
 
 describe('VideoDemoComponent', () => {
@@ -40,7 +40,7 @@ describe('VideoDemoComponent', () => {
       ],
       providers: <StaticProvider[]>[
         { provide: APP_BASE_HREF, useValue: 'http://example.com' },
-        { provide: VIDEO_APIS, multi: true, useValue: [] }
+        provideVideoApis(),
       ]
     })
     .compileComponents();
