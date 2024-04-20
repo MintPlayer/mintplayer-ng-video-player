@@ -6,6 +6,7 @@ import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { Video } from '../../interfaces/video';
 import { EPlayerState } from '@mintplayer/player-provider';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'mintplayer-ng-video-player-playlist-demo',
@@ -15,7 +16,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class PlaylistDemoComponent implements AfterViewInit {
   constructor(
     private ref: ChangeDetectorRef,
-    private zone: NgZone
+    private zone: NgZone,
+    private sanitizer: DomSanitizer
   ) {
     this.playlistController = new PlaylistController<Video>();
     this.playlistController.video$
@@ -40,7 +42,14 @@ export class PlaylistDemoComponent implements AfterViewInit {
         const id_num = <number>id;
         return { id: id_num, text: <string>enumValues[id_num] };
       });
+
+      
+    import('bootstrap-icons/icons/bootstrap.svg').then((icon) => {
+      this.trashFillIcon = sanitizer.bypassSecurityTrustHtml(icon.default);
+    });
   }
+
+  trashFillIcon?: SafeHtml;
   
   private isViewInited = false;
 

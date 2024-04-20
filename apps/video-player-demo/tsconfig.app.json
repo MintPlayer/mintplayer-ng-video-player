@@ -4,6 +4,7 @@
     "outDir": "../../dist/out-tsc",
     "types": ["node", "youtube", "vimeo", "soundcloud", "twitch", "facebook", "vidyard", "wistia", "playerjs"],
     "typeRoots": [
+      "./src/types",
       "../../libs/mintplayer-soundcloud-player/types",
       "../../libs/mintplayer-twitch-player/types",
       "../../libs/mintplayer-vimeo-player/types",

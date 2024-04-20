@@ -1,14 +1,14 @@
 import { StaticProvider } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { BsButtonGroupModule } from '@mintplayer/ng-bootstrap/button-group';
-import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
+import { BsButtonGroupComponent } from '@mintplayer/ng-bootstrap/button-group';
+import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
 import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
-import { BsInputGroupModule } from '@mintplayer/ng-bootstrap/input-group';
+import { BsInputGroupComponent } from '@mintplayer/ng-bootstrap/input-group';
 import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
 import { BsRangeModule } from '@mintplayer/ng-bootstrap/range';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
-import { MockComponent, MockModule } from 'ng-mocks';
+import { MockComponent, MockDirective, MockModule } from 'ng-mocks';
 
 import { VideoDemoComponent } from './video-demo.component';
 import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
@@ -27,9 +27,9 @@ describe('VideoDemoComponent', () => {
         MockModule(BsGridModule),
         MockModule(BsRangeModule),
         MockModule(BsListGroupModule),
-        MockModule(BsInputGroupModule),
-        MockModule(BsButtonTypeModule),
-        MockModule(BsButtonGroupModule),
+        MockComponent(BsButtonGroupComponent),
+        MockDirective(BsButtonTypeDirective),
+        MockComponent(BsButtonGroupComponent),
         MockModule(BsToggleButtonModule),
 
         MockComponent(VideoPlayerComponent),

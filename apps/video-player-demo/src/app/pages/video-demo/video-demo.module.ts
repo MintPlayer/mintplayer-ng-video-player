@@ -6,9 +6,9 @@ import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
 import { BsRangeModule } from '@mintplayer/ng-bootstrap/range';
 import { BsAlertModule } from '@mintplayer/ng-bootstrap/alert';
 import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
-import { BsInputGroupModule } from '@mintplayer/ng-bootstrap/input-group';
-import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
-import { BsButtonGroupModule } from '@mintplayer/ng-bootstrap/button-group';
+import { BsInputGroupComponent } from '@mintplayer/ng-bootstrap/input-group';
+import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
+import { BsButtonGroupComponent } from '@mintplayer/ng-bootstrap/button-group';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
 
 import { VideoPlayerComponent, provideVideoApis } from '@mintplayer/ng-video-player';
@@ -38,9 +38,9 @@ import { VideoDemoComponent } from './video-demo.component';
     BsGridModule,
     BsRangeModule,
     BsListGroupModule,
-    BsInputGroupModule,
-    BsButtonTypeModule,
-    BsButtonGroupModule,
+    BsInputGroupComponent,
+    BsButtonTypeDirective,
+    BsButtonGroupComponent,
     BsToggleButtonModule,
     BsAlertModule,
    

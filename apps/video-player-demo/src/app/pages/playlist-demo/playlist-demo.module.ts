@@ -2,10 +2,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
-import { BsIconModule } from '@mintplayer/ng-bootstrap/icon';
 import { BsSelectModule } from '@mintplayer/ng-bootstrap/select';
 import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
-import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
+import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
 import { youtubeLoader } from '@mintplayer/youtube-player';
 import { vimeoLoader } from '@mintplayer/vimeo-player';
@@ -33,10 +32,9 @@ import { PlaylistDemoComponent } from './playlist-demo.component';
     CommonModule,
     FormsModule,
     BsGridModule,
-    BsIconModule,
     BsSelectModule,
     BsListGroupModule,
-    BsButtonTypeModule,
+    BsButtonTypeDirective,
     BsToggleButtonModule,
 
     VideoPlayerComponent,
