@@ -5,6 +5,6 @@
     "declaration": true,
     "types": ["node", "youtube"]
   },
-  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts", "jest.config.ts"],
-  "include": ["src/**/*.ts"]
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
+  "include": ["**/*.ts"]
 }
