@@ -12,7 +12,7 @@
   "typings": "./src/index.d.ts",
   "peerDependencies": {
     "@mintplayer/player-provider": "^17.3.0",
-    "@mintplayer/script-loader": "^1.1.0",
+    "@mintplayer/script-loader": "^1.2.0",
     "rxjs": "^7.4.0"
   },
   "dependencies": {
