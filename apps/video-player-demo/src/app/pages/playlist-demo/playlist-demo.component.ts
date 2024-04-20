@@ -44,7 +44,7 @@ export class PlaylistDemoComponent implements AfterViewInit {
       });
 
       
-    import('bootstrap-icons/icons/bootstrap.svg').then((icon) => {
+    import('bootstrap-icons/icons/trash-fill.svg').then((icon) => {
       this.trashFillIcon = sanitizer.bypassSecurityTrustHtml(icon.default);
     });
   }
