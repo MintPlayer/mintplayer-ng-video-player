@@ -4,7 +4,7 @@ export default {
   preset: '../../jest.preset.js',
   coverageDirectory: '../../coverage/libs/mintplayer-playlist-controller',
   globals: {},
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   transform: {
     '^.+\\.[tj]s$': [
       'ts-jest',
