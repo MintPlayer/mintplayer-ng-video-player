@@ -6,27 +6,26 @@ import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
 import { BsRangeModule } from '@mintplayer/ng-bootstrap/range';
 import { BsAlertModule } from '@mintplayer/ng-bootstrap/alert';
 import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
-import { BsInputGroupModule } from '@mintplayer/ng-bootstrap/input-group';
-import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
-import { BsButtonGroupModule } from '@mintplayer/ng-bootstrap/button-group';
+import { BsInputGroupComponent } from '@mintplayer/ng-bootstrap/input-group';
+import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
+import { BsButtonGroupComponent } from '@mintplayer/ng-bootstrap/button-group';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
+
+import { VideoPlayerComponent, provideVideoApis } from '@mintplayer/ng-video-player';
+import { youtubeLoader } from '@mintplayer/youtube-player';
+import { vimeoLoader } from '@mintplayer/vimeo-player';
+import { soundCloudLoader } from '@mintplayer/soundcloud-player';
+import { mixCloudLoader } from '@mintplayer/mixcloud-player';
+import { twitchLoader } from '@mintplayer/twitch-player';
+import { spotifyLoader } from '@mintplayer/spotify-player';
+import { streamableLoader } from '@mintplayer/streamable-player';
+import { facebookLoader } from '@mintplayer/facebook-player';
+import { fileLoader } from '@mintplayer/file-player';
+import { vidyardLoader } from '@mintplayer/vidyard-player';
+import { wistiaLoader } from '@mintplayer/wistia-player';
 
 import { VideoDemoRoutingModule } from './video-demo-routing.module';
 import { VideoDemoComponent } from './video-demo.component';
-
-import { YoutubePlayerModule } from '@mintplayer/ng-youtube-player';
-import { DailymotionPlayerModule } from '@mintplayer/ng-dailymotion-player';
-import { VimeoPlayerModule } from '@mintplayer/ng-vimeo-player';
-import { SoundcloudPlayerModule } from '@mintplayer/ng-soundcloud-player';
-import { SpotifyPlayerModule } from '@mintplayer/ng-spotify-player';
-import { TwitchPlayerModule } from '@mintplayer/ng-twitch-player';
-import { MixcloudPlayerModule } from '@mintplayer/ng-mixcloud-player';
-import { FacebookPlayerModule } from '@mintplayer/ng-facebook-player';
-import { VidyardPlayerModule } from '@mintplayer/ng-vidyard-player';
-import { WistiaPlayerModule } from '@mintplayer/ng-wistia-player';
-import { StreamablePlayerModule } from '@mintplayer/ng-streamable-player';
-import { FilePlayerModule } from '@mintplayer/ng-file-player';
-
 
 @NgModule({
   declarations: [
@@ -39,26 +38,30 @@ import { FilePlayerModule } from '@mintplayer/ng-file-player';
     BsGridModule,
     BsRangeModule,
     BsListGroupModule,
-    BsInputGroupModule,
-    BsButtonTypeModule,
-    BsButtonGroupModule,
+    BsInputGroupComponent,
+    BsButtonTypeDirective,
+    BsButtonGroupComponent,
     BsToggleButtonModule,
     BsAlertModule,
+   
+    VideoPlayerComponent,
     
-    YoutubePlayerModule,
-    DailymotionPlayerModule,
-    VimeoPlayerModule,
-    SoundcloudPlayerModule,
-    SpotifyPlayerModule,
-    TwitchPlayerModule,
-    MixcloudPlayerModule,
-    FacebookPlayerModule,
-    VidyardPlayerModule,
-    WistiaPlayerModule,
-    StreamablePlayerModule,
-    FilePlayerModule,
-
     VideoDemoRoutingModule
+  ],
+  providers: [
+    provideVideoApis(
+      youtubeLoader,
+      vimeoLoader,
+      soundCloudLoader,
+      mixCloudLoader,
+      twitchLoader,
+      spotifyLoader,
+      streamableLoader,
+      facebookLoader,
+      fileLoader,
+      vidyardLoader,
+      wistiaLoader
+    )
   ]
 })
 export class VideoDemoModule { }

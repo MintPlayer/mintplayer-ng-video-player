@@ -1,7 +1,7 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { ECapability, EPlayerState, IApiService, VIDEO_APIS } from '@mintplayer/ng-player-provider';
-import { PlayerProgress } from '@mintplayer/ng-player-progress';
+import { ECapability, EPlayerState } from '@mintplayer/player-provider';
+import { PlayerProgress } from '@mintplayer/player-progress';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { APP_BASE_HREF } from '@angular/common';
@@ -13,8 +13,7 @@ import { APP_BASE_HREF } from '@angular/common';
 })
 export class VideoDemoComponent {
 
-  constructor(@Inject(VIDEO_APIS) players: IApiService[], @Inject(APP_BASE_HREF) baseUrl: string) {
-    console.log('VIDEO_APIS', players);
+  constructor(@Inject(APP_BASE_HREF) baseUrl: string) {
     this.cannotFullscreen$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.fullscreen)));
     this.cannotPip$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.pictureInPicture)));
     this.cannotChangeVolume$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.volume)));
@@ -50,8 +49,6 @@ export class VideoDemoComponent {
     'https://www.youtube.com/watch?v=YykjpeuMNEk',
     'https://www.youtube.com/watch?v=yFKhgF_vkgs',
     'https://www.youtube.com/live/gCNeDWCI0vo?app=desktop&feature=share',
-    'https://www.dailymotion.com/video/x2yhuhb',
-    'https://www.dailymotion.com/video/x20zq3f',
     'https://vimeo.com/14190306',
     'https://vimeo.com/82932655',
     'https://soundcloud.com/dario-g/sunchyme-radio-edit',
@@ -87,7 +84,7 @@ export class VideoDemoComponent {
   @ViewChild('player1') player1!: VideoPlayerComponent;
   playVideo(video: string) {
     // Pick one here
-    this.url = video; // This will not replay the video when the url is the same.
+    // this.url = video; // This will not replay the video when the url is the same.
     this.player1.setUrl(video); // This will replay the video when the url is the same.
 
     return false;

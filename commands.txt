@@ -5,10 +5,10 @@ npx create-nx-workspace
 > scss
 cd mintplayer-ng-bootstrap
 nx g @nrwl/angular:lib mintplayer-ng-youtube-player --buildable --publishable --import-path @mintplayer/ng-youtube-player --directory libs/mintplayer-ng-youtube-player
-nx g @nrwl/angular:lib mintplayer-ng-dailymotion-player --buildable --publishable --import-path @mintplayer/ng-dailymotion-player --directory libs/mintplayer-ng-dailymotion-player
 nx g @nrwl/angular:lib mintplayer-ng-vimeo-player --buildable --publishable --import-path @mintplayer/ng-vimeo-player --directory libs/mintplayer-ng-vimeo-player
 nx g @nrwl/angular:lib mintplayer-ng-soundcloud-player --buildable --publishable --import-path @mintplayer/ng-soundcloud-player --directory libs/mintplayer-ng-soundcloud-player
 nx g @nrwl/angular:lib mintplayer-ng-soundcloud-player --buildable --publishable --import-path @mintplayer/ng-mixcloud-player --directory libs/mintplayer-ng-mixcloud-player
 nx g @nrwl/angular:lib mintplayer-ng-player-progress --buildable --publishable --import-path @mintplayer/ng-player-progress --directory libs/mintplayer-ng-player-progress
 nx g @nrwl/angular:lib mintplayer-ng-video-player --buildable --publishable --import-path @mintplayer/ng-video-player --directory libs/mintplayer-ng-video-player
 nx g @nrwl/angular:lib mintplayer-ng-playlist-controller --buildable --publishable --import-path @mintplayer/ng-playlist-controller --directory libs/mintplayer-ng-playlist-controller
+nx g @nx/js:library --name=mintplayer-video-player --buildable --publishable --import-path @mintplayer/video-player

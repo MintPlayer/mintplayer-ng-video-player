@@ -6,13 +6,13 @@
   "prefix": "mintplayer-ng-video-player",
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
+      "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/video-player-demo",
         "index": "apps/video-player-demo/src/index.html",
-        "main": "apps/video-player-demo/src/main.ts",
-        "polyfills": "apps/video-player-demo/src/polyfills.ts",
+        "browser": "apps/video-player-demo/src/main.ts",
+        "polyfills": ["apps/video-player-demo/src/polyfills.ts"],
         "tsConfig": "apps/video-player-demo/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
@@ -29,7 +29,10 @@
           "node_modules/@mintplayer/ng-bootstrap/_bootstrap.scss",
           "apps/video-player-demo/src/styles.scss"
         ],
-        "scripts": []
+        "scripts": [],
+        "loader": {
+          ".svg": "text"
+        }
       },
       "configurations": {
         "production": {
@@ -54,9 +57,7 @@
           "outputHashing": "all"
         },
         "development": {
-          "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true

@@ -1,0 +1,25 @@
+{
+  "name": "@mintplayer/video-player",
+  "private": false,
+  "type": "module",
+  "version": "17.3.0",
+  "description": "Typescript video player supporting multiple platforms",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
+    "directory": "libs/mintplayer-video-player"
+  },
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "rxjs": "^7.4.0",
+    "@mintplayer/player-progress": "^17.3.0",
+    "@mintplayer/player-provider": "^17.3.0"
+  },
+  "author": {
+    "name": "Pieterjan De Clippel",
+    "url": "https://github.com/MintPlayer",
+    "email": "info@mintplayer.com"
+  }
+}

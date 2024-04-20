@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "types": ["node", "soundcloud"],
+    "typeRoots": ["./types", "../../node_modules/@types"],
+    "useDefineForClassFields": false
+  },
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "jest.config.ts"],
+  "include": [
+    "src/**/*.ts",
+    "types/**/*.d.ts"
+  ]
+}

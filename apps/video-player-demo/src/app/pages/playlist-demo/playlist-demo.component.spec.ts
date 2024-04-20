@@ -4,15 +4,10 @@ import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
 import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
 import { BsSelectModule } from '@mintplayer/ng-bootstrap/select';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
-import { PlaylistController } from '@mintplayer/ng-playlist-controller';
-import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
-import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
-import { BehaviorSubject } from 'rxjs';
+import { VideoPlayerComponent, provideVideoApis } from '@mintplayer/ng-video-player';
+import { MockComponent, MockDirective, MockModule, MockProvider } from 'ng-mocks';
 import { PlaylistDemoComponent } from './playlist-demo.component';
-import { BsButtonTypeModule } from '@mintplayer/ng-bootstrap/button-type';
-import { VIDEO_APIS } from '@mintplayer/ng-player-provider';
-
-interface Video {}
+import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
 
 describe('PlaylistDemoComponent', () => {
   let component: PlaylistDemoComponent;
@@ -26,7 +21,7 @@ describe('PlaylistDemoComponent', () => {
         MockModule(BsSelectModule),
         MockModule(BsListGroupModule),
         MockModule(BsToggleButtonModule),
-        MockModule(BsButtonTypeModule)
+        MockDirective(BsButtonTypeDirective)
       ],
       declarations: [
         // Unit to test
@@ -36,10 +31,7 @@ describe('PlaylistDemoComponent', () => {
         MockComponent(VideoPlayerComponent),
       ],
       providers: [
-        MockProvider(PlaylistController, {
-          video$: new BehaviorSubject<Video | null>(null),
-        }),
-        { provide: VIDEO_APIS, multi: true, useValue: [] }
+        provideVideoApis(),
       ]
     })
     .compileComponents();
