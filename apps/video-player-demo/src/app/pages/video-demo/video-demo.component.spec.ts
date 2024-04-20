@@ -30,6 +30,7 @@ describe('VideoDemoComponent', () => {
         MockComponent(BsButtonGroupComponent),
         MockDirective(BsButtonTypeDirective),
         MockComponent(BsButtonGroupComponent),
+        MockComponent(BsInputGroupComponent),
         MockModule(BsToggleButtonModule),
 
         MockComponent(VideoPlayerComponent),
