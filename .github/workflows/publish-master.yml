@@ -37,8 +37,8 @@ jobs:
     - name: Build
       run: npm run nx run-many -- --target=build --configuration=production
 
-    - name: Move web.config
-      run: mv dist/apps/video-player-demo/browser/web.config dist/apps/video-player-demo/
+    # - name: Move web.config
+    #   run: mv dist/apps/video-player-demo/browser/web.config dist/apps/video-player-demo/
 
     - name: Test
       run: npm run nx run-many -- --target=test --browsers=ChromeHeadless --parallel=true
