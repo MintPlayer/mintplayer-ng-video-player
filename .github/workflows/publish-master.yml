@@ -472,3 +472,12 @@ jobs:
         password: ${{ secrets.PUBLISH_FTP_PWD }}
         local-dir: ./dist/apps/video-player-demo/browser/
         server-dir: ./
+
+    - name: Upload web.config seperately
+      uses: tomasbkk/action-ftp-upload@v1.0
+      with:
+        host: mintplayer.com
+        user: ${{ secrets.PUBLISH_FTP_USER }}
+        password: ${{ secrets.PUBLISH_FTP_PWD }}
+        src: dist/apps/video-player-demo/browser/web.config
+        dest: ./web.config
