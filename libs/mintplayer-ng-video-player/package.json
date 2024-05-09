@@ -11,8 +11,8 @@
     "@angular/common": "^17.0.0",
     "@angular/core": "^17.0.0",
     "rxjs": "^7.4.0",
-    "@mintplayer/player-provider": "^17.3.0",
-    "@mintplayer/player-progress": "^17.3.0",
+    "@mintplayer/player-provider": "^17.4.0",
+    "@mintplayer/player-progress": "^17.4.0",
     "@mintplayer/video-player": "^17.3.0"
   },
   "dependencies": {
