@@ -1,7 +1,7 @@
 <h2 class="text-center">Welcome to {{ title }}!</h2>
 <bs-grid>
     <div bsRow class="mb-3">
-        <div [bsColumn]="{'xl': 9}" class="text-center">
+        <div [xl]="9" class="text-center">
             <!-- <video-player [width]="400" [height]="300" (playerStateChange)="onPlayerStateChange($event)"
                 (progressChange)="onProgressChange($event)" #player></video-player> -->
             <video-player [width]="400" [height]="300" (playerStateChange)="onPlayerStateChange($event)" #player></video-player>
@@ -10,7 +10,7 @@
                 <button class="float-end" [color]="colors.secondary" (click)="onNext()">Next</button>
             </div>
         </div>
-        <div [bsColumn]="{'xl': 3}">
+        <div [xl]="3">
             <ul>
                 <li *ngFor="let video of playlistController['_actualPlaylist']">
                     {{ video.video.url }}
@@ -19,7 +19,7 @@
         </div>
     </div>
     <div bsRow class="mb-3">
-        <div [bsColumn]="{'xl': 6}">
+        <div [xl]="6">
             <h3>Available tracks</h3>
             <bs-list-group>
                 <bs-list-group-item *ngFor="let vid of videos" (click)="addVideoToPlaylist(vid)" class="cursor-pointer">
@@ -27,7 +27,7 @@
                 </bs-list-group-item>
             </bs-list-group>
         </div>
-        <div [bsColumn]="{'xl': 6}">
+        <div [xl]="6">
             <h3>Playlist</h3>
             <bs-list-group>
                 <bs-list-group-item *ngFor="let vid of playlistController.playlist">
@@ -45,7 +45,7 @@
         </div>
     </div>
     <div bsRow class="mb-3">
-        <div [bsColumn]="{'xl': 12}" class="text-center">
+        <div [xl]="12" class="text-center">
             <span>
                 <label>
                     Repeat

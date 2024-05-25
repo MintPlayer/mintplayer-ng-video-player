@@ -27,10 +27,10 @@ jobs:
         node-version: 18
 
     - name: Install dependencies
-      run: npm install
+      run: npm ci --force
     
     - name: Build
-      run: npm run nx run-many -- --target=build --configuration=production
+      run: npx nx run-many --target=build --configuration=production
 
     - name: Test
-      run: npm run nx run-many -- --target=test --browsers=ChromeHeadless --parallel=true
+      run: npx nx run-many --target=test --browsers=ChromeHeadless --parallel=true
