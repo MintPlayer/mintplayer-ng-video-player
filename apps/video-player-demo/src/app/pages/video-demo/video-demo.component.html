@@ -2,7 +2,7 @@
 <bs-form>
     <bs-grid>
         <div bsRow class="mb-3">
-            <div [bsColumn]="{lg: 6}">
+            <div [lg]="6">
                 <bs-list-group class="d-block mb-3">
                     <bs-list-group-item (click)="playVideo(video)" class="cursor-pointer overflow-hidden text-truncate truncate-start" *ngFor="let video of videos">{{ video }}</bs-list-group-item>
                 </bs-list-group>
@@ -11,7 +11,7 @@
                     <button [color]="colors.primary" (click)="addToPlaylist()">Add</button>
                 </bs-input-group>
             </div>
-            <div [bsColumn]="{lg: 6}">
+            <div [lg]="6">
                 <div class="d-block" *ngIf="url === 'https://mintplayer.com/Modern-iMovie-8ot-eJxH2yc.mp4'">
                     <bs-alert [type]="colors.warning">
                         <a href="https://www.youtube.com/watch?v=8ot-eJxH2yc" target="_blank">Modern</a> is a melody from <a href="https://apps.apple.com/nl/app/imovie/id377298193" target="_blank">IMovie</a> by <a href="https://www.apple.com" target="_blank">Apple Inc</a>.
@@ -35,10 +35,10 @@
                         (capabilitiesChange)="onCapabilitiesChange($event)" #player1></video-player>
                 </div>
                 <div bsRow>
-                    <div [bsColumn]="{'md': 6}" class="text-center">
+                    <div [md]="6" class="text-center">
                         <label>{{ progress.currentTime }} / {{ progress.duration }}</label>
                     </div>
-                    <div [bsColumn]="{'md': 6}" class="text-center">
+                    <div [md]="6" class="text-center">
                         {{ playerStates[playerState] }}
                         <br>
                         <button (click)="play()" [color]="colors.secondary" *ngIf="playerState === playerStates['paused']">Play</button>
@@ -46,25 +46,25 @@
                     </div>
                 </div>
                 <div bsRow>
-                    <div [bsColumn]="{'md': 6}" class="text-center">
+                    <div [md]="6" class="text-center">
                         <label>
                             <label>{{ volume | number: '0.0' }}</label>
                             <bs-range [(ngModel)]="volume" [disabled]="(cannotChangeVolume$ | async) ?? true" [min]="0" [max]="100" [step]="1"></bs-range>
                         </label>
                     </div>
-                    <div [bsColumn]="{'md': 6}" class="text-center">
+                    <div [md]="6" class="text-center">
                         <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isMuted" [disabled]="(cannotMute$ | async) ?? true" class="d-inline-block py-3">
                             Mute
                         </bs-toggle-button>
                     </div>
                 </div>
                 <div bsRow>
-                    <div [bsColumn]="{'md': 6}" class="text-center">
+                    <div [md]="6" class="text-center">
                         <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isPip" [disabled]="(cannotPip$ | async) ?? true" class="d-inline-block py-3">
                             PiP
                         </bs-toggle-button>
                     </div>
-                    <div [bsColumn]="{'md': 6}" class="text-center">
+                    <div [md]="6" class="text-center">
                         <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isFullscreen" [disabled]="(cannotFullscreen$ | async) ?? true" class="d-inline-block py-3">
                             Fullscreen
                         </bs-toggle-button>
