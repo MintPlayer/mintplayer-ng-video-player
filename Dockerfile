@@ -23,6 +23,7 @@ FROM nginx:latest
 
 # Copy the build output to replace the default nginx contents.
 COPY --from=node_image /usr/local/app/dist/apps/video-player-demo/browser /usr/share/nginx/html
+COPY --from=node_image /usr/local/app/dist/apps/video-player-demo/browser/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80
