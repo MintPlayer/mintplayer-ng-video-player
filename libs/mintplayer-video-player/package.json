@@ -2,7 +2,7 @@
   "name": "@mintplayer/video-player",
   "private": false,
   "type": "module",
-  "version": "18.0.0",
+  "version": "18.0.1",
   "description": "Typescript video player supporting multiple platforms",
   "repository": {
     "type": "git",

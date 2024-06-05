@@ -460,12 +460,12 @@ jobs:
         access: 'public'
         provenance: true
 
-    - name: Publish through FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      if: ${{ steps.publish_ng_video_player.outputs.type }}
-      with:
-        server: mintplayer.com
-        username: ${{ secrets.PUBLISH_FTP_USER }}
-        password: ${{ secrets.PUBLISH_FTP_PWD }}
-        local-dir: ./dist/apps/video-player-demo/browser/
-        server-dir: ./
+    # - name: Publish through FTP
+    #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+    #   if: ${{ steps.publish_ng_video_player.outputs.type }}
+    #   with:
+    #     server: mintplayer.com
+    #     username: ${{ secrets.PUBLISH_FTP_USER }}
+    #     password: ${{ secrets.PUBLISH_FTP_PWD }}
+    #     local-dir: ./dist/apps/video-player-demo/browser/
+    #     server-dir: ./
