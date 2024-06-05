@@ -19,6 +19,7 @@
           "apps/video-player-demo/src/favicon.ico",
           "apps/video-player-demo/src/assets",
           "apps/video-player-demo/src/web.config",
+          "apps/video-player-demo/src/nginx.conf",
           {
             "glob": "*.woff|*.woff2",
             "input": "node_modules/bootstrap-icons/font/fonts",
