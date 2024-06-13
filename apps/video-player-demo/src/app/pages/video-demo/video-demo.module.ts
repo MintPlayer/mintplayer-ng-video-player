@@ -13,6 +13,7 @@ import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
 
 import { VideoPlayerComponent, provideVideoApis } from '@mintplayer/ng-video-player';
 import { youtubeLoader } from '@mintplayer/youtube-player';
+import { dailymotionLoader } from '@mintplayer/dailymotion-player';
 import { vimeoLoader } from '@mintplayer/vimeo-player';
 import { soundCloudLoader } from '@mintplayer/soundcloud-player';
 import { mixCloudLoader } from '@mintplayer/mixcloud-player';
@@ -51,6 +52,7 @@ import { VideoDemoComponent } from './video-demo.component';
   providers: [
     provideVideoApis(
       youtubeLoader,
+      dailymotionLoader,
       vimeoLoader,
       soundCloudLoader,
       mixCloudLoader,
