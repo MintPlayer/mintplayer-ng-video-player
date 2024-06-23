@@ -1,6 +1,6 @@
 import { BehaviorSubject, Observable, Subject, combineLatest, debounceTime, distinctUntilChanged, filter, map, takeUntil } from "rxjs";
 import { PlayerProgress } from "@mintplayer/player-progress";
-import { EPlayerState, IApiService, PlayerAdapter } from "@mintplayer/player-provider";
+import { EPlayerState, IApiService, PlayerAdapter, SphericalProperties, VideoQuality } from "@mintplayer/player-provider";
 import { findApis } from "./player-type-finder";
 import { VideoRequest } from "./video-request";
 import { VideoEventMap } from "./event-map";
@@ -52,6 +52,9 @@ export class VideoPlayer {
               adapter.onDurationChange = (duration) => this.durationObserver$.next(duration);
               adapter.onPipChange = (isPip) => this.pipObserver$.next(isPip);
               adapter.onFullscreenChange = (isFullscreen) => this.fullscreenObserver$.next(isFullscreen);
+              adapter.onPlaybackRateChange = (playbackRate) => this.playbackRateObserver$.next(playbackRate);
+              adapter.onQualityChange = (quality) => this.qualityObserver$.next(quality);
+              adapter.on360PropertiesChange = (properties) => this.sphericalPropertiesObserver$.next(properties);
               this.invokeEvent('capabilitiesChange', adapter.capabilities);
             }).then(() => {
               if (videoRequest !== null) {
@@ -107,6 +110,15 @@ export class VideoPlayer {
     this.fullscreenObserver$
       .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
       .subscribe(isFullscreen => this.invokeEvent('isFullscreenChange', this._isFullscreen = isFullscreen));
+    this.playbackRateObserver$
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
+      .subscribe(playbackRate => this.invokeEvent('playbackRateChange', this._playbackRate = playbackRate));
+    this.qualityObserver$
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
+      .subscribe(quality => this.invokeEvent('qualityChange', this._quality = quality));
+    this.sphericalPropertiesObserver$
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
+      .subscribe(sphericalProperties => this.invokeEvent('sphericalPropertiesChange', this._sphericalProperties = sphericalProperties));
 
     this.progressObserver$ = combineLatest([this.currentTimeObserver$, this.durationObserver$])
       .pipe(debounceTime(10), takeUntil(this.destroyed$))
@@ -159,6 +171,9 @@ export class VideoPlayer {
   private playerStateObserver$ = new Subject<EPlayerState>();
   private pipObserver$ = new Subject<boolean>();
   private fullscreenObserver$ = new Subject<boolean>();
+  private playbackRateObserver$ = new Subject<number>();
+  private qualityObserver$ = new Subject<VideoQuality>();
+  private sphericalPropertiesObserver$ = new Subject<SphericalProperties>();
   //#endregion
 
   //#region width
@@ -230,7 +245,7 @@ export class VideoPlayer {
   }
   set isFullscreen(value: boolean) {
     if (this.playerInfo && this.playerInfo.adapter) {
-      this.playerInfo.adapter.setFullscreen(value);
+      this.playerInfo.adapter.setFullscreen(this._isFullscreen = value);
     }
   }
   //#endregion
@@ -241,14 +256,47 @@ export class VideoPlayer {
   }
   set isPip(value: boolean) {
     if (this.playerInfo && this.playerInfo.adapter) {
-      this.playerInfo.adapter.setPip(value);
+      this.playerInfo.adapter.setPip(this._isPip = value);
     }
   }
   public setIsPip(isPip: boolean) {
     // Vimeo pip requests must originate from a user gesture.
     // Hence why we can't make it a bindable property.
     // Sadly, even with this approach, the browser seems to think the event wasn't user initiated when the iframe isn't focused.
-    this.playerInfo?.adapter?.setPip(isPip);
+    this.playerInfo?.adapter?.setPip(this._isPip = isPip);
+  }
+  //#endregion
+  //#region playbackRate
+  private _playbackRate = 1;
+  get playbackRate() {
+    return this._playbackRate;
+  }
+  set playbackRate(value: number) {
+    if (this.playerInfo && this.playerInfo.adapter) {
+      this.playerInfo.adapter.setPlaybackRate(this._playbackRate = value);
+    }
+  }
+  //#endregion
+  //#region quality
+  private _quality: VideoQuality = 'auto';
+  get quality() {
+    return this._quality;
+  }
+  set quality(value: VideoQuality) {
+    if (this.playerInfo && this.playerInfo.adapter) {
+      this.playerInfo.adapter.setQuality(this._quality = value);
+    }
+  }
+  //#endregion
+  //#region sphericalProperties
+  private _sphericalProperties: SphericalProperties = {};
+  get sphericalProperties() {
+    return this._sphericalProperties;
+  }
+  set sphericalProperties(value: SphericalProperties) {
+    if (this.playerInfo && this.playerInfo.adapter) {
+      this.playerInfo.adapter.set360properties(this._sphericalProperties = value);
+    }
   }
   //#endregion
 

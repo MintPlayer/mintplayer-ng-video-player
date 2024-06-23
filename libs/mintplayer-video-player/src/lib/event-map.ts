@@ -1,5 +1,5 @@
 import { PlayerProgress } from '@mintplayer/player-progress';
-import { ECapability, EPlayerState } from '@mintplayer/player-provider';
+import { ECapability, EPlayerState, SphericalProperties, VideoQuality } from '@mintplayer/player-provider';
 import { VideoPlayer } from './video-player';
 import { Observable, fromEvent } from 'rxjs';
 
@@ -10,6 +10,9 @@ export interface VideoEventMap {
     'muteChange': [boolean];
     'isFullscreenChange': [boolean];
     'isPipChange': [boolean];
+    'playbackRateChange': [number];
+    'qualityChange': [VideoQuality];
+    'sphericalPropertiesChange': [SphericalProperties];
     'capabilitiesChange': [ECapability[]];
 }
 

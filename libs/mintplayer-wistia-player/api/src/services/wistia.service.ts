@@ -56,6 +56,10 @@ export class WistiaService implements IApiService {
       const request: WistiaRequest = {
         id: options.domId,
         onReady: (player) => {
+          debugger;
+          // Is no longer triggered
+          console.warn('player ref', player);
+
           const destroyRef = new Subject<boolean>();
           const adapter = createPlayerAdapter({
             capabilities: [ECapability.mute, ECapability.volume, ECapability.fullscreen, ECapability.getTitle],
