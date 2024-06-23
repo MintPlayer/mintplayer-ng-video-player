@@ -52,6 +52,12 @@ export class StreamableService implements IApiService {
             loadVideoById: (id) => {
               throw 'The Streamable player cannot be reused';
             },
+            getPlayerState: () => new Promise(resolve => {
+              player.getPaused((paused) => {
+                if (paused) resolve(EPlayerState.paused);
+                else resolve(EPlayerState.playing);
+              });
+            }),
             setPlayerState: (state) => {
               switch (state) {
                 case EPlayerState.playing:
@@ -62,6 +68,7 @@ export class StreamableService implements IApiService {
                   break;
               }
             },
+            getMute: () => new Promise(resolve => player.getMuted(muted => resolve(muted))),
             setMute: (mute) => {
               if (mute) {
                 player.mute();
@@ -69,6 +76,7 @@ export class StreamableService implements IApiService {
                 player.unmute();
               }
             },
+            getVolume: () => new Promise(resolve => player.getVolume(volume => resolve(volume))),
             setVolume: (volume) => {
               player.setVolume(volume);
             },
@@ -79,6 +87,12 @@ export class StreamableService implements IApiService {
               iframe.width = `${width}px`;
               iframe.height = `${height}px`;
             },
+            getPlaybackRate: () => new Promise((resolve, reject) => reject('Streamable doesn\'t support getting player state')),
+            setPlaybackRate: () => { return 'Streamable doesn\'t support getting player state' },
+            getQuality: () => new Promise((resolve, reject) => reject('Streamable doesn\'t support changing video quality')),
+            setQuality: () => { return 'Streamable doesn\'t support changing video quality' },
+            get360properties: () => new Promise((resolve, reject) => reject('Streamable doesn\'t support 360 mode')),
+            set360properties: (properties) => { throw 'Streamable doesn\'t support 360 mode'; },
             getTitle: () => new Promise((resolve) => resolve('')),
             setFullscreen: (fullscreen) => {
               if (fullscreen) {

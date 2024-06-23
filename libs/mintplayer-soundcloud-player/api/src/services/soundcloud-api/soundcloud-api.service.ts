@@ -33,6 +33,9 @@ export class SoundcloudApiService implements IApiService {
       const adapter: PlayerAdapter = createPlayerAdapter({
         capabilities: [ECapability.volume, ECapability.getTitle],
         loadVideoById: (id: string) => player.load(id, { auto_play: options.autoplay }),
+        getPlayerState: () => new Promise(resolve => {
+          return player.isPaused(isPaused => resolve(isPaused ? EPlayerState.paused : EPlayerState.playing));
+        }),
         setPlayerState: (state: EPlayerState) => {
           switch (state) {
             case EPlayerState.playing:
@@ -46,8 +49,10 @@ export class SoundcloudApiService implements IApiService {
               break;
           }
         },
+        getMute: () => new Promise(resolve => player.getVolume(volume => resolve(volume == 0))),
         setMute: (mute) => player.setVolume(mute ? 0 : 50),
         setVolume: (volume) => player.setVolume(volume),
+        getVolume: () => new Promise(resolve => player.getVolume(volume => resolve(volume))),
         setProgress: (time) => player.seekTo(time * 1000),
         setSize: (width, height) => {
           if (options.element) {
@@ -58,6 +63,12 @@ export class SoundcloudApiService implements IApiService {
             }
           }
         },
+        getPlaybackRate: () => new Promise((resolve, reject) => reject('SoundCloud doesn\'t support getting player state')),
+        setPlaybackRate: () => { return 'SoundCloud doesn\'t support getting player state' },
+        getQuality: () => new Promise((resolve, reject) => reject('SoundCloud doesn\'t support changing video quality')),
+        setQuality: () => { return 'SoundCloud doesn\'t support changing video quality' },
+        get360properties: () => new Promise((resolve, reject) => reject('SoundCloud doesn\'t support 360 mode')),
+        set360properties: (properties) => { throw 'SoundCloud doesn\'t support 360 mode'; },
         getTitle: () => new Promise<string>((resolve) => player.getCurrentSound((sound: {description: string, title: string}) => resolve(sound.description ?? sound.title))),
         setFullscreen: (isFullscreen) => {
           if (isFullscreen) {

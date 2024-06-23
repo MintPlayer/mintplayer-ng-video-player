@@ -107,11 +107,13 @@ export class VidyardService implements IApiService {
       playerReady$.pipe(filter(([ready]) => ready), take(1), takeUntil(destroyRef), takeUntil(destroy))
         .subscribe(([_, plr]) => {
           const player = plr!;
+          console.warn('vidyard player', player);
           const adapter = createPlayerAdapter({
-            capabilities: [ECapability.volume],
+            capabilities: [ECapability.volume, ECapability.mute],
             loadVideoById: (id: string) => {
               throw 'The Vidyard player cannot be reused';
             },
+            getPlayerState: () => new Promise((resolve, reject) => reject('The Vidyard player doesn\'t allow getting the player state')),
             setPlayerState: (state: EPlayerState) => {
               switch (state) {
                 case EPlayerState.playing:
@@ -122,16 +124,22 @@ export class VidyardService implements IApiService {
                   break;
               }
             },
-            setMute: (mute) => {
-              throw 'The Vidyard player doesn\'t support mute';
-            },
+            getMute: () => new Promise((resolve, reject) => reject('Vidyard doesn\'t support getting muted')),
+            setMute: (mute) => player.setVolume && player.setVolume(0),
+            getVolume: () => new Promise((resolve, reject) => reject('Vidyard doesn\'t support getting volume')),
             setVolume: (volume) => player.setVolume(volume / 100),
             setProgress: (time) => player.seek(time),
             setSize: (width, heigt) => {
               player.iframe.width = `${width}px`;
               player.iframe.height = `${heigt}px`;
             },
-            getTitle: () => new Promise((resolve) => {
+            getPlaybackRate: () => new Promise((resolve, reject) => reject('Vidyard doesn\'t support getting player state')),
+            setPlaybackRate: () => { return 'Vidyard doesn\'t support getting player state' },
+            getQuality: () => new Promise((resolve, reject) => reject('Vidyard doesn\'t support changing video quality')),
+            setQuality: () => { return 'Vidyard doesn\'t support changing video quality' },
+            get360properties: () => new Promise((resolve, reject) => reject('Vidyard doesn\'t support 360 mode')),
+            set360properties: (properties) => { throw 'Vidyard doesn\'t support 360 mode'; },
+              getTitle: () => new Promise((resolve) => {
               resolve(player.metadata.name ?? player.metadata.description);
             }),
             setFullscreen: (fullscreen) => {

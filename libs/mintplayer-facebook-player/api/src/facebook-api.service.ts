@@ -60,6 +60,7 @@ export class FacebookApiService implements IApiService {
                 loadVideoById: (id) => {
                     // No method for this
                 },
+                getPlayerState: () => new Promise((resolve, reject) => reject('No method for this')),
                 setPlayerState: (state) => {
                     const player = lastPlayerInstance$.value;
                     switch (state) {
@@ -76,6 +77,7 @@ export class FacebookApiService implements IApiService {
                             break;
                     }
                 },
+                getMute: () => new Promise((resolve, reject) => reject('No method for this')),
                 setMute: (mute) => {
                     const player = lastPlayerInstance$.value;
                     if (player) {
@@ -84,6 +86,7 @@ export class FacebookApiService implements IApiService {
                         setTimeout(() => disableVolumeChange = false, 20);
                     }
                 },
+                getVolume: () => new Promise((resolve, reject) => reject('no method for this')),
                 setVolume: (volume) => {
                     const player = lastPlayerInstance$.value;
                     if (!disableVolumeChange && player) {
@@ -95,6 +98,12 @@ export class FacebookApiService implements IApiService {
                     player && player.seek(time);
                 },
                 setSize: (width, height) => {},
+                setPlaybackRate: (rate) => { throw 'No method for this' },
+                getPlaybackRate: () => new Promise((resolve, reject) => reject('no method for this')),
+                setQuality: (quality) => { throw 'No method for this' },
+                getQuality: () => new Promise((resolve, reject) => reject('no method for this')),
+                set360properties: () => { throw 'No method for this' },
+                get360properties: () => new Promise((resolve, reject) => reject('no method for this')),
                 getTitle: () => new Promise((resolve, reject) => reject('The Facebook player doesn\'t allow getting the title')),
                 setFullscreen: (fullscreen) => {
                     throw 'The Facebook player doesn\'t allow fullscreen mode';

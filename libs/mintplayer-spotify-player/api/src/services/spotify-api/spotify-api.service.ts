@@ -65,6 +65,7 @@ export class SpotifyApiService implements IApiService {
             adapter = createPlayerAdapter({
               capabilities: [],
               loadVideoById: (id) => controller.loadUri(id),
+              getPlayerState: () => new Promise((resolve, reject) => reject('Spotify doesn\'t support getting the player state')),
               setPlayerState: (state: EPlayerState) => {
                 switch (state) {
                   case EPlayerState.playing:
@@ -79,22 +80,22 @@ export class SpotifyApiService implements IApiService {
                     break;
                 }
               },
-              setMute: (mute) => {
-                throw 'Spotify api doesn\'t allow mute'
-              },
-              setVolume: (volume) => {
-                throw 'Spotify api doesn\'t allow changing the volume'
-              },
+              getMute: () => new Promise((resolve, reject) => reject('Spotify api doesn\'t allow mute')),
+              setMute: (mute) => { throw 'Spotify api doesn\'t allow mute' },
+              getVolume: () => new Promise((resolve, reject) => reject('Spotify api doesn\'t allow changing the volume')),
+              setVolume: (volume) => { throw 'Spotify api doesn\'t allow changing the volume' },
               setProgress: (time) => controller.seek(time),
               setSize: (width, height) => controller.setIframeDimensions(width, height),
+              getPlaybackRate: () => new Promise((resolve, reject) => reject('Spotify doesn\'t support getting player state')),
+              setPlaybackRate: () => { return 'Spotify doesn\'t support getting player state' },
+              getQuality: () => new Promise((resolve, reject) => reject('Spotify doesn\'t support changing video quality')),
+              setQuality: () => { return 'Spotify doesn\'t support changing video quality' },
+              get360properties: () => new Promise((resolve, reject) => reject('Spotify doesn\'t support 360 mode')),
+              set360properties: (properties) => { throw 'Spotify doesn\'t support 360 mode'; },
               getTitle: () => new Promise((resolve, reject) => reject('Spotify api doesn\'t allow getting the title')),
-              setFullscreen: (isFullscreen) => {
-                throw 'Spotify doesn\'t support fullscreen';
-              },
               getFullscreen: () => new Promise((resolve) => resolve(false)),
-              setPip: (isPip) => {
-                throw 'Spotify doesn\'t support picture-in-picture'
-              },
+              setFullscreen: (isFullscreen) => { throw 'Spotify doesn\'t support fullscreen' },
+              setPip: (isPip) => { throw 'Spotify doesn\'t support picture-in-picture' },
               getPip: () => new Promise(resolve => resolve(false)),
               destroy: () => {
                 destroyRef.next(true);

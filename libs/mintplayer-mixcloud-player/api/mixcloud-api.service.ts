@@ -62,6 +62,7 @@ export class MixcloudApiService implements IApiService {
             player.load && player.load(id, options.autoplay)
               // .then(() => this.hookEvents(player, adapter));
           },
+          getPlayerState: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support getting player state')),
           setPlayerState: (state: EPlayerState) => {
             switch (state) {
               case EPlayerState.playing:
@@ -75,15 +76,21 @@ export class MixcloudApiService implements IApiService {
                 break;
             }
           },
-          setMute: (mute) => {
-            throw 'MixCloud doesn\'t allow mute';
-          },
+          getMute: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support getting muted')),
+          setMute: (mute) => player.setVolume && player.setVolume(0),
+          getVolume: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support getting volume')),
           setVolume: (volume) => player.setVolume && player.setVolume(volume / 100),
           setProgress: (time) => player.seek && player.seek(time),
           setSize: (width, height) => {
             frame.width = String(width);
             frame.height = String(height);
           },
+          getPlaybackRate: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support getting player state')),
+          setPlaybackRate: () => { throw 'MixCloud doesn\'t support getting player state' },
+          getQuality: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support changing video quality')),
+          setQuality: () => { throw 'MixCloud doesn\'t support changing video quality' },
+          get360properties: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support 360 mode')),
+          set360properties: (properties) => { throw 'MixCloud doesn\'t support 360 mode'; },
           getTitle: () => new Promise((resolve, reject) => {
             if (player.getCurrentKey) {
               player.getCurrentKey().then((key) => resolve(key));

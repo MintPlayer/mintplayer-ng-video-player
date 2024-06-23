@@ -47,6 +47,11 @@ export class DailymotionApiService implements IApiService {
             adapter = createPlayerAdapter({
               capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
               loadVideoById: (id: string) => player.load({video: id}),
+              getPlayerState: () => new Promise(resolve => {
+                if (player.ended) return resolve(EPlayerState.ended);
+                else if (player.paused) return resolve(EPlayerState.paused);
+                else return resolve(EPlayerState.playing);
+              }),
               setPlayerState: (state: EPlayerState) => {
                 switch (state) {
                   case EPlayerState.playing:
@@ -60,13 +65,21 @@ export class DailymotionApiService implements IApiService {
                     break;
                 }
               },
+              getMute: () => new Promise(resolve => resolve(player.muted)),
               setMute: (mute) => player.setMuted(mute),
+              getVolume: () => new Promise(resolve => resolve(player.volume * 100)),
               setVolume: (volume) => player.setVolume(volume / 100),
               setProgress: (time) => player.seek(time),
               setSize: (width, height) => {
                 player.width = width;
                 player.height = height;
               },
+              getPlaybackRate: () => new Promise(resolve => resolve(1)),
+              setPlaybackRate: () => { throw 'DailyMotion doesn\'t support playback rate'},
+              getQuality: () => new Promise((resolve, reject) => reject('DailyMotion doesn\'t support video quality')),
+              setQuality: () => { throw 'DailyMotion doesn\'t support video quality' },
+              get360properties: () => new Promise((resolve, reject) => reject('DailyMotion doesn\t support spherical mode')),
+              set360properties: (properties) => { throw 'DailyMotion doesn\'t support spherical mode' },
               getTitle: () => new Promise((resolve) => {
                 resolve(player.video.title.replace(new RegExp('\\+', 'g'), ' '));
               }),

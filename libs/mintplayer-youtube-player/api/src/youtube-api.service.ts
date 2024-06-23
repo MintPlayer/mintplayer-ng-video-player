@@ -44,8 +44,21 @@ export class YoutubeApiService implements IApiService {
         events: {
           onReady: (ev: YT.PlayerEvent) => {
             adapter = createPlayerAdapter({
-              capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
+              capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle, ECapability.quality, ECapability.playbackRate, ECapability.spherical],
               loadVideoById: (id: string) => player.loadVideoById(id),
+              getPlayerState: () => new Promise(resolve => {
+                const state = player.getPlayerState();
+                switch (state) {
+                  case YT.PlayerState.PLAYING:
+                    return resolve(EPlayerState.playing);
+                  case YT.PlayerState.PAUSED:
+                    return resolve(EPlayerState.paused);
+                  case YT.PlayerState.ENDED:
+                    return resolve(EPlayerState.ended);
+                  default:
+                    return resolve(EPlayerState.unstarted);
+                }
+              }),
               setPlayerState: (state: EPlayerState) => {
                 switch (state) {
                   case EPlayerState.playing:
@@ -61,10 +74,25 @@ export class YoutubeApiService implements IApiService {
                     break;
                 }
               },
+              getMute: () => new Promise(resolve => resolve(player.isMuted())),
               setMute: (mute) => mute ? player.mute() : player.unMute(),
+              getVolume: () => new Promise(resolve => resolve(player.getVolume())),
               setVolume: (volume) => player.setVolume(volume),
               setProgress: (time) => player.seekTo(time, true),
               setSize: (width, height) => player.setSize(width, height),
+              getPlaybackRate: () => new Promise(resolve => resolve(player.getPlaybackRate())),
+              setPlaybackRate: (rate: number) => player.setPlaybackRate(rate),
+              getQuality: () => new Promise(resolve => resolve(player.getPlaybackQuality())),
+              setQuality: (quality) => {
+                if (typeof quality === 'number') {
+                  throw 'Youtube quality cannot be a number';
+                } else if ((quality === 'default') || (quality === 'small') || (quality === 'medium') || (quality === 'large')
+                   || (quality === 'hd720') || (quality === 'hd1080') || (quality === 'highres')) {
+                  player.setPlaybackQuality(quality);
+                }
+              },
+              get360properties: () => new Promise(resolve => resolve(player.getSphericalProperties())),
+              set360properties: (properties) => player.setSphericalProperties(properties),
               getTitle: () => new Promise((resolve) => {
                 resolve((<any>player).getVideoData().title);
               }),
@@ -98,10 +126,7 @@ export class YoutubeApiService implements IApiService {
                   // Progress
                   const currentTime = player.getCurrentTime();
                   adapter.onCurrentTimeChange(currentTime);
-                });
-              timer(0, 50)
-                .pipe(takeUntil(destroyRef), takeUntil(destroy))
-                .subscribe(() => {
+                  
                   // Volume
                   const vol = player.getVolume();
                   adapter.onVolumeChange(vol);
@@ -109,6 +134,18 @@ export class YoutubeApiService implements IApiService {
                   // Mute
                   const currentMute = player.isMuted();
                   adapter.onMuteChange(currentMute);
+
+                  // PlaybackRate
+                  const currentRate = player.getPlaybackRate();
+                  adapter.onPlaybackRateChange(currentRate);
+
+                  // Quality
+                  const currentQuality = player.getPlaybackQuality();
+                  adapter.onQualityChange(currentQuality);
+
+                  // 360-properties
+                  const sphericalProperties = player.getSphericalProperties();
+                  adapter.on360PropertiesChange(sphericalProperties);
                 });
             }
 

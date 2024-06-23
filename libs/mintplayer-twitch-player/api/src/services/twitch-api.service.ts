@@ -77,6 +77,7 @@ export class TwitchApiService implements IApiService {
               throw 'You must pass a video, channel or collection';
             }
           },
+          getPlayerState: () => new Promise(resolve => resolve(player.isPaused() ? EPlayerState.paused : EPlayerState.playing)),
           setPlayerState: (state: EPlayerState) => {
             switch (state) {
               case EPlayerState.playing:
@@ -87,7 +88,9 @@ export class TwitchApiService implements IApiService {
                 break;
             }
           },
+          getMute: () => new Promise(resolve => resolve(player.getMuted())),
           setMute: (mute) => player.setMuted(mute),
+          getVolume: () => new Promise(resolve => resolve(player.getVolume() * 100)),
           setVolume: (volume) => player.setVolume(volume / 100),
           setProgress: (time) => player.seek(time),
           setSize: (width, height) => {
@@ -95,6 +98,12 @@ export class TwitchApiService implements IApiService {
             iframe.width = String(width);
             iframe.height = String(height);
           },
+          getPlaybackRate: () => new Promise((resolve, reject) => reject('Twitch doesn\'t support getting player state')),
+          setPlaybackRate: () => { return 'Twitch doesn\'t support getting player state' },
+          getQuality: () => new Promise((resolve, reject) => reject('Twitch doesn\'t support changing video quality')),
+          setQuality: () => { return 'Twitch doesn\'t support changing video quality' },
+          get360properties: () => new Promise((resolve, reject) => reject('Twitch doesn\'t support 360 mode')),
+          set360properties: (properties) => { throw 'Twitch doesn\'t support 360 mode'; },
           getTitle: () => new Promise((resolve) => {
             const fragments = [player.getChannel(), player.getVideo()].filter(x => !!x);
             resolve(fragments.join(' - '));

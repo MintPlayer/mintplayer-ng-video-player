@@ -66,6 +66,15 @@ export class WistiaService implements IApiService {
               }
               adapter.onVolumeChange(player.volume() * 100);
             },
+            getPlayerState: () => new Promise(resolve => {
+              const state = player.state();
+              switch (state) {
+                case 'playing': return resolve(EPlayerState.playing);
+                case 'paused': return resolve(EPlayerState.paused);
+                case 'ended': return resolve(EPlayerState.ended);
+                default: return resolve(EPlayerState.unstarted);
+              }
+            }),
             setPlayerState: (state) => {
               switch (state) {
                 case EPlayerState.playing:
@@ -76,16 +85,26 @@ export class WistiaService implements IApiService {
                   break;
                 }
             },
+            getMute: () => new Promise(resolve => resolve(player.isMuted())),
             setMute: (mute) => {
               if (mute) player.mute();
               else player.unmute();
             },
+            getVolume: () => new Promise(resolve => resolve(player.volume() * 100)),
             setVolume: (volume) => player.volume(volume / 100),
             setProgress: (time) => player.time(time),
             setSize: (width, height) => {
               player.width(width);
               player.height(height);
             },
+            // getPlaybackRate: () => new Promise(resolve => resolve(player.playbackRate())),
+            getPlaybackRate: () => new Promise((resolve, reject) => reject('Wistia doesn\'t support getting player state')),
+            setPlaybackRate: (rate) => player.playbackRate(rate),
+            // getQuality: () => new Promise(resolve => resolve(player.playbackRate())),
+            getQuality: () => new Promise(resolve => resolve(player.videoQuality())),
+            setQuality: (quality) => { throw 'MixCloud doesn\'t support changing video quality' },
+            get360properties: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support 360 mode')),
+            set360properties: (properties) => { throw 'MixCloud doesn\'t support 360 mode'; },
             getTitle: () => new Promise(resolve => resolve(player.name())),
             setFullscreen: (isFullscreen) => {
               if (isFullscreen) {

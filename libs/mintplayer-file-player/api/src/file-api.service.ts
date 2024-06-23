@@ -85,6 +85,11 @@ export class FileApiService implements IApiService {
                     loadVideoById: (id: string) => {
                         // throw 'File player cannot be reused';
                     },
+                    getPlayerState: () => new Promise(resolve => {
+                        if (mediaElement.ended) return resolve(EPlayerState.ended);
+                        else if (mediaElement.paused) return resolve(EPlayerState.paused);
+                        else return resolve(EPlayerState.playing);
+                    }),
                     setPlayerState: (state: EPlayerState) => {
                         switch (state) {
                             case EPlayerState.playing:
@@ -95,7 +100,9 @@ export class FileApiService implements IApiService {
                                 break;
                         }
                     },
+                    getMute: () => new Promise(resolve => resolve(mediaElement.muted)),
                     setMute: (mute) => mediaElement.muted = mute,
+                    getVolume: () => new Promise(resolve => resolve(mediaElement.volume * 100)),
                     setVolume: (volume) => mediaElement.volume = volume / 100,
                     setProgress: (time) => mediaElement.fastSeek(time),
                     setSize: (width, height) => {
@@ -104,9 +111,13 @@ export class FileApiService implements IApiService {
                             mediaElement.height = height;
                         }
                     },
-                    getTitle: () => new Promise((resolve, reject) => {
-                        reject('File player doesn\'t support getting the title');
-                    }),
+                    getPlaybackRate: () => new Promise(resolve => resolve(mediaElement.playbackRate)),
+                    setPlaybackRate: (rate) => mediaElement.playbackRate = rate,
+                    getQuality: () => new Promise((resolve, reject) => reject('File player doesn\t support choosing video quality')),
+                    setQuality: (quality) => { throw 'File player doesn\t support choosing video quality' },
+                    get360properties: () => new Promise((resolve, reject) => reject('File player doesn\'t support 360 mode')),
+                    set360properties: (properties) => { throw 'File player doesn\'t support 360 mode'; },
+                    getTitle: () => new Promise((resolve, reject) => reject('File player doesn\'t support getting the title')),
                     setFullscreen: (isFullscreen) => {
                         if (isFullscreen) {
                             divElement.requestFullscreen();

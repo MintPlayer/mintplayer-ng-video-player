@@ -45,6 +45,17 @@ export class VimeoApiService implements IApiService {
         adapter = createPlayerAdapter({
           capabilities: [ECapability.fullscreen, ECapability.pictureInPicture, ECapability.volume, ECapability.mute, ECapability.getTitle],
           loadVideoById: (id: string) => player.loadVideo(id),
+          getPlayerState: () => new Promise(resolve => {
+            player.getEnded().then(ended => {
+              if (ended) {
+                resolve(EPlayerState.ended);
+              } else {
+                player.getPaused().then(paused => {
+                  resolve(paused ? EPlayerState.paused : EPlayerState.playing);
+                });
+              }
+            });
+          }),
           setPlayerState: (state: EPlayerState) => {
             switch (state) {
               case EPlayerState.playing:
@@ -58,8 +69,10 @@ export class VimeoApiService implements IApiService {
                 break;
             }
           },
-          setVolume: (volume) => player.setVolume(volume / 100),
+          getMute: () => player.getMuted(),
           setMute: (mute) => player.setMuted(mute),
+          getVolume: () => new Promise(resolve => player.getVolume().then(vol => resolve(vol * 100))),
+          setVolume: (volume) => player.setVolume(volume / 100),
           setProgress: (time) => player.setCurrentTime(time),
           setSize: (width, height) => {
             if (options.element) {
@@ -70,6 +83,12 @@ export class VimeoApiService implements IApiService {
               }
             }
           },
+          getPlaybackRate: () => new Promise((resolve, reject) => reject('Vimeo doesn\'t support getting player state')),
+          setPlaybackRate: () => { return 'Vimeo doesn\'t support getting player state' },
+          getQuality: () => new Promise((resolve, reject) => reject('Vimeo doesn\'t support changing video quality')),
+          setQuality: () => { return 'Vimeo doesn\'t support changing video quality' },
+          get360properties: () => new Promise((resolve, reject) => reject('Vimeo doesn\'t support 360 mode')),
+          set360properties: (properties) => { throw 'Vimeo doesn\'t support 360 mode'; },
           getTitle: () => player.getVideoTitle(),
           setFullscreen: (isFullscreen) => {
             if (isFullscreen) {
