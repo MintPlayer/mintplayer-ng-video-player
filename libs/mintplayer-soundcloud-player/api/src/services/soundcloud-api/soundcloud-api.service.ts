@@ -63,10 +63,12 @@ export class SoundcloudApiService implements IApiService {
             }
           }
         },
-        getPlaybackRate: () => new Promise((resolve, reject) => reject('SoundCloud doesn\'t support getting player state')),
-        setPlaybackRate: () => { return 'SoundCloud doesn\'t support getting player state' },
+        getPlaybackRate: () => new Promise((resolve, reject) => reject('SoundCloud doesn\'t support changing playback rate')),
+        setPlaybackRate: () => { throw 'SoundCloud doesn\'t support changing playback rate' },
+        getPlaybackRates: () => new Promise((resolve, reject) => reject('SoundCloud doesn\'t support changing playback rate')),
         getQuality: () => new Promise((resolve, reject) => reject('SoundCloud doesn\'t support changing video quality')),
-        setQuality: () => { return 'SoundCloud doesn\'t support changing video quality' },
+        setQuality: () => { throw 'SoundCloud doesn\'t support changing video quality' },
+        getQualities: () => new Promise((resolve, reject) => reject('SoundCloud doesn\'t support changing video quality')),
         get360properties: () => new Promise((resolve, reject) => reject('SoundCloud doesn\'t support 360 mode')),
         set360properties: (properties) => { throw 'SoundCloud doesn\'t support 360 mode'; },
         getTitle: () => new Promise<string>((resolve) => player.getCurrentSound((sound: {description: string, title: string}) => resolve(sound.description ?? sound.title))),

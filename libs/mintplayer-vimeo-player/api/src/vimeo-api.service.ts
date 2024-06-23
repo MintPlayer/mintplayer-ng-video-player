@@ -83,10 +83,12 @@ export class VimeoApiService implements IApiService {
               }
             }
           },
-          getPlaybackRate: () => new Promise((resolve, reject) => reject('Vimeo doesn\'t support getting player state')),
-          setPlaybackRate: () => { return 'Vimeo doesn\'t support getting player state' },
+          getPlaybackRate: () => new Promise((resolve, reject) => reject('Vimeo doesn\'t support changing playback rates')),
+          setPlaybackRate: () => { throw 'Vimeo doesn\'t support changing playback rates' },
+          getPlaybackRates: () => new Promise((resolve, reject) => reject('Vimeo doesn\'t support changing playback rates')),
           getQuality: () => new Promise((resolve, reject) => reject('Vimeo doesn\'t support changing video quality')),
-          setQuality: () => { return 'Vimeo doesn\'t support changing video quality' },
+          setQuality: () => { throw 'Vimeo doesn\'t support changing video quality' },
+          getQualities: () => new Promise((resolve, reject) => reject('Vimeo doesn\'t support changing video quality')),
           get360properties: () => new Promise((resolve, reject) => reject('Vimeo doesn\'t support 360 mode')),
           set360properties: (properties) => { throw 'Vimeo doesn\'t support 360 mode'; },
           getTitle: () => player.getVideoTitle(),

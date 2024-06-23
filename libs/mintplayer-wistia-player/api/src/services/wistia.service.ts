@@ -102,13 +102,15 @@ export class WistiaService implements IApiService {
               player.height(height);
             },
             // getPlaybackRate: () => new Promise(resolve => resolve(player.playbackRate())),
-            getPlaybackRate: () => new Promise((resolve, reject) => reject('Wistia doesn\'t support getting player state')),
+            getPlaybackRate: () => new Promise((resolve, reject) => reject('Wistia doesn\'t support changing playback rate')),
             setPlaybackRate: (rate) => player.playbackRate(rate),
+            getPlaybackRates: () => new Promise(resolve => resolve(undefined)),
             // getQuality: () => new Promise(resolve => resolve(player.playbackRate())),
             getQuality: () => new Promise(resolve => resolve(player.videoQuality())),
-            setQuality: (quality) => { throw 'MixCloud doesn\'t support changing video quality' },
-            get360properties: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support 360 mode')),
-            set360properties: (properties) => { throw 'MixCloud doesn\'t support 360 mode'; },
+            setQuality: (quality) => { throw 'Wistia doesn\'t support changing video quality' },
+            getQualities: () => new Promise((resolve, reject) => reject('Wistia doesn\'t support changing video quality')),
+            get360properties: () => new Promise((resolve, reject) => reject('Wistia doesn\'t support 360 mode')),
+            set360properties: (properties) => { throw 'Wistia doesn\'t support 360 mode'; },
             getTitle: () => new Promise(resolve => resolve(player.name())),
             setFullscreen: (isFullscreen) => {
               if (isFullscreen) {

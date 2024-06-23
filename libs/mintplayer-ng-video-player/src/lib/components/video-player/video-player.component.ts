@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Inject, InjectionToken, Input, ModuleWithProviders, NgZone, OnDestroy, Output, StaticProvider, Type, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PlayerProgress } from '@mintplayer/player-progress';
-import { ApiLoader, ECapability, EPlayerState, IApiService } from '@mintplayer/player-provider';
+import { ApiLoader, ECapability, EPlayerState, IApiService, SphericalProperties, VideoQuality } from '@mintplayer/player-provider';
 import { VideoPlayer, fromVideoEvent } from "@mintplayer/video-player";
 
 const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis');
@@ -149,6 +149,47 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     }
   }
   //#endregion
+  //#region quality
+  public get quality() {
+    return this.player?.quality || 'auto';
+  }
+  @Input() public set quality(value: VideoQuality | undefined) {
+    if (this.player) {
+      this.player.quality = value || 'auto';
+    }
+  }
+  @Output() public qualityChange = new EventEmitter<VideoQuality>();
+  //#endregion
+  //#region quality
+  public get qualities() {
+    return this.player?.qualities || [];
+  }
+  @Output() public qualitiesChange = new EventEmitter<VideoQuality[]>();
+  //#endregion
+  //#region playbackRate
+  public get playbackRate() {
+    return this.player?.playbackRate || 1;
+  }
+  @Input() public set playbackRate(value: number) {
+    if (this.player) {
+      this.player.playbackRate = value;
+    }
+  }
+  @Output() public playbackRateChange = new EventEmitter<number>();
+  //#endregion
+  //#region sphericalProperties
+  public get sphericalProperties() {
+    return this.player?.sphericalProperties || {};
+  }
+  @Input() public set sphericalProperties(value: SphericalProperties) {
+    if (this.player) {
+      this.player.sphericalProperties = value;
+    }
+  }
+  @Output() public sphericalPropertiesChange = new EventEmitter<SphericalProperties>();
+  //#endregion
+
+  
 
   @Output() capabilitiesChange = new EventEmitter<ECapability[]>();
 
@@ -172,6 +213,14 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
         .subscribe(([capabilities]) => this.zoneEmit(this.capabilitiesChange, capabilities));
       fromVideoEvent(this.player, 'progressChange').pipe(takeUntilDestroyed(this.destroy))
         .subscribe(([progress]) => this.zoneEmit(this.progressChange, progress));
+      fromVideoEvent(this.player, 'qualityChange').pipe(takeUntilDestroyed(this.destroy))
+        .subscribe(([quality]) => this.zoneEmit(this.qualityChange, quality));
+      fromVideoEvent(this.player, 'qualitiesChange').pipe(takeUntilDestroyed(this.destroy))
+        .subscribe(([qualities]) => this.zoneEmit(this.qualitiesChange, qualities));
+      fromVideoEvent(this.player, 'playbackRateChange').pipe(takeUntilDestroyed(this.destroy))
+        .subscribe(([playbackRate]) => this.zoneEmit(this.playbackRateChange, playbackRate));
+      fromVideoEvent(this.player, 'sphericalPropertiesChange').pipe(takeUntilDestroyed(this.destroy))
+        .subscribe(([sphericalProperties]) => this.zoneEmit(this.sphericalPropertiesChange, sphericalProperties));
     });
   }
 

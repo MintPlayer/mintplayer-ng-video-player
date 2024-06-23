@@ -12,6 +12,7 @@ export interface VideoEventMap {
     'isPipChange': [boolean];
     'playbackRateChange': [number];
     'qualityChange': [VideoQuality];
+    'qualitiesChange': [VideoQuality[]];
     'sphericalPropertiesChange': [SphericalProperties];
     'capabilitiesChange': [ECapability[]];
 }

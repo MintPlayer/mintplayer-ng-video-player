@@ -1,6 +1,6 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
-import { ECapability, EPlayerState } from '@mintplayer/player-provider';
+import { ECapability, EPlayerState, VideoQuality } from '@mintplayer/player-provider';
 import { PlayerProgress } from '@mintplayer/player-progress';
 import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { BehaviorSubject, Observable, map } from 'rxjs';
@@ -19,6 +19,7 @@ export class VideoDemoComponent {
     this.cannotChangeVolume$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.volume)));
     this.cannotMute$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.mute)));
     this.cannotGetTitle$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.getTitle)));
+    this.cannotChangeQuality$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.quality)));
     // (<any>window)['testingPlayerApi'] = true;
 
     this.videos.push(
@@ -38,6 +39,8 @@ export class VideoDemoComponent {
   isMuted = false;
   isPip = false;
   isFullscreen = false;
+  quality: VideoQuality | undefined;
+  playbackRate: number = 1;
   progress: PlayerProgress = {
     currentTime: 0,
     duration: 0
@@ -120,12 +123,18 @@ export class VideoDemoComponent {
     }
   }
 
+  onQualitiesChange(qualities: VideoQuality[] | undefined) {
+    this.availableQualities$.next(qualities);
+  }
+
   capabilities$ = new BehaviorSubject<ECapability[]>([]);
+  availableQualities$ = new BehaviorSubject<VideoQuality[] | undefined>([]);
   cannotFullscreen$: Observable<boolean>;
   cannotPip$: Observable<boolean>;
   cannotChangeVolume$: Observable<boolean>;
   cannotMute$: Observable<boolean>;
   cannotGetTitle$: Observable<boolean>;
+  cannotChangeQuality$: Observable<boolean>;
   onCapabilitiesChange(capabilities: ECapability[]) {
     this.capabilities$.next(capabilities);
   }

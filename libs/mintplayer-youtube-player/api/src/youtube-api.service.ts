@@ -50,6 +50,7 @@ export class YoutubeApiService implements IApiService {
                 const state = player.getPlayerState();
                 switch (state) {
                   case YT.PlayerState.PLAYING:
+                    adapter.onAvailableQualitiesChange(player.getAvailableQualityLevels());
                     return resolve(EPlayerState.playing);
                   case YT.PlayerState.PAUSED:
                     return resolve(EPlayerState.paused);
@@ -82,15 +83,22 @@ export class YoutubeApiService implements IApiService {
               setSize: (width, height) => player.setSize(width, height),
               getPlaybackRate: () => new Promise(resolve => resolve(player.getPlaybackRate())),
               setPlaybackRate: (rate: number) => player.setPlaybackRate(rate),
+              getPlaybackRates: () => new Promise(resolve => resolve(undefined)),
               getQuality: () => new Promise(resolve => resolve(player.getPlaybackQuality())),
               setQuality: (quality) => {
-                if (typeof quality === 'number') {
-                  throw 'Youtube quality cannot be a number';
-                } else if ((quality === 'default') || (quality === 'small') || (quality === 'medium') || (quality === 'large')
-                   || (quality === 'hd720') || (quality === 'hd1080') || (quality === 'highres')) {
-                  player.setPlaybackQuality(quality);
-                }
+                throw 'Youtube doesn\'t allow changing the quality from outside the iframe';
+                // if (typeof quality === 'number') {
+                //   throw 'Youtube quality cannot be a number';
+                // } else if ((quality === 'default') || (quality === 'small') || (quality === 'medium') || (quality === 'large')
+                //    || (quality === 'hd720') || (quality === 'hd1080') || (quality === 'highres')) {
+                //   player.setPlaybackQuality(quality);
+                // } else if ((quality === 'tiny')) {
+                //   // These qualities are not in DefinitelyTyped
+                //   debugger;
+                //   player.setPlaybackQuality(<any>quality);
+                // }
               },
+              getQualities: () => new Promise(resolve => resolve(player.getAvailableQualityLevels())),
               get360properties: () => new Promise(resolve => resolve(player.getSphericalProperties())),
               set360properties: (properties) => player.setSphericalProperties(properties),
               getTitle: () => new Promise((resolve) => {
@@ -143,9 +151,13 @@ export class YoutubeApiService implements IApiService {
                   const currentQuality = player.getPlaybackQuality();
                   adapter.onQualityChange(currentQuality);
 
+                  // Qualities
+                  const availableQualities = player.getAvailableQualityLevels();
+                  adapter.onAvailableQualitiesChange(availableQualities);
+
                   // 360-properties
                   const sphericalProperties = player.getSphericalProperties();
-                  adapter.on360PropertiesChange(sphericalProperties);
+                  adapter.onSphericalPropertiesChange(sphericalProperties);
                 });
             }
 

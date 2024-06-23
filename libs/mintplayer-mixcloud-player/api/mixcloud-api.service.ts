@@ -62,7 +62,7 @@ export class MixcloudApiService implements IApiService {
             player.load && player.load(id, options.autoplay)
               // .then(() => this.hookEvents(player, adapter));
           },
-          getPlayerState: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support getting player state')),
+          getPlayerState: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support changing playback rate')),
           setPlayerState: (state: EPlayerState) => {
             switch (state) {
               case EPlayerState.playing:
@@ -85,10 +85,12 @@ export class MixcloudApiService implements IApiService {
             frame.width = String(width);
             frame.height = String(height);
           },
-          getPlaybackRate: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support getting player state')),
-          setPlaybackRate: () => { throw 'MixCloud doesn\'t support getting player state' },
+          getPlaybackRate: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support changing playback rate')),
+          setPlaybackRate: () => { throw 'MixCloud doesn\'t support changing playback rate' },
+          getPlaybackRates: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support changing playback rate')),
           getQuality: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support changing video quality')),
           setQuality: () => { throw 'MixCloud doesn\'t support changing video quality' },
+          getQualities: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support changing video quality')),
           get360properties: () => new Promise((resolve, reject) => reject('MixCloud doesn\'t support 360 mode')),
           set360properties: (properties) => { throw 'MixCloud doesn\'t support 360 mode'; },
           getTitle: () => new Promise((resolve, reject) => {

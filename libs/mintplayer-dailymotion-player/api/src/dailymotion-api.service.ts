@@ -76,8 +76,10 @@ export class DailymotionApiService implements IApiService {
               },
               getPlaybackRate: () => new Promise(resolve => resolve(1)),
               setPlaybackRate: () => { throw 'DailyMotion doesn\'t support playback rate'},
+              getPlaybackRates: () => new Promise((resolve, reject) => reject('DailyMotion doesn\'t support playback rate')),
               getQuality: () => new Promise((resolve, reject) => reject('DailyMotion doesn\'t support video quality')),
               setQuality: () => { throw 'DailyMotion doesn\'t support video quality' },
+              getQualities: () => new Promise((resolve, reject) => reject('DailyMotion doesn\'t support video quality')),
               get360properties: () => new Promise((resolve, reject) => reject('DailyMotion doesn\t support spherical mode')),
               set360properties: (properties) => { throw 'DailyMotion doesn\'t support spherical mode' },
               getTitle: () => new Promise((resolve) => {

@@ -9,7 +9,7 @@ export type ApiLoader = () => Promise<IApiService>;
 //     loaders.forEach(loader => loader().then(api => VIDEO_APIS.push(api)));
 // }
 
-export type VideoQuality = 'default' | 'small' | 'medium' | 'large' | 'hd720' | 'hd1080' | 'highres' | 'auto';
+export type VideoQuality = 'default' | 'small' | 'medium' | 'large' | 'hd720' | 'hd1080' | 'highres' | 'auto' | 'tiny';
 
 export interface IApiService {
     get id(): string;
@@ -43,7 +43,8 @@ export interface PlayerAdapter extends PlayerAdapterRequired {
     onPipChange: (isPip: boolean) => void;
     onPlaybackRateChange: (rate: number) => void;
     onQualityChange: (quality: VideoQuality) => void;
-    on360PropertiesChange: (properties: SphericalProperties) => void;
+    onAvailableQualitiesChange: (quality: VideoQuality[]) => void;
+    onSphericalPropertiesChange: (properties: SphericalProperties) => void;
 }
 
 
@@ -59,8 +60,10 @@ export interface PlayerAdapterRequired {
     setSize: (width: number, height: number) => void;
     getPlaybackRate: () => Promise<number>;
     setPlaybackRate: (rate: number) => void;
+    getPlaybackRates(): Promise<number[] | undefined>;
     getQuality: () => Promise<VideoQuality | number>;
     setQuality: (quality: VideoQuality | number) => void;
+    getQualities(): Promise<(VideoQuality | number)[]>;
     get360properties: () => Promise<SphericalProperties>;
     set360properties: (properties: SphericalProperties) => void;
     getTitle: () => Promise<string>;
@@ -85,7 +88,8 @@ export function createPlayerAdapter(requiredProps: PlayerAdapterRequired) : Play
         onPipChange: () => console.warn('onPipChange is not registered'),
         onPlaybackRateChange: () => console.warn('onPlaybackRateChange is not registered'),
         onQualityChange: () => console.warn('onQualityChange is not registered'),
-        on360PropertiesChange: () => console.warn('on360PropertiesChange is not registered'),
+        onAvailableQualitiesChange: () => console.warn('onAvailableQualitiesChange is not registered'),
+        onSphericalPropertiesChange: () => console.warn('onSphericalPropertiesChange is not registered'),
     }
 }
 

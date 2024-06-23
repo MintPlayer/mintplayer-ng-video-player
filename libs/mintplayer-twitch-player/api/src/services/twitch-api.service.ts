@@ -98,10 +98,12 @@ export class TwitchApiService implements IApiService {
             iframe.width = String(width);
             iframe.height = String(height);
           },
-          getPlaybackRate: () => new Promise((resolve, reject) => reject('Twitch doesn\'t support getting player state')),
-          setPlaybackRate: () => { return 'Twitch doesn\'t support getting player state' },
+          getPlaybackRate: () => new Promise((resolve, reject) => reject('Twitch doesn\'t support changing playback rate')),
+          setPlaybackRate: () => { throw 'Twitch doesn\'t support changing playback rate' },
+          getPlaybackRates: () => new Promise((resolve, reject) => reject('Twitch doesn\'t support changing playback rate')),
           getQuality: () => new Promise((resolve, reject) => reject('Twitch doesn\'t support changing video quality')),
-          setQuality: () => { return 'Twitch doesn\'t support changing video quality' },
+          setQuality: () => { throw 'Twitch doesn\'t support changing video quality' },
+          getQualities: () => new Promise((resolve, reject) => reject('Twitch doesn\'t support changing video quality')),
           get360properties: () => new Promise((resolve, reject) => reject('Twitch doesn\'t support 360 mode')),
           set360properties: (properties) => { throw 'Twitch doesn\'t support 360 mode'; },
           getTitle: () => new Promise((resolve) => {

@@ -32,6 +32,7 @@
                     <video-player [width]="width" [height]="height" [autoplay]="true"
                         (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
                         (playerStateChange)="onPlayerStateChange($event)" [(isPip)]="isPip" [(isFullscreen)]="isFullscreen"
+                        [(quality)]="quality" (qualitiesChange)="onQualitiesChange($event)" [(playbackRate)]="playbackRate"
                         (capabilitiesChange)="onCapabilitiesChange($event)" #player1></video-player>
                 </div>
                 <div bsRow>
@@ -68,6 +69,13 @@
                         <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isFullscreen" [disabled]="(cannotFullscreen$ | async) ?? true" class="d-inline-block py-3">
                             Fullscreen
                         </bs-toggle-button>
+                    </div>
+                </div>
+                <div bsRow>
+                    <div [md]="6" class="text-center">
+                        <bs-select [(ngModel)]="quality" [disabled]="(cannotChangeQuality$ | async) ?? true">
+                            <option [ngValue]="qual" *ngFor="let qual of (availableQualities$ | async)">{{ qual }}</option>
+                        </bs-select>
                     </div>
                 </div>
                 <div class="d-block text-center">

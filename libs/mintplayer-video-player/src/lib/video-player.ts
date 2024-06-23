@@ -54,7 +54,8 @@ export class VideoPlayer {
               adapter.onFullscreenChange = (isFullscreen) => this.fullscreenObserver$.next(isFullscreen);
               adapter.onPlaybackRateChange = (playbackRate) => this.playbackRateObserver$.next(playbackRate);
               adapter.onQualityChange = (quality) => this.qualityObserver$.next(quality);
-              adapter.on360PropertiesChange = (properties) => this.sphericalPropertiesObserver$.next(properties);
+              adapter.onAvailableQualitiesChange = (qualities) => this.qualitiesObserver$.next(qualities);
+              adapter.onSphericalPropertiesChange = (properties) => this.sphericalPropertiesObserver$.next(properties);
               this.invokeEvent('capabilitiesChange', adapter.capabilities);
             }).then(() => {
               if (videoRequest !== null) {
@@ -116,6 +117,9 @@ export class VideoPlayer {
     this.qualityObserver$
       .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
       .subscribe(quality => this.invokeEvent('qualityChange', this._quality = quality));
+    this.qualitiesObserver$
+      .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
+      .subscribe(qualities => this.invokeEvent('qualitiesChange', this._qualities = qualities));
     this.sphericalPropertiesObserver$
       .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
       .subscribe(sphericalProperties => this.invokeEvent('sphericalPropertiesChange', this._sphericalProperties = sphericalProperties));
@@ -173,6 +177,7 @@ export class VideoPlayer {
   private fullscreenObserver$ = new Subject<boolean>();
   private playbackRateObserver$ = new Subject<number>();
   private qualityObserver$ = new Subject<VideoQuality>();
+  private qualitiesObserver$ = new Subject<VideoQuality[]>();
   private sphericalPropertiesObserver$ = new Subject<SphericalProperties>();
   //#endregion
 
@@ -276,6 +281,14 @@ export class VideoPlayer {
       this.playerInfo.adapter.setPlaybackRate(this._playbackRate = value);
     }
   }
+
+  get playbackRates() {
+    if (this.playerInfo && this.playerInfo.adapter) {
+      return this.playerInfo.adapter.getPlaybackRates();
+    } else {
+      return [];
+    }
+  }
   //#endregion
   //#region quality
   private _quality: VideoQuality = 'auto';
@@ -285,6 +298,15 @@ export class VideoPlayer {
   set quality(value: VideoQuality) {
     if (this.playerInfo && this.playerInfo.adapter) {
       this.playerInfo.adapter.setQuality(this._quality = value);
+    }
+  }
+  
+  private _qualities: VideoQuality[] = [];
+  get qualities() {
+    if (this.playerInfo && this.playerInfo.adapter) {
+      return this.playerInfo.adapter.getQualities();
+    } else {
+      return [];
     }
   }
   //#endregion

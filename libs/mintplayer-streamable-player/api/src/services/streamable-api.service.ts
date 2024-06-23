@@ -87,10 +87,12 @@ export class StreamableService implements IApiService {
               iframe.width = `${width}px`;
               iframe.height = `${height}px`;
             },
-            getPlaybackRate: () => new Promise((resolve, reject) => reject('Streamable doesn\'t support getting player state')),
-            setPlaybackRate: () => { return 'Streamable doesn\'t support getting player state' },
+            getPlaybackRate: () => new Promise((resolve, reject) => reject('Streamable doesn\'t support changing playback rate')),
+            setPlaybackRate: () => { throw 'Streamable doesn\'t support changing playback rate' },
+            getPlaybackRates: () => new Promise((resolve, reject) => reject('Streamable doesn\'t support changing playback rate')),
             getQuality: () => new Promise((resolve, reject) => reject('Streamable doesn\'t support changing video quality')),
-            setQuality: () => { return 'Streamable doesn\'t support changing video quality' },
+            setQuality: () => { throw 'Streamable doesn\'t support changing video quality' },
+            getQualities: () => new Promise((resolve, reject) => reject('Streamable doesn\'t support changing video quality')),
             get360properties: () => new Promise((resolve, reject) => reject('Streamable doesn\'t support 360 mode')),
             set360properties: (properties) => { throw 'Streamable doesn\'t support 360 mode'; },
             getTitle: () => new Promise((resolve) => resolve('')),
