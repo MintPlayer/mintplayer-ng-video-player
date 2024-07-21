@@ -417,8 +417,8 @@ jobs:
         subject-digest: ${{ steps.push-ghcr.outputs.digest }}
         push-to-registry: true
 
-    # - name: Trigger deploy hook
-    #   uses: fjogeleit/http-request-action@v1
-    #   with:
-    #     url: ${{ secrets.SLIPLANE_DEPLOY_HOOK }}
-    #     method: GET
+    - name: Trigger deploy hook
+      uses: fjogeleit/http-request-action@v1
+      with:
+        url: ${{ secrets.SLIPLANE_DEPLOY_HOOK }}
+        method: GET
