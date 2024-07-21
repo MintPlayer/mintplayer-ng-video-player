@@ -130,3 +130,10 @@ Then run following commands
     git clone https://github.com/MintPlayer/mintplayer-ng-video-player
     npm i
     npm start -- --open
+
+## Docker image
+You can run the docker image which is published to the GitHub Container Registry
+
+    docker run -p 4200:80 ghcr.io/mintplayer/mintplayer-ng-video-player:master
+
+and visit [http://localhost:4200](http://localhost:4200).

@@ -10,6 +10,7 @@ concurrency:
 
 permissions:
   contents: read
+  packages: write 
 
 jobs:
   build:
@@ -21,6 +22,7 @@ jobs:
       contents: read
       id-token: write
       packages: write
+      attestations: write
 
     steps:
     - name: Checkout
@@ -41,12 +43,6 @@ jobs:
       run: npx nx run-many --target=test --browsers=ChromeHeadless --parallel=true
 
     ## ng-canvas-resizer
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-ng-canvas-resizer
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -66,12 +62,6 @@ jobs:
         provenance: true
 
     ## player-provider
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-player-provider
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -110,12 +100,6 @@ jobs:
         provenance: true
 
     ## video-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-video-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -135,12 +119,6 @@ jobs:
         provenance: true
 
     ## ng-video-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-ng-video-player
-
     - name: Push to NPM
       id: publish_ng_video_player
       uses: JS-DevTools/npm-publish@v3
@@ -161,12 +139,6 @@ jobs:
         provenance: true
 
     ## facebook-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-facebook-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -186,12 +158,6 @@ jobs:
         provenance: true
 
     ## mixcloud-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-mixcloud-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -211,12 +177,6 @@ jobs:
         provenance: true
 
     ## dailymotion-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-dailymotion-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -236,12 +196,6 @@ jobs:
         provenance: true
 
     ## soundcloud-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-soundcloud-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -261,12 +215,6 @@ jobs:
         provenance: true
 
     ## spotify-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-spotify-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -286,12 +234,6 @@ jobs:
         provenance: true
 
     ## streamable-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-streamable-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -311,12 +253,6 @@ jobs:
         provenance: true
 
     ## twitch-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-twitch-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -336,12 +272,6 @@ jobs:
         provenance: true
 
     ## vidyard-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-vidyard-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -361,12 +291,6 @@ jobs:
         provenance: true
 
     ## vimeo-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-vimeo-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -386,12 +310,6 @@ jobs:
         provenance: true
 
     ## wistia-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-wistia-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -411,12 +329,6 @@ jobs:
         provenance: true
 
     ## youtube-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-youtube-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -436,12 +348,6 @@ jobs:
         provenance: true
 
     ## file-player
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-file-player
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -461,12 +367,6 @@ jobs:
         provenance: true
 
     ## playlist-controller
-    - name: Upload code coverage report
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./coverage/libs/mintplayer-playlist-controller
-
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
@@ -484,3 +384,41 @@ jobs:
         token: ${{ github.token }}
         access: 'public'
         provenance: true
+
+    # Publish to GitHub Container Registry
+    - name: Authenticate with GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
+
+    - name: Extract tags/labels
+      id: meta-ghcr
+      uses: docker/metadata-action@v5
+      with:
+        github-token: ${{ github.token }}
+        images: ghcr.io/${{ github.repository }}
+
+    - name: Publish to Github Container Registry
+      id: push-ghcr
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ steps.meta-ghcr.outputs.tags }}
+        labels: ${{ steps.meta-ghcr.outputs.labels }}
+
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-name: ghcr.io/${{ github.repository }}
+        subject-digest: ${{ steps.push-ghcr.outputs.digest }}
+        push-to-registry: true
+
+    # - name: Trigger deploy hook
+    #   uses: fjogeleit/http-request-action@v1
+    #   with:
+    #     url: ${{ secrets.SLIPLANE_DEPLOY_HOOK }}
+    #     method: GET

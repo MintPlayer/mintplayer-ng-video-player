@@ -20,6 +20,7 @@ RUN npx nx run-many --target=build --configuration=production
 
 # Use official nginx image as the base image
 FROM nginx:latest
+LABEL org.opencontainers.image.source="https://github.com/MintPlayer/mintplayer-ng-video-player"
 
 # Copy the build output to replace the default nginx contents.
 COPY --from=node_image /usr/local/app/dist/apps/video-player-demo/browser /usr/share/nginx/html
