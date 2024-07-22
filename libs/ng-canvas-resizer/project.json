@@ -1,0 +1,40 @@
+{
+  "name": "ng-canvas-resizer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ng-canvas-resizer/src",
+  "prefix": "lib",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/ng-canvas-resizer/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/ng-canvas-resizer/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/ng-canvas-resizer/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "codeCoverage": true,
+        "coverageReporters": ["lcovonly"],
+        "coverageDirectory": "coverage/{projectRoot}",
+        "jestConfig": "{projectRoot}/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  }
+}

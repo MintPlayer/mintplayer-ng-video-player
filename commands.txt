@@ -12,3 +12,6 @@ nx g @nrwl/angular:lib mintplayer-ng-player-progress --buildable --publishable -
 nx g @nrwl/angular:lib mintplayer-ng-video-player --buildable --publishable --import-path @mintplayer/ng-video-player --directory libs/mintplayer-ng-video-player
 nx g @nrwl/angular:lib mintplayer-ng-playlist-controller --buildable --publishable --import-path @mintplayer/ng-playlist-controller --directory libs/mintplayer-ng-playlist-controller
 nx g @nx/js:library --name=mintplayer-video-player --buildable --publishable --import-path @mintplayer/video-player
+
+npm i -D @nx/react
+nx g @nx/react:lib mintplayer-r-video-player --buildable --publishable --import-path @mintplayer/r-video-player --directory libs/mintplayer-r-video-player

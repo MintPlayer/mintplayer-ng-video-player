@@ -5,9 +5,9 @@
     "module": "commonjs",
     "typeRoots": [
       "../../node_modules/@types",
-      "../../libs/mintplayer-soundcloud-player/types",
-      "../../libs/mintplayer-vimeo-player/types",
-      "../../libs/mintplayer-twitch-player/types"
+      "../../libs/platforms/soundcloud-player/types",
+      "../../libs/platforms/vimeo-player/types",
+      "../../libs/platforms/twitch-player/types"
     ],
     "types": ["jest", "node", "youtube", "vimeo", "soundcloud", "twitch"]
   },

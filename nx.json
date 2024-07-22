@@ -28,6 +28,22 @@
     },
     "@nx/angular:component": {
       "style": "css"
+    },
+    "@nx/react": {
+      "library": {
+        "style": "scss",
+        "linter": "eslint",
+        "unitTestRunner": "none"
+      },
+      "application": {
+        "babel": true,
+        "style": "scss",
+        "linter": "eslint",
+        "bundler": "vite"
+      },
+      "component": {
+        "style": "scss"
+      }
     }
   },
   "defaultProject": "video-player-demo",
@@ -70,6 +86,15 @@
       "inputs": ["production", "^production"]
     },
     "@nx/esbuild:esbuild": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "@nx/vite:test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
+    },
+    "@nx/vite:build": {
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]

@@ -1,0 +1,22 @@
+{
+  "name": "@mintplayer/soundcloud-player",
+  "private": false,
+  "type": "module",
+  "version": "18.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
+    "directory": "libs/platforms/soundcloud-player"
+  },
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "peerDependencies": {
+    "@mintplayer/player-provider": "^18.0.0",
+    "@mintplayer/script-loader": "^1.2.0",
+    "rxjs": "^7.4.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "module": "commonjs",
+    "target": "es2020",
+    "typeRoots": ["../../../node_modules/@types", "./types"],
+    "types": ["jest", "node", "dailymotion"]
+  },
+  "include": ["**/*.test.ts", "**/*.spec.ts", "**/*.d.ts", "jest.config.ts"]
+}

@@ -46,7 +46,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-ng-canvas-resizer/package.json'
+        package: 'dist/libs/ng-canvas-resizer/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -55,7 +55,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-ng-canvas-resizer/package.json'
+        package: 'dist/libs/ng-canvas-resizer/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -65,7 +65,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-player-provider/package.json'
+        package: 'dist/libs/player-provider/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -74,7 +74,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-player-provider/package.json'
+        package: 'dist/libs/player-provider/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -84,7 +84,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-player-progress/package.json'
+        package: 'dist/libs/player-progress/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -93,7 +93,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-player-progress/package.json'
+        package: 'dist/libs/player-progress/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -103,7 +103,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-video-player/package.json'
+        package: 'dist/libs/video-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -112,7 +112,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-video-player/package.json'
+        package: 'dist/libs/video-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -123,7 +123,7 @@ jobs:
       id: publish_ng_video_player
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-ng-video-player/package.json'
+        package: 'dist/libs/frameworks/ng-video-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -132,7 +132,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-ng-video-player/package.json'
+        package: 'dist/libs/frameworks/ng-video-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -142,7 +142,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-facebook-player/package.json'
+        package: 'dist/libs/platforms/facebook-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -151,7 +151,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-facebook-player/package.json'
+        package: 'dist/libs/platforms/facebook-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -161,7 +161,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-mixcloud-player/package.json'
+        package: 'dist/libs/platforms/mixcloud-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -170,7 +170,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-mixcloud-player/package.json'
+        package: 'dist/libs/platforms/mixcloud-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -180,7 +180,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-dailymotion-player/package.json'
+        package: 'dist/libs/platforms/dailymotion-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -189,7 +189,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-dailymotion-player/package.json'
+        package: 'dist/libs/platforms/dailymotion-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -199,7 +199,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-soundcloud-player/package.json'
+        package: 'dist/libs/platforms/soundcloud-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -208,7 +208,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-soundcloud-player/package.json'
+        package: 'dist/libs/platforms/soundcloud-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -218,7 +218,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-spotify-player/package.json'
+        package: 'dist/libs/platforms/spotify-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -227,7 +227,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-spotify-player/package.json'
+        package: 'dist/libs/platforms/spotify-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -237,7 +237,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-streamable-player/package.json'
+        package: 'dist/libs/platforms/streamable-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -246,7 +246,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-streamable-player/package.json'
+        package: 'dist/libs/platforms/streamable-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -256,7 +256,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-twitch-player/package.json'
+        package: 'dist/libs/platforms/twitch-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -265,7 +265,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-twitch-player/package.json'
+        package: 'dist/libs/platforms/twitch-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -275,7 +275,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-vidyard-player/package.json'
+        package: 'dist/libs/platforms/vidyard-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -284,7 +284,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-vidyard-player/package.json'
+        package: 'dist/libs/platforms/vidyard-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -294,7 +294,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-vimeo-player/package.json'
+        package: 'dist/libs/platforms/vimeo-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -303,7 +303,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-vimeo-player/package.json'
+        package: 'dist/libs/platforms/vimeo-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -313,7 +313,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-wistia-player/package.json'
+        package: 'dist/libs/platforms/wistia-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -322,7 +322,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-wistia-player/package.json'
+        package: 'dist/libs/platforms/wistia-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -332,7 +332,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-youtube-player/package.json'
+        package: 'dist/libs/platforms/youtube-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -341,7 +341,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-youtube-player/package.json'
+        package: 'dist/libs/platforms/youtube-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -351,7 +351,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-file-player/package.json'
+        package: 'dist/libs/platforms/file-player/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -360,7 +360,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-file-player/package.json'
+        package: 'dist/libs/platforms/file-player/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'
@@ -370,7 +370,7 @@ jobs:
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-playlist-controller/package.json'
+        package: 'dist/libs/playlist-controller/package.json'
         registry: 'https://registry.npmjs.org'
         token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
         access: 'public'
@@ -379,7 +379,7 @@ jobs:
     - name: Push to Github
       uses: JS-DevTools/npm-publish@v3
       with:
-        package: 'dist/libs/mintplayer-playlist-controller/package.json'
+        package: 'dist/libs/playlist-controller/package.json'
         registry: 'https://npm.pkg.github.com'
         token: ${{ github.token }}
         access: 'public'

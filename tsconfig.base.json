@@ -16,87 +16,84 @@
     "baseUrl": ".",
     "paths": {
       "@mintplayer/dailymotion-player": [
-        "libs/mintplayer-dailymotion-player/src/index.ts"
+        "libs/platforms/dailymotion-player/src/index.ts"
       ],
       "@mintplayer/dailymotion-player/*": [
-        "libs/mintplayer-dailymotion-player/*/index.ts"
+        "libs/platforms/dailymotion-player/*/index.ts"
       ],
       "@mintplayer/facebook-player": [
-        "libs/mintplayer-facebook-player/src/index.ts"
+        "libs/platforms/facebook-player/src/index.ts"
       ],
       "@mintplayer/facebook-player/*": [
-        "libs/mintplayer-facebook-player/*/index.ts"
+        "libs/platforms/facebook-player/*/index.ts"
       ],
-      "@mintplayer/file-player": ["libs/mintplayer-file-player/src/index.ts"],
-      "@mintplayer/file-player/*": ["libs/mintplayer-file-player/*/index.ts"],
+      "@mintplayer/file-player": ["libs/platforms/file-player/src/index.ts"],
+      "@mintplayer/file-player/*": ["libs/platforms/file-player/*/index.ts"],
       "@mintplayer/mixcloud-player": [
-        "libs/mintplayer-mixcloud-player/src/index.ts"
+        "libs/platforms/mixcloud-player/src/index.ts"
       ],
       "@mintplayer/mixcloud-player/*": [
-        "libs/mintplayer-mixcloud-player/*/index.ts"
+        "libs/platforms/mixcloud-player/*/index.ts"
       ],
-      "@mintplayer/ng-canvas-resizer": [
-        "libs/mintplayer-ng-canvas-resizer/src/index.ts"
-      ],
+      "@mintplayer/ng-canvas-resizer": ["libs/ng-canvas-resizer/src/index.ts"],
       "@mintplayer/ng-video-player": [
-        "libs/mintplayer-ng-video-player/src/index.ts"
+        "libs/frameworks/ng-video-player/src/index.ts"
       ],
       "@mintplayer/ng-video-player/package.json": [
-        "libs/mintplayer-ng-video-player/package.ts"
+        "libs/frameworks/ng-video-player/package.ts"
       ],
-      "@mintplayer/player-progress": [
-        "libs/mintplayer-player-progress/src/index.ts"
-      ],
-      "@mintplayer/player-provider": [
-        "libs/mintplayer-player-provider/src/index.ts"
-      ],
+      "@mintplayer/player-progress": ["libs/player-progress/src/index.ts"],
+      "@mintplayer/player-provider": ["libs/player-provider/src/index.ts"],
       "@mintplayer/playlist-controller": [
-        "libs/mintplayer-playlist-controller/src/index.ts"
+        "libs/playlist-controller/src/index.ts"
+      ],
+      "@mintplayer/r-video-player": [
+        "libs/frameworks/r-video-player/src/index.ts"
       ],
       "@mintplayer/soundcloud-player": [
-        "libs/mintplayer-soundcloud-player/src/index.ts"
+        "libs/platforms/soundcloud-player/src/index.ts"
       ],
       "@mintplayer/soundcloud-player/*": [
-        "libs/mintplayer-soundcloud-player/*/index.ts"
+        "libs/platforms/soundcloud-player/*/index.ts"
       ],
       "@mintplayer/spotify-player": [
-        "libs/mintplayer-spotify-player/src/index.ts"
+        "libs/platforms/spotify-player/src/index.ts"
       ],
       "@mintplayer/spotify-player/*": [
-        "libs/mintplayer-spotify-player/*/index.ts"
+        "libs/platforms/spotify-player/*/index.ts"
       ],
       "@mintplayer/streamable-player": [
-        "libs/mintplayer-streamable-player/src/index.ts"
+        "libs/platforms/streamable-player/src/index.ts"
       ],
       "@mintplayer/streamable-player/*": [
-        "libs/mintplayer-streamable-player/*/index.ts"
+        "libs/platforms/streamable-player/*/index.ts"
       ],
       "@mintplayer/twitch-player": [
-        "libs/mintplayer-twitch-player/src/index.ts"
+        "libs/platforms/twitch-player/src/index.ts"
       ],
       "@mintplayer/twitch-player/*": [
-        "libs/mintplayer-twitch-player/*/index.ts"
+        "libs/platforms/twitch-player/*/index.ts"
       ],
-      "@mintplayer/video-player": ["libs/mintplayer-video-player/src/index.ts"],
+      "@mintplayer/video-player": ["libs/video-player/src/index.ts"],
       "@mintplayer/vidyard-player": [
-        "libs/mintplayer-vidyard-player/src/index.ts"
+        "libs/platforms/vidyard-player/src/index.ts"
       ],
       "@mintplayer/vidyard-player/*": [
-        "libs/mintplayer-vidyard-player/*/index.ts"
+        "libs/platforms/vidyard-player/*/index.ts"
       ],
-      "@mintplayer/vimeo-player": ["libs/mintplayer-vimeo-player/src/index.ts"],
-      "@mintplayer/vimeo-player/*": ["libs/mintplayer-vimeo-player/*/index.ts"],
+      "@mintplayer/vimeo-player": ["libs/platforms/vimeo-player/src/index.ts"],
+      "@mintplayer/vimeo-player/*": ["libs/platforms/vimeo-player/*/index.ts"],
       "@mintplayer/wistia-player": [
-        "libs/mintplayer-wistia-player/src/index.ts"
+        "libs/platforms/wistia-player/src/index.ts"
       ],
       "@mintplayer/wistia-player/*": [
-        "libs/mintplayer-wistia-player/*/index.ts"
+        "libs/platforms/wistia-player/*/index.ts"
       ],
       "@mintplayer/youtube-player": [
-        "libs/mintplayer-youtube-player/src/index.ts"
+        "libs/platforms/youtube-player/src/index.ts"
       ],
       "@mintplayer/youtube-player/*": [
-        "libs/mintplayer-youtube-player/*/index.ts"
+        "libs/platforms/youtube-player/*/index.ts"
       ]
     }
   },
