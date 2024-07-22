@@ -1,1 +1,1 @@
-export * from './lib/mintplayer-r-video-player';
+export * from './lib/r-video-player';

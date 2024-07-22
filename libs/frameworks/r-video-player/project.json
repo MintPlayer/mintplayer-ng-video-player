@@ -23,6 +23,15 @@
           "mode": "production"
         }
       }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "codeCoverage": true,
+        "coverageReporters": ["lcovonly"],
+        "coverageDirectory": "coverage/{projectRoot}"
+      }
     }
   }
 }
