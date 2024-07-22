@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'mintplayer-playlist-controller',
-  preset: '../../../jest.preset.js',
+  preset: '../../jest.preset.js',
   coverageDirectory: '../../coverage/libs/playlist-controller',
   globals: {},
   testEnvironment: 'jsdom',
