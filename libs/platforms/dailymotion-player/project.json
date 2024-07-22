@@ -1,6 +1,6 @@
 {
-  "name": "ng-dailymotion-player",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "dailymotion-player",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/platforms/dailymotion-player/src",
   "tags": [],
   "projectType": "library",

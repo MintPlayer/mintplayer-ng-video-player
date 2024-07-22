@@ -1,6 +1,6 @@
 {
   "name": "mixcloud-player",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/platforms/mixcloud-player/src",
   "tags": [],
   "projectType": "library",
