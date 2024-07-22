@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'mintplayer-player-provider',
-  preset: '../../jest.preset.js',
+  preset: '../../../jest.preset.js',
   coverageDirectory: '../../coverage/libs/player-provider',
   globals: {},
   testEnvironment: 'jsdom',

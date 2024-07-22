@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'mintplayer-dailymotion-player',
-  preset: '../../jest.preset.js',
+  preset: '../../../jest.preset.js',
   coverageDirectory: '../../coverage/libs/platforms/dailymotion-player',
   globals: {},
   testEnvironment: 'jsdom',

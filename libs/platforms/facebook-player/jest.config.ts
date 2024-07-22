@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'mintplayer-facebook-player',
-  preset: '../../jest.preset.js',
+  preset: '../../../jest.preset.js',
   coverageDirectory: '../../coverage/libs/platforms/facebook-player',
   globals: {},
   testEnvironment: 'jsdom',

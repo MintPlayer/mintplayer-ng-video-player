@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'mintplayer-ng-video-player',
-  preset: '../../jest.preset.js',
+  preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [

@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'mintplayer-vidyard-player',
-  preset: '../../jest.preset.js',
+  preset: '../../../jest.preset.js',
   coverageDirectory: '../../coverage/libs/platforms/vidyard-player',
   globals: {},
   testEnvironment: 'jsdom',

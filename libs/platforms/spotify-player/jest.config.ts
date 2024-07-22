@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'mintplayer-spotify-player',
-  preset: '../../jest.preset.js',
+  preset: '../../../jest.preset.js',
   coverageDirectory: '../../coverage/libs/platforms/spotify-player',
   globals: {},
   testEnvironment: 'jsdom',

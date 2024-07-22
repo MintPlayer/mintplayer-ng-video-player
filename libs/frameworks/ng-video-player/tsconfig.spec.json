@@ -5,12 +5,11 @@
     "module": "commonjs",
     "typeRoots": [
       "../../../node_modules/@types",
-      "../mintplayer-soundcloud-player/types",
-      "../mintplayer-vimeo-player/types",
-      "../mintplayer-twitch-player/types",
+      "../../platforms/soundcloud-player/types",
+      "../../platforms/vimeo-player/types",
+      "../../platforms/twitch-player/types",
     ],
     "types": ["jest", "node", "youtube", "vimeo", "soundcloud", "twitch"]
   },
-  "files": ["src/test-setup.ts"],
   "include": ["**/*.test.ts", "**/*.spec.ts", "**/*.d.ts", "jest.config.ts"]
 }

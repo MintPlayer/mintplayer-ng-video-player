@@ -15,7 +15,7 @@
     "jest.config.ts"
   ],
   "include": [
-    "src/**/*.ts",
+    "**/*.ts",
     "types/**/*.d.ts"
-, "api/src/dailymotion-api.service.ts"  ]
+  ]
 }
