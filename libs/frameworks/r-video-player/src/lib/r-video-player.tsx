@@ -1,4 +1,4 @@
-import styles from './mintplayer-r-video-player.module.scss';
+import styles from './r-video-player.module.scss';
 
 export function RVideoPlayer() {
   return (
