@@ -1,14 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import styles from './app.module.scss';
 
-import NxWelcome from './nx-welcome';
+import { RVideoPlayer } from '@mintplayer/r-video-player';
 
 import { Route, Routes, Link } from 'react-router-dom';
 
 export function App() {
   return (
     <div>
-      <NxWelcome title="react-demo" />
+      <RVideoPlayer title="react-demo" />
 
       {/* START: routes */}
       {/* These routes and navigation have been generated for you */}
