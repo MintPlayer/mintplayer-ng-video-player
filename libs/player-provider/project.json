@@ -1,5 +1,5 @@
 {
-  "name": "mintplayer-player-provider",
+  "name": "player-provider",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "{projectRoot}/src",
   "tags": [],

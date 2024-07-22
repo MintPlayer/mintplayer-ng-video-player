@@ -1,5 +1,5 @@
 {
-  "name": "mintplayer-ng-canvas-resizer",
+  "name": "ng-canvas-resizer",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/ng-canvas-resizer/src",
   "prefix": "lib",

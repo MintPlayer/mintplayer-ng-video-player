@@ -1,5 +1,5 @@
 {
-  "name": "mintplayer-file-player",
+  "name": "file-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/platforms/file-player/src",
   "tags": [],

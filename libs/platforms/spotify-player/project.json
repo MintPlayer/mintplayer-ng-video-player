@@ -1,5 +1,5 @@
 {
-  "name": "mintplayer-spotify-player",
+  "name": "spotify-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/platforms/spotify-player/src",
   "tags": [],

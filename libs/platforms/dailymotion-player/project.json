@@ -1,5 +1,5 @@
 {
-  "name": "mintplayer-ng-dailymotion-player",
+  "name": "ng-dailymotion-player",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/platforms/dailymotion-player/src",
   "tags": [],
