@@ -1,6 +1,6 @@
 {
   "name": "ng-video-player",
-  "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/frameworks/ng-video-player/src",
   "prefix": "mintplayer-ng-video-player",
