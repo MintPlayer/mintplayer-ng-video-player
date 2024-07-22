@@ -1,0 +1,20 @@
+{
+  "name": "@mintplayer/player-provider",
+  "private": false,
+  "type": "module",
+  "version": "18.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
+    "directory": "libs/player-provider"
+  },
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "peerDependencies": {
+    "rxjs": "^7.4.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}
