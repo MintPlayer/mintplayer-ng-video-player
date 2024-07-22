@@ -4,7 +4,7 @@
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "target": "es2016",
-    "typeRoots": ["../../node_modules/@types", "./types"],
+    "typeRoots": ["../../../node_modules/@types", "./types"],
     "types": ["jest", "node", "dailymotion"]
   },
   "files": ["src/test-setup.ts"],

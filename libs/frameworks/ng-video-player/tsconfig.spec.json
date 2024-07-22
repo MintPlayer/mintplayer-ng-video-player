@@ -4,7 +4,7 @@
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "typeRoots": [
-      "../../node_modules/@types",
+      "../../../node_modules/@types",
       "../mintplayer-soundcloud-player/types",
       "../mintplayer-vimeo-player/types",
       "../mintplayer-twitch-player/types",
