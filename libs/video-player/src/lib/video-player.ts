@@ -141,20 +141,20 @@ export class VideoPlayer {
   private domId = 'player';
 
   //#region Event handling
-  public on<K extends keyof VideoEventMap>(event: K, handler: (...args: VideoEventMap[K]) => void) {
+  public on<K extends keyof VideoEventMap>(event: K, handler: (args: VideoEventMap[K]) => void) {
     this.handlers.push({ event, handler });
   }
-  public off<K extends keyof VideoEventMap>(ev: K, handler: (...args: VideoEventMap[K]) => void) {
+  public off<K extends keyof VideoEventMap>(ev: K, handler: (args: VideoEventMap[K]) => void) {
     const index = this.handlers.findIndex(h => (h.event === ev) && (h.handler === handler));
     if (index > -1) {
       this.handlers.splice(index, 1);
     }
   }
   private handlers: EventHandler<any>[] = [];
-  private invokeEvent<K extends keyof VideoEventMap>(ev: K, ...args: VideoEventMap[K]) {
+  private invokeEvent<K extends keyof VideoEventMap>(ev: K, args: VideoEventMap[K]) {
     this.handlers
       .filter(h => h.event === ev)
-      .forEach(h => h.handler(...args));
+      .forEach(h => h.handler(args));
   }
   //#endregion
 
