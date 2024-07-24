@@ -26,6 +26,7 @@
     "@nrwl/angular": "19.5.3",
     "@vidyard/embed-code": "^4.3.14",
     "react": "18.3.1",
+    "react-bootstrap": "^2.10.4",
     "react-dom": "18.3.1",
     "react-router-dom": "6.11.2",
     "rxjs": "~7.5.6",

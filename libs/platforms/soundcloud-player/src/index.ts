@@ -1,3 +1,3 @@
-import { ApiLoader } from "@mintplayer/player-provider";
+import { ApiPlugin } from "@mintplayer/player-provider";
 
-export const soundCloudPlugin: ApiLoader = () => import('@mintplayer/soundcloud-player/api').then(m => new m.SoundcloudApiService());
+export const soundCloudPlugin: ApiPlugin = () => import('@mintplayer/soundcloud-player/api').then(m => new m.SoundcloudApiService());

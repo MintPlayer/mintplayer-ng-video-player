@@ -1,13 +1,13 @@
 import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Inject, InjectionToken, Input, ModuleWithProviders, NgZone, OnDestroy, Output, StaticProvider, Type, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PlayerProgress } from '@mintplayer/player-progress';
-import { ApiLoader, ECapability, EPlayerState, IApiService } from '@mintplayer/player-provider';
+import { ApiPlugin, ECapability, EPlayerState, IApiService } from '@mintplayer/player-provider';
 import { VideoPlayer, fromVideoEvent } from "@mintplayer/video-player";
 import { BehaviorSubject, combineLatest, filter, take } from 'rxjs';
 
 const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis');
 
-export function provideVideoApis(...platforms: ApiLoader[]): StaticProvider {
+export function provideVideoApis(...platforms: ApiPlugin[]): StaticProvider {
   return {
     provide: VIDEO_APIS,
     useFactory: () => Promise.all(platforms.map(loader => loader())),

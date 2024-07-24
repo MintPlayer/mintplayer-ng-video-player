@@ -3,9 +3,9 @@ import { Subject } from "rxjs";
 // import { BehaviorSubject } from 'rxjs';
 
 // export const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis');
-export type ApiLoader = () => Promise<IApiService>;
+export type ApiPlugin = () => Promise<IApiService>;
 // export const VIDEO_APIS: IApiService[] = [];
-// export function loadApi(...loaders: ApiLoader[]) {
+// export function loadApi(...loaders: ApiPlugin[]) {
 //     loaders.forEach(loader => loader().then(api => VIDEO_APIS.push(api)));
 // }
 
