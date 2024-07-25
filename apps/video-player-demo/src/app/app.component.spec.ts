@@ -2,8 +2,8 @@ import { Component, ContentChildren, Directive, forwardRef, Input, QueryList } f
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
-import { MockModule } from 'ng-mocks';
-import { BsNavbarModule } from '@mintplayer/ng-bootstrap/navbar';
+// import { MockModule } from 'ng-mocks';
+// import { BsNavbarModule } from '@mintplayer/ng-bootstrap/navbar';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 describe('AppComponent', () => {
@@ -12,10 +12,18 @@ describe('AppComponent', () => {
       imports: [
         AppComponent,
         
-        // Mock components
-        MockModule(BsNavbarModule),
+        // // Mock components
+        // MockModule(BsNavbarModule),
       ],
       declarations: [
+        // Mock components
+        BsNavbarMockComponent,
+        BsNavbarNavMockComponent,
+        BsNavbarBrandMockComponent,
+        BsNavbarDropdownMockComponent,
+        BsNavbarItemMockComponent,
+        BsNavbarContentMockDirective,
+
         // Mock pages
         YoutubeMockComponent,
         VimeoMockComponent,
