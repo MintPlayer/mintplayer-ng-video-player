@@ -1,0 +1,91 @@
+// Configuration
+@import "../../../../../node_modules/bootstrap/scss/functions";
+@import "../../../../../node_modules/bootstrap/scss/variables";
+@import "../../../../../node_modules/bootstrap/scss/variables-dark";
+@import "../../../../../node_modules/bootstrap/scss/mixins";
+
+/* :host */ ::ng-deep {
+    // Layout & components
+    // @import "../../../../../node_modules/bootstrap/scss/containers";
+    @import "../../../../../node_modules/bootstrap/scss/dropdown";
+    @import "../../../../../node_modules/bootstrap/scss/nav";
+    @import "../../../../../node_modules/bootstrap/scss/navbar";
+}
+
+::ng-deep {
+    .navbar {
+        z-index: 20 !important;
+
+        &.noscript {
+            &:not(:focus-within) > div > bs-navbar-nav > div.navbar-collapse {
+                display: none;
+            }
+
+            li.nav-item:focus-within > bs-navbar-dropdown > ul {
+                display: block;
+
+                li:has(a.dropdown-item):focus-within > bs-navbar-dropdown > ul {
+                    display: block;
+                }
+            }
+        }
+    }
+}
+
+nav {
+    left: 0;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    // overflow-y: auto !important;
+}
+
+@media (min-width: 768px) {
+    .mx-md-unset {
+        margin-left: 0 !important;    
+        margin-right: 0 !important;    
+    }
+
+    .w-md-auto {
+        width: auto !important;
+    }
+}
+
+.tw {
+    margin: -.5rem 0;
+}
+
+::ng-deep bs-navbar-nav {
+    display: contents;
+}
+
+// Prevent navbar from going outside its bounds in small mode
+@each $breakpoint, $container-max-width in $container-max-widths {
+    @include media-breakpoint-down($breakpoint, $grid-breakpoints) {
+        nav.navbar-expand-#{$breakpoint} {
+            ::ng-deep div.navbar-collapse {
+                overflow-y: hidden;
+            }
+
+            &.position-fixed {
+                max-height: 100%;
+                overflow-y: scroll;
+            }
+            
+            &.os-windows {
+                margin-right: -17px;
+            }
+        }
+    }
+}
+
+// Properly align the navbar-navs
+.nav-wrapper ::ng-deep bs-navbar-nav > .navbar-collapse {
+    justify-content: center;
+}
+.nav-wrapper ::ng-deep bs-navbar-nav:first-of-type > .navbar-collapse {
+    justify-content: flex-start;
+}
+.nav-wrapper ::ng-deep bs-navbar-nav:last-of-type > .navbar-collapse {
+    justify-content: flex-end;
+}

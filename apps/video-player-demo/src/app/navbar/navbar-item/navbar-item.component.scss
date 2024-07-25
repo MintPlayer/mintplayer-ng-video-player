@@ -1,0 +1,9 @@
+li.dropend ::ng-deep a.dropdown-toggle {
+    padding-right: 1.5rem;
+    
+    &::after {
+        position: absolute;
+        right: .5rem;
+        top: .75rem;
+    }
+}

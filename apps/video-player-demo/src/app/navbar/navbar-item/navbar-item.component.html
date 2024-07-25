@@ -1,0 +1,3 @@
+<li [class.nav-item]="parentDropdown === null" [class.dropdown]="(dropdowns.length > 0) && (parentDropdown === null)" [class.dropend]="(dropdowns.length > 0) && (parentDropdown !== null)">
+    <ng-content></ng-content>
+</li>

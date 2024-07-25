@@ -1,0 +1,19 @@
+.submenu {
+    &:not(.noscript) {
+        margin: 0 .5rem !important;
+    }
+
+    &.noscript {
+        margin: 0 .5rem;
+        position: initial !important;
+    }
+}
+
+:not(.submenu).noscript {
+    max-height: calc(100vh - 100% - 1rem);
+    overflow-y: auto;
+}
+
+.overflow-y-auto {
+    overflow-y: auto;
+}
