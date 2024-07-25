@@ -1,39 +1,37 @@
 import { Component, ContentChildren, Directive, forwardRef, Input, QueryList } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
+import { MockModule } from 'ng-mocks';
+import { BsNavbarModule } from '@mintplayer/ng-bootstrap/navbar';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule.withRoutes([
-          { path: 'youtube', component: YoutubeMockComponent },
-          { path: 'vimeo', component: VimeoMockComponent },
-          { path: 'soundcloud', component: SoundcloudMockComponent },
-          { path: 'video', component: VideoMockComponent },
-          { path: 'playlist', component: PlaylistMockComponent },
-        ])
+        AppComponent,
+        
+        // Mock components
+        MockModule(BsNavbarModule),
       ],
       declarations: [
-        AppComponent,
-      
         // Mock pages
         YoutubeMockComponent,
         VimeoMockComponent,
         SoundcloudMockComponent,
         VideoMockComponent,
         PlaylistMockComponent,
-        
-        // Mock components
-        BsNavbarMockComponent,
-        BsNavbarNavMockComponent,
-        BsNavbarBrandMockComponent,
-        BsNavbarDropdownMockComponent,
-        BsNavbarItemMockComponent,
-        BsNavbarContentMockDirective,
       ],
       providers: [
+        provideRouter([
+          { path: 'youtube', component: YoutubeMockComponent },
+          { path: 'vimeo', component: VimeoMockComponent },
+          { path: 'soundcloud', component: SoundcloudMockComponent },
+          { path: 'video', component: VideoMockComponent },
+          { path: 'playlist', component: PlaylistMockComponent },
+        ]),
+        provideNoopAnimations(),
         { provide: 'VIDEO_PLAYER_VERSION', useValue: '1.0.0' }
       ]
     }).compileComponents();

@@ -1,3 +1,4 @@
+global.ResizeObserver = require('resize-observer-polyfill');
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CanvasResizerDemoComponent } from './canvas-resizer-demo.component';
