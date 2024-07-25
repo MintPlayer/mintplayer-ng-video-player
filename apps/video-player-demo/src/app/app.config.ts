@@ -1,5 +1,6 @@
 import { ApplicationConfig } from '@angular/core';
 import { PreloadAllModules, provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScrolling, withPreloading } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideVideoApis } from '@mintplayer/ng-video-player';
 import { fileLoader } from '@mintplayer/file-player';
 import ngVideoPlayerJson from '@mintplayer/ng-video-player/package.json';
@@ -17,6 +18,7 @@ export const appConfig: ApplicationConfig = {
         anchorScrolling: 'enabled',
       })
     ),
+    provideAnimations(),
     provideVideoApis(fileLoader),
     { provide: APP_BASE_HREF, useFactory: () => document.getElementsByTagName('base')[0].href.slice(0, -1) },
     { provide: 'VIDEO_PLAYER_VERSION', useValue: ngVideoPlayerJson.version }
