@@ -2,8 +2,6 @@ import { Component, ContentChildren, Directive, forwardRef, Input, QueryList } f
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
-// import { MockModule } from 'ng-mocks';
-// import { BsNavbarModule } from '@mintplayer/ng-bootstrap/navbar';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 describe('AppComponent', () => {
@@ -23,22 +21,9 @@ describe('AppComponent', () => {
         BsNavbarDropdownMockComponent,
         BsNavbarItemMockComponent,
         BsNavbarContentMockDirective,
-
-        // Mock pages
-        YoutubeMockComponent,
-        VimeoMockComponent,
-        SoundcloudMockComponent,
-        VideoMockComponent,
-        PlaylistMockComponent,
       ],
       providers: [
-        provideRouter([
-          { path: 'youtube', component: YoutubeMockComponent },
-          { path: 'vimeo', component: VimeoMockComponent },
-          { path: 'soundcloud', component: SoundcloudMockComponent },
-          { path: 'video', component: VideoMockComponent },
-          { path: 'playlist', component: PlaylistMockComponent },
-        ]),
+        provideRouter([]),
         provideNoopAnimations(),
         { provide: 'VIDEO_PLAYER_VERSION', useValue: '1.0.0' }
       ]
@@ -82,36 +67,6 @@ enum Color {
   white = 9,
   transparent = 10
 }
-
-@Component({
-  selector: 'youtube-mock-page',
-  template: `<div>Youtube</div>`
-})
-class YoutubeMockComponent { }
-
-@Component({
-  selector: 'vimeo-mock-page',
-  template: `<div>Vimeo</div>`
-})
-class VimeoMockComponent { }
-
-@Component({
-  selector: 'soundcloud-mock-page',
-  template: `<div>Soundcloud</div>`
-})
-class SoundcloudMockComponent { }
-
-@Component({
-  selector: 'video-mock-page',
-  template: `<div>Video</div>`
-})
-class VideoMockComponent { }
-
-@Component({
-  selector: 'playlist-mock-page',
-  template: `<div>Playlist</div>`
-})
-class PlaylistMockComponent { }
 
 @Component({
   selector: 'bs-navbar',
