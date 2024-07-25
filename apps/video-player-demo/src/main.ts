@@ -1,22 +1,7 @@
-import { enableProdMode, StaticProvider } from '@angular/core';
-import { APP_BASE_HREF } from '@angular/common';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { appConfig } from './app/app.config';
 
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app/app.component';
 
-if (environment.production) {
-  enableProdMode();
-}
-
-const getBaseUrl = () => {
-  return document.getElementsByTagName('base')[0].href.slice(0, -1);
-}
-
-const providers: StaticProvider[] = [
-  { provide: APP_BASE_HREF, useFactory: getBaseUrl },
-]
-
-platformBrowserDynamic(providers)
-  .bootstrapModule(AppModule)
+bootstrapApplication(AppComponent, appConfig)
   .catch((err) => console.error(err));

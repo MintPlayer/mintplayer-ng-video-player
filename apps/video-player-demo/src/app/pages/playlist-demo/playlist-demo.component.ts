@@ -2,16 +2,40 @@ import { AfterViewInit, ChangeDetectorRef, Component, NgZone, ViewChild } from '
 import { Color } from '@mintplayer/ng-bootstrap';
 import { PlayerProgress } from '@mintplayer/player-progress';
 import { ERepeatMode, PlaylistController } from '@mintplayer/playlist-controller';
-import { VideoPlayerComponent } from '@mintplayer/ng-video-player';
+import { provideVideoApis, VideoPlayerComponent } from '@mintplayer/ng-video-player';
 import { Video } from '../../interfaces/video';
 import { EPlayerState } from '@mintplayer/player-provider';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { youtubeLoader } from '@mintplayer/youtube-player';
+import { dailymotionLoader } from '@mintplayer/dailymotion-player';
+import { vimeoLoader } from '@mintplayer/vimeo-player';
+import { soundCloudLoader } from '@mintplayer/soundcloud-player';
+import { mixCloudLoader } from '@mintplayer/mixcloud-player';
+import { twitchLoader } from '@mintplayer/twitch-player';
+import { spotifyLoader } from '@mintplayer/spotify-player';
+import { streamableLoader } from '@mintplayer/streamable-player';
+import { facebookLoader } from '@mintplayer/facebook-player';
+import { fileLoader } from '@mintplayer/file-player';
+import { vidyardLoader } from '@mintplayer/vidyard-player';
+import { wistiaLoader } from '@mintplayer/wistia-player';
+import { FormsModule } from '@angular/forms';
+import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
+import { BsSelectModule } from '@mintplayer/ng-bootstrap/select';
+import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
+import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
+import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'mintplayer-ng-video-player-playlist-demo',
   templateUrl: './playlist-demo.component.html',
-  styleUrls: ['./playlist-demo.component.scss']
+  styleUrls: ['./playlist-demo.component.scss'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, VideoPlayerComponent, BsGridModule, BsSelectModule, BsListGroupModule, BsButtonTypeDirective, BsToggleButtonModule],
+  providers: [
+    provideVideoApis(youtubeLoader, dailymotionLoader, vimeoLoader, soundCloudLoader, mixCloudLoader, twitchLoader, spotifyLoader, streamableLoader, facebookLoader, fileLoader, vidyardLoader, wistiaLoader)
+  ]
 })
 export class PlaylistDemoComponent implements AfterViewInit {
   constructor(
