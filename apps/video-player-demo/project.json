@@ -30,10 +30,7 @@
           "node_modules/@mintplayer/ng-bootstrap/_bootstrap.scss",
           "apps/video-player-demo/src/styles.scss"
         ],
-        "scripts": [],
-        "loader": {
-          ".svg": "text"
-        }
+        "scripts": []
       },
       "configurations": {
         "production": {
