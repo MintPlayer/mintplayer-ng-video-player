@@ -98,10 +98,7 @@ export class YoutubeApiService implements IApiService {
                   // Progress
                   const currentTime = player.getCurrentTime();
                   adapter.onCurrentTimeChange(currentTime);
-                });
-              timer(0, 50)
-                .pipe(takeUntil(destroyRef), takeUntil(destroy))
-                .subscribe(() => {
+                  
                   // Volume
                   const vol = player.getVolume();
                   adapter.onVolumeChange(vol);
