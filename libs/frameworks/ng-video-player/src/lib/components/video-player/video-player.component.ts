@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PlayerProgress } from '@mintplayer/player-progress';
 import { ApiLoader, ECapability, EPlayerState, IApiService } from '@mintplayer/player-provider';
 import { VideoPlayer, fromVideoEvent } from "@mintplayer/video-player";
-import { BehaviorSubject, combineLatest, filter } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, take } from 'rxjs';
 
 const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis');
 
@@ -27,9 +27,36 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     @Inject(VIDEO_APIS) private apis: Promise<IApiService[]>,
     private destroy: DestroyRef,
   ) {
+    this.apis.then((apis) => this.apis$.next(apis));
+  
+    const player = new VideoPlayer();
+    fromVideoEvent(player, 'stateChange').pipe(takeUntilDestroyed(this.destroy))
+      .subscribe(([state]) => this.zoneEmit(this.playerStateChange, state));
+    fromVideoEvent(player, 'isPipChange').pipe(takeUntilDestroyed(this.destroy))
+      .subscribe(([isPip]) => this.zoneEmit(this.isPipChange, isPip));
+    fromVideoEvent(player, 'isFullscreenChange').pipe(takeUntilDestroyed(this.destroy))
+      .subscribe(([isFullscreen]) => this.zoneEmit(this.isFullscreenChange, isFullscreen));
+    fromVideoEvent(player, 'muteChange').pipe(takeUntilDestroyed(this.destroy))
+      .subscribe(([mute]) => this.zoneEmit(this.muteChange, mute));
+    fromVideoEvent(player, 'volumeChange').pipe(takeUntilDestroyed(this.destroy))
+      .subscribe(([volume]) => this.zoneEmit(this.volumeChange, volume));
+    fromVideoEvent(player, 'capabilitiesChange').pipe(takeUntilDestroyed(this.destroy))
+      .subscribe(([capabilities]) => this.zoneEmit(this.capabilitiesChange, capabilities));
+    fromVideoEvent(player, 'progressChange').pipe(takeUntilDestroyed(this.destroy))
+      .subscribe(([progress]) => this.zoneEmit(this.progressChange, progress));
+    this.player$ = new BehaviorSubject<VideoPlayer>(player);
+
     combineLatest([this.url$, this.player$])
       .pipe(filter(([url, player]) => !!player), takeUntilDestroyed())
       .subscribe(([url, player]) => player!.url = url);
+      
+    combineLatest([this.apis$, this.player$])
+      .pipe(filter(([apis, player]) => !!apis), take(1), takeUntilDestroyed())
+      .subscribe(([apis, player]) => player.apis = apis || []);
+
+    combineLatest([this.isViewReady$, this.player$])
+      .pipe(filter(([isViewReady, player]) => isViewReady), take(1), takeUntilDestroyed())
+      .subscribe(([_, player]) => player.host = this.container.nativeElement);
   }
 
   private zoneEmit<T>(emitter: EventEmitter<T>, value?: T) {
@@ -41,9 +68,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     return this.player$.value?.width || 300;
   }
   @Input() set width(value: number) {
-    if (this.player$.value) {
-      this.player$.value.width = value;
-    }
+    this.player$.value.width = value;
   }
   //#endregion
   //#region height
@@ -51,9 +76,7 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
     return this.player$.value?.height || 200;
   }
   @Input() set height(value: number) {
-    if (this.player$.value) {
-      this.player$.value.height = value;
-    }
+    this.player$.value.height = value;
   }
   //#endregion
   //#region progress
@@ -61,84 +84,66 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   //#endregion
   //#region playerState
   @Input() set playerState(value: EPlayerState) {
-    if (this.player$.value) {
-      this.player$.value.playerState = value;
-    }
+    this.player$.value.playerState = value;
   }
   @Output() public playerStateChange = new EventEmitter<EPlayerState>();
   //#endregion
   //#region title
   public getTitle() {
     return new Promise<string | null>((resolve) => {
-      if (this.player$.value) {
-        this.player$.value.getTitle().then(t => resolve(t));
-      } else {
-        resolve(null);
-      }
+      this.player$.value.getTitle().then(t => resolve(t));
     });
   }
   //#endregion
   //#region volume
   get volume() {
-    return this.player$.value?.volume ?? 50;
+    return this.player$.value.volume;
   }
   @Input() set volume(value: number) {
-    if (this.player$.value) {
-      this.player$.value.volume = value;
-    }
+    this.player$.value.volume = value;
   }
   @Output() public volumeChange = new EventEmitter<number>();
   //#endregion
   //#region mute
   get mute() {
-    return this.player$.value?.mute ?? false;
+    return this.player$.value.mute;
   }
   @Input() set mute(value: boolean) {
-    if (this.player$.value) {
-      this.player$.value.mute = value;
-    }
+    this.player$.value.mute = value;
   }
   @Output() public muteChange = new EventEmitter<boolean>();
   //#endregion
 
   //#region isFullscreen
   get isFullscreen() {
-    return this.player$.value?.isFullscreen ?? false;
+    return this.player$.value.isFullscreen;
   }
   @Input() set isFullscreen(value: boolean) {
-    if (this.player$.value) {
-      this.player$.value.isFullscreen = value;
-    }
+    this.player$.value.isFullscreen = value;
   }
   @Output() public isFullscreenChange = new EventEmitter<boolean>();
   //#endregion
   //#region isPip
   get isPip() {
-    return this.player$.value?.isPip ?? false;
+    return this.player$.value.isPip;
   }
   @Input() set isPip(value: boolean) {
-    if (this.player$.value) {
-      this.player$.value.isPip = value;
-    }
+    this.player$.value.isPip = value;
   }
   @Output() public isPipChange = new EventEmitter<boolean>();
   public setIsPip(isPip: boolean) {
     // Vimeo pip requests must originate from a user gesture.
     // Hence why we can't make it a bindable property.
     // Sadly, even with this approach, the browser seems to think the event wasn't user initiated when the iframe isn't focused.
-    if (this.player$.value) {
-      this.player$.value.isPip = isPip;
-    }
+    this.player$.value.isPip = isPip;
   }
   //#endregion
   //#region autoplay
   public get autoplay() {
-    return this.player$.value?.autoplay || false;
+    return this.player$.value.autoplay;
   }
   @Input() public set autoplay(value: boolean) {
-    if (this.player$.value) {
-      this.player$.value.autoplay = value;
-    }
+    this.player$.value.autoplay = value;
   }
   //#endregion
   //#region url
@@ -158,29 +163,14 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
 
-  player$ = new BehaviorSubject<VideoPlayer | undefined>(undefined);
+  isViewReady$ = new BehaviorSubject<boolean>(false);
+  player$: BehaviorSubject<VideoPlayer>;
+  apis$ = new BehaviorSubject<IApiService[] | undefined>(undefined);
   ngAfterViewInit() {
-    this.apis.then((apis) => {
-      const player = new VideoPlayer(this.container.nativeElement, apis);
-      fromVideoEvent(player, 'stateChange').pipe(takeUntilDestroyed(this.destroy))
-        .subscribe(([state]) => this.zoneEmit(this.playerStateChange, state));
-      fromVideoEvent(player, 'isPipChange').pipe(takeUntilDestroyed(this.destroy))
-        .subscribe(([isPip]) => this.zoneEmit(this.isPipChange, isPip));
-      fromVideoEvent(player, 'isFullscreenChange').pipe(takeUntilDestroyed(this.destroy))
-        .subscribe(([isFullscreen]) => this.zoneEmit(this.isFullscreenChange, isFullscreen));
-      fromVideoEvent(player, 'muteChange').pipe(takeUntilDestroyed(this.destroy))
-        .subscribe(([mute]) => this.zoneEmit(this.muteChange, mute));
-      fromVideoEvent(player, 'volumeChange').pipe(takeUntilDestroyed(this.destroy))
-        .subscribe(([volume]) => this.zoneEmit(this.volumeChange, volume));
-      fromVideoEvent(player, 'capabilitiesChange').pipe(takeUntilDestroyed(this.destroy))
-        .subscribe(([capabilities]) => this.zoneEmit(this.capabilitiesChange, capabilities));
-      fromVideoEvent(player, 'progressChange').pipe(takeUntilDestroyed(this.destroy))
-        .subscribe(([progress]) => this.zoneEmit(this.progressChange, progress));
-      this.player$.next(player)
-    });
+    this.isViewReady$.next(true);
   }
 
   ngOnDestroy() {
-    this.player$.value && this.player$.value.destroy();
+    this.player$.value.destroy();
   }
 }
