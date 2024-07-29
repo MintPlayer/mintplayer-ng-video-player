@@ -7,89 +7,83 @@ import { VideoEventMap } from "./event-map";
 import { EventHandler } from "./event-handler";
 
 export class VideoPlayer {
-  constructor(host: HTMLElement, apis: IApiService[]) {
-    this.url$.pipe(takeUntil(this.destroyed$)).subscribe(url => {
-      if (url === null) {
-        this.playerInfo?.adapter?.destroy();
-        this.playerInfo = null;
-        host.innerHTML = '';
-      } else {
-        const matchingApis = findApis(url, apis);
-        if (matchingApis.length === 0) {
-          throw `No player found for url ${url}`;
-        } else {
-          this.videoRequest$.next(matchingApis[0]);
-        }
-      }
-    });
-    
-    this.videoRequest$.pipe(takeUntil(this.destroyed$)).subscribe(videoRequest => {
-      if (videoRequest) {
-        videoRequest.api.loadApi().then(() => {
-          if ((videoRequest.api.id === this.playerInfo?.platformId) && (videoRequest.api.canReusePlayer !== false)) {
-            this.playerInfo.adapter.loadVideoById(videoRequest.id);
-          } else {
-            this.playerInfo?.adapter?.destroy();
-            setHtml(videoRequest);
-            videoRequest.api.createPlayer({
-              width: this.width,
-              height: this.height,
-              autoplay: this.autoplay,
-              domId: this.domId,
-              element: host,
-              initialVideoId: videoRequest.id,
-            }, this.destroyed$).then(adapter => {
-              this.playerInfo = {
-                platformId: videoRequest.api.id,
-                videoId: videoRequest.id,
-                adapter: adapter,
-              };
+  constructor(apis?: IApiService[], host?: HTMLElement) {
+    this.host$.next(host);
+    this.apis$.next(apis || []);
 
-              adapter.onStateChange = (state) => this.playerStateObserver$.next(state);
-              adapter.onMuteChange = (mute) => this.muteObserver$.next(mute);
-              adapter.onVolumeChange = (volume) => this.volumeObserver$.next(volume);
-              adapter.onCurrentTimeChange = (progress) => this.currentTimeObserver$.next(progress);
-              adapter.onDurationChange = (duration) => this.durationObserver$.next(duration);
-              adapter.onPipChange = (isPip) => this.pipObserver$.next(isPip);
-              adapter.onFullscreenChange = (isFullscreen) => this.fullscreenObserver$.next(isFullscreen);
-              this.invokeEvent('capabilitiesChange', adapter.capabilities);
-            }).then(() => {
-              if (videoRequest !== null) {
-                if (typeof videoRequest.id !== 'undefined') {
-                  this.playerInfo?.adapter.loadVideoById(videoRequest.id);
-                }
-              }
-            });
-
-            this.pipObserver$.next(false);
-            this.fullscreenObserver$.next(false);
-          }
-        });
-
-      } else {
-        // Cancel all timers / Clear the html
-        this.playerInfo?.adapter?.destroy();
+    combineLatest([this.url$, this.host$, this.apis$])
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(([url, host, apis]) => {
         if (host) {
-          host.innerHTML = '';
+          if (url === null) {
+            this.playerInfo?.adapter?.destroy();
+            this.playerInfo = null;
+            host.innerHTML = '';
+          } else {
+            const matchingApis = findApis(url, apis);
+            if (matchingApis.length === 0) {
+              throw `No player found for url ${url}`;
+            } else {
+              this.videoRequest$.next(matchingApis[0]);
+            }
+          }
         }
-      }
-    });
+      });
+    
+    combineLatest([this.videoRequest$, this.host$])
+      .pipe(filter(([_, host]) => !!host))
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(([videoRequest, host]) => {
+        if (videoRequest) {
+          videoRequest.api.loadApi().then(() => {
+            if ((videoRequest.api.id === this.playerInfo?.platformId) && (videoRequest.api.canReusePlayer !== false)) {
+              this.playerInfo.adapter.loadVideoById(videoRequest.id);
+            } else {
+              this.playerInfo?.adapter?.destroy();
+              this.setHtml(videoRequest, host!);
+              videoRequest.api.createPlayer({
+                width: this.width,
+                height: this.height,
+                autoplay: this.autoplay,
+                domId: this.domId,
+                element: host!,
+                initialVideoId: videoRequest.id,
+              }, this.destroyed$).then(adapter => {
+                this.playerInfo = {
+                  platformId: videoRequest.api.id,
+                  videoId: videoRequest.id,
+                  adapter: adapter,
+                };
 
-    const setHtml = (request: VideoRequest | null) => {
-      if (request) {
-        this.domId = `player${VideoPlayer.playerCounter++}`;
-        const html = request.api.prepareHtml({
-          domId: this.domId,
-          width: this._width,
-          height: this._height,
-          initialVideoId: request.id,
-          autoplay: this.autoplay,
-        });
-        host.innerHTML = html;
-      } else {
-        host.innerHTML = '';
-      }
-    };
+                adapter.onStateChange = (state) => this.playerStateObserver$.next(state);
+                adapter.onMuteChange = (mute) => this.muteObserver$.next(mute);
+                adapter.onVolumeChange = (volume) => this.volumeObserver$.next(volume);
+                adapter.onCurrentTimeChange = (progress) => this.currentTimeObserver$.next(progress);
+                adapter.onDurationChange = (duration) => this.durationObserver$.next(duration);
+                adapter.onPipChange = (isPip) => this.pipObserver$.next(isPip);
+                adapter.onFullscreenChange = (isFullscreen) => this.fullscreenObserver$.next(isFullscreen);
+                this.invokeEvent('capabilitiesChange', adapter.capabilities);
+              }).then(() => {
+                if (videoRequest !== null) {
+                  if (typeof videoRequest.id !== 'undefined') {
+                    this.playerInfo?.adapter.loadVideoById(videoRequest.id);
+                  }
+                }
+              });
+
+              this.pipObserver$.next(false);
+              this.fullscreenObserver$.next(false);
+            }
+          });
+
+        } else {
+          // Cancel all timers / Clear the html
+          this.playerInfo?.adapter?.destroy();
+          if (host) {
+            host.innerHTML = '';
+          }
+        }
+      });
 
     // TODO: missing zone.emit from angular
     this.volumeObserver$
@@ -125,6 +119,18 @@ export class VideoPlayer {
     this.url$.next(value || null);
   }
   //#endregion
+  //#region Apis
+  private apis$ = new BehaviorSubject<IApiService[]>([]);
+  public set apis(value: IApiService[]) {
+    this.apis$.next(value);
+  }
+  //#endregion
+  //#region Host
+  private host$ = new BehaviorSubject<HTMLElement | undefined>(undefined);
+  public set host(value: HTMLElement | undefined) {
+    this.host$.next(value);
+  }
+  //#endregion
 
   private videoRequest$ = new BehaviorSubject<VideoRequest | null>(null);
 
@@ -149,6 +155,22 @@ export class VideoPlayer {
       .forEach(h => h.handler(args));
   }
   //#endregion
+
+  private setHtml(request: VideoRequest | null, host: HTMLElement) {
+    if (request) {
+      this.domId = `player${VideoPlayer.playerCounter++}`;
+      const html = request.api.prepareHtml({
+        domId: this.domId,
+        width: this._width,
+        height: this._height,
+        initialVideoId: request.id,
+        autoplay: this.autoplay,
+      });
+      host.innerHTML = html;
+    } else {
+      host.innerHTML = '';
+    }
+  }
 
   //#region Debouncing
   private volumeObserver$ = new Subject<number>();
