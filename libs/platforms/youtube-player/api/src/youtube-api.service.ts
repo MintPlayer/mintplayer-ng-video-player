@@ -45,7 +45,13 @@ export class YoutubeApiService implements IApiService {
           onReady: (ev: YT.PlayerEvent) => {
             adapter = createPlayerAdapter({
               capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
-              loadVideoById: (id: string) => player.loadVideoById(id),
+              loadVideoById: (id: string) => {
+                if (options.autoplay) {
+                  player.loadVideoById(id);
+                } else {
+                  player.cueVideoById(id);
+                }
+              },
               setPlayerState: (state: EPlayerState) => {
                 switch (state) {
                   case EPlayerState.playing:
