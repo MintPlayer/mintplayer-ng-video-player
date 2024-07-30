@@ -40,7 +40,7 @@ export function RVideoPlayer({ url, volumeState, muteState, playerStateState }: 
       .map(loader => loader())
     ).then((apis) => {
       if (!player) {
-        setPlayer(new VideoPlayer(videoContainerRef.current!, apis));
+        setPlayer(new VideoPlayer(apis, videoContainerRef.current || undefined));
       }
     });
   }, []);

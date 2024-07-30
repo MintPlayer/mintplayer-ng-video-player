@@ -31,19 +31,19 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   
     const player = new VideoPlayer();
     fromVideoEvent(player, 'stateChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([state]) => this.zoneEmit(this.playerStateChange, state));
+      .subscribe((state) => this.zoneEmit(this.playerStateChange, state));
     fromVideoEvent(player, 'isPipChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([isPip]) => this.zoneEmit(this.isPipChange, isPip));
+      .subscribe((isPip) => this.zoneEmit(this.isPipChange, isPip));
     fromVideoEvent(player, 'isFullscreenChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([isFullscreen]) => this.zoneEmit(this.isFullscreenChange, isFullscreen));
+      .subscribe((isFullscreen) => this.zoneEmit(this.isFullscreenChange, isFullscreen));
     fromVideoEvent(player, 'muteChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([mute]) => this.zoneEmit(this.muteChange, mute));
+      .subscribe((mute) => this.zoneEmit(this.muteChange, mute));
     fromVideoEvent(player, 'volumeChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([volume]) => this.zoneEmit(this.volumeChange, volume));
+      .subscribe((volume) => this.zoneEmit(this.volumeChange, volume));
     fromVideoEvent(player, 'capabilitiesChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([capabilities]) => this.zoneEmit(this.capabilitiesChange, capabilities));
+      .subscribe((capabilities) => this.zoneEmit(this.capabilitiesChange, capabilities));
     fromVideoEvent(player, 'progressChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([progress]) => this.zoneEmit(this.progressChange, progress));
+      .subscribe((progress) => this.zoneEmit(this.progressChange, progress));
     this.player$ = new BehaviorSubject<VideoPlayer>(player);
 
     combineLatest([this.url$, this.player$])
