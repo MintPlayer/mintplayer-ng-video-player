@@ -21,7 +21,7 @@
     "@angular/platform-browser": "~18.1.1",
     "@angular/platform-browser-dynamic": "~18.1.1",
     "@angular/router": "~18.1.1",
-    "@mintplayer/ng-bootstrap": "~18.4.0",
+    "@mintplayer/ng-bootstrap": "~18.4.1",
     "@mintplayer/script-loader": "~1.3.0",
     "@nrwl/angular": "19.5.3",
     "@vidyard/embed-code": "^4.3.14",
