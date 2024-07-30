@@ -1,9 +1,9 @@
 declare module '@vidyard/embed-code' {
-    export class Surface {
+    export declare class Surface {
         api: VidyardApi;
     }
 
-    export class VidyardApi {
+    export declare class VidyardApi {
         // renderDOMPlayers: () => void;
         renderPlayer(el: HTMLElement | RenderPlayerOptions): void;
         addReadyListener(callback: (_, player: VidyardPlayer) => void): void;
@@ -12,7 +12,7 @@ declare module '@vidyard/embed-code' {
         destroyPlayer(player: VidyardPlayer): void;
     }
 
-    export interface RenderPlayerOptions {
+    export declare interface RenderPlayerOptions {
         uuid: string,
         container: HTMLElement;
         // optional
@@ -23,7 +23,7 @@ declare module '@vidyard/embed-code' {
         [x: string | number | symbol]: unknown;
     }
 
-    export interface VidyardPlayer {
+    export declare interface VidyardPlayer {
         get container(): HTMLElement;
         get element(): HTMLElement;
         get iframe(): HTMLIFrameElement;
@@ -40,7 +40,7 @@ declare module '@vidyard/embed-code' {
     }
 
 
-    export interface VidyardMetadata {
+    export declare interface VidyardMetadata {
         length_in_seconds: number;
         width: number;
         height: number;
@@ -49,16 +49,16 @@ declare module '@vidyard/embed-code' {
         chapters_attributes: VidyardChapter[];
     }
 
-    export interface VidyardChapter {
+    export declare interface VidyardChapter {
         video_attributes: VidyardChapterAttribute;
     }
 
-    export interface VidyardChapterAttribute {
+    export declare interface VidyardChapterAttribute {
         length_in_seconds: number;
         name: string;
     }
 
-    export interface VidyardEventMap {
+    export declare interface VidyardEventMap {
         'ready': [undefined, VidyardPlayer];
         'play': [number, VidyardPlayer];
         'pause': [undefined, VidyardPlayer];

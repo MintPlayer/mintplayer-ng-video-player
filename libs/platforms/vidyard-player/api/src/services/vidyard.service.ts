@@ -1,6 +1,9 @@
+/// <reference types="../../../types/vidyard" />
+
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/player-provider';
 import { loadScript } from '@mintplayer/script-loader';
-import VidyardEmbed, { VidyardApi, VidyardEventMap, VidyardPlayer } from '@vidyard/embed-code';
+import { VidyardApi, VidyardEventMap, VidyardPlayer } from '@vidyard/embed-code';
+import VidyardEmbed from '@vidyard/embed-code';
 import { Subject, BehaviorSubject, map, filter, take, takeUntil, fromEvent } from 'rxjs';
 import { fromVidyardEvent } from '../extensions';
 

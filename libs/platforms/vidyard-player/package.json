@@ -13,7 +13,6 @@
   "peerDependencies": {
     "@mintplayer/player-provider": "^18.0.0",
     "@mintplayer/script-loader": "^1.2.0",
-    "@vidyard/embed-code": "^4.0.0",
     "rxjs": "^7.4.0"
   },
   "dependencies": {
