@@ -1,3 +1,5 @@
+/// <reference types="@types/youtube" />
+
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/player-provider';
 import { Subject, takeUntil, timer } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';

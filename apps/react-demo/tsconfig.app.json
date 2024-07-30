@@ -6,9 +6,29 @@
       "node",
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts",
-      "vite/client"
+      "vite/client",
+      "youtube",
+      "dailymotion",
+      "vimeo",
+      "soundcloud",
+      "twitch",
+      "facebook",
+      "vidyard",
+      "wistia",
+      "playerjs"
     ]
   },
+  "typeRoots": [
+    "../../libs/platforms/dailymotion-player/types",
+    "../../libs/platforms/soundcloud-player/types",
+    "../../libs/platforms/twitch-player/types",
+    "../../libs/platforms/vimeo-player/types",
+    "../../libs/platforms/facebook-player/types",
+    "../../libs/platforms/vidyard-player/types",
+    "../../libs/platforms/wistia-player/types",
+    "../../libs/platforms/streamable-player/types",
+    "../../node_modules/@types",
+  ],
   "exclude": [
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
