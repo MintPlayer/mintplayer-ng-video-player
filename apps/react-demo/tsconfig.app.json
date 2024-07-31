@@ -2,11 +2,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
+    "target": "ES2022",
     "types": [
       "node",
-      "@nx/react/typings/cssmodule.d.ts",
-      "@nx/react/typings/image.d.ts",
-      "vite/client",
+      "cssmodule", /* from @nx/react/typings */
+      "image", /* from @nx/react/typings */
+      "client", /* from vite */
       "youtube",
       "dailymotion",
       "vimeo",
@@ -16,19 +17,21 @@
       "vidyard",
       "wistia",
       "playerjs"
+    ],
+    "typeRoots": [
+      "../../libs/platforms/dailymotion-player/types",
+      "../../libs/platforms/soundcloud-player/types",
+      "../../libs/platforms/twitch-player/types",
+      "../../libs/platforms/vimeo-player/types",
+      "../../libs/platforms/facebook-player/types",
+      "../../libs/platforms/vidyard-player/types",
+      "../../libs/platforms/wistia-player/types",
+      "../../libs/platforms/streamable-player/types",
+      "../../node_modules/vite",
+      "../../node_modules/@nx/react/typings",
+      "../../node_modules/@types",
     ]
   },
-  "typeRoots": [
-    "../../libs/platforms/dailymotion-player/types",
-    "../../libs/platforms/soundcloud-player/types",
-    "../../libs/platforms/twitch-player/types",
-    "../../libs/platforms/vimeo-player/types",
-    "../../libs/platforms/facebook-player/types",
-    "../../libs/platforms/vidyard-player/types",
-    "../../libs/platforms/wistia-player/types",
-    "../../libs/platforms/streamable-player/types",
-    "../../node_modules/@types",
-  ],
   "exclude": [
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
