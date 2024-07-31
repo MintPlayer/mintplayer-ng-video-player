@@ -7,13 +7,13 @@ FROM node:latest as node_image
 WORKDIR /usr/local/app
 
 # Add the source code to app
-COPY ./ /usr/local/app/
+COPY . /usr/local/app/
 
 # Install all the dependencies
 RUN npm install
 
 # Generate the build of the application
-RUN npx nx run-many --target=build --configuration=production
+RUN npx nx run angular-demo:build:production
 
 
 # Stage 2: Serve app with nginx server
@@ -23,8 +23,8 @@ FROM nginx:latest
 LABEL org.opencontainers.image.source="https://github.com/MintPlayer/mintplayer-ng-video-player"
 
 # Copy the build output to replace the default nginx contents.
-COPY --from=node_image /usr/local/app/dist/apps/video-player-demo/browser /usr/share/nginx/html
-COPY --from=node_image /usr/local/app/dist/apps/video-player-demo/browser/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=node_image /usr/local/app/dist/apps/angular-demo/browser /usr/share/nginx/html
+COPY --from=node_image /usr/local/app/dist/apps/angular-demo/browser/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80

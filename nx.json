@@ -46,7 +46,7 @@
       }
     }
   },
-  "defaultProject": "video-player-demo",
+  "defaultProject": "angular-demo",
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "build": {

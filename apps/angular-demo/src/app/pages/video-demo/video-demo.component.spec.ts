@@ -57,14 +57,14 @@ describe('VideoDemoComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it(`should have as title 'video-player-demo'`, () => {
-    expect(component.title).toEqual('video-player-demo');
+  it(`should have as title 'angular-demo'`, () => {
+    expect(component.title).toEqual('angular-demo');
   });
 
   it('should render title', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h2')?.textContent).toContain(
-      'Welcome to video-player-demo!'
+      'Welcome to angular-demo!'
     );
   });
 });

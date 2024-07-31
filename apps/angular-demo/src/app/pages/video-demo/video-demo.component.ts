@@ -55,7 +55,7 @@ export class VideoDemoComponent {
   }
 
   url?: string;
-  title = 'video-player-demo';
+  title = 'angular-demo';
   colors = Color;
   playerStates = EPlayerState;
   playerState!: EPlayerState;

@@ -1,7 +1,7 @@
 npx create-nx-workspace
 > mintplayer-ng-video-player
 > angular
-> video-player-demo
+> angular-demo
 > scss
 cd mintplayer-ng-bootstrap
 nx g @nrwl/angular:lib mintplayer-ng-youtube-player --buildable --publishable --import-path @mintplayer/ng-youtube-player --directory libs/mintplayer-ng-youtube-player
