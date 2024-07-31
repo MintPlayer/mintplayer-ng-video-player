@@ -1,18 +1,18 @@
 {
-  "name": "video-player-demo-e2e",
+  "name": "angular-demo-e2e",
   "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
-  "sourceRoot": "apps/video-player-demo-e2e/src",
+  "sourceRoot": "apps/angular-demo-e2e/src",
   "projectType": "application",
   "targets": {
     "e2e": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
-        "cypressConfig": "apps/video-player-demo-e2e/cypress.json",
-        "devServerTarget": "video-player-demo:serve:development"
+        "cypressConfig": "apps/angular-demo-e2e/cypress.json",
+        "devServerTarget": "angular-demo:serve:development"
       },
       "configurations": {
         "production": {
-          "devServerTarget": "video-player-demo:serve:production"
+          "devServerTarget": "angular-demo:serve:production"
         }
       }
     },
@@ -20,10 +20,10 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/video-player-demo-e2e/**/*.{js,ts}"]
+        "lintFilePatterns": ["apps/angular-demo-e2e/**/*.{js,ts}"]
       }
     }
   },
   "tags": [],
-  "implicitDependencies": ["video-player-demo"]
+  "implicitDependencies": ["angular-demo"]
 }

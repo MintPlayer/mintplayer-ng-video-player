@@ -7,18 +7,18 @@ import { Video } from '../../interfaces/video';
 import { EPlayerState } from '@mintplayer/player-provider';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { youtubeLoader } from '@mintplayer/youtube-player';
-import { dailymotionLoader } from '@mintplayer/dailymotion-player';
-import { vimeoLoader } from '@mintplayer/vimeo-player';
-import { soundCloudLoader } from '@mintplayer/soundcloud-player';
-import { mixCloudLoader } from '@mintplayer/mixcloud-player';
-import { twitchLoader } from '@mintplayer/twitch-player';
-import { spotifyLoader } from '@mintplayer/spotify-player';
-import { streamableLoader } from '@mintplayer/streamable-player';
-import { facebookLoader } from '@mintplayer/facebook-player';
-import { fileLoader } from '@mintplayer/file-player';
-import { vidyardLoader } from '@mintplayer/vidyard-player';
-import { wistiaLoader } from '@mintplayer/wistia-player';
+import { youtubePlugin } from '@mintplayer/youtube-player';
+import { dailymotionPlugin } from '@mintplayer/dailymotion-player';
+import { vimeoPlugin } from '@mintplayer/vimeo-player';
+import { soundCloudPlugin } from '@mintplayer/soundcloud-player';
+import { mixCloudPlugin } from '@mintplayer/mixcloud-player';
+import { twitchPlugin } from '@mintplayer/twitch-player';
+import { spotifyPlugin } from '@mintplayer/spotify-player';
+import { streamablePlugin } from '@mintplayer/streamable-player';
+import { facebookPlugin } from '@mintplayer/facebook-player';
+import { filePlugin } from '@mintplayer/file-player';
+import { vidyardPlugin } from '@mintplayer/vidyard-player';
+import { wistiaPlugin } from '@mintplayer/wistia-player';
 import { FormsModule } from '@angular/forms';
 import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
 import { BsSelectModule } from '@mintplayer/ng-bootstrap/select';
@@ -34,7 +34,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule, FormsModule, VideoPlayerComponent, BsGridModule, BsSelectModule, BsListGroupModule, BsButtonTypeDirective, BsToggleButtonModule],
   providers: [
-    provideVideoApis(youtubeLoader, dailymotionLoader, vimeoLoader, soundCloudLoader, mixCloudLoader, twitchLoader, spotifyLoader, streamableLoader, facebookLoader, fileLoader, vidyardLoader, wistiaLoader)
+    provideVideoApis(youtubePlugin, dailymotionPlugin, vimeoPlugin, soundCloudPlugin, mixCloudPlugin, twitchPlugin, spotifyPlugin, streamablePlugin, facebookPlugin, filePlugin, vidyardPlugin, wistiaPlugin)
   ]
 })
 export class PlaylistDemoComponent implements AfterViewInit {

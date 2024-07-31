@@ -63,17 +63,17 @@ Import the modules for which you want to support a player:
     ]
     providers: [
         provideVideoApis(
-            youtubeLoader,
-            vimeoLoader,
-            soundCloudLoader,
-            mixCloudLoader,
-            twitchLoader,
-            spotifyLoader,
-            streamableLoader,
-            facebookLoader,
-            fileLoader,
-            vidyardLoader,
-            wistiaLoader
+            youtubePlugin,
+            vimeoPlugin,
+            soundCloudPlugin,
+            mixCloudPlugin,
+            twitchPlugin,
+            spotifyPlugin,
+            streamablePlugin,
+            facebookPlugin,
+            filePlugin,
+            vidyardPlugin,
+            wistiaPlugin
         )
     ]
 })

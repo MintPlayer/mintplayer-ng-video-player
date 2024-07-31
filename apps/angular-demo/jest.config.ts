@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'video-player-demo',
+  displayName: 'angular-demo',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   transform: {

@@ -4,10 +4,10 @@
   "license": "MIT",
   "scripts": {
     "ng": "nx",
-    "start": "nx serve video-player-demo",
+    "start": "nx serve angular-demo",
     "build": "nx build",
     "build:sme": "nx build --source-map",
-    "analyze:sme": "source-map-explorer dist/apps/video-player-demo/*",
+    "analyze:sme": "source-map-explorer dist/apps/angular-demo/*",
     "test": "nx test"
   },
   "private": true,

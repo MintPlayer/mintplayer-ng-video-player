@@ -1,6 +1,6 @@
 import { getGreeting } from '../support/app.po';
 
-describe('video-player-demo', () => {
+describe('angular-demo', () => {
   beforeEach(() => cy.visit('/'));
 
   it('should display welcome message', () => {
@@ -8,6 +8,6 @@ describe('video-player-demo', () => {
     cy.login('my-email@something.com', 'myPassword');
 
     // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome video-player-demo');
+    getGreeting().contains('Welcome angular-demo');
   });
 });
