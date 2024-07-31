@@ -20,6 +20,7 @@ describe('App', () => {
         <App />
       </BrowserRouter>
     );
-    expect(getByText(/react-demo/i)).toBeTruthy();
+
+    expect(getByText(/@mintplayer\/r\-video\-player/i)).toBeTruthy();
   });
 });

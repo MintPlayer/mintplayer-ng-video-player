@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { act, useEffect, useRef, useState } from 'react';
 import { VideoPlayer } from "@mintplayer/video-player";
 import { youtubePlugin } from '@mintplayer/youtube-player';
 import { dailymotionPlugin } from '@mintplayer/dailymotion-player';
@@ -40,7 +40,7 @@ export function RVideoPlayer({ url, volumeState, muteState, playerStateState }: 
       .map(loader => loader())
     ).then((apis) => {
       if (!player) {
-        setPlayer(new VideoPlayer(apis, videoContainerRef.current || undefined));
+        act(() => setPlayer(new VideoPlayer(apis, videoContainerRef.current || undefined)));
       }
     });
   }, []);
