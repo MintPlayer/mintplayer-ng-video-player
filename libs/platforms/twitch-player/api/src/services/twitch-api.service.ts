@@ -1,4 +1,4 @@
-/// <reference types="../types/twitch/index.d.ts" />
+/// <reference types="../../../types/twitch" />
 
 // https://dev.twitch.tv/docs/embed/video-and-clips/#interactive-frames-for-live-streams-and-vods
 

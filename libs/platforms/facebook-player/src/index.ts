@@ -1,3 +1,3 @@
-import { ApiLoader } from "@mintplayer/player-provider";
+import { ApiPlugin } from "@mintplayer/player-provider";
 
-export const facebookPlugin: ApiLoader = () => import('@mintplayer/facebook-player/api').then(m => new m.FacebookApiService());
+export const facebookPlugin: ApiPlugin = () => import('@mintplayer/facebook-player/api').then(m => new m.FacebookApiService());

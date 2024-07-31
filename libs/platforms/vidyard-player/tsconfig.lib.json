@@ -9,5 +9,8 @@
     "typeRoots": ["./types", "../../../node_modules/@types"]
   },
   "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"],
-  "include": ["**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "types/**/*.d.ts"
+  ]
 }

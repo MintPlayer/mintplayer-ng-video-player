@@ -1,3 +1,5 @@
+/// <reference types="../../types/vimeo" />
+
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/player-provider';
 import { Subject, takeUntil, timer } from 'rxjs';
 import { loadScript } from '@mintplayer/script-loader';
@@ -127,7 +129,7 @@ export class VimeoApiService implements IApiService {
       player.on('timeupdate', (ev) => adapter.onCurrentTimeChange(ev.seconds));
       player.on('enterpictureinpicture', () => adapter.onPipChange(true));
       player.on('leavepictureinpicture', () => adapter.onPipChange(false));
-      player.on('fullscreenchange', (ev: { fullscreen: boolean }) => adapter.onFullscreenChange(ev.fullscreen));
+      player.on('fullscreenchange', (ev) => adapter.onFullscreenChange(ev.fullscreen));
 
     });
   }

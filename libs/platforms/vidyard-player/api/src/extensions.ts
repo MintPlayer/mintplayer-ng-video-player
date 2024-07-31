@@ -1,3 +1,5 @@
+/// <reference types="../../types/vidyard" />
+
 // import { Observable } from 'rxjs';
 
 import { VidyardEventMap, VidyardPlayer } from "@vidyard/embed-code";

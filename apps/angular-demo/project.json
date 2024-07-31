@@ -19,7 +19,6 @@
           "apps/angular-demo/src/favicon.ico",
           "apps/angular-demo/src/assets",
           "apps/angular-demo/src/web.config",
-          "apps/angular-demo/src/nginx.conf",
           {
             "glob": "*.woff|*.woff2",
             "input": "node_modules/bootstrap-icons/font/fonts",

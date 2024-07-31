@@ -4,13 +4,13 @@ import { VideoPlayer } from './video-player';
 import { Observable, fromEvent } from 'rxjs';
 
 export interface VideoEventMap {
-    'progressChange': [PlayerProgress];
-    'stateChange': [EPlayerState];
-    'volumeChange': [number];
-    'muteChange': [boolean];
-    'isFullscreenChange': [boolean];
-    'isPipChange': [boolean];
-    'capabilitiesChange': [ECapability[]];
+    'progressChange': (PlayerProgress);
+    'stateChange': (EPlayerState);
+    'volumeChange': (number);
+    'muteChange': (boolean);
+    'isFullscreenChange': (boolean);
+    'isPipChange': (boolean);
+    'capabilitiesChange': (ECapability[]);
 }
 
 export function fromVideoEvent<E extends keyof VideoEventMap>(target: VideoPlayer, name: E): Observable<VideoEventMap[E]> {

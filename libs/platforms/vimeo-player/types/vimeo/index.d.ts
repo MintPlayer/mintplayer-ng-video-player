@@ -46,19 +46,9 @@ declare namespace Vimeo {
         getMuted(): Promise<boolean>;
         setMuted(muted: boolean): void;
 
-        on(e: PlayerEvents, t: (...parms: any[]) => void): void;
-        off(e: PlayerEvents, t: (...parms: any[]) => void): void;
+        on<K extends keyof VimeoEventMap>(ev: K, handler: (...args: VimeoEventMap[K]) => void): void;
+        off<K extends keyof VimeoEventMap>(ev: K, handler: (...args: VimeoEventMap[K]) => void): void;
     }
-
-    export type PlayerEvents = 'loaded'
-                             | 'play'
-                             | 'pause'
-                             | 'ended'
-                             | 'timeupdate'
-                             | 'fullscreenchange'
-                             | 'enterpictureinpicture'
-                             | 'leavepictureinpicture'
-                             | 'volumechange';
 
     export interface VimeoPlayerOptions {
         /** Required. Either the id or the url of the video. */
@@ -87,5 +77,29 @@ declare namespace Vimeo {
 
         /** Show the title on the video. */
         title: boolean;
+    }
+
+    export interface VolumeChangeEvent {
+        volume: number;
+    }
+
+    export interface TimeUpdateEvent {
+        seconds: number;
+    }
+
+    export interface FullscreenChangeEvent {
+        fullscreen: boolean;
+    }
+
+    export interface VimeoEventMap {
+        'loaded': [];
+        'play': [];
+        'pause': [];
+        'ended': [];
+        'volumechange': [VolumeChangeEvent];
+        'timeupdate': [TimeUpdateEvent];
+        'enterpictureinpicture': [];
+        'leavepictureinpicture': [];
+        'fullscreenchange': [FullscreenChangeEvent];
     }
 }

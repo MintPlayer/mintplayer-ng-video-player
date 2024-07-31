@@ -1,3 +1,3 @@
-import { ApiLoader } from "@mintplayer/player-provider";
+import { ApiPlugin } from "@mintplayer/player-provider";
 
-export const spotifyPlugin: ApiLoader = () => import('@mintplayer/spotify-player/api').then(m => new m.SpotifyApiService());
+export const spotifyPlugin: ApiPlugin = () => import('@mintplayer/spotify-player/api').then(m => new m.SpotifyApiService());

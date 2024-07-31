@@ -13,7 +13,7 @@ COPY ../.. /usr/local/app/
 RUN npm install
 
 # Generate the build of the application
-RUN npx nx run angular-demo:build:production
+RUN npx nx run react-demo:build:production
 
 
 # Stage 2: Serve app with nginx server
@@ -23,7 +23,7 @@ FROM nginx:latest
 LABEL org.opencontainers.image.source="https://github.com/MintPlayer/mintplayer-ng-video-player"
 
 # Copy the build output to replace the default nginx contents.
-COPY --from=node_image /usr/local/app/dist/apps/angular-demo/browser /usr/share/nginx/html
+COPY --from=node_image /usr/local/app/dist/apps/react-demo /usr/share/nginx/html
 COPY --from=node_image /usr/local/app/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80

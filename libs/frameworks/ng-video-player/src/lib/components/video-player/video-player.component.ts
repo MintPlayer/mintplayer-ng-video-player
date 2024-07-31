@@ -1,13 +1,13 @@
 import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Inject, InjectionToken, Input, ModuleWithProviders, NgZone, OnDestroy, Output, StaticProvider, Type, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PlayerProgress } from '@mintplayer/player-progress';
-import { ApiLoader, ECapability, EPlayerState, IApiService } from '@mintplayer/player-provider';
+import { ApiPlugin, ECapability, EPlayerState, IApiService } from '@mintplayer/player-provider';
 import { VideoPlayer, fromVideoEvent } from "@mintplayer/video-player";
 import { BehaviorSubject, combineLatest, filter, take } from 'rxjs';
 
 const VIDEO_APIS = new InjectionToken<IApiService>('VideoApis');
 
-export function provideVideoApis(...platforms: ApiLoader[]): StaticProvider {
+export function provideVideoApis(...platforms: ApiPlugin[]): StaticProvider {
   return {
     provide: VIDEO_APIS,
     useFactory: () => Promise.all(platforms.map(loader => loader())),
@@ -31,19 +31,19 @@ export class VideoPlayerComponent implements AfterViewInit, OnDestroy {
   
     const player = new VideoPlayer();
     fromVideoEvent(player, 'stateChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([state]) => this.zoneEmit(this.playerStateChange, state));
+      .subscribe((state) => this.zoneEmit(this.playerStateChange, state));
     fromVideoEvent(player, 'isPipChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([isPip]) => this.zoneEmit(this.isPipChange, isPip));
+      .subscribe((isPip) => this.zoneEmit(this.isPipChange, isPip));
     fromVideoEvent(player, 'isFullscreenChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([isFullscreen]) => this.zoneEmit(this.isFullscreenChange, isFullscreen));
+      .subscribe((isFullscreen) => this.zoneEmit(this.isFullscreenChange, isFullscreen));
     fromVideoEvent(player, 'muteChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([mute]) => this.zoneEmit(this.muteChange, mute));
+      .subscribe((mute) => this.zoneEmit(this.muteChange, mute));
     fromVideoEvent(player, 'volumeChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([volume]) => this.zoneEmit(this.volumeChange, volume));
+      .subscribe((volume) => this.zoneEmit(this.volumeChange, volume));
     fromVideoEvent(player, 'capabilitiesChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([capabilities]) => this.zoneEmit(this.capabilitiesChange, capabilities));
+      .subscribe((capabilities) => this.zoneEmit(this.capabilitiesChange, capabilities));
     fromVideoEvent(player, 'progressChange').pipe(takeUntilDestroyed(this.destroy))
-      .subscribe(([progress]) => this.zoneEmit(this.progressChange, progress));
+      .subscribe((progress) => this.zoneEmit(this.progressChange, progress));
     this.player$ = new BehaviorSubject<VideoPlayer>(player);
 
     combineLatest([this.url$, this.player$])

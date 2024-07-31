@@ -400,8 +400,9 @@ jobs:
         github-token: ${{ github.token }}
         images: ghcr.io/${{ github.repository }}
 
+    ## Angular app
     - name: Publish to Github Container Registry
-      id: push-ghcr
+      id: push-ghcr-angular
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -413,12 +414,36 @@ jobs:
     - name: Generate artifact attestation
       uses: actions/attest-build-provenance@v1
       with:
-        subject-name: ghcr.io/${{ github.repository }}
-        subject-digest: ${{ steps.push-ghcr.outputs.digest }}
+        subject-name: ghcr.io/${{ github.repository }}-angular
+        subject-digest: ${{ steps.push-ghcr-angular.outputs.digest }}
         push-to-registry: true
 
     - name: Trigger deploy hook
       uses: fjogeleit/http-request-action@v1
       with:
-        url: ${{ secrets.SLIPLANE_DEPLOY_HOOK }}
+        url: ${{ secrets.SLIPLANE_ANGULAR_DEPLOY_HOOK }}
+        method: GET
+        
+    ## React app
+    - name: Publish to Github Container Registry
+      id: push-ghcr-react
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./apps/react-demo/Dockerfile
+        push: true
+        tags: ${{ steps.meta-ghcr.outputs.tags }}
+        labels: ${{ steps.meta-ghcr.outputs.labels }}
+
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-name: ghcr.io/${{ github.repository }}-react
+        subject-digest: ${{ steps.push-ghcr-react.outputs.digest }}
+        push-to-registry: true
+
+    - name: Trigger deploy hook
+      uses: fjogeleit/http-request-action@v1
+      with:
+        url: ${{ secrets.SLIPLANE_REACT_DEPLOY_HOOK }}
         method: GET
