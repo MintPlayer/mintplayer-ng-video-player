@@ -393,16 +393,15 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ github.token }}
 
+    ## Angular app
     - name: Extract tags/labels
-      id: meta-ghcr
+      id: meta-ghcr-angular
       uses: docker/metadata-action@v5
       with:
         github-token: ${{ github.token }}
         images: |
           ghcr.io/${{ github.repository }}-angular
-          ghcr.io/${{ github.repository }}-react
 
-    ## Angular app
     - name: Publish to Github Container Registry
       id: push-ghcr-angular
       uses: docker/build-push-action@v6
@@ -410,8 +409,8 @@ jobs:
         context: .
         file: ./apps/angular-demo/Dockerfile
         push: true
-        tags: ${{ steps.meta-ghcr.outputs.tags }}
-        labels: ${{ steps.meta-ghcr.outputs.labels }}
+        tags: ${{ steps.meta-ghcr-angular.outputs.tags }}
+        labels: ${{ steps.meta-ghcr-angular.outputs.labels }}
 
     - name: Generate artifact attestation
       uses: actions/attest-build-provenance@v1
@@ -427,6 +426,14 @@ jobs:
         method: GET
         
     ## React app
+    - name: Extract tags/labels
+      id: meta-ghcr-react
+      uses: docker/metadata-action@v5
+      with:
+        github-token: ${{ github.token }}
+        images: |
+          ghcr.io/${{ github.repository }}-react
+
     - name: Publish to Github Container Registry
       id: push-ghcr-react
       uses: docker/build-push-action@v6
@@ -434,8 +441,8 @@ jobs:
         context: .
         file: ./apps/react-demo/Dockerfile
         push: true
-        tags: ${{ steps.meta-ghcr.outputs.tags }}
-        labels: ${{ steps.meta-ghcr.outputs.labels }}
+        tags: ${{ steps.meta-ghcr-react.outputs.tags }}
+        labels: ${{ steps.meta-ghcr-react.outputs.labels }}
 
     - name: Generate artifact attestation
       uses: actions/attest-build-provenance@v1
