@@ -1,4 +1,4 @@
-<!-- <h2 class="text-center">Welcome to {{ title }}!</h2>
+<h2 class="text-center">Welcome to {{ title }}!</h2>
 <bs-form>
     <bs-grid>
         <div bsRow class="mb-3">
@@ -28,12 +28,12 @@
                         <a href="http://youtu.be/Q7E4Hiqe1s4" target="_blank">Watch</a>
                     </bs-alert>
                 </div>
-                <div class="d-block text-center">-->
-                    <video-player [width]="width" [height]="height" [autoplay]="false" [url]="'http://localhost:4200/assets/Modern-iMovie-8ot-eJxH2yc.mp4'"
+                <div class="d-block text-center">
+                    <video-player [width]="width" [height]="height" [autoplay]="true"
                         (progressChange)="onProgressChange($event)" [(volume)]="volume" [(mute)]="isMuted" [(playerState)]="playerState"
                         (playerStateChange)="onPlayerStateChange($event)" [(isPip)]="isPip" [(isFullscreen)]="isFullscreen"
                         (capabilitiesChange)="onCapabilitiesChange($event)" #player1></video-player>
-                <!--</div>
+                </div>
                 <div bsRow>
                     <div [md]="6" class="text-center">
                         <label>{{ progress.currentTime }} / {{ progress.duration }}</label>
@@ -79,4 +79,4 @@
             </div>
         </div>
     </bs-grid>
-</bs-form> -->
+</bs-form>
