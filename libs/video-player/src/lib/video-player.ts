@@ -12,7 +12,7 @@ export class VideoPlayer {
     this.apis$.next(apis || []);
 
     combineLatest([this.url$, this.host$, this.apis$])
-      .pipe(takeUntil(this.destroyed$))
+      .pipe(debounceTime(20), takeUntil(this.destroyed$))
       .subscribe(([url, host, apis]) => {
         if (host) {
           if (url === null) {
@@ -21,10 +21,10 @@ export class VideoPlayer {
             host.innerHTML = '';
           } else {
             const matchingApis = findApis(url, apis);
-            if (matchingApis.length === 0) {
-              throw `No player found for url ${url}`;
-            } else {
+            if (matchingApis.length > 0) {
               this.videoRequest$.next(matchingApis[0]);
+            } else if (apis.length > 0) {
+              throw `No player found for url ${url}`;
             }
           }
         }
