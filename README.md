@@ -1,7 +1,9 @@
 # @mintplayer/ng-video-player
 ## Demo
 
-A working demo application can [be found here](https://video-player.mintplayer.com).
+A working demo application can be found here:
+- [Angular demo](https://video-player.mintplayer.com)
+- [React demo](https://react.video-player.mintplayer.com)
 The code is included in the git repository.
 
 ## Version info
