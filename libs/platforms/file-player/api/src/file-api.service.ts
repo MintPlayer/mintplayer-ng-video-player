@@ -56,7 +56,7 @@ export class FileApiService implements IApiService {
                         </div>
                     </div>`
             case 'video':
-                return `<video src="${id}" style="max-width:100%" ${options.autoplay ? 'autoplay' : ''}" width="${options.width ?? 500}" height="${options.height ?? 300}" controls></video>`
+                return `<video src="${id}" style="max-width:100%" ${options.autoplay ? 'autoplay' : ''} width="${options.width ?? 500}" height="${options.height ?? 300}" controls></video>`
             default:
                 throw `Unsupported media type: ${info.extension}`;
         }
