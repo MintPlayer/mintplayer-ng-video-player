@@ -49,7 +49,7 @@ export class FileApiService implements IApiService {
                 return `
                     <div style="width:${options.width}px;height:${options.height}px;max-width:100%;overflow:hidden;position:relative;margin:0 auto">
                         <div style="height:100%;display:flex;width:100%;flex-direction:column;align-items:center;justify-content:space-around;position:absolute">
-                            <audio src="${id}" ${options.autoplay ? 'autoplay' : ''}" controls="on" style="z-index:5;max-width:100%"></audio>
+                            <audio src="${id}" ${options.autoplay ? 'autoplay' : ''} controls="on" style="z-index:5;max-width:100%"></audio>
                         </div>
                         <div style="height:100%;display:flex;width:100%;flex-direction:column;align-items:center;justify-content:space-around;position:absolute">
                             <canvas width="${options.width}" height="${options.height}"></canvas>
