@@ -51,7 +51,8 @@
         "production": {
           "buildTarget": "react-demo:build:production"
         }
-      }
+      },
+      "dependsOn": ["build"]
     },
     "lint": {
       "executor": "@nx/eslint:lint"
