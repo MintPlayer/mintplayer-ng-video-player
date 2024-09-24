@@ -58,7 +58,7 @@ export function App() {
         <Row className='mb-3'>
           <Col lg="6">
             <ListGroup className='mb-3'>
-              {videos.map(video => <ListGroupItem key={video} onClick={() => setUrl(video)} className='cursor-pointer overflow-hidden text-truncate truncate-start'>{video}</ListGroupItem>)}
+              {videos.map(video => <ListGroupItem key={video} onPointerDown={() => setUrl(video)} className='cursor-pointer overflow-hidden text-truncate truncate-start'>{video}</ListGroupItem>)}
             </ListGroup>
           </Col>
           <Col lg="6" className='text-center'>
