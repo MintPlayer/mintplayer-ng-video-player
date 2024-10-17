@@ -6,7 +6,7 @@
   "prefix": "mintplayer-ng-video-player",
   "targets": {
     "build": {
-      "executor": "@nrwl/angular:package",
+      "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
         "project": "{projectRoot}/ng-package.json",
