@@ -2,7 +2,7 @@
   "name": "@mintplayer/spotify-player",
   "private": false,
   "type": "module",
-  "version": "18.2.0",
+  "version": "18.2.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",

@@ -6,7 +6,7 @@
   "prefix": "mintplayer-ng-video-player",
   "targets": {
     "build": {
-      "executor": "@nrwl/angular:package",
+      "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
         "project": "{projectRoot}/ng-package.json",
@@ -33,13 +33,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/frameworks/ng-video-player/src/**/*.ts",
-          "libs/frameworks/ng-video-player/src/**/*.html"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     }
   },
   "tags": []
