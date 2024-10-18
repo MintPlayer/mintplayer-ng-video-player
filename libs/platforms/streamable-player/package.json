@@ -2,7 +2,7 @@
   "name": "@mintplayer/streamable-player",
   "private": false,
   "type": "module",
-  "version": "18.2.1",
+  "version": "18.3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
@@ -12,7 +12,7 @@
   "typings": "./src/index.d.ts",
   "peerDependencies": {
     "@mintplayer/player-provider": "^18.0.0",
-    "@mintplayer/script-loader": "^1.2.0",
+    "@mintplayer/script-loader": "^1.4.0",
     "rxjs": "^7.4.0"
   },
   "dependencies": {
