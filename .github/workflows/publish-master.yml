@@ -48,7 +48,7 @@ jobs:
       with:
         package: 'dist/libs/ng-canvas-resizer/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -67,7 +67,7 @@ jobs:
       with:
         package: 'dist/libs/player-provider/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -86,7 +86,7 @@ jobs:
       with:
         package: 'dist/libs/player-progress/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -105,7 +105,7 @@ jobs:
       with:
         package: 'dist/libs/video-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -125,7 +125,7 @@ jobs:
       with:
         package: 'dist/libs/frameworks/ng-video-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -144,7 +144,7 @@ jobs:
       with:
         package: 'dist/libs/platforms/facebook-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -163,7 +163,7 @@ jobs:
       with:
         package: 'dist/libs/platforms/mixcloud-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -182,7 +182,7 @@ jobs:
       with:
         package: 'dist/libs/platforms/dailymotion-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -201,7 +201,7 @@ jobs:
       with:
         package: 'dist/libs/platforms/soundcloud-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -220,7 +220,7 @@ jobs:
       with:
         package: 'dist/libs/platforms/spotify-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -239,7 +239,7 @@ jobs:
       with:
         package: 'dist/libs/platforms/streamable-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -258,7 +258,7 @@ jobs:
       with:
         package: 'dist/libs/platforms/twitch-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -277,7 +277,7 @@ jobs:
       with:
         package: 'dist/libs/platforms/vidyard-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -296,7 +296,7 @@ jobs:
       with:
         package: 'dist/libs/platforms/vimeo-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -315,7 +315,7 @@ jobs:
       with:
         package: 'dist/libs/platforms/wistia-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -334,7 +334,7 @@ jobs:
       with:
         package: 'dist/libs/platforms/youtube-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -353,7 +353,7 @@ jobs:
       with:
         package: 'dist/libs/platforms/file-player/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
@@ -372,7 +372,7 @@ jobs:
       with:
         package: 'dist/libs/playlist-controller/package.json'
         registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_NODE_TO_NPMJS_COM }}
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
         access: 'public'
         provenance: true
 
