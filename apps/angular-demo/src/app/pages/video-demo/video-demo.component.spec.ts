@@ -14,6 +14,7 @@ import { VideoDemoComponent } from './video-demo.component';
 import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
 import { VideoPlayerComponent, provideVideoApis } from '@mintplayer/ng-video-player';
 import { APP_BASE_HREF } from '@angular/common';
+import { provideRouter } from '@angular/router';
 
 describe('VideoDemoComponent', () => {
   let component: VideoDemoComponent;
@@ -40,6 +41,7 @@ describe('VideoDemoComponent', () => {
         VideoDemoComponent,
       ],
       providers: <StaticProvider[]>[
+        provideRouter([]),
         { provide: APP_BASE_HREF, useValue: 'http://example.com' },
         provideVideoApis(),
       ]
