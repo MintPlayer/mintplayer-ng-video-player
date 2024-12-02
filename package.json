@@ -21,7 +21,7 @@
     "@angular/platform-browser": "~18.2.5",
     "@angular/platform-browser-dynamic": "~18.2.5",
     "@angular/router": "~18.2.5",
-    "@mintplayer/ng-bootstrap": "~18.4.2",
+    "@mintplayer/ng-bootstrap": "~18.5.0",
     "@mintplayer/script-loader": "~2.0.0",
     "@nx/angular": "20.0.1",
     "react": "18.3.1",

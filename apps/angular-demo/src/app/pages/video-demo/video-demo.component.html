@@ -12,12 +12,12 @@
                 </bs-input-group>
             </div>
             <div [lg]="6">
-                <div class="d-block" *ngIf="url === 'https://mintplayer.com/Modern-iMovie-8ot-eJxH2yc.mp4'">
+                <div class="d-block" *ngIf="(url$ | async) === 'https://mintplayer.com/Modern-iMovie-8ot-eJxH2yc.mp4'">
                     <bs-alert [type]="colors.warning">
                         <a href="https://www.youtube.com/watch?v=8ot-eJxH2yc" target="_blank">Modern</a> is a melody from <a href="https://apps.apple.com/nl/app/imovie/id377298193" target="_blank">IMovie</a> by <a href="https://www.apple.com" target="_blank">Apple Inc</a>.
                     </bs-alert>
                 </div>
-                <div class="d-block" *ngIf="url === 'https://mintplayer.com/Jim_Yosef_Firefly_pt_II.mp3'">
+                <div class="d-block" *ngIf="(url$ | async) === 'https://mintplayer.com/Jim_Yosef_Firefly_pt_II.mp3'">
                     <bs-alert [type]="colors.warning">
                         Song: <a href="https://ncs.io/Fireflypt2" target="_blank">Jim Yosef - Firefly pt. II (ft. STARLYTE)</a> [NCS Release]
                         <br>
@@ -74,9 +74,46 @@
                     <bs-button-group>
                         <button (click)="getTitle()" [color]="colors.secondary" [disabled]="(cannotGetTitle$ | async)">Get Title</button>
                         <button (click)="setSize()" [color]="colors.secondary">Set size</button>
+                        <button (click)="shareModalVisible = true" [color]="colors.secondary">Create share link</button>
                     </bs-button-group>
                 </div>
             </div>
         </div>
     </bs-grid>
 </bs-form>
+<bs-modal [(isOpen)]="shareModalVisible">
+    <div *bsModal>
+        <div bsModalHeader>
+            <span class="h5 modal-title flex-grow-1">Create share link</span>
+            <bs-close bsModalClose></bs-close>
+        </div>
+        <div bsModalBody>
+            <bs-grid>
+                <bs-form>
+                    <div bsRow>
+                        <div [xxs]>
+                            <label [bsFor]="txtShareLink">Paste your link here</label>
+                        </div>
+                        <div [xxs]>
+                            <bs-input-group>
+                                <input autofocus #txtShareLink [ngModel]="shareLink$ | async" (ngModelChange)="shareLink$.next($event)">
+                                <button [color]="colors.primary" [bsCopy]="shareableLink$ | async" (bsCopied)="closeShareModal()">Copy link</button>
+                            </bs-input-group>
+                        </div>
+                    </div>
+                    <div bsRow>
+                        <div [xxs]>
+                            <label bsColFormLabel>{{ shareableLink$ | async }}</label>
+                        </div>
+                    </div>
+                </bs-form>
+            </bs-grid>
+        </div>
+        <div bsModalFooter>
+            <button type="button" bsModalClose class="btn btn-light bg-transparent" aria-label="Close">Close</button>
+        </div>
+    </div>
+</bs-modal>
+<bs-offcanvas [position]="'bottom'" [isVisible]="(isCopiedToClipboardVisible$ | async)!" (isVisibleChange)="isCopiedToClipboardVisible$.next($event)">
+    <div *bsOffcanvasContent class="p-3 bg-dark text-light">Shareable link copied to clipboard</div>
+</bs-offcanvas>

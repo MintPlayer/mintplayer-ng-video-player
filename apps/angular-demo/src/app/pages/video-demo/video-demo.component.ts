@@ -1,12 +1,14 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Inject, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Color } from '@mintplayer/ng-bootstrap';
 import { ECapability, EPlayerState } from '@mintplayer/player-provider';
 import { PlayerProgress } from '@mintplayer/player-progress';
 import { provideVideoApis, VideoPlayerComponent } from '@mintplayer/ng-video-player';
-import { BehaviorSubject, Observable, map } from 'rxjs';
-import { APP_BASE_HREF, CommonModule } from '@angular/common';
+import { BehaviorSubject, Observable, combineLatest, filter, map } from 'rxjs';
+import { APP_BASE_HREF, CommonModule, LocationStrategy } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
+import { BsForDirective } from '@mintplayer/ng-bootstrap/for';
 import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
 import { BsRangeModule } from '@mintplayer/ng-bootstrap/range';
 import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
@@ -14,7 +16,12 @@ import { BsInputGroupComponent } from '@mintplayer/ng-bootstrap/input-group';
 import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
 import { BsButtonGroupComponent } from '@mintplayer/ng-bootstrap/button-group';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
+import { BsCloseComponent } from '@mintplayer/ng-bootstrap/close';
+import { BsCopyDirective } from '@mintplayer/ng-bootstrap/copy';
+import { BsModalModule } from '@mintplayer/ng-bootstrap/modal';
+import { BsOffcanvasModule } from '@mintplayer/ng-bootstrap/offcanvas';
 import { BsAlertModule } from '@mintplayer/ng-bootstrap/alert';
+import { FocusOnLoadDirective } from '@mintplayer/ng-focus-on-load';
 import { youtubePlugin } from '@mintplayer/youtube-player';
 import { dailymotionPlugin } from '@mintplayer/dailymotion-player';
 import { vimeoPlugin } from '@mintplayer/vimeo-player';
@@ -27,20 +34,21 @@ import { facebookPlugin } from '@mintplayer/facebook-player';
 import { filePlugin } from '@mintplayer/file-player';
 import { vidyardPlugin } from '@mintplayer/vidyard-player';
 import { wistiaPlugin } from '@mintplayer/wistia-player';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'mintplayer-ng-video-player-video-demo',
   templateUrl: './video-demo.component.html',
   styleUrls: ['./video-demo.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, VideoPlayerComponent, BsFormModule, BsGridModule, BsRangeModule, BsListGroupModule, BsInputGroupComponent, BsButtonTypeDirective, BsButtonGroupComponent, BsToggleButtonModule, BsAlertModule],
+  imports: [CommonModule, FormsModule, VideoPlayerComponent, BsForDirective, BsFormModule, BsGridModule, BsRangeModule, BsListGroupModule, BsInputGroupComponent, BsButtonTypeDirective, BsButtonGroupComponent, BsToggleButtonModule, BsAlertModule, BsModalModule, BsCloseComponent, FocusOnLoadDirective, BsCopyDirective, BsOffcanvasModule],
   providers: [
     provideVideoApis(youtubePlugin, dailymotionPlugin, vimeoPlugin, soundCloudPlugin, mixCloudPlugin, twitchPlugin, spotifyPlugin, streamablePlugin, facebookPlugin, filePlugin, vidyardPlugin, wistiaPlugin)
   ]
 })
-export class VideoDemoComponent {
+export class VideoDemoComponent implements AfterViewInit {
 
-  constructor(@Inject(APP_BASE_HREF) baseUrl: string) {
+  constructor(@Inject(APP_BASE_HREF) baseUrl: string, private router: Router, private locationStrategy: LocationStrategy, private route: ActivatedRoute) {
     this.cannotFullscreen$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.fullscreen)));
     this.cannotPip$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.pictureInPicture)));
     this.cannotChangeVolume$ = this.capabilities$.pipe(map(caps => !caps.includes(ECapability.volume)));
@@ -52,9 +60,38 @@ export class VideoDemoComponent {
       `${baseUrl}/assets/Modern-iMovie-8ot-eJxH2yc.mp4`,
       `${baseUrl}/assets/Jim_Yosef_Firefly_pt_II.mp3`
     );
+
+    this.shareableLink$ = this.shareLink$.pipe(map((link) => {
+      if (link) {
+        const urlTree = this.router.createUrlTree(['/video'], {
+          queryParams: {
+            video: link
+          }
+        });
+        const url = this.router.serializeUrl(urlTree);
+        return this.locationStrategy.prepareExternalUrl(url);
+      } else {
+        return '';
+      }
+    }));
+
+    combineLatest([this.isViewInited$, this.url$])
+      .pipe(filter(([inited, _]) => inited))
+      .pipe(takeUntilDestroyed())
+      .subscribe(([_, url]) => {
+        // Pick one here
+        // this.url = url; // This will not replay the video when the url is the same.
+        this.player1.setUrl(url || null); // This will replay the video when the url is the same.
+      });
+
+    const initial = this.route.snapshot.queryParamMap.get('video');
+    if (initial) {
+      this.url$.next(initial);
+    }
   }
 
-  url?: string;
+  isViewInited$ = new BehaviorSubject<boolean>(false);
+  url$ = new BehaviorSubject<string | undefined>(undefined);
   title = 'angular-demo';
   colors = Color;
   playerStates = EPlayerState;
@@ -70,6 +107,9 @@ export class VideoDemoComponent {
     duration: 0
   };
 
+  shareModalVisible = false;
+  shareLink$ = new BehaviorSubject<string>('');
+  shareableLink$: Observable<string>;
   newVideoUrl = '';
   videos: string[] = [
     'https://www.youtube.com/watch?v=tt2k8PGm-TI',
@@ -101,9 +141,15 @@ export class VideoDemoComponent {
     'https://streamable.com/ifjh',
   ];
 
+  ngAfterViewInit() {
+    this.isViewInited$.next(true);
+  }
+
   addToPlaylist() {
-    this.videos.push(this.newVideoUrl);
-    this.newVideoUrl = '';
+    if (this.newVideoUrl) {
+      this.videos.push(this.newVideoUrl);
+      this.newVideoUrl = '';
+    }
   }
 
 
@@ -112,10 +158,7 @@ export class VideoDemoComponent {
 
   @ViewChild('player1') player1!: VideoPlayerComponent;
   playVideo(video: string) {
-    // Pick one here
-    // this.url = video; // This will not replay the video when the url is the same.
-    this.player1.setUrl(video); // This will replay the video when the url is the same.
-
+    this.url$.next(video);
     return false;
   }
 
@@ -155,5 +198,12 @@ export class VideoDemoComponent {
   cannotGetTitle$: Observable<boolean>;
   onCapabilitiesChange(capabilities: ECapability[]) {
     this.capabilities$.next(capabilities);
+  }
+
+  isCopiedToClipboardVisible$ = new BehaviorSubject<boolean>(false);
+  closeShareModal() {
+    this.shareModalVisible = false;
+    this.isCopiedToClipboardVisible$.next(true);
+    setTimeout(() => this.isCopiedToClipboardVisible$.next(false), 5000);
   }
 }
