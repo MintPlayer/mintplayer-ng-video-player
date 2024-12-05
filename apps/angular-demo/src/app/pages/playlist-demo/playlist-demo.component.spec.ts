@@ -16,20 +16,19 @@ describe('PlaylistDemoComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
+        // Unit to test
+        PlaylistDemoComponent,
+
+        // Mock dependencies
         FormsModule,
         MockModule(BsGridModule),
         MockModule(BsSelectModule),
         MockModule(BsListGroupModule),
         MockModule(BsToggleButtonModule),
-        MockDirective(BsButtonTypeDirective)
-      ],
-      declarations: [
-        // Unit to test
-        PlaylistDemoComponent,
-      
-        // Mock dependencies
+        MockDirective(BsButtonTypeDirective),
         MockComponent(VideoPlayerComponent),
       ],
+      declarations: [],
       providers: [
         provideVideoApis(),
       ]

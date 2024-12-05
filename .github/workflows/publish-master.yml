@@ -37,10 +37,10 @@ jobs:
       run: npm ci
 
     - name: Build
-      run: npx nx run-many --target=build --configuration=production
+      run: npm run build -- --configuration=production
 
     - name: Test
-      run: npx nx run-many --target=test --browsers=ChromeHeadless --parallel=true
+      run: npm run test -- --watch=false --parallel=true
 
     ## ng-canvas-resizer
     - name: Push to NPM

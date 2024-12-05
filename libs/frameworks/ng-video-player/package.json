@@ -1,15 +1,15 @@
 {
   "name": "@mintplayer/ng-video-player",
   "private": false,
-  "version": "18.2.3",
+  "version": "19.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
     "directory": "libs/frameworks/ng-video-player"
   },
   "peerDependencies": {
-    "@angular/common": "^18.0.0",
-    "@angular/core": "^18.0.0",
+    "@angular/common": "^19.0.0",
+    "@angular/core": "^19.0.0",
     "rxjs": "^7.4.0",
     "@mintplayer/player-provider": "^18.0.0",
     "@mintplayer/player-progress": "^18.0.0",
