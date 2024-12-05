@@ -5,10 +5,10 @@
   "scripts": {
     "ng": "nx",
     "start": "nx serve angular-demo",
-    "build": "nx build",
+    "build": "nx build --project angular-demo",
     "build:sme": "nx build --source-map",
     "analyze:sme": "source-map-explorer dist/apps/angular-demo/*",
-    "test": "nx test"
+    "test": "nx run angular-demo:test"
   },
   "private": true,
   "dependencies": {

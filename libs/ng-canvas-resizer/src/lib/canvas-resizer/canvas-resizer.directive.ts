@@ -3,6 +3,7 @@ import { AfterViewInit, Directive, ElementRef, HostBinding, OnDestroy } from '@a
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'canvas[canvasResizer]',
+  standalone: true,
 })
 export class CanvasResizerDirective implements AfterViewInit, OnDestroy {
   constructor(private element: ElementRef) {

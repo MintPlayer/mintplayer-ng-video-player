@@ -12,9 +12,13 @@ describe('CanvasResizerDemoComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
+        // Unit to test
+        CanvasResizerDemoComponent,
+        
+        // Mock dependencies
         MockModule(BsGridModule)
       ],
-      declarations: [CanvasResizerDemoComponent]
+      declarations: []
     })
     .compileComponents();
     

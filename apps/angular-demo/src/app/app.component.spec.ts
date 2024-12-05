@@ -14,8 +14,7 @@ describe('AppComponent', () => {
         
         // Mock components
         MockModule(BsNavbarModule),
-      ],
-      declarations: [
+        
         // Mock pages
         YoutubeMockComponent,
         VimeoMockComponent,
@@ -23,6 +22,7 @@ describe('AppComponent', () => {
         VideoMockComponent,
         PlaylistMockComponent,
       ],
+      declarations: [],
       providers: [
         provideRouter([
           { path: 'youtube', component: YoutubeMockComponent },
@@ -61,30 +61,35 @@ describe('AppComponent', () => {
 
 @Component({
   selector: 'youtube-mock-page',
+  standalone: true,
   template: `<div>Youtube</div>`
 })
 class YoutubeMockComponent { }
 
 @Component({
   selector: 'vimeo-mock-page',
+  standalone: true,
   template: `<div>Vimeo</div>`
 })
 class VimeoMockComponent { }
 
 @Component({
   selector: 'soundcloud-mock-page',
+  standalone: true,
   template: `<div>Soundcloud</div>`
 })
 class SoundcloudMockComponent { }
 
 @Component({
   selector: 'video-mock-page',
+  standalone: true,
   template: `<div>Video</div>`
 })
 class VideoMockComponent { }
 
 @Component({
   selector: 'playlist-mock-page',
+  standalone: true,
   template: `<div>Playlist</div>`
 })
 class PlaylistMockComponent { }

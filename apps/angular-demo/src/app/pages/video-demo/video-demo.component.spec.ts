@@ -23,6 +23,10 @@ describe('VideoDemoComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
+        // Unit to test
+        VideoDemoComponent,
+
+        // Mock dependencies
         FormsModule,
         MockModule(BsFormModule),
         MockModule(BsGridModule),
@@ -36,10 +40,7 @@ describe('VideoDemoComponent', () => {
 
         MockComponent(VideoPlayerComponent),
       ],
-      declarations: [
-        // Unit to test
-        VideoDemoComponent,
-      ],
+      declarations: [],
       providers: <StaticProvider[]>[
         provideRouter([]),
         { provide: APP_BASE_HREF, useValue: 'http://example.com' },
