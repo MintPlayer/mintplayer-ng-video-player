@@ -17,7 +17,7 @@ export class Deferred<T> extends Promise<T> {
     // Use Symbol.species in order to let JS
     // know it's a Promise for then/catch/finally
     // $FlowIgnore can't understand this magic
-    static get [Symbol.species]() {
+    static override get [Symbol.species]() {
         return Promise;
     }
 
