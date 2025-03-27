@@ -8,6 +8,10 @@ import { VideoPlayerComponent, provideVideoApis } from '@mintplayer/ng-video-pla
 import { MockComponent, MockDirective, MockModule, MockProvider } from 'ng-mocks';
 import { PlaylistDemoComponent } from './playlist-demo.component';
 import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
+import { BsAccordionModule } from '@mintplayer/ng-bootstrap/accordion';
+import { BsInputGroupComponent } from '@mintplayer/ng-bootstrap/input-group';
+import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
+import { BsButtonGroupComponent } from '@mintplayer/ng-bootstrap/button-group';
 
 describe('PlaylistDemoComponent', () => {
   let component: PlaylistDemoComponent;
@@ -21,9 +25,13 @@ describe('PlaylistDemoComponent', () => {
 
         // Mock dependencies
         FormsModule,
+        MockModule(BsAccordionModule),
+        MockModule(BsFormModule),
         MockModule(BsGridModule),
         MockModule(BsSelectModule),
         MockModule(BsListGroupModule),
+        MockModule(BsInputGroupComponent),
+        MockModule(BsButtonGroupComponent),
         MockModule(BsToggleButtonModule),
         MockDirective(BsButtonTypeDirective),
         MockComponent(VideoPlayerComponent),
