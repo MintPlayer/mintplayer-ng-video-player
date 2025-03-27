@@ -5,27 +5,48 @@
             <!-- <video-player [width]="400" [height]="300" (playerStateChange)="onPlayerStateChange($event)"
                 (progressChange)="onProgressChange($event)" #player></video-player> -->
             <video-player [width]="400" [height]="300" (playerStateChange)="onPlayerStateChange($event)" #player></video-player>
-            <div class="d-block">
+            <bs-button-group>
                 <button class="float-start" [color]="colors.secondary" (click)="onPrevious()">Previous</button>
                 <button class="float-end" [color]="colors.secondary" (click)="onNext()">Next</button>
-            </div>
+            </bs-button-group>
         </div>
         <div [xl]="3">
-            <ul>
-                <li *ngFor="let video of playlistController['_actualPlaylist']">
-                    {{ video.video.url }}
-                </li>
-            </ul>
+            <bs-accordion>
+                <bs-accordion-tab>
+                    <bs-accordion-tab-header>
+                        Here is the in-memory list used to keep track of the queue
+                    </bs-accordion-tab-header>
+                    <bs-list-group>
+                        <bs-list-group-item *ngFor="let video of playlistController['_actualPlaylist']">
+                            @if ((playlistController['_currentPlayedVideo']) === video) {
+                                <b>{{ video.video.url }}</b>
+                            } @else {
+                                {{ video.video.url }}
+                            }
+                        </bs-list-group-item>
+                    </bs-list-group>
+                </bs-accordion-tab>
+            </bs-accordion>
         </div>
     </div>
     <div bsRow class="mb-3">
         <div [xl]="6">
             <h3>Available tracks</h3>
-            <bs-list-group>
+            <bs-list-group class="d-block mb-3">
                 <bs-list-group-item *ngFor="let vid of videos" (click)="addVideoToPlaylist(vid)" class="cursor-pointer">
-                    {{ vid.url }}
+                    <span class="d-inline-block my-2">{{ vid.url }}</span>
+                    <button (click)="removeVideoFromAvailable(vid)" [color]="colors.secondary" title="Remove" class="float-end">
+                        <span [innerHTML]="trashFillIcon"></span>
+                    </button>
                 </bs-list-group-item>
             </bs-list-group>
+            <bs-form>
+                <bs-input-group>
+                    <input type="text" [(ngModel)]="videoToAddAvailable">
+                    <button [color]="colors.secondary" (click)="addToAvailable()">+</button>
+                </bs-input-group>
+            </bs-form>
+            <button [color]="colors.secondary" (click)="queueAllVideos()">Queue all</button>
         </div>
         <div [xl]="6">
             <h3>Playlist</h3>
@@ -36,7 +57,7 @@
                             <span class="align-self-center uc-icon" *ngIf="(playlistController.video$ | async) === vid">&#9654;</span>
                             <span class="align-self-center flex-grow-1 mx-2" *ngIf="vid">{{ vid.url }}</span>
                         </label>
-                        <button (click)="removeVideo(vid)" [color]="colors.secondary" title="Remove" class="float-end">
+                        <button (click)="removeVideoFromPlaylist(vid)" [color]="colors.secondary" title="Remove" class="float-end">
                             <span [innerHTML]="trashFillIcon"></span>
                         </button>
                     </div>
