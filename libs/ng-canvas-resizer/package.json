@@ -1,15 +1,15 @@
 {
   "name": "@mintplayer/ng-canvas-resizer",
   "private": false,
-  "version": "19.0.0",
+  "version": "20.0.0-preview.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
     "directory": "libs/ng-canvas-resizer"
   },
   "peerDependencies": {
-    "@angular/common": "^19.0.0",
-    "@angular/core": "^19.0.0"
+    "@angular/common": "^20.0.0-rc.2",
+    "@angular/core": "^20.0.0-rc.2"
   },
   "dependencies": {
     "tslib": "^2.3.0"
