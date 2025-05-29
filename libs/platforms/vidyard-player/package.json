@@ -2,7 +2,7 @@
   "name": "@mintplayer/vidyard-player",
   "private": false,
   "type": "module",
-  "version": "18.3.0",
+  "version": "19.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
@@ -11,7 +11,7 @@
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "peerDependencies": {
-    "@mintplayer/player-provider": "^18.0.0",
+    "@mintplayer/player-provider": "^19.0.0",
     "@mintplayer/script-loader": "^2.0.0",
     "rxjs": "^7.4.0"
   },
