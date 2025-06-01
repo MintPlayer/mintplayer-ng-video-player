@@ -116,7 +116,7 @@ export class VideoDemoComponent implements AfterViewInit {
     'https://www.youtube.com/watch?v=YykjpeuMNEk',
     'https://www.youtube.com/watch?v=yFKhgF_vkgs',
     'https://www.youtube.com/live/gCNeDWCI0vo?app=desktop&feature=share',
-https://youtu.be/neCBNP9kAMg?si=X3_NJpSP1V5huly8',
+'https://youtu.be/neCBNP9kAMg?si=X3_NJpSP1V5huly8',
     'https://vimeo.com/14190306',
     'https://vimeo.com/82932655',
     'https://soundcloud.com/dario-g/sunchyme-radio-edit',
