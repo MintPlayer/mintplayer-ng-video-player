@@ -116,10 +116,11 @@ export class VideoDemoComponent implements AfterViewInit {
     'https://www.youtube.com/watch?v=YykjpeuMNEk',
     'https://www.youtube.com/watch?v=yFKhgF_vkgs',
     'https://www.youtube.com/live/gCNeDWCI0vo?app=desktop&feature=share',
+    'ets/Jim_Yosef_Firefly_pt_II.mp3
+https://youtu.be/neCBNP9kAMg?si=X3_NJpSP1V5huly8',
     'https://vimeo.com/14190306',
     'https://vimeo.com/82932655',
     'https://soundcloud.com/dario-g/sunchyme-radio-edit',
-    'https://soundcloud.com/oasisofficial/whatever',
     'https://open.spotify.com/episode/7makk4oTQel546B0PZlDM5',
     'spotify:track:0FDzzruyVECATHXKHFs9eJ',
     'https://www.twitch.tv/jankos',
