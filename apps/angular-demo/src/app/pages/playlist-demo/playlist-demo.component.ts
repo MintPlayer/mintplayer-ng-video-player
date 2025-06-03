@@ -26,13 +26,17 @@ import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
 import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
 import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
 import { CommonModule } from '@angular/common';
+import { BsButtonGroupComponent } from '@mintplayer/ng-bootstrap/button-group';
+import { BsAccordionModule } from '@mintplayer/ng-bootstrap/accordion';
+import { BsInputGroupComponent } from '@mintplayer/ng-bootstrap/input-group';
+import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
 
 @Component({
   selector: 'mintplayer-ng-video-player-playlist-demo',
   templateUrl: './playlist-demo.component.html',
   styleUrls: ['./playlist-demo.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, VideoPlayerComponent, BsGridModule, BsSelectModule, BsListGroupModule, BsButtonTypeDirective, BsToggleButtonModule],
+  imports: [CommonModule, FormsModule, VideoPlayerComponent, BsAccordionModule, BsGridModule, BsSelectModule, BsListGroupModule, BsInputGroupComponent, BsFormModule, BsButtonGroupComponent, BsButtonTypeDirective, BsToggleButtonModule],
   providers: [
     provideVideoApis(youtubePlugin, dailymotionPlugin, vimeoPlugin, soundCloudPlugin, mixCloudPlugin, twitchPlugin, spotifyPlugin, streamablePlugin, facebookPlugin, filePlugin, vidyardPlugin, wistiaPlugin)
   ]
@@ -43,6 +47,11 @@ export class PlaylistDemoComponent implements AfterViewInit {
     private zone: NgZone,
     private sanitizer: DomSanitizer
   ) {
+    const storedPlaylist = localStorage.getItem('videos');
+    if (storedPlaylist) {
+      this.videos = JSON.parse(storedPlaylist);
+    }
+
     this.playlistController = new PlaylistController<Video>();
     this.playlistController.video$
       .pipe(takeUntilDestroyed())
@@ -88,7 +97,22 @@ export class PlaylistDemoComponent implements AfterViewInit {
     { url: 'https://www.youtube.com/watch?v=cxKOn1gB92c' },
     { url: 'https://www.youtube.com/watch?v=lzkKzZmRZk8' },
   ];
+  videoToAddAvailable = '';
+  addToAvailable() {
+    this.videos.push({ url: this.videoToAddAvailable });
+    this.videoToAddAvailable = '';
+    this.savePlaylist();
+  }
 
+  savePlaylist() {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('videos', JSON.stringify(this.videos));
+    }
+  }
+
+  queueAllVideos() {
+    this.playlistController.addToPlaylist(...this.videos);
+  }
 
   ngAfterViewInit() {
     this.isViewInited = true;
@@ -98,7 +122,12 @@ export class PlaylistDemoComponent implements AfterViewInit {
     this.playlistController.addToPlaylist(video);
   }
 
-  removeVideo(video: Video) {
+  removeVideoFromAvailable(video: Video) {
+    this.videos.splice(this.videos.indexOf(video), 1);
+    this.savePlaylist();
+  }
+
+  removeVideoFromPlaylist(video: Video) {
     this.playlistController.removeFromPlaylist(video);
   }
 
