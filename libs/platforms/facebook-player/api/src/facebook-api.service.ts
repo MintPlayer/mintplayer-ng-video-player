@@ -1,4 +1,4 @@
-/// <reference types="../../types/facebook" />
+/// <reference path="../../types/facebook/index.d.ts" />
 
 import { loadScript } from '@mintplayer/script-loader';
 import { takeUntil, timer, Subject, BehaviorSubject, debounceTime, pairwise, combineLatest, filter, take } from 'rxjs';

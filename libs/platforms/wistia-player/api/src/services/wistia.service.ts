@@ -1,4 +1,4 @@
-/// <reference types="../../../types/wistia/index.d.ts" />
+/// <reference path="../../../types/wistia/index.d.ts" />
 
 import { loadScript } from '@mintplayer/script-loader';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/player-provider';

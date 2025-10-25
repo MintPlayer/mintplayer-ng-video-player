@@ -4,6 +4,14 @@
   "projectType": "library",
   "sourceRoot": "libs/frameworks/ng-video-player/src",
   "prefix": "mintplayer-ng-video-player",
+  "release": {
+    "version": {
+      "currentVersionResolver": "git-tag",
+      "preserveLocalDependencyProtocols": false,
+      "manifestRootsToUpdate": ["dist/{projectRoot}"]
+    }
+  },
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/angular:package",
@@ -29,12 +37,12 @@
         "codeCoverage": true,
         "coverageReporters": ["lcovonly"],
         "coverageDirectory": "coverage/{projectRoot}",
-        "jestConfig": "{projectRoot}/jest.config.ts"
+        "jestConfig": "{projectRoot}/jest.config.ts",
+        "tsConfig": "libs/frameworks/ng-video-player/tsconfig.spec.json"
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint"
     }
-  },
-  "tags": []
+  }
 }

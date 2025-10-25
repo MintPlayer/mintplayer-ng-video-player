@@ -9,7 +9,7 @@
       "../../libs/platforms/vimeo-player/types",
       "../../libs/platforms/twitch-player/types"
     ],
-    "types": ["jest", "node", "youtube", "vimeo", "soundcloud", "twitch"]
+    "types": ["jest", "node", "youtube", "vimeo", "twitch"]
   },
   "files": ["src/test-setup.ts"],
   "include": ["**/*.test.ts", "**/*.spec.ts", "**/*.d.ts", "jest.config.ts"]

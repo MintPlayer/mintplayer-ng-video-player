@@ -1,4 +1,4 @@
-/// <reference types="../../../types/vidyard" />
+/// <reference path="../../../types/vidyard/index.d.ts" />
 
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/player-provider';
 import { loadScript } from '@mintplayer/script-loader';

@@ -3,6 +3,14 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "{projectRoot}/src",
   "projectType": "library",
+  "release": {
+    "version": {
+      "currentVersionResolver": "git-tag",
+      "preserveLocalDependencyProtocols": false,
+      "manifestRootsToUpdate": ["dist/{projectRoot}"]
+    }
+  },
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -28,14 +36,6 @@
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts"
       }
-    }
-  },
-  "tags": [],
-  "release": {
-    "version": {
-      "currentVersionResolver": "git-tag",
-      "preserveLocalDependencyProtocols": false,
-      "manifestRootsToUpdate": ["dist/{projectRoot}"]
     }
   }
 }

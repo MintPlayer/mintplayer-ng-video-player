@@ -10,6 +10,7 @@
       "manifestRootsToUpdate": ["dist/{projectRoot}"]
     }
   },
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -36,6 +37,5 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     }
-  },
-  "tags": []
+  }
 }

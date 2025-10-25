@@ -1,4 +1,4 @@
-/// <reference types="../../types/vimeo" />
+/// <reference path="../../types/vimeo/index.d.ts" />
 
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/player-provider';
 import { Subject, takeUntil, timer } from 'rxjs';

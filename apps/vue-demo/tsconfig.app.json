@@ -1,0 +1,36 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "types": ["node", "vite/client", "youtube", "dailymotion", "vimeo", "twitch", "facebook", "vidyard", "wistia", "playerjs"],
+    "typeRoots": [
+      "./src/types",
+      "../../libs/platforms/dailymotion-player/types",
+      "../../libs/platforms/soundcloud-player/types",
+      "../../libs/platforms/twitch-player/types",
+      "../../libs/platforms/vimeo-player/types",
+      "../../libs/platforms/facebook-player/types",
+      "../../libs/platforms/vidyard-player/types",
+      "../../libs/platforms/wistia-player/types",
+      "../../libs/platforms/streamable-player/types",
+      "../../node_modules/@types",
+    ]
+  },
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "src/**/*.spec.vue",
+    "src/**/*.test.vue",
+    "vite.config.ts",
+    "vite.config.mts",
+    "vitest.config.ts",
+    "vitest.config.mts",
+    "src/**/*.test.tsx",
+    "src/**/*.spec.tsx",
+    "src/**/*.test.js",
+    "src/**/*.spec.js",
+    "src/**/*.test.jsx",
+    "src/**/*.spec.jsx"
+  ],
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.vue"]
+}

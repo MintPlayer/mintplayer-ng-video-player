@@ -2,8 +2,15 @@
   "name": "wistia-player",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/platforms/wistia-player/src",
-  "tags": [],
   "projectType": "library",
+  "release": {
+    "version": {
+      "currentVersionResolver": "git-tag",
+      "preserveLocalDependencyProtocols": false,
+      "manifestRootsToUpdate": ["dist/{projectRoot}"]
+    }
+  },
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
