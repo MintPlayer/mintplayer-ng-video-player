@@ -138,6 +138,46 @@ jobs:
         access: 'public'
         provenance: true
 
+    ## r-video-player
+    - name: Push to NPM
+      id: publish_r_video_player
+      uses: JS-DevTools/npm-publish@v3
+      with:
+        package: 'dist/libs/frameworks/r-video-player/package.json'
+        registry: 'https://registry.npmjs.org'
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
+        access: 'public'
+        provenance: true
+
+    - name: Push to Github
+      uses: JS-DevTools/npm-publish@v3
+      with:
+        package: 'dist/libs/frameworks/r-video-player/package.json'
+        registry: 'https://npm.pkg.github.com'
+        token: ${{ github.token }}
+        access: 'public'
+        provenance: true
+
+    ## v-video-player
+    - name: Push to NPM
+      id: publish_v_video_player
+      uses: JS-DevTools/npm-publish@v3
+      with:
+        package: 'dist/libs/frameworks/v-video-player/package.json'
+        registry: 'https://registry.npmjs.org'
+        token: ${{ secrets.PUBLISH_TO_NPMJS }}
+        access: 'public'
+        provenance: true
+
+    - name: Push to Github
+      uses: JS-DevTools/npm-publish@v3
+      with:
+        package: 'dist/libs/frameworks/v-video-player/package.json'
+        registry: 'https://npm.pkg.github.com'
+        token: ${{ github.token }}
+        access: 'public'
+        provenance: true
+
     ## facebook-player
     - name: Push to NPM
       uses: JS-DevTools/npm-publish@v3
