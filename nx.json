@@ -126,8 +126,15 @@
       "!{projectRoot}/src/test-setup.[jt]s"
     ]
   },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nx/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": []
+      }
+    }
+  },
   "useDaemonProcess": false,
-  "nxCloudAccessToken": "YjkyZDQ0ZjAtMzkxOS00ODRmLTkxNmUtY2ZmNDJhZTY2ZDA0fHJlYWQtd3JpdGU=",
   "useInferencePlugins": false,
   "defaultBase": "master",
   "release": {
