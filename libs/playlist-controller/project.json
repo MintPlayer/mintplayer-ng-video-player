@@ -3,6 +3,14 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/playlist-controller/src",
+  "release": {
+    "version": {
+      "currentVersionResolver": "git-tag",
+      "preserveLocalDependencyProtocols": false,
+      "manifestRootsToUpdate": ["dist/{projectRoot}"]
+    }
+  },
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -27,6 +35,5 @@
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     }
-  },
-  "tags": []
+  }
 }

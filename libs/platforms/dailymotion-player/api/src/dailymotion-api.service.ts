@@ -1,4 +1,4 @@
-/// <reference types="../../types/dailymotion" />
+/// <reference path="../../types/dailymotion/index.d.ts" />
 
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/player-provider';
 import { timer, takeUntil, Subject } from 'rxjs';

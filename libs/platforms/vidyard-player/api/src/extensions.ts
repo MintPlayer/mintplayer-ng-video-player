@@ -1,4 +1,4 @@
-/// <reference types="../../types/vidyard" />
+/// <reference path="../../types/vidyard/index.d.ts" />
 
 // import { Observable } from 'rxjs';
 

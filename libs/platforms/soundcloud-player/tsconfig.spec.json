@@ -4,7 +4,7 @@
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "typeRoots": ["../../../node_modules/@types", "./types"],
-    "types": ["jest", "node", "soundcloud"]
+    "types": ["jest", "node"]
   },
   "include": ["**/*.test.ts", "**/*.spec.ts", "**/*.d.ts", "jest.config.ts"]
 }

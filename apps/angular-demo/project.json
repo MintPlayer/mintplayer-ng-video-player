@@ -95,7 +95,8 @@
         "codeCoverage": true,
         "coverageReporters": ["lcovonly"],
         "coverageDirectory": "coverage/apps/angular-demo",
-        "jestConfig": "apps/angular-demo/jest.config.ts"
+        "jestConfig": "apps/angular-demo/jest.config.ts",
+        "tsConfig": "apps/angular-demo/tsconfig.spec.json"
       }
     }
   }

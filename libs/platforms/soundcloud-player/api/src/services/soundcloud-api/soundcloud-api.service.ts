@@ -1,4 +1,4 @@
-/// <reference types="../../../../types/soundcloud" />
+/// <reference path="../../../../types/soundcloud/index.d.ts" />
 
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/player-provider';
 import { BehaviorSubject, Subject, takeUntil, timer } from 'rxjs';

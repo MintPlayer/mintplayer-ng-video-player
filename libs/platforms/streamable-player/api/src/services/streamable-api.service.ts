@@ -1,4 +1,4 @@
-/// <reference types="../../../types/playerjs" />
+/// <reference path="../../../types/playerjs/index.d.ts" />
 
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, createPlayerAdapter } from '@mintplayer/player-provider';
 import { loadScript } from '@mintplayer/script-loader';

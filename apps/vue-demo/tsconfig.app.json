@@ -2,7 +2,19 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "types": ["vite/client"]
+    "types": ["node", "vite/client", "youtube", "dailymotion", "vimeo", "twitch", "facebook", "vidyard", "wistia", "playerjs"],
+    "typeRoots": [
+      "./src/types",
+      "../../libs/platforms/dailymotion-player/types",
+      "../../libs/platforms/soundcloud-player/types",
+      "../../libs/platforms/twitch-player/types",
+      "../../libs/platforms/vimeo-player/types",
+      "../../libs/platforms/facebook-player/types",
+      "../../libs/platforms/vidyard-player/types",
+      "../../libs/platforms/wistia-player/types",
+      "../../libs/platforms/streamable-player/types",
+      "../../node_modules/@types",
+    ]
   },
   "exclude": [
     "src/**/*.spec.ts",

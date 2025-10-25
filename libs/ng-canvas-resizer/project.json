@@ -3,22 +3,28 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/ng-canvas-resizer/src",
   "prefix": "lib",
-  "tags": [],
   "projectType": "library",
+  "release": {
+    "version": {
+      "currentVersionResolver": "git-tag",
+      "preserveLocalDependencyProtocols": false,
+      "manifestRootsToUpdate": ["dist/{projectRoot}"]
+    }
+  },
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/ng-canvas-resizer/ng-package.json"
+        "project": "libs/ng-canvas-resizer/ng-package.json",
+        "tsConfig": "libs/ng-canvas-resizer/tsconfig.lib.json"
       },
       "configurations": {
         "production": {
           "tsConfig": "libs/ng-canvas-resizer/tsconfig.lib.prod.json"
         },
-        "development": {
-          "tsConfig": "libs/ng-canvas-resizer/tsconfig.lib.json"
-        }
+        "development": {}
       },
       "defaultConfiguration": "production"
     },
@@ -29,7 +35,8 @@
         "codeCoverage": true,
         "coverageReporters": ["lcovonly"],
         "coverageDirectory": "coverage/{projectRoot}",
-        "jestConfig": "{projectRoot}/jest.config.ts"
+        "jestConfig": "{projectRoot}/jest.config.ts",
+        "tsConfig": "libs/ng-canvas-resizer/tsconfig.spec.json"
       }
     },
     "lint": {
