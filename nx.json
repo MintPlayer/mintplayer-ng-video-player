@@ -44,6 +44,20 @@
       "component": {
         "style": "scss"
       }
+    },
+    "@nx/vue": {
+      "application": {
+        "bundler": "vite",
+        "style": "scss",
+        "linter": "eslint",
+        "unitTestRunner": "vitest",
+        "e2eTestRunner": "playwright"
+      },
+      "library": {
+        "bundler": "vite",
+        "linter": "eslint",
+        "unitTestRunner": "vitest"
+      }
     }
   },
   "defaultProject": "angular-demo",

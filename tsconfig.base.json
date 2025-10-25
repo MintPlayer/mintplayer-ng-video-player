@@ -74,6 +74,9 @@
       "@mintplayer/twitch-player/*": [
         "libs/platforms/twitch-player/*/index.ts"
       ],
+      "@mintplayer/v-video-player": [
+        "libs/frameworks/v-video-player/src/index.ts"
+      ],
       "@mintplayer/video-player": ["libs/video-player/src/index.ts"],
       "@mintplayer/vidyard-player": [
         "libs/platforms/vidyard-player/src/index.ts"
