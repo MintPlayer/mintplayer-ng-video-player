@@ -45,7 +45,7 @@ jobs:
 
     ## ng-canvas-resizer
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/ng-canvas-resizer/package.json'
         registry: 'https://registry.npmjs.org'
@@ -54,7 +54,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/ng-canvas-resizer/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -64,7 +64,7 @@ jobs:
 
     ## player-provider
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/player-provider/package.json'
         registry: 'https://registry.npmjs.org'
@@ -73,7 +73,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/player-provider/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -83,7 +83,7 @@ jobs:
 
     ## player-progress
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/player-progress/package.json'
         registry: 'https://registry.npmjs.org'
@@ -92,7 +92,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/player-progress/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -102,7 +102,7 @@ jobs:
 
     ## video-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/video-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -111,7 +111,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/video-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -122,7 +122,7 @@ jobs:
     ## ng-video-player
     - name: Push to NPM
       id: publish_ng_video_player
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/frameworks/ng-video-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -131,7 +131,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/frameworks/ng-video-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -142,7 +142,7 @@ jobs:
     ## r-video-player
     - name: Push to NPM
       id: publish_r_video_player
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/frameworks/r-video-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -151,7 +151,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/frameworks/r-video-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -162,7 +162,7 @@ jobs:
     ## v-video-player
     - name: Push to NPM
       id: publish_v_video_player
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/frameworks/v-video-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -171,7 +171,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/frameworks/v-video-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -181,7 +181,7 @@ jobs:
 
     ## facebook-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/facebook-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -190,7 +190,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/facebook-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -200,7 +200,7 @@ jobs:
 
     ## mixcloud-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/mixcloud-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -209,7 +209,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/mixcloud-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -219,7 +219,7 @@ jobs:
 
     ## dailymotion-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/dailymotion-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -228,7 +228,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/dailymotion-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -238,7 +238,7 @@ jobs:
 
     ## soundcloud-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/soundcloud-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -247,7 +247,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/soundcloud-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -257,7 +257,7 @@ jobs:
 
     ## spotify-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/spotify-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -266,7 +266,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/spotify-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -276,7 +276,7 @@ jobs:
 
     ## streamable-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/streamable-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -285,7 +285,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/streamable-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -295,7 +295,7 @@ jobs:
 
     ## twitch-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/twitch-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -304,7 +304,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/twitch-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -314,7 +314,7 @@ jobs:
 
     ## vidyard-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/vidyard-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -323,7 +323,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/vidyard-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -333,7 +333,7 @@ jobs:
 
     ## vimeo-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/vimeo-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -342,7 +342,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/vimeo-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -352,7 +352,7 @@ jobs:
 
     ## wistia-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/wistia-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -361,7 +361,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/wistia-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -371,7 +371,7 @@ jobs:
 
     ## youtube-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/youtube-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -380,7 +380,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/youtube-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -390,7 +390,7 @@ jobs:
 
     ## file-player
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/file-player/package.json'
         registry: 'https://registry.npmjs.org'
@@ -399,7 +399,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/platforms/file-player/package.json'
         registry: 'https://npm.pkg.github.com'
@@ -409,7 +409,7 @@ jobs:
 
     ## playlist-controller
     - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/playlist-controller/package.json'
         registry: 'https://registry.npmjs.org'
@@ -418,7 +418,7 @@ jobs:
         provenance: true
 
     - name: Push to Github
-      uses: JS-DevTools/npm-publish@v3
+      uses: JS-DevTools/npm-publish@v4
       with:
         package: 'dist/libs/playlist-controller/package.json'
         registry: 'https://npm.pkg.github.com'
