@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
 import { CanvasResizerDirective } from '@mintplayer/ng-canvas-resizer';
@@ -8,6 +8,6 @@ import { CanvasResizerDirective } from '@mintplayer/ng-canvas-resizer';
   templateUrl: './canvas-resizer-demo.component.html',
   styleUrl: './canvas-resizer-demo.component.scss',
   standalone: true,
-  imports: [CommonModule, BsGridModule, CanvasResizerDirective]
+  imports: [BsGridModule, CanvasResizerDirective]
 })
 export class CanvasResizerDemoComponent {}
