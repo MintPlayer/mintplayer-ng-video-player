@@ -2,14 +2,16 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "module": "commonjs",
+    "module": "preserve",
     "typeRoots": [
       "../../../node_modules/@types",
       "../../platforms/soundcloud-player/types",
       "../../platforms/vimeo-player/types",
-      "../../platforms/twitch-player/types",
+      "../../platforms/twitch-player/types"
     ],
-    "types": ["jest", "node", "youtube", "vimeo", "twitch"]
+    "types": ["jest", "node", "youtube", "vimeo", "twitch"],
+    "moduleResolution": "bundler",
+    "isolatedModules": true
   },
   "include": ["**/*.test.ts", "**/*.spec.ts", "**/*.d.ts", "jest.config.ts"]
 }
