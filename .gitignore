@@ -48,3 +48,6 @@ vite.config.*.timestamp*
 .github/instructions/nx.instructions.md
 
 vitest.config.*.timestamp*
+
+# Environment variables (generated on VPS at deploy time)
+.env

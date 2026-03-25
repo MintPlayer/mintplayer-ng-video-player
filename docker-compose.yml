@@ -1,0 +1,26 @@
+services:
+  angular-demo:
+    image: ghcr.io/mintplayer/mintplayer-ng-video-player-angular:master
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ng-video-player-angular.rule=Host(`video-player-angular.mintplayer.com`)"
+      - "traefik.http.routers.ng-video-player-angular.entrypoints=websecure"
+      - "traefik.http.routers.ng-video-player-angular.tls.certresolver=letsencrypt"
+    networks:
+      - web
+    restart: unless-stopped
+
+  react-demo:
+    image: ghcr.io/mintplayer/mintplayer-ng-video-player-react:master
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ng-video-player-react.rule=Host(`video-player-react.mintplayer.com`)"
+      - "traefik.http.routers.ng-video-player-react.entrypoints=websecure"
+      - "traefik.http.routers.ng-video-player-react.tls.certresolver=letsencrypt"
+    networks:
+      - web
+    restart: unless-stopped
+
+networks:
+  web:
+    external: true
