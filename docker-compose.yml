@@ -3,9 +3,18 @@ services:
     image: ghcr.io/mintplayer/mintplayer-ng-video-player-angular:master
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ng-video-player-angular.rule=Host(`video-player-angular.mintplayer.com`)"
+      # Main router: angular.video-player.mintplayer.com
+      - "traefik.http.routers.ng-video-player-angular.rule=Host(`angular.video-player.mintplayer.com`)"
       - "traefik.http.routers.ng-video-player-angular.entrypoints=websecure"
       - "traefik.http.routers.ng-video-player-angular.tls.certresolver=letsencrypt"
+      # Redirect: video-player.mintplayer.com -> angular.video-player.mintplayer.com
+      - "traefik.http.routers.ng-video-player-redirect.rule=Host(`video-player.mintplayer.com`)"
+      - "traefik.http.routers.ng-video-player-redirect.entrypoints=websecure"
+      - "traefik.http.routers.ng-video-player-redirect.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.ng-video-player-redirect.middlewares=ng-video-player-redirect-mw"
+      - "traefik.http.middlewares.ng-video-player-redirect-mw.redirectregex.regex=^https://video-player\\.mintplayer\\.com(.*)"
+      - "traefik.http.middlewares.ng-video-player-redirect-mw.redirectregex.replacement=https://angular.video-player.mintplayer.com$${1}"
+      - "traefik.http.middlewares.ng-video-player-redirect-mw.redirectregex.permanent=true"
     networks:
       - web
     restart: unless-stopped
@@ -14,7 +23,7 @@ services:
     image: ghcr.io/mintplayer/mintplayer-ng-video-player-react:master
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ng-video-player-react.rule=Host(`video-player-react.mintplayer.com`)"
+      - "traefik.http.routers.ng-video-player-react.rule=Host(`react.video-player.mintplayer.com`)"
       - "traefik.http.routers.ng-video-player-react.entrypoints=websecure"
       - "traefik.http.routers.ng-video-player-react.tls.certresolver=letsencrypt"
     networks:

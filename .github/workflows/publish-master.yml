@@ -508,8 +508,8 @@ jobs:
           passphrase: ${{ secrets.VPS_SSH_KEY_PASSPHRASE }}
           envs: GITHUB_TOKEN
           script: |
-            mkdir -p /var/www/ng-video-player-demo
-            cd /var/www/ng-video-player-demo
+            mkdir -p /var/www/video-player
+            cd /var/www/video-player
 
             # Generate .env from GitHub Secrets (ready for future secrets)
             cat > .env << EOF
