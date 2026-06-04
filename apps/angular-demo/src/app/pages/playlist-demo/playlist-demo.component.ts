@@ -20,11 +20,11 @@ import { filePlugin } from '@mintplayer/file-player';
 import { vidyardPlugin } from '@mintplayer/vidyard-player';
 import { wistiaPlugin } from '@mintplayer/wistia-player';
 import { FormsModule } from '@angular/forms';
-import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
-import { BsSelectModule } from '@mintplayer/ng-bootstrap/select';
-import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
+import { BsGridComponent, BsGridRowDirective, BsGridColDirective, BsGridColumnDirective, BsColFormLabelDirective } from '@mintplayer/ng-bootstrap/grid';
+import { BsSelectComponent, BsSelectValueAccessor } from '@mintplayer/ng-bootstrap/select';
+import { BsListGroupComponent, BsListGroupItemComponent } from '@mintplayer/ng-bootstrap/list-group';
 import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
-import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
+import { BsCheckboxComponent } from '@mintplayer/ng-bootstrap/checkbox';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -32,7 +32,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './playlist-demo.component.html',
   styleUrls: ['./playlist-demo.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, VideoPlayerComponent, BsGridModule, BsSelectModule, BsListGroupModule, BsButtonTypeDirective, BsToggleButtonModule],
+  imports: [CommonModule, FormsModule, VideoPlayerComponent, BsGridComponent, BsGridRowDirective, BsGridColDirective, BsGridColumnDirective, BsColFormLabelDirective, BsSelectComponent, BsSelectValueAccessor, BsListGroupComponent, BsListGroupItemComponent, BsButtonTypeDirective, BsCheckboxComponent],
   providers: [
     provideVideoApis(youtubePlugin, dailymotionPlugin, vimeoPlugin, soundCloudPlugin, mixCloudPlugin, twitchPlugin, spotifyPlugin, streamablePlugin, facebookPlugin, filePlugin, vidyardPlugin, wistiaPlugin)
   ]
@@ -137,9 +137,5 @@ export class PlaylistDemoComponent implements AfterViewInit {
   }
   set shuffle(value: boolean) {
     this.playlistController.shuffle = value;
-  }
-
-  getChecked($event: Event) {
-    return (<HTMLInputElement>$event.target).checked;
   }
 }

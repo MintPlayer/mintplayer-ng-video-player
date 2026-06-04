@@ -1,6 +1,6 @@
 
 import { Component } from '@angular/core';
-import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
+import { BsGridComponent, BsGridRowDirective, BsGridColDirective, BsGridColumnDirective, BsColFormLabelDirective } from '@mintplayer/ng-bootstrap/grid';
 import { CanvasResizerDirective } from '@mintplayer/ng-canvas-resizer';
 
 @Component({
@@ -8,6 +8,6 @@ import { CanvasResizerDirective } from '@mintplayer/ng-canvas-resizer';
   templateUrl: './canvas-resizer-demo.component.html',
   styleUrl: './canvas-resizer-demo.component.scss',
   standalone: true,
-  imports: [BsGridModule, CanvasResizerDirective]
+  imports: [BsGridComponent, BsGridRowDirective, BsGridColDirective, BsGridColumnDirective, BsColFormLabelDirective, CanvasResizerDirective]
 })
 export class CanvasResizerDemoComponent {}

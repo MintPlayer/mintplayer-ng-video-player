@@ -66,9 +66,9 @@
         </bs-select>
       </label>
       <label class="mx-4">
-        <bs-toggle-button [type]="'checkbox'" [isToggled]="shuffle" (change)="shuffle = getChecked($event)">
+        <bs-checkbox [type]="'toggle_button'" [(isToggled)]="shuffle">
           Shuffle
-        </bs-toggle-button>
+        </bs-checkbox>
       </label>
     </span>
   </div>

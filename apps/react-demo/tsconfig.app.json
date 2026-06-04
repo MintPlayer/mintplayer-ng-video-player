@@ -28,7 +28,7 @@
       "../../libs/platforms/streamable-player/types",
       "../../node_modules/vite",
       "../../node_modules/@nx/react/typings",
-      "../../node_modules/@types",
+      "../../node_modules/@types"
     ]
   },
   "exclude": [

@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
-import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
-import { BsSelectModule } from '@mintplayer/ng-bootstrap/select';
-import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
+import { BsGridComponent, BsGridRowDirective, BsGridColDirective, BsGridColumnDirective, BsColFormLabelDirective } from '@mintplayer/ng-bootstrap/grid';
+import { BsListGroupComponent, BsListGroupItemComponent } from '@mintplayer/ng-bootstrap/list-group';
+import { BsSelectComponent, BsSelectValueAccessor } from '@mintplayer/ng-bootstrap/select';
+import { BsCheckboxComponent } from '@mintplayer/ng-bootstrap/checkbox';
 import { VideoPlayerComponent, provideVideoApis } from '@mintplayer/ng-video-player';
-import { MockComponent, MockDirective, MockModule, MockProvider } from 'ng-mocks';
+import { MockComponent, MockDirective, MockProvider } from 'ng-mocks';
 import { PlaylistDemoComponent } from './playlist-demo.component';
 import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
 
@@ -21,10 +21,16 @@ describe('PlaylistDemoComponent', () => {
 
         // Mock dependencies
         FormsModule,
-        MockModule(BsGridModule),
-        MockModule(BsSelectModule),
-        MockModule(BsListGroupModule),
-        MockModule(BsToggleButtonModule),
+        MockComponent(BsGridComponent),
+        MockDirective(BsGridRowDirective),
+        MockDirective(BsGridColDirective),
+        MockDirective(BsGridColumnDirective),
+        MockDirective(BsColFormLabelDirective),
+        MockComponent(BsSelectComponent),
+        MockDirective(BsSelectValueAccessor),
+        MockComponent(BsListGroupComponent),
+        MockComponent(BsListGroupItemComponent),
+        MockComponent(BsCheckboxComponent),
         MockDirective(BsButtonTypeDirective),
         MockComponent(VideoPlayerComponent),
       ],

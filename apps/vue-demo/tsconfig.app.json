@@ -13,7 +13,7 @@
       "../../libs/platforms/vidyard-player/types",
       "../../libs/platforms/wistia-player/types",
       "../../libs/platforms/streamable-player/types",
-      "../../node_modules/@types",
+      "../../node_modules/@types"
     ]
   },
   "exclude": [
