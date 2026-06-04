@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "module": "commonjs",
+    "module": "esnext",
     "target": "es2020",
     "typeRoots": ["../../../node_modules/@types", "./types"],
     "types": ["jest", "node", "dailymotion"]
