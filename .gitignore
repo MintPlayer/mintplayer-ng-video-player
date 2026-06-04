@@ -51,3 +51,6 @@ vitest.config.*.timestamp*
 
 # Environment variables (generated on VPS at deploy time)
 .env
+.claude/worktrees
+.nx/polygraph
+.nx/self-healing

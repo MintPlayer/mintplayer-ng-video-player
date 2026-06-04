@@ -10,7 +10,9 @@
     },
     "build": {
       "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/libs/frameworks/v-video-player"
@@ -26,9 +28,11 @@
     },
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
-        "reportsDirectory": "../coverage/libs/frameworks/v-video-player"
+        "reportsDirectory": "{projectRoot}/../coverage/libs/frameworks/v-video-player"
       }
     }
   }
