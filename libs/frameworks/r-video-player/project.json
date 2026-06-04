@@ -12,6 +12,7 @@
       "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
+      "dependsOn": [],
       "options": {
         "outputPath": "dist/libs/frameworks/r-video-player"
       },
