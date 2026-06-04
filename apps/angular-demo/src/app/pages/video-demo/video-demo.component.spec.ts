@@ -3,15 +3,15 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { BsButtonGroupComponent } from '@mintplayer/ng-bootstrap/button-group';
 import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
-import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
+import { BsGridComponent, BsGridRowDirective, BsGridColDirective, BsGridColumnDirective, BsColFormLabelDirective } from '@mintplayer/ng-bootstrap/grid';
 import { BsInputGroupComponent } from '@mintplayer/ng-bootstrap/input-group';
-import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
-import { BsRangeModule } from '@mintplayer/ng-bootstrap/range';
-import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
-import { MockComponent, MockDirective, MockModule } from 'ng-mocks';
+import { BsListGroupComponent, BsListGroupItemComponent } from '@mintplayer/ng-bootstrap/list-group';
+import { BsRangeComponent, BsRangeValueAccessor } from '@mintplayer/ng-bootstrap/range';
+import { BsCheckboxComponent } from '@mintplayer/ng-bootstrap/checkbox';
+import { MockComponent, MockDirective } from 'ng-mocks';
 
 import { VideoDemoComponent } from './video-demo.component';
-import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
+import { BsFormComponent, BsFormControlDirective, BsFormGroupDirective } from '@mintplayer/ng-bootstrap/form';
 import { VideoPlayerComponent, provideVideoApis } from '@mintplayer/ng-video-player';
 import { APP_BASE_HREF } from '@angular/common';
 import { provideRouter } from '@angular/router';
@@ -28,15 +28,23 @@ describe('VideoDemoComponent', () => {
 
         // Mock dependencies
         FormsModule,
-        MockModule(BsFormModule),
-        MockModule(BsGridModule),
-        MockModule(BsRangeModule),
-        MockModule(BsListGroupModule),
+        MockComponent(BsFormComponent),
+        MockDirective(BsFormControlDirective),
+        MockDirective(BsFormGroupDirective),
+        MockComponent(BsGridComponent),
+        MockDirective(BsGridRowDirective),
+        MockDirective(BsGridColDirective),
+        MockDirective(BsGridColumnDirective),
+        MockDirective(BsColFormLabelDirective),
+        MockComponent(BsRangeComponent),
+        MockDirective(BsRangeValueAccessor),
+        MockComponent(BsListGroupComponent),
+        MockComponent(BsListGroupItemComponent),
         MockComponent(BsButtonGroupComponent),
         MockDirective(BsButtonTypeDirective),
         MockComponent(BsButtonGroupComponent),
         MockComponent(BsInputGroupComponent),
-        MockModule(BsToggleButtonModule),
+        MockComponent(BsCheckboxComponent),
 
         MockComponent(VideoPlayerComponent),
       ],

@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
-import { MockModule } from 'ng-mocks';
-import { BsNavbarModule } from '@mintplayer/ng-bootstrap/navbar';
+import { MockComponent, MockDirective } from 'ng-mocks';
+import { BsNavbarComponent, BsNavbarBrandComponent, BsNavbarContentDirective, BsNavbarDropdownComponent, BsNavbarItemComponent, BsNavbarNavComponent, BsNavbarTriggerDirective, BsExpandButtonDirective, DropdownToggleDirective, NavLinkDirective } from '@mintplayer/ng-bootstrap/navbar';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 describe('AppComponent', () => {
@@ -13,7 +13,16 @@ describe('AppComponent', () => {
         AppComponent,
         
         // Mock components
-        MockModule(BsNavbarModule),
+        MockComponent(BsNavbarComponent),
+        MockComponent(BsNavbarBrandComponent),
+        MockComponent(BsNavbarDropdownComponent),
+        MockComponent(BsNavbarItemComponent),
+        MockComponent(BsNavbarNavComponent),
+        MockDirective(BsNavbarContentDirective),
+        MockDirective(BsNavbarTriggerDirective),
+        MockDirective(BsExpandButtonDirective),
+        MockDirective(DropdownToggleDirective),
+        MockDirective(NavLinkDirective),
         
         // Mock pages
         YoutubeMockComponent,

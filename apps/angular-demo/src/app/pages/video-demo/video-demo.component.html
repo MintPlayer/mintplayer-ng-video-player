@@ -63,21 +63,21 @@
                     </label>
                   </div>
                   <div [md]="6" class="text-center">
-                    <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isMuted" [disabled]="(cannotMute$ | async) ?? true" class="d-inline-block py-3">
+                    <bs-checkbox [type]="'toggle_button'" [(ngModel)]="isMuted" [disabled]="(cannotMute$ | async) ?? true" class="d-inline-block py-3">
                       Mute
-                    </bs-toggle-button>
+                    </bs-checkbox>
                   </div>
                 </div>
                 <div bsRow>
                   <div [md]="6" class="text-center">
-                    <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isPip" [disabled]="(cannotPip$ | async) ?? true" class="d-inline-block py-3">
+                    <bs-checkbox [type]="'toggle_button'" [(ngModel)]="isPip" [disabled]="(cannotPip$ | async) ?? true" class="d-inline-block py-3">
                       PiP
-                    </bs-toggle-button>
+                    </bs-checkbox>
                   </div>
                   <div [md]="6" class="text-center">
-                    <bs-toggle-button [type]="'checkbox'" [(ngModel)]="isFullscreen" [disabled]="(cannotFullscreen$ | async) ?? true" class="d-inline-block py-3">
+                    <bs-checkbox [type]="'toggle_button'" [(ngModel)]="isFullscreen" [disabled]="(cannotFullscreen$ | async) ?? true" class="d-inline-block py-3">
                       Fullscreen
-                    </bs-toggle-button>
+                    </bs-checkbox>
                   </div>
                 </div>
                 <div class="d-block text-center">

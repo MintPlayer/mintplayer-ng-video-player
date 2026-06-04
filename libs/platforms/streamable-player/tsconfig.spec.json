@@ -2,10 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "module": "commonjs",
+    "module": "esnext",
     "target": "es2020",
     "types": ["jest", "node", "playerjs"],
-    "typeRoots": ["./types", "../../../node_modules/@types"],
+    "typeRoots": ["./types", "../../../node_modules/@types"]
   },
   "include": [
     "jest.config.ts",

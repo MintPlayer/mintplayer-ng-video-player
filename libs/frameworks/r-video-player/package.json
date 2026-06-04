@@ -1,7 +1,7 @@
 {
   "name": "@mintplayer/r-video-player",
   "private": false,
-  "version": "18.1.2",
+  "version": "19.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
@@ -13,6 +13,16 @@
     ".": {
       "import": "./index.mjs",
       "require": "./index.js"
+    }
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@vidyard/embed-code": "^4.3.15"
+  },
+  "peerDependenciesMeta": {
+    "@vidyard/embed-code": {
+      "optional": true
     }
   }
 }

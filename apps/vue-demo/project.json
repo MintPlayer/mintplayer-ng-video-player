@@ -10,7 +10,9 @@
     },
     "build": {
       "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/vue-demo",
@@ -56,13 +58,17 @@
           "buildTarget": "vue-demo:build:production"
         }
       },
-      "dependsOn": ["build"]
+      "dependsOn": [
+        "build"
+      ]
     },
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
-        "reportsDirectory": "../coverage/apps/vue-demo"
+        "reportsDirectory": "{projectRoot}/../coverage/apps/vue-demo"
       }
     }
   }

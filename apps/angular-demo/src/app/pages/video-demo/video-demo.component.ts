@@ -7,20 +7,20 @@ import { provideVideoApis, VideoPlayerComponent } from '@mintplayer/ng-video-pla
 import { BehaviorSubject, Observable, combineLatest, filter, map } from 'rxjs';
 import { APP_BASE_HREF, CommonModule, LocationStrategy } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BsFormModule } from '@mintplayer/ng-bootstrap/form';
+import { BsFormComponent, BsFormControlDirective, BsFormGroupDirective } from '@mintplayer/ng-bootstrap/form';
 import { BsForDirective } from '@mintplayer/ng-bootstrap/for';
-import { BsGridModule } from '@mintplayer/ng-bootstrap/grid';
-import { BsRangeModule } from '@mintplayer/ng-bootstrap/range';
-import { BsListGroupModule } from '@mintplayer/ng-bootstrap/list-group';
+import { BsGridComponent, BsGridRowDirective, BsGridColDirective, BsGridColumnDirective, BsColFormLabelDirective } from '@mintplayer/ng-bootstrap/grid';
+import { BsRangeComponent, BsRangeValueAccessor } from '@mintplayer/ng-bootstrap/range';
+import { BsListGroupComponent, BsListGroupItemComponent } from '@mintplayer/ng-bootstrap/list-group';
 import { BsInputGroupComponent } from '@mintplayer/ng-bootstrap/input-group';
 import { BsButtonTypeDirective } from '@mintplayer/ng-bootstrap/button-type';
 import { BsButtonGroupComponent } from '@mintplayer/ng-bootstrap/button-group';
-import { BsToggleButtonModule } from '@mintplayer/ng-bootstrap/toggle-button';
+import { BsCheckboxComponent } from '@mintplayer/ng-bootstrap/checkbox';
 import { BsCloseComponent } from '@mintplayer/ng-bootstrap/close';
 import { BsCopyDirective } from '@mintplayer/ng-bootstrap/copy';
-import { BsModalModule } from '@mintplayer/ng-bootstrap/modal';
-import { BsOffcanvasModule } from '@mintplayer/ng-bootstrap/offcanvas';
-import { BsAlertModule } from '@mintplayer/ng-bootstrap/alert';
+import { BsModalComponent, BsModalDirective, BsModalBodyDirective, BsModalCloseDirective, BsModalFooterDirective, BsModalHeaderDirective, BsModalHostComponent } from '@mintplayer/ng-bootstrap/modal';
+import { BsOffcanvasComponent, BsOffcanvasContentDirective, BsOffcanvasCloseDirective, BsOffcanvasPushDirective, BsOffcanvasHostComponent, OffcanvasBodyComponent, OffcanvasHeaderComponent } from '@mintplayer/ng-bootstrap/offcanvas';
+import { BsAlertComponent, BsAlertCloseComponent } from '@mintplayer/ng-bootstrap/alert';
 import { FocusOnLoadDirective } from '@mintplayer/ng-focus-on-load';
 import { youtubePlugin } from '@mintplayer/youtube-player';
 import { dailymotionPlugin } from '@mintplayer/dailymotion-player';
@@ -41,7 +41,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './video-demo.component.html',
   styleUrls: ['./video-demo.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, VideoPlayerComponent, BsForDirective, BsFormModule, BsGridModule, BsRangeModule, BsListGroupModule, BsInputGroupComponent, BsButtonTypeDirective, BsButtonGroupComponent, BsToggleButtonModule, BsAlertModule, BsModalModule, BsCloseComponent, FocusOnLoadDirective, BsCopyDirective, BsOffcanvasModule],
+  imports: [CommonModule, FormsModule, VideoPlayerComponent, BsForDirective, BsFormComponent, BsFormControlDirective, BsFormGroupDirective, BsGridComponent, BsGridRowDirective, BsGridColDirective, BsGridColumnDirective, BsColFormLabelDirective, BsRangeComponent, BsRangeValueAccessor, BsListGroupComponent, BsListGroupItemComponent, BsInputGroupComponent, BsButtonTypeDirective, BsButtonGroupComponent, BsCheckboxComponent, BsAlertComponent, BsAlertCloseComponent, BsModalComponent, BsModalDirective, BsModalBodyDirective, BsModalCloseDirective, BsModalFooterDirective, BsModalHeaderDirective, BsModalHostComponent, BsCloseComponent, FocusOnLoadDirective, BsCopyDirective, BsOffcanvasComponent, BsOffcanvasContentDirective, BsOffcanvasCloseDirective, BsOffcanvasPushDirective, BsOffcanvasHostComponent, OffcanvasBodyComponent, OffcanvasHeaderComponent],
   providers: [
     provideVideoApis(youtubePlugin, dailymotionPlugin, vimeoPlugin, soundCloudPlugin, mixCloudPlugin, twitchPlugin, spotifyPlugin, streamablePlugin, facebookPlugin, filePlugin, vidyardPlugin, wistiaPlugin)
   ]
