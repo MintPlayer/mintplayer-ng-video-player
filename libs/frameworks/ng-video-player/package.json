@@ -8,12 +8,11 @@
     "directory": "libs/frameworks/ng-video-player"
   },
   "peerDependencies": {
-    "@angular/common": "^22.0.0",
     "@angular/core": "^22.0.0",
     "rxjs": "^7.4.0",
-    "@mintplayer/player-provider": "^19.0.0",
-    "@mintplayer/player-progress": "^19.0.0",
-    "@mintplayer/video-player": "^19.0.0"
+    "@mintplayer/player-provider": "^20.0.0",
+    "@mintplayer/player-progress": "^20.0.0",
+    "@mintplayer/video-player": "^20.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

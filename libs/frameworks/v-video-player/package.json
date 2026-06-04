@@ -1,7 +1,7 @@
 {
   "name": "@mintplayer/v-video-player",
   "private": false,
-  "version": "18.1.1",
+  "version": "18.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/MintPlayer/mintplayer-ng-video-player",
@@ -15,5 +15,8 @@
       "import": "./index.mjs",
       "require": "./index.js"
     }
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
   }
 }

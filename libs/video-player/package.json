@@ -1,7 +1,7 @@
 {
   "name": "@mintplayer/video-player",
   "private": false,
-  "version": "19.1.2",
+  "version": "20.0.0",
   "description": "Typescript video player supporting multiple platforms",
   "repository": {
     "type": "git",
@@ -20,5 +20,10 @@
     "name": "Pieterjan De Clippel",
     "url": "https://github.com/MintPlayer",
     "email": "info@mintplayer.com"
+  },
+  "peerDependencies": {
+    "@mintplayer/player-provider": "^20.0.0",
+    "@mintplayer/player-progress": "^20.0.0",
+    "rxjs": "^7.4.0"
   }
 }
