@@ -2,7 +2,7 @@
 export default {
   displayName: 'mintplayer-soundcloud-player',
   preset: '../../../jest.preset.js',
-  coverageDirectory: '../../coverage/libs/platforms/soundcloud-player',
+  coverageDirectory: '../../../coverage/libs/platforms/soundcloud-player',
   globals: {},
   testEnvironment: 'jsdom',
   transform: {

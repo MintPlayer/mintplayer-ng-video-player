@@ -116,9 +116,7 @@ export class VideoPlayer {
     return this.url$.value;
   }
   public set url(value: string | null | undefined) {
-    const x = value || null;
-    console.warn('x', x);
-    this.url$.next(x);
+    this.url$.next(value || null);
   }
   //#endregion
   //#region Apis

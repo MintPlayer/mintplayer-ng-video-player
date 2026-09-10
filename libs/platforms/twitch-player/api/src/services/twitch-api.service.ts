@@ -13,7 +13,9 @@ export class TwitchApiService implements IApiService {
   }
 
   public urlRegexes = [
-    new RegExp(/https?:\/\/(www\.)?twitch\.tv\/(?<channel>[0-9A-Za-z]+)$/, 'g'),
+    // Underscore included: Twitch login names allow it, so channels like
+    // twitch.tv/some_streamer were simply not recognised as twitch urls.
+    new RegExp(/https?:\/\/(www\.)?twitch\.tv\/(?<channel>[0-9A-Za-z_]+)$/, 'g'),
     new RegExp(/https?:\/\/(www\.)?twitch\.tv\/videos\/(?<video>[0-9A-Za-z]+)$/, 'g'),
   ];
 
@@ -91,9 +93,13 @@ export class TwitchApiService implements IApiService {
           setVolume: (volume) => player.setVolume(volume / 100),
           setProgress: (time) => player.seek(time),
           setSize: (width, height) => {
+            // Guarded like the vimeo adapter does: the SDK injects the iframe
+            // asynchronously, so a resize arriving first threw on `undefined`.
             const iframe = options.element.getElementsByTagName('iframe')[0];
-            iframe.width = String(width);
-            iframe.height = String(height);
+            if (iframe) {
+              iframe.width = String(width);
+              iframe.height = String(height);
+            }
           },
           getTitle: () => new Promise((resolve) => {
             const fragments = [player.getChannel(), player.getVideo()].filter(x => !!x);

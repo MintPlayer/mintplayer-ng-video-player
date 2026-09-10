@@ -12,7 +12,9 @@ export class SpotifyApiService implements IApiService {
   }
 
   public urlRegexes = [
-    new RegExp(/http[s]{0,1}:\/\/open\.spotify\.com\/(?<type>track|episode)\/(?<id>[^&/]+)/, 'g'),
+    // `?` excluded from the id, or every share link — they all carry `?si=...`
+    // — produced `spotify:track:<id>?si=<token>`, which is not a valid uri.
+    new RegExp(/http[s]{0,1}:\/\/open\.spotify\.com\/(?<type>track|episode)\/(?<id>[^&/?]+)/, 'g'),
     new RegExp(/spotify:(?<type>track|episode):(?<id>[0-9A-Za-z]+)/, 'g'),
   ];
 
@@ -53,6 +55,10 @@ export class SpotifyApiService implements IApiService {
       let isReady = false;
       this.api.createController(<HTMLElement>options.element.querySelector('div'), { uri: options.initialVideoId, width: options.width, height: options.height }, (controller) => {
         let adapter: PlayerAdapter;
+        // Out here, not inside the `ready` handler: state$ below is created in
+        // this scope, so a destroyRef declared in there could never be used to
+        // tear it down — which is why destroy() detached nothing at all.
+        const destroyRef = new Subject<boolean>();
         controller.addListener('ready', () => {
           if (options.autoplay) {
             setTimeout(() => controller.play(), 3000);
@@ -60,7 +66,6 @@ export class SpotifyApiService implements IApiService {
 
           if (!isReady) {
             isReady = true;
-            const destroyRef = new Subject<boolean>();
 
             adapter = createPlayerAdapter({
               capabilities: [],
@@ -88,16 +93,26 @@ export class SpotifyApiService implements IApiService {
               setProgress: (time) => controller.seek(time),
               setSize: (width, height) => controller.setIframeDimensions(width, height),
               getTitle: () => new Promise((resolve, reject) => reject('Spotify api doesn\'t allow getting the title')),
+              // Only the request to turn these ON is an error. Throwing on
+              // `false` too meant the VideoPlayer could not so much as reset
+              // them to off — its isFullscreen/isPip setters forward the value
+              // unconditionally — so a player carrying either flag threw on
+              // every attempt to clear it.
               setFullscreen: (isFullscreen) => {
-                throw 'Spotify doesn\'t support fullscreen';
+                if (isFullscreen) {
+                  throw 'Spotify doesn\'t support fullscreen';
+                }
               },
               getFullscreen: () => new Promise((resolve) => resolve(false)),
               setPip: (isPip) => {
-                throw 'Spotify doesn\'t support picture-in-picture'
+                if (isPip) {
+                  throw 'Spotify doesn\'t support picture-in-picture'
+                }
               },
               getPip: () => new Promise(resolve => resolve(false)),
               destroy: () => {
                 destroyRef.next(true);
+                controller.removeListener('playback_update', onPlaybackUpdate);
                 controller.destroy();
               }
             });
@@ -106,27 +121,38 @@ export class SpotifyApiService implements IApiService {
           }
         });
 
+        // Spotify reports position and duration in MILLISECONDS — that is why
+        // they are divided by 1000 before going out to the adapter below. The
+        // thresholds here were 0.5 and 3, i.e. half a millisecond and three
+        // milliseconds, so this only ever fired when the embed happened to
+        // report position exactly equal to duration; a track stopping a
+        // millisecond short was never reported as ended.
+        const endOfTrackMs = 500;
+        const sameTrackToleranceMs = 3000;
+
         const state$ = new Subject<PlaybackUpdateEvent>();
         state$.pipe(
           // debounceTime(200),
           pairwise(),
           filter(([prev, next]) => {
-            return !prev.data.isPaused && ((prev.data.duration - prev.data.position) < 0.5)
-              && next.data.isPaused && (next.data.position === 0) && (Math.abs(prev.data.duration - next.data.duration) < 3);
+            return !prev.data.isPaused && ((prev.data.duration - prev.data.position) < endOfTrackMs)
+              && next.data.isPaused && (next.data.position === 0) && (Math.abs(prev.data.duration - next.data.duration) < sameTrackToleranceMs);
           }),
+          takeUntil(destroyRef),
           takeUntil(destroy)
         ).subscribe(() => {
           setTimeout(() => adapter.onStateChange(EPlayerState.ended), 20);
         });
 
-        controller.addListener('playback_update', (ev) => {
+        const onPlaybackUpdate = (ev: undefined | PlaybackUpdateEvent) => {
           const evt = <PlaybackUpdateEvent>ev;
           state$.next(evt);
 
           adapter.onCurrentTimeChange(evt.data.position / 1000);
           adapter.onDurationChange(evt.data.duration / 1000);
           adapter.onStateChange(!evt.data.isPaused ? EPlayerState.playing : EPlayerState.paused);
-        });
+        };
+        controller.addListener('playback_update', onPlaybackUpdate);
       });
     });
   }

@@ -41,8 +41,14 @@ export class VidyardService implements IApiService {
 
   public createPlayer(options: PlayerOptions, destroy: Subject<boolean>) : Promise<PlayerAdapter> {
     return new Promise((resolvePlayer, rejectPlayer) => {
+      // Checked before it is dereferenced, so a missing host surfaces as this
+      // rejection rather than a TypeError on `undefined.querySelector`.
+      if (!options.element) {
+        return rejectPlayer('The Vidyard api requires the options.element to be set');
+      }
+
       const div = options.element.querySelector<HTMLDivElement>('div.vidyard-player-embed');
-      
+
       if (!div) {
         return rejectPlayer('Something went wrong');
       }
@@ -58,9 +64,13 @@ export class VidyardService implements IApiService {
 
       adapter$.pipe(filter(a => !!a), map(a => a!), take(1), takeUntil(destroyRef), takeUntil(destroy))
         .subscribe(([adapter, player]) => {
-          VidyardEmbed.api.getPlayerMetadata(options.initialVideoId!).then(meta => {
-            adapter.onDurationChange(meta.length_in_seconds);
-          });
+          // Started here but reported after resolvePlayer below. Emitting from
+          // inside this .then() raced the consumer: resolvePlayer queues the
+          // work that assigns adapter.onDurationChange as a microtask, and a
+          // metadata promise that had already settled beat it — so the single
+          // duration emission landed on createPlayerAdapter's placeholder
+          // ("onDurationChange is not registered") and no consumer ever saw it.
+          const metadata = VidyardEmbed.api.getPlayerMetadata(options.initialVideoId!);
 
           fromVidyardEvent(player, 'play')
             .pipe(takeUntil(destroyRef), takeUntil(destroy))
@@ -105,6 +115,8 @@ export class VidyardService implements IApiService {
           // });
           
           resolvePlayer(adapter);
+
+          metadata.then(meta => adapter.onDurationChange(meta.length_in_seconds));
         });
 
       playerReady$.pipe(filter(([ready]) => ready), take(1), takeUntil(destroyRef), takeUntil(destroy))

@@ -11,9 +11,15 @@ export class FileApiService implements IApiService {
         return false;
     }
 
+    // Alternatives are ordered longest-first, and the extension may not be
+    // followed by another url character. Regex alternation takes the FIRST
+    // branch that matches, not the longest, so with `mp2` ahead of `mp2a` a
+    // `.mp2a` url matched as `mp2` and the `(?<id>...)` group stopped one
+    // character short — handing the player a truncated src that 404s. Same
+    // class of bug for .mp4a, .mpga, .m2a, .m3a and .oga.
     public urlRegexes: RegExp[] = [
-        new RegExp(/(?<id>https?:\/\/.+\.(?<audiotype>m4a|m4b|mp4a|mpga|mp2|mp2a|mp3|m2a|m3a|wav|weba|aac|oga|spx))/, 'g'),
-        new RegExp(/(?<id>https?:\/\/.+\.(?<videotype>mp4|og[gv]|webm|mov|m4v))/, 'g'),
+        new RegExp(/(?<id>https?:\/\/.+\.(?<audiotype>mp4a|mpga|mp2a|weba|m4a|m4b|m2a|m3a|mp2|mp3|wav|aac|oga|spx))(?![a-z0-9])/, 'g'),
+        new RegExp(/(?<id>https?:\/\/.+\.(?<videotype>webm|mp4|ogg|ogv|mov|m4v))(?![a-z0-9])/, 'g'),
     ];
 
     public loadApi() {
@@ -39,11 +45,15 @@ export class FileApiService implements IApiService {
 
     public prepareHtml(options: PrepareHtmlOptions) {
         if (!options.initialVideoId) {
-            throw 'The Facebook api requires an initial video id';
+            throw 'The File api requires an initial video id';
         }
 
         const info: MediaType = JSON.parse(options.initialVideoId);
-        const id = info.id.replace(/["<>]/, '');
+        // /g, not a single replacement: `id` is interpolated straight into a
+        // src="" attribute below, and without the global flag only the FIRST
+        // quote or angle bracket was stripped — so a url carrying two of them
+        // closed the attribute and injected markup into the host.
+        const id = info.id.replace(/["<>]/g, '');
         switch (info.tagType) {
             case 'audio':
                 return `

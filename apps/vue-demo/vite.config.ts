@@ -37,8 +37,12 @@ const config: UserConfigFn = async () => {
       include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
       reporters: ['default'],
       coverage: {
-        reportsDirectory: '../coverage/apps/vue-demo',
+        // Two levels up, not one: `root` is this project's own directory, so
+        // '../' landed the report in apps/coverage/ where nothing collected it.
+        reportsDirectory: '../../coverage/apps/vue-demo',
         provider: 'v8' as const,
+        reporter: ['lcovonly', 'text-summary'],
+        enabled: true,
       },
     },
   };

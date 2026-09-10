@@ -2,7 +2,7 @@
 export default {
   displayName: 'mintplayer-vidyard-player',
   preset: '../../../jest.preset.js',
-  coverageDirectory: '../../coverage/libs/platforms/vidyard-player',
+  coverageDirectory: '../../../coverage/libs/platforms/vidyard-player',
   globals: {},
   testEnvironment: 'jsdom',
   transform: {

@@ -11,7 +11,9 @@ export class MixcloudApiService implements IApiService {
   }
 
   urlRegexes = [
-    new RegExp(/http[s]{0,1}:\/\/(www.){0,1}mixcloud\.com(?<id>\/[0-9A-Za-z-]+\/[0-9A-Za-z-]+)\/{0,1}/),
+    // `www\.`, not `www.` — the unescaped dot matched any character, so
+    // https://wwwXmixcloud.com/... was accepted as a mixcloud url.
+    new RegExp(/http[s]{0,1}:\/\/(www\.){0,1}mixcloud\.com(?<id>\/[0-9A-Za-z-]+\/[0-9A-Za-z-]+)\/{0,1}/),
   ]
 
   match2id(match: RegExpExecArray) {

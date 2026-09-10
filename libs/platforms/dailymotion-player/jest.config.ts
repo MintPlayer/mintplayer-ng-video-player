@@ -2,7 +2,7 @@
 export default {
   displayName: 'mintplayer-dailymotion-player',
   preset: '../../../jest.preset.js',
-  coverageDirectory: '../../coverage/libs/platforms/dailymotion-player',
+  coverageDirectory: '../../../coverage/libs/platforms/dailymotion-player',
   globals: {},
   testEnvironment: 'jsdom',
   transform: {

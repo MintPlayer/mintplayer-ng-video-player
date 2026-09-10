@@ -20,7 +20,12 @@ export class SoundcloudApiService implements IApiService {
   }
 
   public prepareHtml(options: PrepareHtmlOptions) {
-    return `<iframe id="${options.domId}" width="${options.width}" height="${options.height}" style="max-width:100%" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&amp;show_teaser=false&amp;" allow="autoplay"></iframe>`;
+    // The requested track, not a hardcoded one. This used to embed
+    // api.soundcloud.com/tracks/293 unconditionally and rely on the
+    // loadVideoById that follows to swap it — so every load briefly mounted
+    // somebody else's track, and a failed swap left it playing.
+    const url = encodeURIComponent(options.initialVideoId ?? '');
+    return `<iframe id="${options.domId}" width="${options.width}" height="${options.height}" style="max-width:100%" src="https://w.soundcloud.com/player/?url=${url}&amp;show_teaser=false&amp;" allow="autoplay"></iframe>`;
   }
 
   public createPlayer(options: PlayerOptions, destroy: Subject<boolean>): Promise<PlayerAdapter> {
@@ -31,6 +36,13 @@ export class SoundcloudApiService implements IApiService {
 
       const destroyRef = new Subject<boolean>();
       const player = SC.Widget(<HTMLIFrameElement>options.element.getElementsByTagName('iframe')[0]);
+
+      // Unmuting has to restore the volume the listener last chose, so track
+      // it from both the explicit setVolume and the poll below — the widget's
+      // own controls can change it too. 50 only ever applies if mute is the
+      // very first thing anyone does.
+      let lastKnownVolume = 50;
+      let volumeBeforeMute = 50;
 
       const adapter: PlayerAdapter = createPlayerAdapter({
         capabilities: [ECapability.volume, ECapability.getTitle],
@@ -48,8 +60,21 @@ export class SoundcloudApiService implements IApiService {
               break;
           }
         },
-        setMute: (mute) => player.setVolume(mute ? 0 : 50),
-        setVolume: (volume) => player.setVolume(volume),
+        // The widget has no real mute, so it is emulated by dropping the
+        // volume to 0 — but unmuting used to restore a hardcoded 50, throwing
+        // away whatever the listener had actually set. Remember it instead.
+        setMute: (mute) => {
+          if (mute) {
+            volumeBeforeMute = lastKnownVolume;
+            player.setVolume(0);
+          } else {
+            player.setVolume(volumeBeforeMute);
+          }
+        },
+        setVolume: (volume) => {
+          lastKnownVolume = volume;
+          player.setVolume(volume);
+        },
         setProgress: (time) => player.seekTo(time * 1000),
         setSize: (width, height) => {
           if (options.element) {
@@ -86,6 +111,11 @@ export class SoundcloudApiService implements IApiService {
             .subscribe(() => {
               // Volume
               player.getVolume((currentVolume) => {
+                // Zero is the emulated mute, so it must not be remembered as
+                // the volume to unmute back to.
+                if (currentVolume > 0) {
+                  lastKnownVolume = currentVolume;
+                }
                 adapter.onVolumeChange(currentVolume);
                 adapter.onMuteChange(currentVolume === 0 ? true : false);
               });

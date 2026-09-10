@@ -34,7 +34,9 @@ export class StreamableService implements IApiService {
 
   public createPlayer(options: PlayerOptions, destroy: Subject<boolean>) {
     return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
-      const iframe = options.element.querySelector('iframe');
+      // Checked before it is dereferenced, so a missing host surfaces as the
+      // rejection below rather than a TypeError on `undefined.querySelector`.
+      const iframe = options.element?.querySelector('iframe');
 
       if (!iframe) {
         return rejectPlayer('Streamable player requires the options.element to be set, and contain an iframe');
