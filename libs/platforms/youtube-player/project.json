@@ -33,6 +33,9 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
+        "codeCoverage": true,
+        "coverageReporters": ["lcovonly"],
+        "coverageDirectory": "coverage/{projectRoot}",
         "jestConfig": "libs/platforms/youtube-player/jest.config.ts"
       }
     },

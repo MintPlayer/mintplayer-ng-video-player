@@ -1,7 +1,7 @@
 /// <reference path="../../types/facebook/index.d.ts" />
 
 import { loadScript } from '@mintplayer/script-loader';
-import { takeUntil, timer, Subject, BehaviorSubject, debounceTime, pairwise, combineLatest, filter, take } from 'rxjs';
+import { takeUntil, timer, Subject, BehaviorSubject, debounceTime, pairwise, combineLatest, filter, take, startWith } from 'rxjs';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from "@mintplayer/player-provider";
 
 export class FacebookApiService implements IApiService {
@@ -112,7 +112,15 @@ export class FacebookApiService implements IApiService {
                 }
             });
 
-            lastPlayerInstance$.pipe(debounceTime(500), pairwise()).subscribe(([previous, next]) => {
+            // startWith between the debounce and the pairwise, or the first
+            // player is never subscribed to at all. lastPlayerInstance$ is a
+            // BehaviorSubject seeded with undefined, and FB.init({xfbml:true})
+            // parses the embed immediately — so xfbml.ready lands well inside
+            // the 500ms window and the debounce collapses [undefined, player]
+            // down to one value. pairwise() then has nothing to pair with and
+            // never emits, leaving startedPlaying/paused/finishedPlaying
+            // unsubscribed: onStateChange never fired for that player.
+            lastPlayerInstance$.pipe(debounceTime(500), startWith(undefined), pairwise()).subscribe(([previous, next]) => {
                 if (previous && events) {
                     events.forEach((ev) => ev.release());
                 }

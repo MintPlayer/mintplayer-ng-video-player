@@ -2,7 +2,7 @@
 
 import { loadScript } from '@mintplayer/script-loader';
 import { ECapability, EPlayerState, IApiService, PlayerAdapter, PlayerOptions, PrepareHtmlOptions, createPlayerAdapter } from '@mintplayer/player-provider';
-import { Subject } from 'rxjs';
+import { Subject, Subscription, filter } from 'rxjs';
 
 // https://wistia.com/support/developers/player-api#volumechange
 
@@ -13,7 +13,11 @@ export class WistiaService implements IApiService {
   }
 
   public urlRegexes = [
-    new RegExp(/https?:\/\/(www\.|home\.)?wistia\.(com|net)\/(medias|embed)\/(?<id>[0-9A-Za-z]+)/),
+    // `fast.` and the optional `iframe/` segment cover the embed url Wistia's
+    // own share dialog hands out — https://fast.wistia.net/embed/iframe/<id> —
+    // which previously matched nothing, and whose id would have been read as
+    // the literal "iframe" if the host had matched.
+    new RegExp(/https?:\/\/(www\.|home\.|fast\.)?wistia\.(com|net)\/(medias|embed)\/(iframe\/)?(?<id>[0-9A-Za-z]+)/),
   ];
 
   loadApi() {
@@ -38,13 +42,18 @@ export class WistiaService implements IApiService {
 
   createPlayer(options: PlayerOptions, destroy: Subject<boolean>) {
     return new Promise<PlayerAdapter>((resolvePlayer, rejectPlayer) => {
-      if (typeof window !== 'undefined') {
+      // `===`, not `!==`. Inverted, this returned immediately in a BROWSER —
+      // the promise never settled, `window._wq` was never touched and even the
+      // validations below never ran, so nothing in this player has ever
+      // executed. The `!==` arm was also unreachable in the intended way,
+      // since everything past this point dereferences `window`.
+      if (typeof window === 'undefined') {
         // Do not resolve this promise during SSR
         return;
       }
 
       if (!options.domId) {
-        return rejectPlayer('The YouTube api requires the options.domId to be set');
+        return rejectPlayer('The Wistia api requires the options.domId to be set');
       }
 
       if (!options.initialVideoId) {
@@ -57,6 +66,8 @@ export class WistiaService implements IApiService {
         id: options.domId,
         onReady: (player) => {
           const destroyRef = new Subject<boolean>();
+          let isDestroyed = false;
+          let ownerDestroy: Subscription | undefined;
           const adapter = createPlayerAdapter({
             capabilities: [ECapability.mute, ECapability.volume, ECapability.fullscreen, ECapability.getTitle],
             loadVideoById: (id: string) => {
@@ -103,6 +114,16 @@ export class WistiaService implements IApiService {
             },
             getPip: () => new Promise((resolve) => resolve(false)),
             destroy: () => {
+              // Idempotent: the adapter can be destroyed explicitly AND by the
+              // owner's Subject, and running the teardown twice would call
+              // player.remove() on an already-removed player and push a second
+              // revoke onto the queue.
+              if (isDestroyed) {
+                return;
+              }
+              isDestroyed = true;
+              ownerDestroy?.unsubscribe();
+
               player.unbind('play', handlers.get('play'));
               player.unbind('pause', handlers.get('pause'));
               player.unbind('end', handlers.get('end'));
@@ -145,6 +166,12 @@ export class WistiaService implements IApiService {
           player.bind('cancelfullscreen', handlers.get('cancelfullscreen'));
           // player.bind('betweentimes', 30, 60, handlers.get('betweentimes'));
           // player.bind('crosstime', 30, handlers.get('crosstime'));
+
+          // Honour the owner's teardown as well as adapter.destroy(). Nothing
+          // subscribed to `destroy` before, so a VideoPlayer being disposed
+          // left this player bound and its handlers live — every other
+          // platform reacts to both.
+          ownerDestroy = destroy.pipe(filter((d) => d)).subscribe(() => adapter.destroy());
 
           resolvePlayer(adapter);
         }

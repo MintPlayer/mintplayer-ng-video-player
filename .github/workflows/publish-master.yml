@@ -40,8 +40,41 @@ jobs:
     - name: Build
       run: npm run build -- --configuration=production
 
+    # run-many, not affected: a partial set reads as a coverage collapse on the
+    # default branch, and this is the run whose number becomes the headline.
     - name: Test
-      run: npm run test -- --watch=false --parallel=true
+      run: npx nx run-many --target=test --all --coverage --watch=false --parallel=2 --output-style=stream
+
+    # Vitest writes `SF:` paths relative to each project's own root, so
+    # `libs/frameworks/r-video-player/src/index.ts` is emitted as
+    # `src/index.ts` — a suffix that exists under every library in the
+    # workspace. The coverage service resolves report paths against
+    # `git ls-files` by longest suffix and drops anything ambiguous from the
+    # totals, silently. This rewrites them to workspace-relative and fails
+    # loudly if any path stops resolving. Jest already emits rooted paths;
+    # the script is idempotent, so it leaves those alone.
+    - name: Rebase coverage paths to workspace-relative
+      run: node tools/scripts/rebase-lcov-paths.mjs
+
+    - name: Upload coverage
+      uses: MintPlayer/MintPlayer.Spark/apps/CodeCoverage/action@coverage-upload-v1
+      with:
+        url: https://coverage.mintplayer.com
+        token: ${{ secrets.COVERAGE_TOKEN }}
+        # libs only. The demo apps still run their tests, but their coverage is
+        # not a property of the published libraries — counting them lets a demo
+        # page move the number the ratchet gates on.
+        # `**` because libs nest unevenly — libs/video-player is one level
+        # deep, libs/platforms/* and libs/frameworks/* are two.
+        files: coverage/libs/**/lcov.info
+        # With search on, a glob that matches nothing silently falls back to
+        # auto-detection and would upload stray unparsable reports.
+        disable-search: true
+        flags: unit
+        finish: true
+        # A coverage-service outage must never block the publish + deploy jobs
+        # that hang off this one.
+        fail-ci-if-error: false
 
     ## ng-canvas-resizer
     - name: Push to NPM

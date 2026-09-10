@@ -2,7 +2,7 @@
 export default {
   displayName: 'mintplayer-streamable-player',
   preset: '../../../jest.preset.js',
-  coverageDirectory: '../../coverage/libs/platforms/streamable-player',
+  coverageDirectory: '../../../coverage/libs/platforms/streamable-player',
   globals: {},
   testEnvironment: 'jsdom',
   transform: {

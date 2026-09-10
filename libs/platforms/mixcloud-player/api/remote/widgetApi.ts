@@ -99,12 +99,17 @@ export class MixcloudPlayerWidgetApiRPC {
             case 'api':
                 this.buildApi(data);
                 break;
-            case 'event':
-                (<any>this.eventHandlers)[data.eventName].apply(
-                    this.external,
-                    data.args
-                );
+            case 'event': {
+                // Guarded, like 'methodResponse' below already is. This runs
+                // inside a window message listener, so an event naming
+                // something the `api` description never listed used to throw an
+                // uncaught TypeError on every such message.
+                const handler = (<any>this.eventHandlers)[data.eventName];
+                if (handler) {
+                    handler.apply(this.external, data.args);
+                }
                 break;
+            }
             case 'methodResponse':
                 if ((<any>this.methodResponses)[data.methodId]) {
                     // Resolve the deferred promise

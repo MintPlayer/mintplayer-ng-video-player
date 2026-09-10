@@ -2,7 +2,7 @@
 export default {
   displayName: 'mintplayer-spotify-player',
   preset: '../../../jest.preset.js',
-  coverageDirectory: '../../coverage/libs/platforms/spotify-player',
+  coverageDirectory: '../../../coverage/libs/platforms/spotify-player',
   globals: {},
   testEnvironment: 'jsdom',
   transform: {

@@ -56,6 +56,15 @@ export class PlaylistController<TVideo> {
   }
 
   public removeFromPlaylist(video: TVideo) {
+    // A video that isn't in the playlist has nothing to remove. Guarding here
+    // rather than at the splice calls below because indexOf returns -1 and
+    // `splice(-1, 1)` removes the LAST element — so removing an unknown video
+    // silently deleted a real one, and could also strand playback by taking
+    // out the video that was playing.
+    if (this._playlist.indexOf(video) === -1) {
+      return;
+    }
+
     // Check if video to be removed is currently playing
     if (this._currentPlayedVideo !== null) {
       if (this._currentPlayedVideo.video === video) {

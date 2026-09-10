@@ -55,8 +55,21 @@ const config: UserConfigFn = async () => {
       passWithNoTests: true,
       reporters: ['default'],
       coverage: {
-        reportsDirectory: '../../coverage/libs/frameworks/v-video-player',
+        // Three levels up, not two: `root` is this project's own directory, so
+        // '../../' landed the report in libs/coverage/ where nothing collected
+        // it. The path has to mirror the project path under the workspace
+        // coverage/ dir — that mapping is what tools/scripts/rebase-lcov-paths.mjs
+        // uses to root the SF: paths, and what the workflow globs on.
+        reportsDirectory: '../../../coverage/libs/frameworks/v-video-player',
         provider: 'v8' as const,
+        reporter: ['lcovonly', 'text-summary'],
+        // Always on. The report is a CI artefact, not an opt-in.
+        enabled: true,
+        // Explicit, so a source file that no spec imports is reported at 0%
+        // rather than silently dropped from the denominator.
+        all: true,
+        include: ['src/**/*.{ts,vue}'],
+        exclude: ['src/**/*.{spec,test}.ts'],
       },
     },
   };

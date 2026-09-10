@@ -47,11 +47,11 @@ export function RVideoPlayer({ url, volumeState, muteState, playerStateState }: 
 
   useEffect(() => {
     player && (player.url = url);
-  }, [url]);
+  }, [player, url]);
 
   useEffect(() => {
     player && (player.volume = volume);
-  }, [volume]);
+  }, [player, volume]);
   
   useEffect(() => {
     player && player.on('volumeChange', (vol) => setVolume(vol));
@@ -59,7 +59,7 @@ export function RVideoPlayer({ url, volumeState, muteState, playerStateState }: 
 
   useEffect(() => {
     player && (player.mute = mute);
-  }, [mute]);
+  }, [player, mute]);
 
   useEffect(() => {
     player && player.on('muteChange', (mute) => {
@@ -69,7 +69,7 @@ export function RVideoPlayer({ url, volumeState, muteState, playerStateState }: 
 
   useEffect(() => {
     player && (player.playerState = playerState);
-  }, [playerState]);
+  }, [player, playerState]);
 
   useEffect(() => {
     player && player.on('stateChange', (state) => {

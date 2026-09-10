@@ -65,11 +65,9 @@
     "test": {
       "executor": "@nx/vitest:test",
       "outputs": [
-        "{options.reportsDirectory}"
+        "{workspaceRoot}/coverage/{projectRoot}"
       ],
-      "options": {
-        "reportsDirectory": "{projectRoot}/../coverage/apps/vue-demo"
-      }
+      "options": {}
     }
   }
 }

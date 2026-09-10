@@ -29,11 +29,9 @@
     "test": {
       "executor": "@nx/vitest:test",
       "outputs": [
-        "{options.reportsDirectory}"
+        "{workspaceRoot}/coverage/{projectRoot}"
       ],
-      "options": {
-        "reportsDirectory": "{projectRoot}/../coverage/libs/frameworks/v-video-player"
-      }
+      "options": {}
     }
   }
 }

@@ -24,6 +24,11 @@
           "mode": "production"
         }
       }
+    },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {}
     }
   }
 }

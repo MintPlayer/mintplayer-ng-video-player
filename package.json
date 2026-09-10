@@ -8,7 +8,7 @@
     "build": "nx run-many -t build --projects=angular-demo,react-demo,vue-demo",
     "build:sme": "nx build --source-map",
     "analyze:sme": "source-map-explorer dist/apps/angular-demo/*",
-    "test": "nx run angular-demo:test"
+    "test": "nx run-many -t test --all"
   },
   "private": true,
   "engines": {

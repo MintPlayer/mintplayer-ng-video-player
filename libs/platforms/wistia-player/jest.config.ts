@@ -2,7 +2,7 @@
 export default {
   displayName: 'mintplayer-wistia-player',
   preset: '../../../jest.preset.js',
-  coverageDirectory: '../../coverage/libs/platforms/wistia-player',
+  coverageDirectory: '../../../coverage/libs/platforms/wistia-player',
   globals: {},
   testEnvironment: 'jsdom',
   transform: {

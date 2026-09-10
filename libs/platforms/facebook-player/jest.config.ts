@@ -2,7 +2,7 @@
 export default {
   displayName: 'mintplayer-facebook-player',
   preset: '../../../jest.preset.js',
-  coverageDirectory: '../../coverage/libs/platforms/facebook-player',
+  coverageDirectory: '../../../coverage/libs/platforms/facebook-player',
   globals: {},
   testEnvironment: 'jsdom',
   transform: {

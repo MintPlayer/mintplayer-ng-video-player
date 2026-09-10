@@ -43,6 +43,11 @@
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
+        "codeCoverage": true,
+        "coverageReporters": [
+          "lcovonly"
+        ],
+        "coverageDirectory": "coverage/{projectRoot}",
         "jestConfig": "{projectRoot}/jest.config.ts"
       }
     }

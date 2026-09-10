@@ -2,7 +2,7 @@
 export default {
   displayName: 'mintplayer-twitch-player',
   preset: '../../../jest.preset.js',
-  coverageDirectory: '../../coverage/libs/platforms/twitch-player',
+  coverageDirectory: '../../../coverage/libs/platforms/twitch-player',
   globals: {},
   testEnvironment: 'jsdom',
   transform: {

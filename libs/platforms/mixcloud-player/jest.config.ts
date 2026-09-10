@@ -2,7 +2,7 @@
 export default {
   displayName: 'mintplayer-mixcloud-player',
   preset: '../../../jest.preset.js',
-  coverageDirectory: '../../coverage/libs/platforms/mixcloud-player',
+  coverageDirectory: '../../../coverage/libs/platforms/mixcloud-player',
   globals: {},
   testEnvironment: 'jsdom',
   transform: {

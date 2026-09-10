@@ -35,5 +35,8 @@ jobs:
     - name: Build
       run: npm run build -- --configuration=production
 
-    # - name: Test
-    #   run: npm run test -- --watch=false
+    # Feature branches run the suite but deliberately do not upload coverage —
+    # the service only tracks the default branch and PRs, and an unreviewed
+    # branch upload would compete with the PR's own partial build.
+    - name: Test
+      run: npx nx run-many --target=test --all --coverage --watch=false --parallel=2 --output-style=stream

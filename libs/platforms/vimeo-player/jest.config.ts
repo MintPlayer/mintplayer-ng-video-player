@@ -2,7 +2,7 @@
 export default {
   displayName: 'mintplayer-vimeo-player',
   preset: '../../../jest.preset.js',
-  coverageDirectory: '../../coverage/libs/platforms/vimeo-player',
+  coverageDirectory: '../../../coverage/libs/platforms/vimeo-player',
   globals: {},
   testEnvironment: 'jsdom',
   transform: {

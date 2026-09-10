@@ -46,4 +46,27 @@ export default defineConfig({
       external: ['react', 'react-dom', 'react/jsx-runtime', '@vidyard/embed-code'],
     },
   },
+
+  test: {
+    watch: false,
+    globals: true,
+    environment: 'jsdom',
+    include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    passWithNoTests: true,
+    reporters: ['default'],
+    coverage: {
+      // Mirrors the project path under the workspace coverage/ dir — that
+      // mapping is what tools/scripts/rebase-lcov-paths.mjs roots the SF:
+      // paths with, and what the workflow globs on.
+      reportsDirectory: '../../../coverage/libs/frameworks/r-video-player',
+      provider: 'v8' as const,
+      reporter: ['lcovonly', 'text-summary'],
+      enabled: true,
+      // Explicit, so a source file that no spec imports is reported at 0%
+      // rather than silently dropped from the denominator.
+      all: true,
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/**/*.{spec,test}.{ts,tsx}'],
+    },
+  },
 });
