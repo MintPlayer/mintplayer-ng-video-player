@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
       id-token: write
       packages: write
       attestations: write
@@ -75,6 +75,10 @@ jobs:
         # A coverage-service outage must never block the publish + deploy jobs
         # that hang off this one.
         fail-ci-if-error: false
+
+    - name: Version the packages
+      id: versioning
+      uses: MintPlayer/MintPlayer.Spark/apps/CodeCoverage/versioning-action@fc5aa28d12bea9a9c91afee290e13cf586184714 # versioning-v1
 
     ## ng-canvas-resizer
     - name: Push to NPM
