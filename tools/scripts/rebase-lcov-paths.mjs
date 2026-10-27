@@ -33,7 +33,7 @@
  */
 import { readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, posix, relative } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { runCli } from './lib/cli.mjs';
 
 const COVERAGE_DIR = 'coverage';
 
@@ -56,8 +56,17 @@ export function findReports(dir) {
 export function prefixFor(report, coverageDir) {
   // Split on either separator: relative() emits the platform's own, but the
   // spec (and any caller) may hand in posix paths on Windows.
-  return relative(coverageDir, report).split(/[\\/]/).slice(0, -1).join(posix.sep);
+  const dirs = relative(coverageDir, report).split(/[\\/]/).slice(0, -1);
+  // A sharded test job (.github/workflows/test.yml) parks its report in
+  // `<project coverage dir>/shard-<i>-of-<n>/` so the shards of one project do
+  // not overwrite each other when their artifacts are merged. That folder is
+  // not part of the project path.
+  const project = SHARD_DIR.test(dirs.at(-1) ?? '') ? dirs.slice(0, -1) : dirs;
+  return project.join(posix.sep);
 }
+
+/** The folder a sharded test job moves its lcov.info into: `shard-1-of-2`. */
+export const SHARD_DIR = /^shard-\d+-of-\d+$/;
 
 /**
  * Line and branch totals for one lcov report.
@@ -157,49 +166,65 @@ export function rebaseLcov(text, prefix, exists) {
   return { text: out, rewritten, alreadyRooted, unresolved };
 }
 
-const isEntryPoint = !!process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
-if (isEntryPoint) {
-  const reports = findReports(COVERAGE_DIR);
+/**
+ * Rebase every report under `coverageDir` in place. Exit 1 when there is no
+ * report, when one sits directly in `coverageDir`, or when a rewritten path does
+ * not exist on disk; 0 otherwise.
+ *
+ * `exists` answers for a workspace-relative path. The default resolves it
+ * against the working directory, which is what the workflows run from; a spec
+ * passes one rooted in its temp tree.
+ *
+ * @param {{ coverageDir?: string, exists?: (path: string) => boolean, log?: (...args: any[]) => void, error?: (...args: any[]) => void }} [options]
+ */
+export function main({
+  coverageDir = COVERAGE_DIR,
+  exists = existsSync,
+  log = console.log,
+  error = console.error,
+} = {}) {
+  const reports = findReports(coverageDir);
   if (reports.length === 0) {
-    console.error(`No lcov.info found under ${COVERAGE_DIR}/ — did the test run emit coverage?`);
-    process.exit(1);
+    error(`No lcov.info found under ${coverageDir}/ — did the test run emit coverage?`);
+    return 1;
   }
 
-  let rewritten = 0;
-  let alreadyRooted = 0;
-  const unresolved = [];
-  const summaries = [];
+  const unprefixed = reports.find((report) => !prefixFor(report, coverageDir));
+  if (unprefixed) {
+    error(`Refusing to rewrite ${unprefixed}: it sits directly in ${coverageDir}/, so there is no project prefix to apply.`);
+    return 1;
+  }
 
-  for (const report of reports) {
-    const prefix = prefixFor(report, COVERAGE_DIR);
-    if (!prefix) {
-      console.error(`Refusing to rewrite ${report}: it sits directly in ${COVERAGE_DIR}/, so there is no project prefix to apply.`);
-      process.exit(1);
-    }
-
-    const result = rebaseLcov(readFileSync(report, 'utf8'), prefix, existsSync);
-    rewritten += result.rewritten;
-    alreadyRooted += result.alreadyRooted;
-    unresolved.push(...result.unresolved.map((u) => ({ ...u, report })));
+  const results = reports.map((report) => {
+    const prefix = prefixFor(report, coverageDir);
+    const result = rebaseLcov(readFileSync(report, 'utf8'), prefix, exists);
     writeFileSync(report, result.text, 'utf8');
-    summaries.push({ name: prefix, summary: summarizeLcov(result.text) });
-  }
+    return { report, prefix, ...result };
+  });
+
+  const rewritten = results.reduce((sum, r) => sum + r.rewritten, 0);
+  const alreadyRooted = results.reduce((sum, r) => sum + r.alreadyRooted, 0);
+  const unresolved = results.flatMap((r) => r.unresolved.map((u) => ({ ...u, report: r.report })));
 
   if (unresolved.length > 0) {
-    console.error(`\n${unresolved.length} rewritten path(s) do not exist on disk:`);
-    for (const u of unresolved.slice(0, 20)) console.error(`  ${u.rooted}   (from ${u.report})`);
-    console.error(
+    error(`\n${unresolved.length} rewritten path(s) do not exist on disk:`);
+    unresolved.slice(0, 20).map((u) => error(`  ${u.rooted}   (from ${u.report})`));
+    error(
       '\nEither the coverage directory no longer mirrors the project path, or a report\n' +
         "contains files that were not checked out. Both silently shrink the service's\n" +
         'denominator, so this is a hard failure rather than a warning.',
     );
-    process.exit(1);
+    return 1;
   }
 
-  console.log(
+  const summaries = results.map((r) => ({ name: r.prefix, summary: summarizeLcov(r.text) }));
+  log(
     `Rebased ${rewritten} path(s) across ${reports.length} report(s) to workspace-relative` +
       (alreadyRooted ? ` (${alreadyRooted} already rooted)` : '') +
       '; all resolve on disk.',
   );
-  console.log(`\nCoverage about to be uploaded:\n${formatCoverageSummary(summaries)}`);
+  log(`\nCoverage about to be uploaded:\n${formatCoverageSummary(summaries)}`);
+  return 0;
 }
+
+runCli(import.meta.url, main);
