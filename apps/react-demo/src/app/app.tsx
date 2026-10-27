@@ -4,11 +4,23 @@ import styles from './app.module.scss';
 
 import { RVideoPlayer } from '@mintplayer/r-video-player';
 import { useRef, useState } from 'react';
-import { Button, ButtonGroup, Col, Container, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
+import {
+  Button,
+  ButtonGroup,
+  Col,
+  Container,
+  ListGroup,
+  ListGroupItem,
+  Row,
+} from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 
 import { Route, Routes, Link } from 'react-router-dom';
 import { EPlayerState } from '@mintplayer/player-provider';
+import rVideoPlayerJson from '@mintplayer/r-video-player/package.json';
+import { displayVersion } from './display-version';
+
+const version = displayVersion(rVideoPlayerJson.version);
 
 export function App() {
   const urlState = useState<string | undefined>();
@@ -16,7 +28,7 @@ export function App() {
   const muteState = useState<boolean>(false);
   const muteRef = useRef<HTMLInputElement>(null);
   const playerStateState = useState<EPlayerState>(EPlayerState.unstarted);
-  
+
   const [url, setUrl] = urlState;
   const [volume, setVolume] = volumeState;
   const [mute, setMute] = muteState;
@@ -53,37 +65,87 @@ export function App() {
 
   return (
     <>
-      <h1 className='text-center'>@mintplayer/r-video-player</h1>
+      <header>
+        <nav
+          className="navbar navbar-dark bg-dark px-3 mb-3"
+          aria-label="Main navigation"
+        >
+          <a
+            className={`${styles['github-link']} ms-auto`}
+            href="https://github.com/MintPlayer/mintplayer-ng-video-player"
+            title="@mintplayer/r-video-player on GitHub"
+          >
+            <span>{version}</span>
+            <img src="/github.svg" alt="@mintplayer/r-video-player on GitHub" />
+          </a>
+        </nav>
+      </header>
+      <h1 className="text-center">@mintplayer/r-video-player</h1>
       <Container>
-        <Row className='mb-3'>
+        <Row className="mb-3">
           <Col lg="6">
-            <ListGroup className='mb-3'>
-              {videos.map(video => <ListGroupItem key={video} onPointerDown={() => setUrl(video)} className='cursor-pointer overflow-hidden text-truncate truncate-start'>{video}</ListGroupItem>)}
+            <ListGroup className="mb-3">
+              {videos.map((video) => (
+                <ListGroupItem
+                  key={video}
+                  onPointerDown={() => setUrl(video)}
+                  className="cursor-pointer overflow-hidden text-truncate truncate-start"
+                >
+                  {video}
+                </ListGroupItem>
+              ))}
             </ListGroup>
           </Col>
-          <Col lg="6" className='text-center'>
-            <div className='d-block text-center'>
-              <RVideoPlayer url={url} volumeState={volumeState} muteState={muteState} playerStateState={playerStateState} />
+          <Col lg="6" className="text-center">
+            <div className="d-block text-center">
+              <RVideoPlayer
+                url={url}
+                volumeState={volumeState}
+                muteState={muteState}
+                playerStateState={playerStateState}
+              />
               <Row>
-                <Col md="6" className='text-center'>
-                </Col>
-                <Col md="6" className='text-center'>
-                  {
-                    (playerState !== EPlayerState.playing)
-                    ? <Button variant='secondary' onClick={() => setPlayerState(EPlayerState.playing)}>Play</Button>
-                    : <Button variant='secondary' onClick={() => setPlayerState(EPlayerState.paused)}>Pause</Button>
-                  }
+                <Col md="6" className="text-center"></Col>
+                <Col md="6" className="text-center">
+                  {playerState !== EPlayerState.playing ? (
+                    <Button
+                      variant="secondary"
+                      onClick={() => setPlayerState(EPlayerState.playing)}
+                    >
+                      Play
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="secondary"
+                      onClick={() => setPlayerState(EPlayerState.paused)}
+                    >
+                      Pause
+                    </Button>
+                  )}
                 </Col>
               </Row>
               <Row>
-                <Col md="6" className='text-center'>
+                <Col md="6" className="text-center">
                   <label>
-                    <label>{ volume }</label>
-                    <Form.Range value={volume} onChange={(ev) => setVolume(parseFloat(ev.currentTarget.value))} min="0" max="100" />
+                    <label>{volume}</label>
+                    <Form.Range
+                      value={volume}
+                      onChange={(ev) =>
+                        setVolume(parseFloat(ev.currentTarget.value))
+                      }
+                      min="0"
+                      max="100"
+                    />
                   </label>
                 </Col>
-                <Col md="6" className='text-center'>
-                  <Form.Check type='checkbox' label='Mute' ref={muteRef} checked={mute} onChange={ev => setMute(ev.currentTarget.checked)} />
+                <Col md="6" className="text-center">
+                  <Form.Check
+                    type="checkbox"
+                    label="Mute"
+                    ref={muteRef}
+                    checked={mute}
+                    onChange={(ev) => setMute(ev.currentTarget.checked)}
+                  />
                 </Col>
               </Row>
             </div>

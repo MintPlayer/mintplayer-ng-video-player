@@ -50,6 +50,12 @@
       "@mintplayer/ng-video-player/package.json": [
         "./libs/frameworks/ng-video-player/package.ts"
       ],
+      "@mintplayer/r-video-player/package.json": [
+        "./libs/frameworks/r-video-player/package.json"
+      ],
+      "@mintplayer/v-video-player/package.json": [
+        "./libs/frameworks/v-video-player/package.json"
+      ],
       "@mintplayer/player-progress": [
         "./libs/player-progress/src/index.ts"
       ],

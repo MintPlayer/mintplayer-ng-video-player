@@ -3,6 +3,7 @@ import { PreloadAllModules, provideRouter, withEnabledBlockingInitialNavigation,
 import { provideAnimations } from '@angular/platform-browser/animations';
 import ngVideoPlayerJson from '@mintplayer/ng-video-player/package.json';
 import { APP_BASE_HREF } from '@angular/common';
+import { displayVersion, VIDEO_PLAYER_VERSION } from './providers/video-player-version.provider';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,6 +19,6 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAnimations(),
     { provide: APP_BASE_HREF, useFactory: () => document.getElementsByTagName('base')[0].href.slice(0, -1) },
-    { provide: 'VIDEO_PLAYER_VERSION', useValue: ngVideoPlayerJson.version }
+    { provide: VIDEO_PLAYER_VERSION, useValue: displayVersion(ngVideoPlayerJson.version) }
   ]
 }

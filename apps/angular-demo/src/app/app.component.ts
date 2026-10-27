@@ -1,6 +1,7 @@
 import { ViewportScroller } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { VIDEO_PLAYER_VERSION } from './providers/video-player-version.provider';
 import { Color } from '@mintplayer/ng-bootstrap';
 import { BsNavbarComponent, BsNavbarBrandComponent, BsNavbarContentDirective, BsNavbarDropdownComponent, BsNavbarItemComponent, BsNavbarNavComponent, BsNavbarTriggerDirective, BsExpandButtonDirective, DropdownToggleDirective, NavLinkDirective } from '@mintplayer/ng-bootstrap/navbar';
 
@@ -12,7 +13,7 @@ import { BsNavbarComponent, BsNavbarBrandComponent, BsNavbarContentDirective, Bs
   imports: [BsNavbarComponent, BsNavbarBrandComponent, BsNavbarContentDirective, BsNavbarDropdownComponent, BsNavbarItemComponent, BsNavbarNavComponent, BsNavbarTriggerDirective, BsExpandButtonDirective, DropdownToggleDirective, NavLinkDirective, RouterOutlet, RouterLink]
 })
 export class AppComponent {
-  constructor(@Inject('VIDEO_PLAYER_VERSION') videoPlayerVersion: string, scroller: ViewportScroller) {
+  constructor(@Inject(VIDEO_PLAYER_VERSION) videoPlayerVersion: string, scroller: ViewportScroller) {
     this.versionInfo = videoPlayerVersion;
     scroller.setOffset([0, 56]);
   }
