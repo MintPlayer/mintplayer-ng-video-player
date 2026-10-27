@@ -1,29 +1,8 @@
 {
   "name": "angular-demo-e2e",
-  "$schema": "..\\..\\node_modules\\nx\\schemas\\project-schema.json",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/angular-demo-e2e/src",
   "projectType": "application",
   "tags": [],
-  "implicitDependencies": ["angular-demo"],
-  "targets": {
-    "e2e": {
-      "executor": "@nx/cypress:cypress",
-      "options": {
-        "cypressConfig": "apps/angular-demo-e2e/cypress.json",
-        "devServerTarget": "angular-demo:serve:development"
-      },
-      "configurations": {
-        "production": {
-          "devServerTarget": "angular-demo:serve:production"
-        }
-      }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/angular-demo-e2e/**/*.{js,ts}"]
-      }
-    }
-  }
+  "implicitDependencies": ["angular-demo"]
 }
