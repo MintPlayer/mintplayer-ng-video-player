@@ -61,7 +61,8 @@ deploy 12s.
 - Fallback: if Nx 24 does not build and test green within about 30 minutes, go to the latest 23.x and
   record why.
 - Node: the newest LTS line at implementation time (24, or 26 if it has been promoted). Check it then,
-  don't assume it. Keep `engines` consistent.
+  don't assume it. Keep `engines` consistent. *(Implemented: Node 24 is still the newest LTS.
+  `engines` already allows `>=24.0.0`, so it is unchanged.)*
 
 ### F1 Shared workflow pieces
 - `.github/actions/setup` (ported): setup-node, an `actions/cache` of `node_modules` keyed on the
@@ -123,9 +124,10 @@ deploy 12s.
 - Angular: port `bootstrap-version.provider.ts` as `video-player-version.provider.ts`
   (`displayVersion(v) => v === '0.0.0-PLACEHOLDER' ? 'dev' : v`) plus its unit spec, and wire it in
   `app.config.ts`.
-- React: **add a minimal header** to `app.tsx`, structured like Vue's `app-shell__header` / `<nav>`.
-  It holds a GitHub link titled `@mintplayer/r-video-player on GitHub` with the version in a `<span>`,
-  using the inline `displayVersion` mapping.
+- React: **add a minimal header** to `app.tsx`. *(Implemented as a Bootstrap navbar,
+  `<nav className='navbar navbar-dark bg-dark'>`, styled in `app.module.scss`.)* It holds a GitHub
+  link titled `@mintplayer/r-video-player on GitHub` with the version in a `<span>`. *(The mapping
+  lives in `display-version.ts` and is covered by a badge test in `app.spec.tsx`.)*
 - Vue: the same link in the existing `<nav>`, titled `@mintplayer/v-video-player on GitHub`.
 
 ### F6 Version guard
@@ -138,8 +140,10 @@ deploy 12s.
   missing, or when no `.js`/`.mjs` in a bundle contains the stamped version as a quoted literal. It
   asserts **presence** of the version, never absence of the placeholder (`@angular/core` contains
   the literal).
-- New `tools` Nx project (`tools/project.json`, `@nx/vitest:test`, coverage at `coverage/tools`), so
-  the specs run in `run-many -t test`. Add the missing `rebase-lcov-paths` spec.
+- New `tools` Nx project (`tools/project.json`, coverage at `coverage/tools`), so the specs run in
+  `run-many -t test`. Add the missing `rebase-lcov-paths` spec. *(Implemented: the `test` target is
+  inferred by `@nx/vitest`, because Nx 24 removed the executor. The project also covers
+  `tools/vite/vite-helpers.ts`, which replaces `nxViteTsPaths`/`nxCopyAssetsPlugin`.)*
 
 ### F7 e2e
 - **Migrate angular-demo-e2e to Playwright** (`@nx/playwright`, `playwright.config.ts`,
@@ -148,6 +152,9 @@ deploy 12s.
 - Each demo's e2e gets "navbar shows the library version, or dev when unstamped", using
   `getByTitle('<pkg> on GitHub').locator('span')` and
   `toHaveText(/^(dev|\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?)$/)`. These run locally; CI doesn't run e2e.
+- *(Implemented: every e2e target is inferred by `@nx/playwright/plugin`, and the suites run
+  Chromium only. vue-demo previews on port 4301, so it no longer collides with react-demo's 4300
+  when the suites run in parallel.)*
 
 ## 5. Spikes (time-boxed, run before implementation)
 
@@ -240,3 +247,21 @@ Note for the companion repos: D8 and D9 now make this repo stricter than ng-boot
 - The live angular and react demos show the released version.
 - Wall clock ≤ 6m23s (baseline run 40203505605).
 - A PR run uses the remote cache (an Nx "remote cache hit" appears in the log for unaffected projects).
+
+## 10. Status (2026-10-27)
+
+Milestones 0–7 are implemented in PR #103.
+
+- **Verified locally, with the cache disabled:**
+  - `run-many -t build test typecheck`: all 27 projects pass.
+  - The three e2e projects pass.
+  - A build stamped `9.9.9-local.1` passes `check-demo-versions` for all three demos.
+  - `tools`: 68 tests pass.
+- **Open, checked on the merge run:**
+  - Every item in §9.
+  - S3: no Docker daemon was available, so `docker build --target prebuilt` from milestone 7 did
+    not run. On the first deploy, check that `/` and a deep route serve.
+  - S4: timing and the plan output size.
+- **Known, not in scope:** lint fails on errors that predate this work (`no-var` in `.d.ts`,
+  `@nx/dependency-checks`, `prefer-inject`, …) and on an eslint-plugin-react crash under ESLint 10.
+  CI doesn't run lint.
