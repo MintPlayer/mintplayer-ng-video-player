@@ -1,0 +1,30 @@
+name: Setup workspace
+description: >
+  Node 24 (the newest LTS) + node_modules. Shared by every job of both
+  workflows, which run their jobs in parallel instead of as one long sequence.
+  Run actions/checkout first: a local action can only be used once the
+  repository is on disk.
+
+runs:
+  using: composite
+  steps:
+    - name: Setup node
+      uses: actions/setup-node@v7
+      with:
+        node-version: 24
+
+    # node_modules itself, not just ~/.npm: restoring the tree takes a few
+    # seconds where `npm ci` from the npm cache takes ~30 s per job. The key is
+    # the lockfile plus the Node version, which together pin every byte npm
+    # would write. On a hit `npm ci` is skipped entirely.
+    - name: Cache node_modules
+      id: node-modules
+      uses: actions/cache@v6
+      with:
+        path: node_modules
+        key: node-modules-${{ runner.os }}-node24-${{ hashFiles('package-lock.json') }}
+
+    - name: Install dependencies
+      if: steps.node-modules.outputs.cache-hit != 'true'
+      shell: bash
+      run: npm ci
