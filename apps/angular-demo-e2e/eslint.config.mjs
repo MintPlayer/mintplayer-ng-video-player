@@ -11,17 +11,25 @@ const compat = new FlatCompat({
 
 export default [
   ...baseConfig,
-  ...compat.extends('plugin:cypress/recommended'),
+  ...compat.extends('plugin:playwright/recommended'),
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     // Override or add rules here
     rules: {},
   },
   {
-    files: ['src/plugins/index.js'],
-    rules: {
-      '@typescript-eslint/no-var-requires': 'off',
-      'no-undef': 'off',
-    },
+    files: ['**/*.ts', '**/*.tsx'],
+    // Override or add rules here
+    rules: {},
+  },
+  {
+    files: ['**/*.js', '**/*.jsx'],
+    // Override or add rules here
+    rules: {},
+  },
+  {
+    files: ['src/**/*.{ts,js,tsx,jsx}'],
+    // Override or add rules here
+    rules: {},
   },
 ];

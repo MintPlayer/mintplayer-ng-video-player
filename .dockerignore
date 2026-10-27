@@ -1,0 +1,10 @@
+# The `standalone` target runs `npm ci` and builds inside the image, and the
+# `prebuilt` target takes the bundle from its own `dist` build context, so none
+# of these belong in the main context.
+node_modules
+dist
+coverage
+tmp
+.nx
+.angular
+.git

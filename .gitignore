@@ -56,3 +56,5 @@ vitest.config.*.timestamp*
 .nx/self-healing
 .playwright-mcp/
 verdaccio-*.png
+
+.nx/migrate-runs

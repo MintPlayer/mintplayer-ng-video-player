@@ -9,7 +9,7 @@ describe('App', () => {
     const { baseElement } = render(
       <BrowserRouter>
         <App />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     expect(baseElement).toBeTruthy();
   });
@@ -18,9 +18,22 @@ describe('App', () => {
     const { getByText } = render(
       <BrowserRouter>
         <App />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(getByText(/@mintplayer\/r\-video\-player/i)).toBeTruthy();
+  });
+
+  it('shows the r-video-player version in the GitHub link', () => {
+    const { getByTitle } = render(
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>,
+    );
+
+    const link = getByTitle('@mintplayer/r-video-player on GitHub');
+    expect(link.querySelector('span')?.textContent).toMatch(
+      /^(dev|\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?)$/,
+    );
   });
 });

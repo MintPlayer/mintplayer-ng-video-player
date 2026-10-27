@@ -1,0 +1,65 @@
+name: Push a Docker image with retries
+description: >
+  Pushes an image that is already in the local image store to every tag given,
+  retrying each push up to `attempts` times, and outputs the pushed manifest
+  digest. Build it first (docker/build-push-action with push: false, load: true)
+  and log in to the registry.
+
+inputs:
+  tags:
+    description: Newline- or space-separated image references, e.g. docker/metadata-action's `tags` output.
+    required: true
+  attempts:
+    description: How many times to try each push before failing.
+    default: '3'
+  delay:
+    description: Seconds to wait after the first failed attempt; each further attempt waits that much longer.
+    default: '10'
+
+outputs:
+  digest:
+    description: The sha256 manifest digest the registry reported for the push.
+    value: ${{ steps.push.outputs.digest }}
+
+runs:
+  using: composite
+  steps:
+    # GHCR intermittently rejects a push with "unknown blob" when two jobs
+    # upload the same layer at the same moment (the angular and react images
+    # share their nginx base layers; ng-bootstrap run 39450551748 lost two legs
+    # that way). A push only re-uploads the layers the registry doesn't have yet, so
+    # a retry is cheap, and it costs time only when the race actually hits.
+    - name: Push
+      id: push
+      shell: bash
+      env:
+        TAGS: ${{ inputs.tags }}
+        ATTEMPTS: ${{ inputs.attempts }}
+        DELAY: ${{ inputs.delay }}
+      run: |
+        set -uo pipefail
+        log="$RUNNER_TEMP/docker-push.log"
+        digest=''
+        for tag in $TAGS; do
+          for attempt in $(seq 1 "$ATTEMPTS"); do
+            if docker push "$tag" 2>&1 | tee "$log"; then
+              break
+            fi
+            if [ "$attempt" -eq "$ATTEMPTS" ]; then
+              echo "::error::docker push $tag failed $ATTEMPTS times"
+              exit 1
+            fi
+            wait=$((DELAY * attempt))
+            echo "::warning::docker push $tag failed (attempt $attempt/$ATTEMPTS), retrying in ${wait}s"
+            sleep "$wait"
+          done
+          # Every tag names the same image, so the first push's digest is the digest.
+          if [ -z "$digest" ]; then
+            digest=$(grep -oE 'digest: sha256:[0-9a-f]{64}' "$log" | tail -1 | cut -d' ' -f2)
+          fi
+        done
+        if [ -z "$digest" ]; then
+          echo "::error::no digest found in the docker push output"
+          exit 1
+        fi
+        echo "digest=$digest" >> "$GITHUB_OUTPUT"

@@ -1,7 +1,7 @@
 /// <reference types='vitest' />
 import type { UserConfigFn } from 'vite';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
+import { workspaceAliases } from '../../tools/vite/vite-helpers';
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin';
 
 const config: UserConfigFn = async () => {
   const { default: vue } = await import('@vitejs/plugin-vue');
@@ -14,14 +14,16 @@ const config: UserConfigFn = async () => {
       host: 'localhost',
     },
     preview: {
-      port: 4300,
+      port: 4301,
       host: 'localhost',
     },
-    plugins: [vue(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
-    // Uncomment this if you are using workers.
-    // worker: {
-    //  plugins: [ nxViteTsPaths() ],
-    // },
+    // github.svg and friends live in public/, so absolute URLs must stay URLs
+    // rather than become module imports (which vitest cannot resolve).
+    plugins: [
+      vue({ template: { transformAssetUrls: { includeAbsolute: false } } }),
+      nxReadySignal(),
+    ],
+    resolve: { alias: workspaceAliases() },
     build: {
       outDir: '../../dist/apps/vue-demo',
       emptyOutDir: true,

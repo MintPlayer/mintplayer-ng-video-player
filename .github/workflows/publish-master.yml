@@ -1,532 +1,313 @@
-name: npm-publish
+name: publish-master
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
+# Queued, never cancelled: once `publish-libs` has pushed the version tags, a
+# cancelled run would leave npm and the tags ahead of the deployed demos. A
+# newer merge waits for the run in flight instead (a burst keeps only the
+# newest pending run). docs/prd/release-pipeline-alignment.md, D9.
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: read
-  packages: write 
 
+# Self-hosted Nx remote cache. RW token is only used on push to the default
+# branch; everything else (PRs, feature branches) gets the read-only token.
+env:
+  NX_SELF_HOSTED_REMOTE_CACHE_SERVER: ${{ secrets.NX_CACHE_SERVER }}
+  NX_SELF_HOSTED_REMOTE_CACHE_ACCESS_TOKEN: ${{ (github.event_name == 'push' && github.ref_name == github.event.repository.default_branch) && secrets.NX_CACHE_RW_TOKEN || secrets.NX_CACHE_RO_TOKEN }}
+
+# The jobs run in PARALLEL wherever nothing forces an order:
+#
+#   build ──────────────┐
+#   tests (test.yml) ───┼─► docker (×2, matrix) ─► deploy
+#                       └─► publish-libs
+#   tests ─► coverage
+#
+# Versioning is split around the tests: `build` PLANS the versions after the
+# library build, which stamps every package.json without tagging, so the demos
+# it builds next show the version that ships. `publish-libs` RELEASES that one
+# plan after the tests, so a tag always promises a tested commit.
+#
+# The publishing gate: nothing reaches npm or GHCR unless the tests passed. The
+# images are built from the very `dist` the build job produced, so what is
+# deployed is what was tested.
 jobs:
   build:
-
-    name: npm-publish
+    name: build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     permissions:
-      contents: write
+      contents: read
+      # Server-mode versioning: the plan step proves to the app which
+      # repository and workflow is asking. Without it the step warns and falls
+      # back to the local engine instead of failing.
+      id-token: write
+
+    outputs:
+      plan: ${{ steps.plan.outputs.plan }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup workspace
+        uses: ./.github/actions/setup
+
+      - name: Build libraries
+        # run-many so EVERY publishable lib lands in dist/libs/ for the publish
+        # action. The demos are left out: they build after the plan below.
+        run: npx nx run-many -t build --exclude=angular-demo,react-demo,vue-demo --configuration=production
+
+      # Decides every package's version from the built .d.ts files and stamps it
+      # into each package.json (source and dist), without tagging: the tags wait
+      # for the tests, in publish-libs' release step.
+      - name: Plan the package versions
+        id: plan
+        uses: MintPlayer/MintPlayer.Spark/apps/CodeCoverage/versioning-action@14900a6057ee305ac9b03690fcb2ff989452e2eb # versioning-v1.1.0
+        with:
+          phase: plan
+
+      - name: Build demos
+        # They read the stamped package.json, so they show the version that
+        # ships. --exclude-task-dependencies: stamping changed the libraries'
+        # inputs, and a plain build would rebuild every one of them.
+        run: npx nx run-many -t build --projects=angular-demo,react-demo,vue-demo --configuration=production --exclude-task-dependencies
+
+      - name: Check the demos carry their versions
+        run: node tools/scripts/check-demo-versions.mjs
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+
+  tests:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+
+  # A side job, NOT a publishing gate: publishing depends on the tests passing,
+  # never on the coverage service being up. A failed upload still turns the
+  # run red through the aggregator, it just cannot hold a deploy back.
+  coverage:
+    name: coverage
+    needs: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # rebase-lcov-paths.mjs imports only node: built-ins and a local helper,
+      # so Node itself is enough: no node_modules.
+      - name: Setup node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: coverage
+
+      # Vitest writes `SF:` paths relative to each project's own root, so
+      # `libs/frameworks/r-video-player/src/index.ts` is emitted as
+      # `src/index.ts` — a suffix that exists under every library in the
+      # workspace. The coverage service resolves report paths against
+      # `git ls-files` by longest suffix and drops anything ambiguous from the
+      # totals, silently. This rewrites them to workspace-relative and fails
+      # loudly if any path stops resolving. Jest already emits rooted paths;
+      # the script is idempotent, so it leaves those alone.
+      - name: Rebase coverage paths to workspace-relative
+        run: node tools/scripts/rebase-lcov-paths.mjs
+
+      - name: Upload coverage
+        uses: MintPlayer/MintPlayer.Spark/apps/CodeCoverage/action@coverage-upload-v1
+        with:
+          url: https://coverage.mintplayer.com
+          token: ${{ secrets.COVERAGE_TOKEN }}
+          # libs and tools only. The demo apps still run their tests, but their
+          # coverage is not a property of the published libraries — counting
+          # them lets a demo page move the number the ratchet gates on.
+          # `**` because libs nest unevenly — libs/video-player is one level
+          # deep, libs/platforms/* and libs/frameworks/* are two.
+          files: |
+            coverage/libs/**/lcov.info
+            coverage/tools/lcov.info
+          # With search on, a glob that matches nothing silently falls back to
+          # auto-detection and would upload stray unparsable reports.
+          disable-search: true
+          flags: unit
+          finish: true
+          fail-ci-if-error: false
+
+  # One leg per image, side by side. Each leg builds, pushes, attests and
+  # publishes only its own image, from the Dockerfile's `prebuilt` target,
+  # which copies the bundle from a named build context instead of building
+  # from source.
+  docker:
+    name: image (${{ matrix.label }})
+    needs: [build, tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
       id-token: write
       packages: write
       attestations: write
+      # attest-build-provenance also files an artifact-metadata storage record
+      # alongside the attestation itself; without this it warns and skips that
+      # half. The attestation is still created either way.
+      artifact-metadata: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Angular's application builder puts the client bundle in browser/.
+          - {
+              label: angular,
+              app: angular-demo,
+              bundle: dist/apps/angular-demo/browser,
+              suffix: -angular,
+            }
+          - {
+              label: react,
+              app: react-demo,
+              bundle: dist/apps/react-demo,
+              suffix: -react,
+            }
+
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}${{ matrix.suffix }}
+      # The build-record artifact each build-push step uploads is ~2 s per
+      # image that nothing reads.
+      DOCKER_BUILD_RECORD_UPLOAD: false
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v7
 
-    - name: Setup node
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        cache: 'npm'
+      - name: Download dist artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Authenticate with GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
 
-    - name: Build
-      run: npm run build -- --configuration=production
+      - name: Extract tags/labels
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          github-token: ${{ github.token }}
+          images: ${{ env.IMAGE }}
 
-    # run-many, not affected: a partial set reads as a coverage collapse on the
-    # default branch, and this is the run whose number becomes the headline.
-    - name: Test
-      run: npx nx run-many --target=test --all --coverage --watch=false --parallel=2 --output-style=stream
+      # Built into the local image store and pushed separately, so a failed push
+      # (GHCR's "unknown blob" race between legs) retries the push alone.
+      - name: Build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./apps/${{ matrix.app }}/Dockerfile
+          target: prebuilt
+          build-contexts: dist=${{ matrix.bundle }}
+          push: false
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
-    # Vitest writes `SF:` paths relative to each project's own root, so
-    # `libs/frameworks/r-video-player/src/index.ts` is emitted as
-    # `src/index.ts` — a suffix that exists under every library in the
-    # workspace. The coverage service resolves report paths against
-    # `git ls-files` by longest suffix and drops anything ambiguous from the
-    # totals, silently. This rewrites them to workspace-relative and fails
-    # loudly if any path stops resolving. Jest already emits rooted paths;
-    # the script is idempotent, so it leaves those alone.
-    - name: Rebase coverage paths to workspace-relative
-      run: node tools/scripts/rebase-lcov-paths.mjs
+      - name: Push
+        id: push
+        uses: ./.github/actions/docker-push
+        with:
+          tags: ${{ steps.meta.outputs.tags }}
 
-    - name: Upload coverage
-      uses: MintPlayer/MintPlayer.Spark/apps/CodeCoverage/action@coverage-upload-v1
-      with:
-        url: https://coverage.mintplayer.com
-        token: ${{ secrets.COVERAGE_TOKEN }}
-        # libs only. The demo apps still run their tests, but their coverage is
-        # not a property of the published libraries — counting them lets a demo
-        # page move the number the ratchet gates on.
-        # `**` because libs nest unevenly — libs/video-player is one level
-        # deep, libs/platforms/* and libs/frameworks/* are two.
-        files: coverage/libs/**/lcov.info
-        # With search on, a glob that matches nothing silently falls back to
-        # auto-detection and would upload stray unparsable reports.
-        disable-search: true
-        flags: unit
-        finish: true
-        # A coverage-service outage must never block the publish + deploy jobs
-        # that hang off this one.
-        fail-ci-if-error: false
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
 
-    - name: Version the packages
-      id: versioning
-      uses: MintPlayer/MintPlayer.Spark/apps/CodeCoverage/versioning-action@fc5aa28d12bea9a9c91afee290e13cf586184714 # versioning-v1
+      # GHCR packages default to private on first publish, and the VPS's
+      # `docker compose pull` then fails with 'denied'. PATCH is idempotent:
+      # an already-public package returns 204. A 403/404 is swallowed so a
+      # misconfigured token doesn't fail the leg.
+      - name: Make the image public
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGE: ${{ github.event.repository.name }}${{ matrix.suffix }}
+        run: |
+          gh api --method PATCH \
+            "/orgs/${{ github.repository_owner }}/packages/container/$PACKAGE" \
+            -f visibility=public 2>&1 || echo "  (skipped — already public, missing, or insufficient scope)"
 
-    ## ng-canvas-resizer
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/ng-canvas-resizer/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/ng-canvas-resizer/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## player-provider
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/player-provider/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/player-provider/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## player-progress
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/player-progress/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/player-progress/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## video-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/video-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/video-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## ng-video-player
-    - name: Push to NPM
-      id: publish_ng_video_player
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/frameworks/ng-video-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/frameworks/ng-video-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## r-video-player
-    - name: Push to NPM
-      id: publish_r_video_player
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/frameworks/r-video-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/frameworks/r-video-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## v-video-player
-    - name: Push to NPM
-      id: publish_v_video_player
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/frameworks/v-video-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/frameworks/v-video-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## facebook-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/facebook-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/facebook-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## mixcloud-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/mixcloud-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/mixcloud-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## dailymotion-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/dailymotion-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/dailymotion-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## soundcloud-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/soundcloud-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/soundcloud-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## spotify-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/spotify-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/spotify-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## streamable-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/streamable-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/streamable-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## twitch-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/twitch-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/twitch-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## vidyard-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/vidyard-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/vidyard-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## vimeo-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/vimeo-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/vimeo-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## wistia-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/wistia-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/wistia-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## youtube-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/youtube-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/youtube-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## file-player
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/file-player/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/platforms/file-player/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    ## playlist-controller
-    - name: Push to NPM
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/playlist-controller/package.json'
-        registry: 'https://registry.npmjs.org'
-        token: ${{ secrets.PUBLISH_TO_NPMJS }}
-        access: 'public'
-        provenance: true
-
-    - name: Push to Github
-      uses: JS-DevTools/npm-publish@v4
-      with:
-        package: 'dist/libs/playlist-controller/package.json'
-        registry: 'https://npm.pkg.github.com'
-        token: ${{ github.token }}
-        access: 'public'
-        provenance: true
-
-    # Publish to GitHub Container Registry
-    - name: Authenticate with GHCR
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ github.token }}
-
-    ## Angular app
-    - name: Extract tags/labels
-      id: meta-ghcr-angular
-      uses: docker/metadata-action@v5
-      with:
-        github-token: ${{ github.token }}
-        images: |
-          ghcr.io/${{ github.repository }}-angular
-
-    - name: Publish to Github Container Registry
-      id: push-ghcr-angular
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        file: ./apps/angular-demo/Dockerfile
-        push: true
-        tags: ${{ steps.meta-ghcr-angular.outputs.tags }}
-        labels: ${{ steps.meta-ghcr-angular.outputs.labels }}
-
-    - name: Generate artifact attestation
-      uses: actions/attest-build-provenance@v1
-      with:
-        subject-name: ghcr.io/${{ github.repository }}-angular
-        subject-digest: ${{ steps.push-ghcr-angular.outputs.digest }}
-        push-to-registry: true
-
-    ## React app
-    - name: Extract tags/labels
-      id: meta-ghcr-react
-      uses: docker/metadata-action@v5
-      with:
-        github-token: ${{ github.token }}
-        images: |
-          ghcr.io/${{ github.repository }}-react
-
-    - name: Publish to Github Container Registry
-      id: push-ghcr-react
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        file: ./apps/react-demo/Dockerfile
-        push: true
-        tags: ${{ steps.meta-ghcr-react.outputs.tags }}
-        labels: ${{ steps.meta-ghcr-react.outputs.labels }}
-
-    - name: Generate artifact attestation
-      uses: actions/attest-build-provenance@v1
-      with:
-        subject-name: ghcr.io/${{ github.repository }}-react
-        subject-digest: ${{ steps.push-ghcr-react.outputs.digest }}
-        push-to-registry: true
-
-  deploy:
+  # MintPlayer/github-actions/publish-npm-packages scans dist/libs recursively
+  # (libs nest one or two levels deep), topo-sorts the packages by their
+  # dependencies, and publishes each to every registry it's given, skipping a
+  # version that is already there.
+  publish-libs:
+    name: publish-libs
+    needs: [build, tests]
     runs-on: ubuntu-latest
-    needs: build
+    timeout-minutes: 15
+
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download dist artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist
+
+      # Tags exactly what `build` planned and stamps the checkout and dist again.
+      - name: Release the planned versions
+        uses: MintPlayer/MintPlayer.Spark/apps/CodeCoverage/versioning-action@14900a6057ee305ac9b03690fcb2ff989452e2eb # versioning-v1.1.0
+        with:
+          phase: release
+          plan: ${{ needs.build.outputs.plan }}
+
+      - name: Publish to NPM + GitHub Packages
+        # Pinned to b08fbdd (v1.1.0): the v3 tag predates this action.
+        uses: MintPlayer/github-actions/publish-npm-packages@b08fbddf0b285a8633ac138b89d79ceb8cc8c888
+        with:
+          folder: dist/libs
+          registries: |
+            [
+              { "url": "https://registry.npmjs.org", "token": "${{ secrets.PUBLISH_TO_NPMJS }}" },
+              { "url": "https://npm.pkg.github.com", "token": "${{ github.token }}" }
+            ]
+
+  # Needs the images only: it pulls them from GHCR and restarts compose. The
+  # npm packages have nothing to do with it.
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    needs: [docker]
     if: github.ref == 'refs/heads/master'
+    timeout-minutes: 10
 
     permissions:
       contents: read
@@ -534,7 +315,7 @@ jobs:
 
     steps:
       - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v1.2.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -564,11 +345,27 @@ jobs:
             # Pull latest image
             docker compose --env-file .env pull
 
-            # Stop and remove old containers
-            docker compose --env-file .env down
-
-            # Start new containers
-            docker compose --env-file .env up -d
+            # Recreate only the containers whose image changed. No `down` first:
+            # it stopped every container before the new ones could start, which
+            # was pure downtime. --remove-orphans still clears services renamed
+            # away in docker-compose.yml.
+            docker compose --env-file .env up -d --remove-orphans
 
             # Clean up old images
             docker image prune -f
+
+  # The single check that sums the run up. `if: always()` so it reports a
+  # failure instead of being skipped when a job it needs failed.
+  publish-master:
+    name: publish-master
+    if: always()
+    needs: [build, tests, coverage, docker, publish-libs, deploy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: All jobs passed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo '${{ toJSON(needs) }}'
+          exit 1

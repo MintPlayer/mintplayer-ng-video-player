@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
+import { VIDEO_PLAYER_VERSION } from './providers/video-player-version.provider';
 import { MockComponent, MockDirective } from 'ng-mocks';
 import { BsNavbarComponent, BsNavbarBrandComponent, BsNavbarContentDirective, BsNavbarDropdownComponent, BsNavbarItemComponent, BsNavbarNavComponent, BsNavbarTriggerDirective, BsExpandButtonDirective, DropdownToggleDirective, NavLinkDirective } from '@mintplayer/ng-bootstrap/navbar';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -41,7 +42,7 @@ describe('AppComponent', () => {
           { path: 'playlist', component: PlaylistMockComponent },
         ]),
         provideNoopAnimations(),
-        { provide: 'VIDEO_PLAYER_VERSION', useValue: '1.0.0' }
+        { provide: VIDEO_PLAYER_VERSION, useValue: '1.0.0' }
       ]
     }).compileComponents();
   });

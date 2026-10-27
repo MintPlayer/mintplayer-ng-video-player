@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
+import vVideoPlayerJson from '@mintplayer/v-video-player/package.json';
+import { displayVersion } from './display-version';
+
+const version = displayVersion(vVideoPlayerJson.version);
 </script>
 
 <template>
@@ -8,6 +12,10 @@ import { RouterLink, RouterView } from 'vue-router';
       <nav aria-label="Main navigation">
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <a class="github-link" href="https://github.com/MintPlayer/mintplayer-ng-video-player" title="@mintplayer/v-video-player on GitHub">
+          <span>{{ version }}</span>
+          <img src="/github.svg" alt="@mintplayer/v-video-player on GitHub" />
+        </a>
       </nav>
     </header>
     <RouterView />
@@ -45,6 +53,18 @@ import { RouterLink, RouterView } from 'vue-router';
         &.router-link-active,
         &:hover {
           color: #38bdf8;
+        }
+      }
+
+      .github-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-transform: none;
+
+        img {
+          height: 1.25rem;
+          filter: invert(1);
         }
       }
     }

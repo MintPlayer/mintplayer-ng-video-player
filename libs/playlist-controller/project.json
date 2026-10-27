@@ -7,18 +7,14 @@
     "version": {
       "currentVersionResolver": "git-tag",
       "preserveLocalDependencyProtocols": false,
-      "manifestRootsToUpdate": [
-        "dist/{projectRoot}"
-      ]
+      "manifestRootsToUpdate": ["dist/{projectRoot}"]
     }
   },
   "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{workspaceRoot}/dist/{projectRoot}",
         "main": "{projectRoot}/src/index.ts",
@@ -27,24 +23,11 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
       "options": {
-        "codeCoverage": true,
-        "coverageReporters": [
-          "lcovonly"
-        ],
-        "coverageDirectory": "coverage/{projectRoot}",
-        "jestConfig": "{projectRoot}/jest.config.ts"
+        "coverageReporters": ["lcovonly"],
+        "coverageDirectory": "../../coverage/{projectRoot}",
+        "coverage": true
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ]
     }
   }
 }
