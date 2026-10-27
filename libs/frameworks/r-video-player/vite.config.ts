@@ -1,32 +1,33 @@
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
+import {
+  copyPackageFiles,
+  workspaceAliases,
+} from '../../../tools/vite/vite-helpers';
 import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
 import * as path from 'path';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+
+const outDir = '../../../dist/libs/frameworks/r-video-player';
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/libs/frameworks/r-video-player',
+  cacheDir: '../../../node_modules/.vite/libs/frameworks/r-video-player',
 
   plugins: [
     react(),
-    nxViteTsPaths(),
     dts({
       entryRoot: 'src',
       tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
     }),
+    copyPackageFiles(__dirname, outDir),
   ],
-
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [ nxViteTsPaths() ],
-  // },
+  resolve: { alias: workspaceAliases() },
 
   // Configuration for building your library.
   // See: https://vitejs.dev/guide/build.html#library-mode
   build: {
-    outDir: '../../dist/libs/frameworks/r-video-player',
+    outDir,
     emptyOutDir: true,
     reportCompressedSize: true,
     commonjsOptions: {
@@ -41,9 +42,14 @@ export default defineConfig({
       // Don't forget to update your package.json as well.
       formats: ['es', 'cjs'],
     },
-    rollupOptions: {
+    rolldownOptions: {
       // External packages that should not be bundled into your library.
-      external: ['react', 'react-dom', 'react/jsx-runtime', '@vidyard/embed-code'],
+      external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        '@vidyard/embed-code',
+      ],
     },
   },
 
@@ -64,7 +70,6 @@ export default defineConfig({
       enabled: true,
       // Explicit, so a source file that no spec imports is reported at 0%
       // rather than silently dropped from the denominator.
-      all: true,
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/**/*.{spec,test}.{ts,tsx}'],
     },

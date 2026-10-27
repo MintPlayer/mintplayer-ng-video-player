@@ -1,8 +1,12 @@
 /// <reference types='vitest' />
 import type { UserConfigFn } from 'vite';
+import {
+  copyPackageFiles,
+  workspaceAliases,
+} from '../../../tools/vite/vite-helpers';
 import * as path from 'path';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
+
+const outDir = '../../../dist/libs/frameworks/v-video-player';
 
 const config: UserConfigFn = async () => {
   const { default: vue } = await import('@vitejs/plugin-vue');
@@ -10,24 +14,20 @@ const config: UserConfigFn = async () => {
 
   return {
     root: __dirname,
-    cacheDir: '../../node_modules/.vite/libs/frameworks/v-video-player',
+    cacheDir: '../../../node_modules/.vite/libs/frameworks/v-video-player',
     plugins: [
       vue(),
-      nxViteTsPaths(),
-      nxCopyAssetsPlugin(['*.md']),
       dts({
         entryRoot: 'src',
         tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
       }),
+      copyPackageFiles(__dirname, outDir),
     ],
-    // Uncomment this if you are using workers.
-    // worker: {
-    //  plugins: [ nxViteTsPaths() ],
-    // },
+    resolve: { alias: workspaceAliases() },
     // Configuration for building your library.
     // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
-      outDir: '../../dist/libs/frameworks/v-video-player',
+      outDir,
       emptyOutDir: true,
       reportCompressedSize: true,
       commonjsOptions: {
@@ -42,7 +42,7 @@ const config: UserConfigFn = async () => {
         // Don't forget to update your package.json as well.
         formats: ['es', 'cjs'],
       },
-      rollupOptions: {
+      rolldownOptions: {
         // External packages that should not be bundled into your library.
         external: ['vue'],
       },
@@ -67,7 +67,6 @@ const config: UserConfigFn = async () => {
         enabled: true,
         // Explicit, so a source file that no spec imports is reported at 0%
         // rather than silently dropped from the denominator.
-        all: true,
         include: ['src/**/*.{ts,vue}'],
         exclude: ['src/**/*.{spec,test}.ts'],
       },

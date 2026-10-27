@@ -9,6 +9,7 @@
     "build": {
       "executor": "@angular-devkit/build-angular:application",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/angular-demo",
         "index": "apps/angular-demo/src/index.html",
@@ -63,11 +64,12 @@
           "sourceMap": true,
           "namedChunks": true
         }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "defaultConfiguration": "development",
+      "continuous": true,
       "configurations": {
         "production": {
           "buildTarget": "angular-demo:build:production"
@@ -76,8 +78,9 @@
           "buildTarget": "angular-demo:build:development"
         }
       },
-      "defaultConfiguration": "development",
-      "continuous": true
+      "readyWhen": {
+        "signal": true
+      }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -85,18 +88,12 @@
         "buildTarget": "angular-demo:build"
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
     "test": {
-      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/angular-demo"],
       "options": {
-        "codeCoverage": true,
         "coverageReporters": ["lcovonly"],
-        "coverageDirectory": "coverage/apps/angular-demo",
-        "jestConfig": "apps/angular-demo/jest.config.ts",
-        "tsConfig": "apps/angular-demo/tsconfig.spec.json"
+        "coverageDirectory": "../../coverage/apps/angular-demo",
+        "coverage": true
       }
     }
   }
