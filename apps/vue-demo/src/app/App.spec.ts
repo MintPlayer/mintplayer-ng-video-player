@@ -5,14 +5,14 @@ import App from './App.vue';
 
 describe('App', () => {
   it('renders properly', async () => {
-    // Stub VVideoPlayer: mounting the real player kicks off provideVideoApis'
+    // Stub VueVideoPlayer: mounting the real player kicks off provideVideoApis'
     // lazy `import('../api')` for every platform, which settle after the test
     // tears down and surface as an EnvironmentTeardownError. The heading lives
     // in HomeView alongside the player, so stubbing it keeps this assertion.
     const wrapper = mount(App, {
-      global: { plugins: [router], stubs: { VVideoPlayer: true } },
+      global: { plugins: [router], stubs: { VueVideoPlayer: true } },
     });
     await router.isReady();
-    expect(wrapper.text()).toContain('@mintplayer/v-video-player');
+    expect(wrapper.text()).toContain('@mintplayer/vue-video-player');
   });
 });

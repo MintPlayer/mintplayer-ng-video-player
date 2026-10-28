@@ -53,8 +53,8 @@
       "@mintplayer/r-video-player/package.json": [
         "./libs/frameworks/r-video-player/package.json"
       ],
-      "@mintplayer/v-video-player/package.json": [
-        "./libs/frameworks/v-video-player/package.json"
+      "@mintplayer/vue-video-player/package.json": [
+        "./libs/frameworks/vue-video-player/package.json"
       ],
       "@mintplayer/player-progress": [
         "./libs/player-progress/src/index.ts"
@@ -92,8 +92,8 @@
       "@mintplayer/twitch-player/*": [
         "./libs/platforms/twitch-player/*/index.ts"
       ],
-      "@mintplayer/v-video-player": [
-        "./libs/frameworks/v-video-player/src/index.ts"
+      "@mintplayer/vue-video-player": [
+        "./libs/frameworks/vue-video-player/src/index.ts"
       ],
       "@mintplayer/video-player": [
         "./libs/video-player/src/index.ts"

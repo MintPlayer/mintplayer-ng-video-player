@@ -183,7 +183,7 @@
         "apps/vue-demo-e2e/**/*",
         "libs/frameworks/ng-video-player/**/*",
         "libs/frameworks/r-video-player/**/*",
-        "libs/frameworks/v-video-player/**/*",
+        "libs/frameworks/vue-video-player/**/*",
         "libs/ng-canvas-resizer/**/*",
         "libs/platforms/dailymotion-player/**/*",
         "libs/platforms/facebook-player/**/*",
@@ -259,7 +259,7 @@
       "include": [
         "apps/vue-demo/**/*",
         "libs/frameworks/r-video-player/**/*",
-        "libs/frameworks/v-video-player/**/*",
+        "libs/frameworks/vue-video-player/**/*",
         "tools/**/*"
       ]
     },

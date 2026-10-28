@@ -41,7 +41,7 @@ export const DEMOS = [
   },
   {
     name: 'vue-demo',
-    packageJson: 'libs/frameworks/v-video-player/package.json',
+    packageJson: 'libs/frameworks/vue-video-player/package.json',
     bundles: ['dist/apps/vue-demo'],
   },
 ];

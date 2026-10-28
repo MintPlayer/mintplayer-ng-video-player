@@ -1,0 +1,16 @@
+{
+  "name": "vue-video-player",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/frameworks/vue-video-player/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "options": {
+        "command": "vite build --mode {args.mode}",
+        "forwardAllArgs": false,
+        "outputPath": "{workspaceRoot}/dist/{projectRoot}"
+      }
+    }
+  }
+}

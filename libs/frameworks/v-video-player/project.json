@@ -1,7 +1,0 @@
-{
-  "name": "v-video-player",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/frameworks/v-video-player/src",
-  "projectType": "library",
-  "tags": []
-}
