@@ -3,5 +3,14 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/frameworks/r-video-player/src",
   "projectType": "library",
-  "tags": []
+  "tags": [],
+  "targets": {
+    "build": {
+      "options": {
+        "command": "vite build --mode {args.mode}",
+        "forwardAllArgs": false,
+        "outputPath": "{workspaceRoot}/dist/{projectRoot}"
+      }
+    }
+  }
 }

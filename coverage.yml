@@ -8,5 +8,7 @@ versioning:
 #   groups:                         # packages that always share one version
 #     - name: core
 #       packages: [Acme.Core, Acme.Core.*]
-#   packages:
+  packages:
 #     Acme.Generators: { anchor: free }   # free, or the framework package whose major it follows
+    # Published as 18.x long before versioning; anchoring to vue (3.x) would lower the major.
+    "@mintplayer/v-video-player": { anchor: free }
