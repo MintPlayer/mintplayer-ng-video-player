@@ -121,8 +121,8 @@ vi.mock('@mintplayer/wistia-player', () => ({
   wistiaPlugin: () => Promise.resolve({ id: 'wistia' }),
 }));
 
-import VVideoPlayer from './v-video-player.vue';
-import type { VVideoPlayerProps } from './types';
+import VueVideoPlayer from './vue-video-player.vue';
+import type { VueVideoPlayerProps } from './types';
 
 const expectedApiIds = [
   'youtube',
@@ -140,13 +140,13 @@ const expectedApiIds = [
 ];
 
 /** Mounts the component and waits for the async onMounted work to finish. */
-async function mountPlayer(props: Partial<VVideoPlayerProps> = {}) {
-  const wrapper = mount(VVideoPlayer, { props });
+async function mountPlayer(props: Partial<VueVideoPlayerProps> = {}) {
+  const wrapper = mount(VueVideoPlayer, { props });
   await flushPromises();
   return { wrapper, player: FakeVideoPlayer.instances[0] };
 }
 
-describe('VVideoPlayer', () => {
+describe('VueVideoPlayer', () => {
   beforeEach(() => {
     FakeVideoPlayer.instances.length = 0;
   });
@@ -154,7 +154,7 @@ describe('VVideoPlayer', () => {
   it('renders the element that will host the player inside its wrapper', async () => {
     const { wrapper } = await mountPlayer();
 
-    const host = wrapper.find('.v-video-player > div');
+    const host = wrapper.find('.vue-video-player > div');
     expect(host.exists()).toBe(true);
     expect(host.element.children).toHaveLength(0);
   });
@@ -171,7 +171,7 @@ describe('VVideoPlayer', () => {
   it('hosts the player in the wrapped container element', async () => {
     const { wrapper, player } = await mountPlayer();
 
-    expect(player.host).toBe(wrapper.find('.v-video-player > div').element);
+    expect(player.host).toBe(wrapper.find('.vue-video-player > div').element);
   });
 
   it('does not construct a second player when props change', async () => {
@@ -260,7 +260,7 @@ describe('VVideoPlayer', () => {
   });
 
   it('ignores prop changes that arrive before the player is constructed', async () => {
-    const wrapper = mount(VVideoPlayer, {
+    const wrapper = mount(VueVideoPlayer, {
       props: { url: 'https://example.com/a', volume: 10 },
     });
 

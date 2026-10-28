@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { VVideoPlayer } from '@mintplayer/v-video-player';
+import { VueVideoPlayer } from '@mintplayer/vue-video-player';
 import { EPlayerState } from '@mintplayer/player-provider';
 
 const videos = [
@@ -62,7 +62,7 @@ const onSelectVideo = (video: string) => {
 
 <template>
   <main class="home-view">
-    <h1 class="title">@mintplayer/v-video-player</h1>
+    <h1 class="title">@mintplayer/vue-video-player</h1>
     <div class="layout">
       <aside class="video-list" aria-label="Available videos">
         <h2 class="list-title">Pick a video</h2>
@@ -80,7 +80,7 @@ const onSelectVideo = (video: string) => {
         </ul>
       </aside>
       <section class="player-panel">
-        <VVideoPlayer
+        <VueVideoPlayer
           class="player"
           :url="url"
           v-model:volume="volume"

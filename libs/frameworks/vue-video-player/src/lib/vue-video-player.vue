@@ -1,5 +1,5 @@
 <template>
-  <div class="v-video-player">
+  <div class="vue-video-player">
     <div ref="container"></div>
   </div>
 </template>
@@ -20,15 +20,15 @@ import { vimeoPlugin } from '@mintplayer/vimeo-player';
 import { wistiaPlugin } from '@mintplayer/wistia-player';
 import { youtubePlugin } from '@mintplayer/youtube-player';
 import { EPlayerState } from '@mintplayer/player-provider';
-import type { VVideoPlayerEmits, VVideoPlayerProps } from './types';
+import type { VueVideoPlayerEmits, VueVideoPlayerProps } from './types';
 
-const props = withDefaults(defineProps<VVideoPlayerProps>(), {
+const props = withDefaults(defineProps<VueVideoPlayerProps>(), {
   volume: 0,
   mute: false,
   playerState: EPlayerState.unstarted,
 });
 
-const emit = defineEmits<VVideoPlayerEmits>();
+const emit = defineEmits<VueVideoPlayerEmits>();
 
 const container = ref<HTMLDivElement | null>(null);
 const player = ref<VideoPlayer>();
@@ -104,7 +104,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="scss">
-.v-video-player {
+.vue-video-player {
   display: flex;
   justify-content: center;
   align-items: center;

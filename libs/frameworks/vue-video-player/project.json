@@ -1,7 +1,7 @@
 {
-  "name": "v-video-player",
+  "name": "vue-video-player",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/frameworks/v-video-player/src",
+  "sourceRoot": "libs/frameworks/vue-video-player/src",
   "projectType": "library",
   "tags": [],
   "targets": {

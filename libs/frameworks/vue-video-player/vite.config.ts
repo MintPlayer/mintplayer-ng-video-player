@@ -6,7 +6,7 @@ import {
 } from '../../../tools/vite/vite-helpers';
 import * as path from 'path';
 
-const outDir = '../../../dist/libs/frameworks/v-video-player';
+const outDir = '../../../dist/libs/frameworks/vue-video-player';
 
 const config: UserConfigFn = async () => {
   const { default: vue } = await import('@vitejs/plugin-vue');
@@ -14,7 +14,7 @@ const config: UserConfigFn = async () => {
 
   return {
     root: __dirname,
-    cacheDir: '../../../node_modules/.vite/libs/frameworks/v-video-player',
+    cacheDir: '../../../node_modules/.vite/libs/frameworks/vue-video-player',
     plugins: [
       vue(),
       dts({
@@ -36,7 +36,7 @@ const config: UserConfigFn = async () => {
       lib: {
         // Could also be a dictionary or array of multiple entry points.
         entry: 'src/index.ts',
-        name: 'mintplayer-v-video-player',
+        name: 'mintplayer-vue-video-player',
         fileName: 'index',
         // Change this to the formats you want to support.
         // Don't forget to update your package.json as well.
@@ -60,7 +60,7 @@ const config: UserConfigFn = async () => {
         // it. The path has to mirror the project path under the workspace
         // coverage/ dir — that mapping is what tools/scripts/rebase-lcov-paths.mjs
         // uses to root the SF: paths, and what the workflow globs on.
-        reportsDirectory: '../../../coverage/libs/frameworks/v-video-player',
+        reportsDirectory: '../../../coverage/libs/frameworks/vue-video-player',
         provider: 'v8' as const,
         reporter: ['lcovonly', 'text-summary'],
         // Always on. The report is a CI artefact, not an opt-in.
