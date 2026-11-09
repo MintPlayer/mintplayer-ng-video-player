@@ -1,0 +1,62 @@
+name: nx-migrate
+
+# MintPlayer CodeCoverage dependency updates: the Nx MIGRATE hook (docs/code-coverage/
+# dependency-updates-PRD.md R9, R18, R19, S17). Dispatched only for an APPROVED over-threshold group, after
+# its apply, on a work ref = expected_sha + the applied group. It runs
+#   nx migrate <to> --from=<pkg@from,...> --include=all --agentic=false   (--from: nx#23505, S17)
+#   install with scripts off, nx migrate --run-migrations, relock
+# and uploads `migrate-result.json` (the completion marker, written last, listing the extra bumps that
+# --include=all brought, R19) + `migrate.patch`.
+#
+# Migrations execute package code by design (S17). So: `contents: read`, NO secrets, no `id-token`,
+# `persist-credentials: false`. A failing step ("Run halted at migration 3 of 7") fails the run and nothing
+# is uploaded (`if: success()`): the bot requires conclusion == success AND the marker, else it drops the
+# group. The resulting PR never auto-merges and is marked "contains code migrations".
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_sha:
+        description: The work-ref commit holding the applied group; the patch is a diff against it.
+        required: true
+      packages:
+        description: 'JSON array of {"name","from","to"}, e.g. [{"name":"nx","from":"22.7.12","to":"23.3.0"},{"name":"@nx/js","from":"22.7.12","to":"23.3.0"}]'
+        required: true
+      run_id:
+        description: The bot's id for this run (artifact name and run name).
+        required: true
+
+run-name: 'nx migrate (${{ inputs.run_id }})'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-migrate
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.base_sha }}
+          persist-credentials: false
+
+      - id: migrate
+        uses: MintPlayer/MintPlayer.Spark/apps/CodeCoverage/dependency-action@5c992693d01ba9e70eb355df3f2c4979057b4108 # dependency-update-v1
+        with:
+          mode: migrate
+          migrate-tool: nx
+          migrate-packages: ${{ inputs.packages }}
+          base-sha: ${{ inputs.base_sha }}
+
+      - uses: actions/upload-artifact@v7
+        if: success()
+        with:
+          name: dependency-migrate-${{ inputs.run_id }}
+          path: ${{ steps.migrate.outputs.output-dir }}
+          if-no-files-found: error
+          retention-days: 3
