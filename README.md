@@ -127,6 +127,20 @@ when the listener changes them in that platform's own controls. So bind them to 
 listener to hear (for example `volume = 50`), not to `0`. Platforms that can't change the volume or
 mute (Spotify; mute on Mixcloud and Vidyard) skip the setting, and the next platform that can gets it.
 
+### Player state
+
+`playerState` is two-way bindable. Set it to `playing` or `paused` to command the player; the player
+reports `unstarted`, `playing`, `paused` and `ended` back. A reported value is never written back into the
+player, so a playlist can bind `[(playerState)]` and load the next medium on `ended` without the echo
+stopping it. Each new medium starts with `unstarted`, so its `playing` is always reported, even when the
+previous medium was playing too.
+
+### Signals and zoneless apps
+
+The component's bindings are signal-based (`input()`, `model()`, `output()`), and it doesn't need zone.js.
+Templates bind them as before. Code that reads the component directly calls them: `player.volume()`,
+`player.playerState()`. `volume` and `mute` are `undefined` until the app or the player sets them.
+
 ## Components
 All components are showcased in the angular app included in the project. You can simply run
 

@@ -35,6 +35,7 @@ export class VideoPlayer {
       .pipe(takeUntil(this.destroyed$))
       .subscribe(([videoRequest, host]) => {
         if (videoRequest) {
+          this.startMedium();
           videoRequest.api.loadApi().then(() => {
             if ((videoRequest.api.id === this.playerInfo?.platformId) && (videoRequest.api.canReusePlayer !== false)) {
               this.loadAndApplySettings(this.playerInfo.adapter, videoRequest.id);
@@ -55,7 +56,8 @@ export class VideoPlayer {
                   adapter: adapter,
                 };
 
-                adapter.onStateChange = (state) => this.playerStateObserver$.next(state);
+                // Tagged with the medium it was reported for, read when the report is made.
+                adapter.onStateChange = (state) => this.playerStateObserver$.next({ state, medium: this.medium });
                 adapter.onMuteChange = (mute) => this.muteObserver$.next(mute);
                 adapter.onVolumeChange = (volume) => this.volumeObserver$.next(volume);
                 adapter.onCurrentTimeChange = (progress) => this.currentTimeObserver$.next(progress);
@@ -96,8 +98,13 @@ export class VideoPlayer {
       .pipe(debounceTime(20), takeUntil(this.destroyed$))
       .subscribe(mute => this.onMuteReport(mute));
     this.playerStateObserver$
-      .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
-      .subscribe(newPlayerState => this.invokeEvent('stateChange', newPlayerState));
+      .pipe(debounceTime(20), takeUntil(this.destroyed$))
+      .subscribe(report => {
+        // A report still in the debounce when the next medium started belongs to the previous one.
+        if (report.medium === this.medium) {
+          this.emitState(report.state);
+        }
+      });
     this.pipObserver$
       .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
       .subscribe(isPip => this.invokeEvent('isPipChange', this._isPip = isPip));
@@ -181,7 +188,7 @@ export class VideoPlayer {
   private currentTimeObserver$ = new Subject<number>();
   private durationObserver$ = new Subject<number>();
   private progressObserver$: Observable<PlayerProgress>;
-  private playerStateObserver$ = new Subject<EPlayerState>();
+  private playerStateObserver$ = new Subject<{ state: EPlayerState, medium: number }>();
   private pipObserver$ = new Subject<boolean>();
   private fullscreenObserver$ = new Subject<boolean>();
   //#endregion
@@ -213,6 +220,28 @@ export class VideoPlayer {
   //#region playerState
   set playerState(value: EPlayerState) {
     this.playerInfo?.adapter.setPlayerState(value);
+  }
+
+  /** Counts the media loaded so far; a state report carries the count it was made under. */
+  private medium = 0;
+  /** The last state emitted as `stateChange`. Reset per medium, so a repeat from the next medium gets through (#107). */
+  private lastState: EPlayerState | undefined = undefined;
+
+  /**
+   * A new medium starts a fresh state sequence: emit `unstarted` right away, not through the
+   * debounce, where the medium's first report would swallow it (spike S3 in
+   * docs/prd/signals-and-state-per-medium.md).
+   */
+  private startMedium() {
+    this.medium++;
+    this.emitState(EPlayerState.unstarted);
+  }
+
+  private emitState(state: EPlayerState) {
+    if (state !== this.lastState) {
+      this.lastState = state;
+      this.invokeEvent('stateChange', state);
+    }
   }
   //#endregion
   //#region title

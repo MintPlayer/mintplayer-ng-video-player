@@ -4,9 +4,14 @@
     <div [xl]="9" class="text-center">
       <!-- <video-player [width]="400" [height]="300" (playerStateChange)="onPlayerStateChange($event)"
     (progressChange)="onProgressChange($event)" #player></video-player> -->
-    <video-player [width]="400" [height]="300" (playerStateChange)="onPlayerStateChange($event)" #player></video-player>
+    <video-player [width]="400" [height]="300" [(playerState)]="playerState"></video-player>
     <div class="d-block">
       <button class="float-start" [color]="colors.secondary" (click)="onPrevious()">Previous</button>
+      @if (playerState() === playerStates.playing) {
+        <button [color]="colors.primary" (click)="pause()">Pause</button>
+      } @else {
+        <button [color]="colors.primary" (click)="play()">Play</button>
+      }
       <button class="float-end" [color]="colors.secondary" (click)="onNext()">Next</button>
     </div>
   </div>

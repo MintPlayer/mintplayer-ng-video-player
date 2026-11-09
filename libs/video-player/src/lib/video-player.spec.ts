@@ -475,6 +475,128 @@ describe('VideoPlayer', () => {
     });
   });
 
+  describe('player state per medium (#107)', () => {
+    function recordStates(player: VideoPlayer) {
+      const states: EPlayerState[] = [];
+      player.on('stateChange', (s) => states.push(s));
+      return states;
+    }
+
+    it('reports the next medium playing on a reused adapter after a playing one', async () => {
+      const api = fakeApi();
+      const player = new VideoPlayer([api.service], host);
+      const states = recordStates(player);
+      player.url = 'https://fake/abc';
+      await settle();
+      api.adapters[0].onStateChange(EPlayerState.playing);
+      await settle();
+
+      player.url = 'https://fake/def';
+      await settle();
+      // The SoundCloud adapter reports nothing on a load, only `playing` once it plays.
+      api.adapters[0].onStateChange(EPlayerState.playing);
+      await settle();
+
+      expect(api.createPlayerCalls).toHaveLength(1);
+      expect(states).toEqual([
+        EPlayerState.unstarted,
+        EPlayerState.playing,
+        EPlayerState.unstarted,
+        EPlayerState.playing,
+      ]);
+      player.destroy();
+    });
+
+    it('reports the next medium playing on another platform after a playing one', async () => {
+      const first = fakeApi('first');
+      const second = fakeApi('second');
+      second.service.urlRegexes = [/https:\/\/other\/(?<id>\w+)/];
+      const player = new VideoPlayer([first.service, second.service], host);
+      const states = recordStates(player);
+      player.url = 'https://fake/abc';
+      await settle();
+      first.adapters[0].onStateChange(EPlayerState.playing);
+      await settle();
+
+      player.url = 'https://other/def';
+      await settle();
+      second.adapters[0].onStateChange(EPlayerState.playing);
+      await settle();
+
+      expect(states).toEqual([
+        EPlayerState.unstarted,
+        EPlayerState.playing,
+        EPlayerState.unstarted,
+        EPlayerState.playing,
+      ]);
+      player.destroy();
+    });
+
+    it('keeps the reset when the next medium reports playing within the debounce', async () => {
+      const api = fakeApi();
+      const player = new VideoPlayer([api.service], host);
+      const states = recordStates(player);
+      player.url = 'https://fake/abc';
+      await settle();
+      api.adapters[0].onStateChange(EPlayerState.playing);
+      await settle();
+
+      player.url = 'https://fake/def';
+      // Past the url debounce, so the load has started, then report straight away.
+      await jest.advanceTimersByTimeAsync(25);
+      api.adapters[0].onStateChange(EPlayerState.playing);
+      await settle();
+
+      expect(states).toEqual([
+        EPlayerState.unstarted,
+        EPlayerState.playing,
+        EPlayerState.unstarted,
+        EPlayerState.playing,
+      ]);
+      player.destroy();
+    });
+
+    it("does not repeat the reset for an adapter that reports its own unstarted", async () => {
+      const api = fakeApi();
+      const player = new VideoPlayer([api.service], host);
+      const states = recordStates(player);
+      player.url = 'https://fake/abc';
+      await settle();
+
+      // YouTube and Vimeo report `unstarted` themselves when they load.
+      api.adapters[0].onStateChange(EPlayerState.unstarted);
+      await settle();
+      api.adapters[0].onStateChange(EPlayerState.playing);
+      await settle();
+
+      expect(states).toEqual([EPlayerState.unstarted, EPlayerState.playing]);
+      player.destroy();
+    });
+
+    it("drops the previous medium's report that is still in the debounce", async () => {
+      const api = fakeApi();
+      const player = new VideoPlayer([api.service], host);
+      const states = recordStates(player);
+      player.url = 'https://fake/abc';
+      await settle();
+      api.adapters[0].onStateChange(EPlayerState.playing);
+      await settle();
+
+      player.url = 'https://fake/def';
+      await jest.advanceTimersByTimeAsync(19);
+      // Reported for abc, a moment before def starts loading.
+      api.adapters[0].onStateChange(EPlayerState.paused);
+      await settle();
+
+      expect(states).toEqual([
+        EPlayerState.unstarted,
+        EPlayerState.playing,
+        EPlayerState.unstarted,
+      ]);
+      player.destroy();
+    });
+  });
+
   describe('commands', () => {
     it('resizes the live player', async () => {
       const api = fakeApi();
