@@ -1,6 +1,6 @@
 import { BehaviorSubject, Observable, Subject, combineLatest, debounceTime, distinctUntilChanged, filter, map, takeUntil } from "rxjs";
 import { PlayerProgress } from "@mintplayer/player-progress";
-import { EPlayerState, IApiService, PlayerAdapter } from "@mintplayer/player-provider";
+import { ECapability, EPlayerState, IApiService, PlayerAdapter } from "@mintplayer/player-provider";
 import { findApis } from "./player-type-finder";
 import { VideoRequest } from "./video-request";
 import { VideoEventMap } from "./event-map";
@@ -37,7 +37,7 @@ export class VideoPlayer {
         if (videoRequest) {
           videoRequest.api.loadApi().then(() => {
             if ((videoRequest.api.id === this.playerInfo?.platformId) && (videoRequest.api.canReusePlayer !== false)) {
-              this.playerInfo.adapter.loadVideoById(videoRequest.id);
+              this.loadAndApplySettings(this.playerInfo.adapter, videoRequest.id);
             } else {
               this.playerInfo?.adapter?.destroy();
               this.setHtml(videoRequest, host!);
@@ -64,10 +64,11 @@ export class VideoPlayer {
                 adapter.onFullscreenChange = (isFullscreen) => this.fullscreenObserver$.next(isFullscreen);
                 this.invokeEvent('capabilitiesChange', adapter.capabilities);
               }).then(() => {
-                if (videoRequest !== null) {
-                  if (typeof videoRequest.id !== 'undefined') {
-                    this.playerInfo?.adapter.loadVideoById(videoRequest.id);
-                  }
+                const adapter = this.playerInfo?.adapter;
+                if (adapter && (typeof videoRequest.id !== 'undefined')) {
+                  this.loadAndApplySettings(adapter, videoRequest.id);
+                } else if (adapter) {
+                  this.applySettings(adapter);
                 }
               });
 
@@ -86,12 +87,14 @@ export class VideoPlayer {
       });
 
     // TODO: missing zone.emit from angular
+    // Volume and mute are the listener's settings, owned here (#105). An adapter's
+    // report only replaces them outside the settle window; see onVolumeReport.
     this.volumeObserver$
-      .pipe(debounceTime(20), distinctUntilChanged(), filter(volume => volume !== null), takeUntil(this.destroyed$))
-      .subscribe(newVolume => this.invokeEvent('volumeChange', this._volume = newVolume));
+      .pipe(debounceTime(20), takeUntil(this.destroyed$))
+      .subscribe(volume => this.onVolumeReport(volume));
     this.muteObserver$
-      .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
-      .subscribe(newMute => this.invokeEvent('muteChange', this._mute = newMute));
+      .pipe(debounceTime(20), takeUntil(this.destroyed$))
+      .subscribe(mute => this.onMuteReport(mute));
     this.playerStateObserver$
       .pipe(debounceTime(20), distinctUntilChanged(), takeUntil(this.destroyed$))
       .subscribe(newPlayerState => this.invokeEvent('stateChange', newPlayerState));
@@ -224,24 +227,138 @@ export class VideoPlayer {
     });
   }
   //#endregion
-  //#region volume
-  private _volume = 0;
+  //#region volume and mute
+  /**
+   * How long after volume and mute were pushed to an adapter a contradicting
+   * report is still taken as the platform's own default or load reset, and
+   * answered by re-applying, rather than as the listener using the platform's UI.
+   * Sized by spike S3 in docs/prd/keep-volume-and-mute-across-media.md.
+   */
+  public static readonly SETTLE_MS = 2000;
+  private static readonly REAPPLY_INTERVAL_MS = 250;
+
+  /** The listener's settings. Undefined until set by the consumer or first reported by a platform. */
+  private desiredVolume: number | undefined = undefined;
+  private desiredMute: boolean | undefined = undefined;
+  private settleUntil = 0;
+  private lastReapply = 0;
+
   get volume() {
-    return this._volume;
+    return this.desiredVolume ?? 0;
   }
   set volume(value: number) {
-    this._volume = value;
-    this.playerInfo?.adapter.setVolume(value);
+    if ((typeof value !== 'number') || !Number.isFinite(value)) {
+      return;
+    }
+    this.desiredVolume = value;
+    const adapter = this.playerInfo?.adapter;
+    if (adapter && this.can(adapter, ECapability.volume)) {
+      this.openSettleWindow();
+      this.call(() => adapter.setVolume(value));
+    }
   }
-  //#endregion
-  //#region mute
-  private _mute = false;
+
   get mute() {
-    return this._mute;
+    return this.desiredMute ?? false;
   }
   set mute(value: boolean) {
-    this._mute = value;
-    this.playerInfo?.adapter.setMute(value);
+    if (typeof value !== 'boolean') {
+      return;
+    }
+    this.desiredMute = value;
+    const adapter = this.playerInfo?.adapter;
+    if (adapter && this.can(adapter, ECapability.mute)) {
+      this.openSettleWindow();
+      this.call(() => adapter.setMute(value));
+    }
+  }
+
+  private loadAndApplySettings(adapter: PlayerAdapter, videoId: string) {
+    try {
+      adapter.loadVideoById(videoId);
+    } finally {
+      this.applySettings(adapter);
+    }
+  }
+
+  /** Push the listener's settings to the adapter, as far as its capabilities allow. */
+  private applySettings(adapter: PlayerAdapter, openWindow = true) {
+    if (openWindow) {
+      this.openSettleWindow();
+    }
+    const canMute = this.can(adapter, ECapability.mute);
+    // Mute first, so the medium never starts audible.
+    if (canMute && (this.desiredMute === true)) {
+      this.call(() => adapter.setMute(true));
+    }
+    if ((this.desiredVolume !== undefined) && this.can(adapter, ECapability.volume)) {
+      const volume = this.desiredVolume;
+      this.call(() => adapter.setVolume(volume));
+    }
+    if (canMute && (this.desiredMute === false)) {
+      this.call(() => adapter.setMute(false));
+    }
+  }
+
+  private onVolumeReport(volume: number) {
+    if ((typeof volume !== 'number') || !Number.isFinite(volume)) {
+      return; // Platforms report junk (undefined, null) while loading.
+    }
+    if ((this.desiredVolume !== undefined) && (Math.abs(this.desiredVolume - volume) < 0.5)) {
+      return;
+    }
+    if ((this.desiredVolume !== undefined) && this.isSettling()) {
+      this.reapply();
+      return;
+    }
+    this.desiredVolume = volume;
+    this.invokeEvent('volumeChange', volume);
+  }
+
+  private onMuteReport(mute: boolean) {
+    if (typeof mute !== 'boolean') {
+      return;
+    }
+    if (this.desiredMute === mute) {
+      return;
+    }
+    if ((this.desiredMute !== undefined) && this.isSettling()) {
+      this.reapply();
+      return;
+    }
+    this.desiredMute = mute;
+    this.invokeEvent('muteChange', mute);
+  }
+
+  private openSettleWindow() {
+    this.settleUntil = Date.now() + VideoPlayer.SETTLE_MS;
+  }
+
+  private isSettling() {
+    return Date.now() < this.settleUntil;
+  }
+
+  /** Answer a platform's reset. Throttled, since polls report every 50 ms; never extends the window. */
+  private reapply() {
+    const adapter = this.playerInfo?.adapter;
+    const now = Date.now();
+    if (adapter && (now - this.lastReapply >= VideoPlayer.REAPPLY_INTERVAL_MS)) {
+      this.lastReapply = now;
+      this.applySettings(adapter, false);
+    }
+  }
+
+  private can(adapter: PlayerAdapter, capability: ECapability) {
+    return (adapter.capabilities ?? []).includes(capability);
+  }
+
+  /** Setting volume or mute must never throw out of a setter, whatever the platform. */
+  private call(action: () => void) {
+    try {
+      action();
+    } catch (e) {
+      console.warn('VideoPlayer: the player rejected a volume or mute change', e);
+    }
   }
   //#endregion
 

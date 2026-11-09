@@ -24,7 +24,7 @@ const version = displayVersion(rVideoPlayerJson.version);
 
 export function App() {
   const urlState = useState<string | undefined>();
-  const volumeState = useState<number>(0);
+  const volumeState = useState<number>(50);
   const muteState = useState<boolean>(false);
   const muteRef = useRef<HTMLInputElement>(null);
   const playerStateState = useState<EPlayerState>(EPlayerState.unstarted);

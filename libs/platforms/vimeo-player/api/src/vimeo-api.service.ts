@@ -43,10 +43,41 @@ export class VimeoApiService implements IApiService {
       });
 
 
+      // The SDK unmutes on every setVolume, and loadVideo resets volume and mute
+      // to its defaults (spike S1 in docs/prd/keep-volume-and-mute-across-media.md).
+      // So the adapter remembers both, and puts them back itself.
+      let volume: number | null = null;
+      let muted = false;
+      let lastMuteSet = 0;
+      const setVolume = (newVolume: number): Promise<void> => {
+        volume = newVolume;
+        const keepMuted = muted;
+        return Promise.resolve(player.setVolume(newVolume / 100))
+          .then(() => {
+            if (keepMuted && muted) {
+              player.setMuted(true);
+            }
+          })
+          .catch(() => undefined);
+      };
+      const restore = (settings: { volume: number | null, muted: boolean }) => {
+        muted = settings.muted;
+        lastMuteSet = Date.now();
+        if (settings.muted) {
+          player.setMuted(true);
+        }
+        return (settings.volume === null) ? Promise.resolve() : setVolume(settings.volume);
+      };
+
       player.ready().then(() => {
         adapter = createPlayerAdapter({
           capabilities: [ECapability.fullscreen, ECapability.pictureInPicture, ECapability.volume, ECapability.mute, ECapability.getTitle],
-          loadVideoById: (id: string) => player.loadVideo(id),
+          loadVideoById: (id: string) => {
+            const settings = { volume, muted };
+            Promise.resolve(player.loadVideo(id))
+              .then(() => restore(settings))
+              .catch(() => undefined);
+          },
           setPlayerState: (state: EPlayerState) => {
             switch (state) {
               case EPlayerState.playing:
@@ -60,8 +91,12 @@ export class VimeoApiService implements IApiService {
                 break;
             }
           },
-          setVolume: (volume) => player.setVolume(volume / 100),
-          setMute: (mute) => player.setMuted(mute),
+          setVolume: (newVolume) => { setVolume(newVolume); },
+          setMute: (mute) => {
+            muted = mute;
+            lastMuteSet = Date.now();
+            player.setMuted(mute);
+          },
           setProgress: (time) => player.setCurrentTime(time),
           setSize: (width, height) => {
             if (options.element) {
@@ -108,16 +143,27 @@ export class VimeoApiService implements IApiService {
         });
         resolvePlayer(adapter);
       });
+      let polling = false;
       player.on('loaded', () => {
         adapter.onStateChange(EPlayerState.unstarted);
         if (typeof window !== 'undefined') {
           setTimeout(() => options.autoplay && player.play(), 600);
-          timer(0, 50)
-            .pipe(takeUntil(destroyRef), takeUntil(destroy))
-            .subscribe(() => {
-              // Mute
-              player.getMuted().then((currentMute) => adapter.onMuteChange(currentMute));
-            });
+          // 'loaded' fires for every video; one poll per player is enough.
+          if (!polling) {
+            polling = true;
+            timer(0, 50)
+              .pipe(takeUntil(destroyRef), takeUntil(destroy))
+              .subscribe(() => {
+                // Mute
+                player.getMuted().then((currentMute) => {
+                  // Follow the listener's own clicks, but not a read that predates our last setMuted.
+                  if (Date.now() - lastMuteSet > 150) {
+                    muted = currentMute;
+                  }
+                  adapter.onMuteChange(currentMute);
+                });
+              });
+          }
           player.getVolume().then((vol) => adapter.onVolumeChange(vol * 100));
           player.getDuration().then((duration) => adapter.onDurationChange(duration));
         }
@@ -125,7 +171,10 @@ export class VimeoApiService implements IApiService {
       player.on('play', () => adapter.onStateChange(EPlayerState.playing));
       player.on('pause', () => adapter.onStateChange(EPlayerState.paused));
       player.on('ended', () => adapter.onStateChange(EPlayerState.ended));
-      player.on('volumechange', (ev) => adapter.onVolumeChange(ev.volume * 100));
+      player.on('volumechange', (ev) => {
+        volume = ev.volume * 100;
+        adapter.onVolumeChange(volume);
+      });
       player.on('timeupdate', (ev) => adapter.onCurrentTimeChange(ev.seconds));
       player.on('enterpictureinpicture', () => adapter.onPipChange(true));
       player.on('leavepictureinpicture', () => adapter.onPipChange(false));

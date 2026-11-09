@@ -119,6 +119,14 @@ playVideo(video: string) {
 }
 ```
 
+### Volume and mute
+
+The player keeps `volume` and `mute` across media, including a switch to another platform: each new
+platform player gets them as soon as it has loaded the medium. A platform's report only replaces them
+when the listener changes them in that platform's own controls. So bind them to the value you want the
+listener to hear (for example `volume = 50`), not to `0`. Platforms that can't change the volume or
+mute (Spotify; mute on Mixcloud and Vidyard) skip the setting, and the next platform that can gets it.
+
 ## Components
 All components are showcased in the angular app included in the project. You can simply run
 
