@@ -90,6 +90,8 @@ patch from its own diff.
 
 - **F3. Signal API.**
   - `model()`: `playerState`, `volume`, `mute`, `isFullscreen`, `isPip`. Their `…Change` outputs come from `model()`.
+    `playerState` / `isFullscreen` / `isPip` default to `unstarted` / `false` / `false`; `volume` / `mute` are
+    `undefined` until set or reported (D6).
   - `input()`: `width`, `height`, `autoplay`, `url`. Only defined values are forwarded, so the core defaults
     (600 × 450, autoplay on) still apply when unbound.
   - `output()`: `progressChange`, `capabilitiesChange`.
@@ -181,4 +183,5 @@ Run 2026-11-09 as throwaway jest specs (Angular 22.2, jest-preset-angular, fake 
 
 - [x] M0 · [x] M1 · [x] M2 · [x] M3 · [x] M4 (2026-11-09: `video-player` 58 and `ng-video-player` 33 tests green;
   `angular-demo` builds)
-- Open: the §8 checks in a running demo app (YouTube → SoundCloud via Next; playlist auto-advance).
+- PR: [#108](https://github.com/MintPlayer/mintplayer-ng-video-player/pull/108) (CI green). Open: the §8 checks in
+  a running demo app (YouTube → SoundCloud via Next; playlist auto-advance).
