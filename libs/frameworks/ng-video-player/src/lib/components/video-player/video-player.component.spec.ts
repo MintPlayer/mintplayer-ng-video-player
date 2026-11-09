@@ -1,3 +1,4 @@
+import { Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {
   ApiPlugin,
@@ -92,15 +93,40 @@ function fakeApi(id = 'fake'): FakeApi {
   return state;
 }
 
+/** A consumer that two-way binds the state, as a playlist does. */
+@Component({
+  selector: 'test-host',
+  imports: [VideoPlayerComponent],
+  template: `<video-player [url]="url()" [(playerState)]="playerState" [(volume)]="volume"
+    (playerStateChange)="onStateChange($event)" />
+    <span id="state">{{ playerState() }}</span>`,
+})
+class HostComponent {
+  url = signal<string | null>('https://fake/abc');
+  playerState = signal(EPlayerState.unstarted);
+  volume = signal<number | undefined>(undefined);
+  next = 'https://fake/def';
+
+  onStateChange(state: EPlayerState) {
+    // A playlist advances on `ended`.
+    if (state === EPlayerState.ended) {
+      this.url.set(this.next);
+    }
+  }
+}
+
 describe('VideoPlayerComponent', () => {
   let component: VideoPlayerComponent;
   let fixture: ComponentFixture<VideoPlayerComponent>;
   let api: FakeApi;
 
-  /** Let the component's debounced pipelines and promise chains settle. */
-  async function settle(ms = 50) {
+  /** Let the component's effects, debounced pipelines and promise chains settle. */
+  async function settle(f: ComponentFixture<unknown> = fixture, ms = 50) {
+    f.detectChanges();
     await jest.advanceTimersByTimeAsync(ms);
+    f.detectChanges();
     await jest.advanceTimersByTimeAsync(ms);
+    f.detectChanges();
   }
 
   async function build(...plugins: ApiPlugin[]) {
@@ -113,6 +139,10 @@ describe('VideoPlayerComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
     return component;
+  }
+
+  function setInput(name: string, value: unknown) {
+    fixture.componentRef.setInput(name, value);
   }
 
   beforeEach(() => {
@@ -134,35 +164,63 @@ describe('VideoPlayerComponent', () => {
   it('renders the container the player is hosted in', async () => {
     await build();
 
-    expect(component.container).toBeTruthy();
-    expect(component.container.nativeElement.tagName).toBe('DIV');
+    expect(component.container().nativeElement.tagName).toBe('DIV');
   });
 
-  it('reports the underlying player defaults', async () => {
+  it('starts unstarted, and leaves volume and mute unset until the consumer or the player sets them', async () => {
     await build();
 
-    expect(component.width).toBe(600);
-    expect(component.height).toBe(450);
-    expect(component.autoplay).toBe(true);
-    expect(component.volume).toBe(0);
-    expect(component.mute).toBe(false);
-    expect(component.isPip).toBe(false);
-    expect(component.isFullscreen).toBe(false);
-    expect(component.url).toBe('');
+    expect(component.playerState()).toBe(EPlayerState.unstarted);
+    expect(component.isPip()).toBe(false);
+    expect(component.isFullscreen()).toBe(false);
+    expect(component.volume()).toBeUndefined();
+    expect(component.mute()).toBeUndefined();
+  });
+
+  it('does not forward its defaults to the player', async () => {
+    await build(() => Promise.resolve(api.service));
+
+    setInput('url', 'https://fake/abc');
+    await settle();
+
+    expect(api.setStates).toEqual([]);
+    expect(api.setPips).toEqual([]);
+    expect(api.setFullscreens).toEqual([]);
+    expect(api.setVolumes).toEqual([]);
+    expect(api.setMutes).toEqual([]);
   });
 
   it('hands the container to the player once the view is ready', async () => {
     await build(() => Promise.resolve(api.service));
 
-    component.url = 'https://fake/abc';
+    setInput('url', 'https://fake/abc');
     await settle();
 
     // A player with no host never builds anything, so this is the assertion
-    // that ngAfterViewInit actually wired the two together.
+    // that the component actually wired the two together.
     expect(api.createPlayerCalls).toHaveLength(1);
     expect(api.createPlayerCalls[0].element).toBe(
-      component.container.nativeElement
+      component.container().nativeElement
     );
+  });
+
+  it('keeps the player defaults for unbound size and autoplay', async () => {
+    await build(() => Promise.resolve(api.service));
+
+    setInput('url', 'https://fake/abc');
+    await settle();
+
+    expect(api.createPlayerCalls[0]).toMatchObject({ width: 600, height: 450, autoplay: true });
+  });
+
+  it('forwards autoplay to the player before it loads', async () => {
+    await build(() => Promise.resolve(api.service));
+
+    setInput('autoplay', false);
+    setInput('url', 'https://fake/abc');
+    await settle();
+
+    expect(api.createPlayerCalls[0].autoplay).toBe(false);
   });
 
   it('resolves its platform plugins before loading a url', async () => {
@@ -173,7 +231,7 @@ describe('VideoPlayerComponent', () => {
       () => Promise.resolve(other.service)
     );
 
-    component.url = 'https://other/def';
+    setInput('url', 'https://other/def');
     await settle();
 
     expect(other.createPlayerCalls).toHaveLength(1);
@@ -183,12 +241,12 @@ describe('VideoPlayerComponent', () => {
   describe('inputs', () => {
     beforeEach(async () => {
       await build(() => Promise.resolve(api.service));
-      component.url = 'https://fake/abc';
+      setInput('url', 'https://fake/abc');
       await settle();
     });
 
     it('forwards url changes to the player', async () => {
-      component.url = 'https://fake/def';
+      setInput('url', 'https://fake/def');
       await settle();
 
       expect(api.loadedIds).toEqual(['abc', 'def']);
@@ -199,51 +257,54 @@ describe('VideoPlayerComponent', () => {
       await settle();
 
       expect(api.destroyed).toBe(1);
-      expect(component.url).toBe('');
     });
 
-    it('forwards size to the player', () => {
-      component.width = 800;
-      component.height = 600;
+    it('lets a change of the bound url take over from setUrl', async () => {
+      component.setUrl('https://fake/def');
+      await settle();
+      setInput('url', 'https://fake/ghi');
+      await settle();
 
-      expect(component.width).toBe(800);
-      expect(component.height).toBe(600);
+      expect(api.loadedIds).toEqual(['abc', 'def', 'ghi']);
+    });
+
+    it('forwards size to the player', async () => {
+      setInput('width', 800);
+      await settle();
+      setInput('height', 600);
+      await settle();
+
       expect(api.sizes).toEqual([
         [800, 450],
         [800, 600],
       ]);
     });
 
-    it('forwards volume and mute to the player', () => {
-      component.volume = 55;
-      component.mute = true;
+    it('forwards volume and mute to the player', async () => {
+      component.volume.set(55);
+      component.mute.set(true);
+      await settle();
 
-      expect(component.volume).toBe(55);
-      expect(component.mute).toBe(true);
-      expect(api.setVolumes).toEqual([55]);
-      expect(api.setMutes).toEqual([true]);
+      expect(api.setVolumes).toContain(55);
+      expect(api.setMutes).toContain(true);
     });
 
-    it('forwards player state to the player', () => {
-      component.playerState = EPlayerState.playing;
+    it('forwards player state to the player', async () => {
+      component.playerState.set(EPlayerState.playing);
+      await settle();
 
       expect(api.setStates).toEqual([EPlayerState.playing]);
     });
 
-    it('forwards autoplay to the player', () => {
-      component.autoplay = false;
-
-      expect(component.autoplay).toBe(false);
-    });
-
-    it('forwards fullscreen and pip requests', () => {
-      component.isFullscreen = true;
-      component.isPip = true;
+    it('forwards fullscreen and pip requests', async () => {
+      component.isFullscreen.set(true);
+      component.isPip.set(true);
+      await settle();
+      // setIsPip exists because Vimeo needs the call to originate from a user
+      // gesture: it reaches the player synchronously.
       component.setIsPip(false);
 
       expect(api.setFullscreens).toEqual([true]);
-      // setIsPip exists because Vimeo needs the call to originate from a user
-      // gesture, but it goes through the same setter as the input.
       expect(api.setPips).toEqual([true, false]);
     });
 
@@ -255,32 +316,36 @@ describe('VideoPlayerComponent', () => {
   describe('outputs', () => {
     beforeEach(async () => {
       await build(() => Promise.resolve(api.service));
-      component.url = 'https://fake/abc';
+      setInput('url', 'https://fake/abc');
       await settle();
     });
 
-    it('emits capabilitiesChange when the player is created', () => {
-      // Emitted during the settle above, before any handler could subscribe,
-      // so this asserts on the capabilities the adapter advertised instead.
-      expect(api.adapters[0].capabilities).toEqual([
-        ECapability.volume,
-        ECapability.mute,
-      ]);
+    it('emits capabilitiesChange when the player is created', async () => {
+      const seen: ECapability[][] = [];
+      component.capabilitiesChange.subscribe((c) => seen.push(c));
+
+      setInput('url', null);
+      await settle();
+      setInput('url', 'https://fake/def');
+      await settle();
+
+      expect(seen).toEqual([[ECapability.volume, ECapability.mute]]);
     });
 
     it('emits volumeChange when the platform reports a new volume', async () => {
-      const seen: number[] = [];
-      component.volumeChange.subscribe((v) => seen.push(v));
+      const seen: (number | undefined)[] = [];
+      component.volume.subscribe((v) => seen.push(v));
 
       api.adapters[0].onVolumeChange(30);
       await settle();
 
       expect(seen).toEqual([30]);
+      expect(component.volume()).toBe(30);
     });
 
     it('emits muteChange when the platform reports a new mute', async () => {
-      const seen: boolean[] = [];
-      component.muteChange.subscribe((m) => seen.push(m));
+      const seen: (boolean | undefined)[] = [];
+      component.mute.subscribe((m) => seen.push(m));
 
       api.adapters[0].onMuteChange(true);
       await settle();
@@ -290,7 +355,7 @@ describe('VideoPlayerComponent', () => {
 
     it('emits playerStateChange when the platform reports playback', async () => {
       const seen: EPlayerState[] = [];
-      component.playerStateChange.subscribe((s) => seen.push(s));
+      component.playerState.subscribe((s) => seen.push(s));
 
       api.adapters[0].onStateChange(EPlayerState.playing);
       await settle();
@@ -301,8 +366,8 @@ describe('VideoPlayerComponent', () => {
     it('emits isPipChange and isFullscreenChange', async () => {
       const pips: boolean[] = [];
       const fullscreens: boolean[] = [];
-      component.isPipChange.subscribe((p) => pips.push(p));
-      component.isFullscreenChange.subscribe((f) => fullscreens.push(f));
+      component.isPip.subscribe((p) => pips.push(p));
+      component.isFullscreen.subscribe((f) => fullscreens.push(f));
 
       api.adapters[0].onPipChange(true);
       api.adapters[0].onFullscreenChange(true);
@@ -327,9 +392,49 @@ describe('VideoPlayerComponent', () => {
     });
   });
 
+  describe('reported values are not written back (#100)', () => {
+    beforeEach(async () => {
+      await build(() => Promise.resolve(api.service));
+      setInput('url', 'https://fake/abc');
+      await settle();
+    });
+
+    it('does not forward a state the player reported', async () => {
+      api.adapters[0].onStateChange(EPlayerState.playing);
+      await settle();
+      api.adapters[0].onStateChange(EPlayerState.ended);
+      await settle();
+
+      expect(component.playerState()).toBe(EPlayerState.ended);
+      expect(api.setStates).toEqual([]);
+    });
+
+    it('does not forward a volume or mute the player reported', async () => {
+      api.adapters[0].onVolumeChange(30);
+      api.adapters[0].onMuteChange(true);
+      await settle();
+
+      expect(api.setVolumes).toEqual([]);
+      expect(api.setMutes).toEqual([]);
+    });
+
+    it('forwards the consumer setting the reported value again after another one', async () => {
+      api.adapters[0].onStateChange(EPlayerState.playing);
+      await settle();
+
+      component.playerState.set(EPlayerState.paused);
+      await settle();
+      // The player hasn't reported `paused` yet; the consumer changes their mind.
+      component.playerState.set(EPlayerState.playing);
+      await settle();
+
+      expect(api.setStates).toEqual([EPlayerState.paused, EPlayerState.playing]);
+    });
+  });
+
   it('destroys the player when the component goes away', async () => {
     await build(() => Promise.resolve(api.service));
-    component.url = 'https://fake/abc';
+    setInput('url', 'https://fake/abc');
     await settle();
 
     fixture.destroy();
@@ -339,16 +444,100 @@ describe('VideoPlayerComponent', () => {
 
   it('stops emitting after the component is destroyed', async () => {
     await build(() => Promise.resolve(api.service));
-    component.url = 'https://fake/abc';
+    setInput('url', 'https://fake/abc');
     await settle();
-    const seen: number[] = [];
-    component.volumeChange.subscribe((v) => seen.push(v));
+    const seen: (number | undefined)[] = [];
+    component.volume.subscribe((v) => seen.push(v));
 
     fixture.destroy();
     api.adapters[0].onVolumeChange(99);
-    await settle();
+    await jest.advanceTimersByTimeAsync(100);
 
     expect(seen).toEqual([]);
+  });
+});
+
+describe('VideoPlayerComponent in a two-way bound host', () => {
+  let api: FakeApi;
+
+  async function settle(fixture: ComponentFixture<unknown>, ms = 50) {
+    fixture.detectChanges();
+    await jest.advanceTimersByTimeAsync(ms);
+    fixture.detectChanges();
+    await jest.advanceTimersByTimeAsync(ms);
+    fixture.detectChanges();
+  }
+
+  async function buildHost(zoneless = false) {
+    await TestBed.configureTestingModule({
+      imports: [HostComponent],
+      providers: [
+        provideVideoApis(() => Promise.resolve(api.service)),
+        ...(zoneless ? [provideZonelessChangeDetection()] : []),
+      ],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(HostComponent);
+    await settle(fixture);
+    return fixture;
+  }
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    api = fakeApi();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+    TestBed.resetTestingModule();
+  });
+
+  it('does not stop the next video of a playlist when the previous one ended', async () => {
+    const fixture = await buildHost();
+    const adapter = api.adapters[0];
+    adapter.onStateChange(EPlayerState.playing);
+    await settle(fixture);
+
+    adapter.onStateChange(EPlayerState.ended);
+    await settle(fixture);
+    // The host advanced to the next video on `ended`; it starts playing.
+    adapter.onStateChange(EPlayerState.playing);
+    await settle(fixture);
+
+    expect(api.loadedIds).toEqual(['abc', 'def']);
+    expect(api.setStates).not.toContain(EPlayerState.ended);
+    expect(api.setStates).toEqual([]);
+    expect(fixture.componentInstance.playerState()).toBe(EPlayerState.playing);
+  });
+
+  it('forwards a state the host sets', async () => {
+    const fixture = await buildHost();
+    api.adapters[0].onStateChange(EPlayerState.playing);
+    await settle(fixture);
+
+    fixture.componentInstance.playerState.set(EPlayerState.paused);
+    await settle(fixture);
+
+    expect(api.setStates).toEqual([EPlayerState.paused]);
+  });
+
+  it('does not write a reported volume back through the host', async () => {
+    const fixture = await buildHost();
+
+    api.adapters[0].onVolumeChange(40);
+    await settle(fixture);
+
+    expect(fixture.componentInstance.volume()).toBe(40);
+    expect(api.setVolumes).toEqual([]);
+  });
+
+  it('updates a zoneless host when the player reports', async () => {
+    const fixture = await buildHost(true);
+
+    api.adapters[0].onStateChange(EPlayerState.playing);
+    await jest.advanceTimersByTimeAsync(100);
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('#state').textContent).toBe(String(EPlayerState.playing));
   });
 });
 
@@ -358,7 +547,7 @@ describe('provideVideoApis', () => {
     const provider = provideVideoApis(() => Promise.resolve(api.service));
 
     await expect(
-      (provider as { useFactory: () => Promise<IApiService[]> }).useFactory()
+      (provider as unknown as { useFactory: () => Promise<IApiService[]> }).useFactory()
     ).resolves.toEqual([api.service]);
   });
 
@@ -366,7 +555,7 @@ describe('provideVideoApis', () => {
     const provider = provideVideoApis();
 
     await expect(
-      (provider as { useFactory: () => Promise<IApiService[]> }).useFactory()
+      (provider as unknown as { useFactory: () => Promise<IApiService[]> }).useFactory()
     ).resolves.toEqual([]);
   });
 });

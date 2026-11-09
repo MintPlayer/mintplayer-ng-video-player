@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, NgZone, ViewChild } from '@angular/core';
+import { afterNextRender, Component, DestroyRef, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { Color } from '@mintplayer/ng-bootstrap';
 import { PlayerProgress } from '@mintplayer/player-progress';
 import { ERepeatMode, PlaylistController } from '@mintplayer/playlist-controller';
@@ -37,28 +37,25 @@ import { CommonModule } from '@angular/common';
     provideVideoApis(youtubePlugin, dailymotionPlugin, vimeoPlugin, soundCloudPlugin, mixCloudPlugin, twitchPlugin, spotifyPlugin, streamablePlugin, facebookPlugin, filePlugin, vidyardPlugin, wistiaPlugin)
   ]
 })
-export class PlaylistDemoComponent implements AfterViewInit {
-  constructor(
-    private ref: ChangeDetectorRef,
-    private zone: NgZone,
-    private sanitizer: DomSanitizer
-  ) {
+export class PlaylistDemoComponent {
+  constructor(sanitizer: DomSanitizer) {
     this.playlistController = new PlaylistController<Video>();
-    this.playlistController.video$
-      .pipe(takeUntilDestroyed())
+    const destroyRef = inject(DestroyRef);
+    // Once the player exists.
+    afterNextRender(() => this.playlistController.video$
+      .pipe(takeUntilDestroyed(destroyRef))
       .subscribe((video) => {
-        if (this.isViewInited) {
-          if (video !== null) {
-            this.video = video;
-            this.player.setUrl(video.url);
-            // this.ref.detectChanges();
-          } else {
-            this.video = null;
-            this.player.setUrl(null);
-            // this.ref.detectChanges();
-          }
-        }
-      });
+        this.video = video;
+        // setUrl rather than a [url] binding, so repeating the same video replays it.
+        this.player().setUrl(video?.url ?? null);
+      }));
+
+    // The player reports `ended` through the two-way binding; it is never written back (#100).
+    effect(() => {
+      if (this.playerState() === EPlayerState.ended) {
+        untracked(() => this.playlistController.playerEnded());
+      }
+    });
 
     const enumValues = Object.values(ERepeatMode);
     this.repeatOptions = enumValues.slice(enumValues.length / 2)
@@ -74,10 +71,10 @@ export class PlaylistDemoComponent implements AfterViewInit {
   }
 
   trashFillIcon?: SafeHtml;
-  
-  private isViewInited = false;
 
-  @ViewChild('player') player!: VideoPlayerComponent;
+  readonly player = viewChild.required(VideoPlayerComponent);
+  readonly playerState = signal(EPlayerState.unstarted);
+  readonly playerStates = EPlayerState;
   repeatOptions: any[];
   title = 'playlist';
   colors = Color;
@@ -90,10 +87,6 @@ export class PlaylistDemoComponent implements AfterViewInit {
   ];
 
 
-  ngAfterViewInit() {
-    this.isViewInited = true;
-  }
-
   addVideoToPlaylist(video: Video) {
     this.playlistController.addToPlaylist(video);
   }
@@ -102,15 +95,12 @@ export class PlaylistDemoComponent implements AfterViewInit {
     this.playlistController.removeFromPlaylist(video);
   }
 
-  onPlayerStateChange(playerState: EPlayerState) {
-    switch (playerState) {
-      case EPlayerState.ended: {
-        this.zone.run(() => {
-          this.playlistController.playerEnded();
-        });
-        break;
-      }
-    }
+  play() {
+    this.playerState.set(EPlayerState.playing);
+  }
+
+  pause() {
+    this.playerState.set(EPlayerState.paused);
   }
 
   onProgressChange(progress: PlayerProgress) {
