@@ -195,11 +195,13 @@ describe('VueVideoPlayer', () => {
     expect(player.valuesSetFor('url')).toEqual([]);
   });
 
-  it('applies the default volume, mute and player state on mount', async () => {
+  it('leaves volume and mute to the player when they are not bound (#105)', async () => {
     const { player } = await mountPlayer();
 
-    expect(player.valuesSetFor('volume')).toEqual([0]);
-    expect(player.valuesSetFor('mute')).toEqual([false]);
+    // VideoPlayer keeps a pushed volume across media, so a default 0 would
+    // silence every consumer that doesn't bind it.
+    expect(player.valuesSetFor('volume')).toEqual([]);
+    expect(player.valuesSetFor('mute')).toEqual([]);
     expect(player.valuesSetFor('playerState')).toEqual([
       EPlayerState.unstarted,
     ]);

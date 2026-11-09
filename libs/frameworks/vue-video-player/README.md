@@ -32,6 +32,9 @@ const playerState = ref(EPlayerState.unstarted);
 </template>
 ```
 
+`volume` and `mute` are kept across media, also when the next URL plays on another platform. Leave
+them unbound to start at the first platform's own settings; they no longer default to `0` / `false`.
+
 ## Building
 
 Run `nx build vue-video-player` to bundle the library with Vite.

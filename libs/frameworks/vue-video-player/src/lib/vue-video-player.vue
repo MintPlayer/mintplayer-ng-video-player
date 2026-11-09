@@ -22,9 +22,11 @@ import { youtubePlugin } from '@mintplayer/youtube-player';
 import { EPlayerState } from '@mintplayer/player-provider';
 import type { VueVideoPlayerEmits, VueVideoPlayerProps } from './types';
 
+// volume and mute have no default: VideoPlayer keeps whatever is pushed to it
+// across media, so a default 0 would silence every consumer that doesn't bind it.
 const props = withDefaults(defineProps<VueVideoPlayerProps>(), {
-  volume: 0,
-  mute: false,
+  volume: undefined,
+  mute: undefined,
   playerState: EPlayerState.unstarted,
 });
 
@@ -63,8 +65,12 @@ onMounted(async () => {
   if (typeof props.url !== 'undefined') {
     player.value.url = props.url;
   }
-  player.value.volume = props.volume;
-  player.value.mute = props.mute;
+  if (typeof props.volume !== 'undefined') {
+    player.value.volume = props.volume;
+  }
+  if (typeof props.mute !== 'undefined') {
+    player.value.mute = props.mute;
+  }
   player.value.playerState = props.playerState;
 });
 
@@ -75,13 +81,13 @@ watch(() => props.url, (url) => {
 });
 
 watch(() => props.volume, (volume) => {
-  if (player.value) {
+  if (player.value && (typeof volume !== 'undefined')) {
     player.value.volume = volume;
   }
 });
 
 watch(() => props.mute, (mute) => {
-  if (player.value) {
+  if (player.value && (typeof mute !== 'undefined')) {
     player.value.mute = mute;
   }
 });

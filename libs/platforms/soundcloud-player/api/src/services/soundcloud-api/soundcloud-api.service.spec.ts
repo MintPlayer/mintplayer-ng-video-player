@@ -266,13 +266,43 @@ describe('SoundcloudApiService', () => {
       return (await promise) as PlayerAdapter;
     }
 
-    it('advertises volume and title support only', async () => {
+    it('advertises volume, (emulated) mute and title support', async () => {
       const adapter = await ready();
 
       expect(adapter.capabilities).toEqual([
         ECapability.volume,
+        ECapability.mute,
         ECapability.getTitle,
       ]);
+    });
+
+    it('stays muted when the volume changes, and unmutes to that volume (#105)', async () => {
+      const adapter = await ready();
+
+      adapter.setVolume(80);
+      adapter.setMute(true);
+      adapter.setVolume(30);
+      jest.advanceTimersByTime(200);
+      adapter.setMute(false);
+
+      expect(sc.calls).toEqual(['setVolume(80)', 'setVolume(0)', 'setVolume(30)']);
+    });
+
+    it('reports the volume to restore rather than the emulated 0 while muted', async () => {
+      const adapter = await ready();
+      const volumes: number[] = [];
+      const mutes: boolean[] = [];
+      adapter.onVolumeChange = (v) => volumes.push(v);
+      adapter.onMuteChange = (m) => mutes.push(m);
+
+      adapter.setVolume(80);
+      adapter.setMute(true);
+      adapter.setVolume(30);
+      jest.advanceTimersByTime(100);
+
+      expect(volumes[volumes.length - 1]).toBe(30);
+      expect(volumes).not.toContain(0);
+      expect(mutes[mutes.length - 1]).toBe(true);
     });
 
     it('loads another track through the widget, carrying the autoplay flag', async () => {

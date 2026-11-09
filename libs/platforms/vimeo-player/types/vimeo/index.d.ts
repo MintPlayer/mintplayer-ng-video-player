@@ -24,7 +24,8 @@ declare namespace Vimeo {
         exitPictureInPicture(): Promise<any>;
 
         getVolume(): Promise<number>;
-        setVolume(volume: number): void;
+        /** Resolves once applied. Setting a volume also unmutes the player. */
+        setVolume(volume: number): Promise<number>;
 
         getTextTracks(): any[];
         enableTextTrack(): void;
@@ -44,7 +45,7 @@ declare namespace Vimeo {
         setLoop(loop: boolean): void;
 
         getMuted(): Promise<boolean>;
-        setMuted(muted: boolean): void;
+        setMuted(muted: boolean): Promise<boolean>;
 
         on<K extends keyof VimeoEventMap>(ev: K, handler: (...args: VimeoEventMap[K]) => void): void;
         off<K extends keyof VimeoEventMap>(ev: K, handler: (...args: VimeoEventMap[K]) => void): void;

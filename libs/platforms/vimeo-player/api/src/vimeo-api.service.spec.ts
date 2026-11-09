@@ -278,6 +278,59 @@ describe('VimeoApiService', () => {
       expect(vimeo.calls).toContain('setVolume(0.4)');
     });
 
+    it('stays muted when the volume changes, since the SDK unmutes on setVolume (#105)', async () => {
+      const adapter = await ready();
+
+      adapter.setMute(true);
+      adapter.setVolume(45);
+      await flush();
+
+      expect(vimeo.calls).toEqual(['setMuted(true)', 'setVolume(0.45)', 'setMuted(true)']);
+    });
+
+    it('does not mute on a volume change while unmuted', async () => {
+      const adapter = await ready();
+
+      adapter.setMute(false);
+      adapter.setVolume(45);
+      await flush();
+
+      expect(vimeo.calls).toEqual(['setMuted(false)', 'setVolume(0.45)']);
+    });
+
+    it('puts volume and mute back once the SDK has loaded the next video, which resets them (#105)', async () => {
+      const adapter = await ready();
+      adapter.setVolume(30);
+      adapter.setMute(true);
+      await flush();
+      vimeo.calls.length = 0;
+
+      adapter.loadVideoById('987654321');
+      await flush();
+      await flush();
+
+      expect(vimeo.calls).toEqual([
+        'loadVideo(987654321)',
+        'setMuted(true)',
+        'setVolume(0.3)',
+        'setMuted(true)',
+      ]);
+    });
+
+    it('runs one mute poll per player, however many videos it loads', async () => {
+      const adapter = await ready();
+      let reads = 0;
+      adapter.onMuteChange = () => reads++;
+
+      vimeo.fire('loaded');
+      vimeo.fire('loaded');
+      jest.advanceTimersByTime(100);
+      await flush();
+
+      // timer(0, 50) ticks at 0, 50 and 100 ms.
+      expect(reads).toBe(3);
+    });
+
     it('forwards mute and seek straight through', async () => {
       const adapter = await ready();
 

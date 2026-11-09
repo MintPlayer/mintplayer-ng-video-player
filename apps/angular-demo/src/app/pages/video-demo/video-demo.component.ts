@@ -98,7 +98,7 @@ export class VideoDemoComponent implements AfterViewInit {
   playerState!: EPlayerState;
   width = 500;
   height = 300;
-  volume = 0;
+  volume = 50;
   isMuted = false;
   isPip = false;
   isFullscreen = false;

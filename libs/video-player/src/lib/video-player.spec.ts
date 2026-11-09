@@ -582,6 +582,176 @@ describe('VideoPlayer', () => {
     });
   });
 
+  describe('volume and mute across media (#105)', () => {
+    const otherApi = () =>
+      fakeApi('other', { urlRegexes: [/https:\/\/other\/(?<id>\w+)/] });
+
+    it('applies the stored settings to every new adapter, also across platforms', async () => {
+      const first = fakeApi();
+      const second = otherApi();
+      const player = new VideoPlayer([first.service, second.service], host);
+      const events: (number | boolean)[] = [];
+      player.on('volumeChange', (v) => events.push(v));
+      player.on('muteChange', (m) => events.push(m));
+
+      // Set before any adapter exists.
+      player.volume = 30;
+      player.mute = true;
+      player.url = 'https://fake/abc';
+      await settle();
+
+      expect(first.setMutes).toEqual([true]);
+      expect(first.setVolumes).toEqual([30]);
+
+      player.url = 'https://other/def';
+      await settle();
+
+      expect(second.adapters).toHaveLength(1);
+      expect(second.setMutes).toEqual([true]);
+      expect(second.setVolumes).toEqual([30]);
+      expect(player.volume).toBe(30);
+      expect(player.mute).toBe(true);
+      expect(events).toEqual([]);
+      player.destroy();
+    });
+
+    it('re-applies the settings after loading into a reused adapter', async () => {
+      const api = fakeApi();
+      const player = new VideoPlayer([api.service], host);
+      player.url = 'https://fake/abc';
+      await settle();
+      player.volume = 40;
+      player.mute = false;
+
+      player.url = 'https://fake/def';
+      await settle();
+
+      expect(api.adapters).toHaveLength(1);
+      expect(api.loadedIds).toEqual(['abc', 'def']);
+      expect(api.setVolumes).toEqual([40, 40]);
+      expect(api.setMutes).toEqual([false, false]);
+      player.destroy();
+    });
+
+    it("answers a platform's default or reset in the settle window by re-applying", async () => {
+      const api = fakeApi();
+      const second = otherApi();
+      const player = new VideoPlayer([api.service, second.service], host);
+      player.volume = 30;
+      player.mute = true;
+      player.url = 'https://fake/abc';
+      await settle();
+      player.url = 'https://other/def';
+      await settle();
+      const events: (number | boolean)[] = [];
+      player.on('volumeChange', (v) => events.push(v));
+      player.on('muteChange', (m) => events.push(m));
+
+      // The new platform reports its own defaults.
+      second.adapters[0].onVolumeChange(52);
+      second.adapters[0].onMuteChange(false);
+      await settle();
+
+      expect(events).toEqual([]);
+      expect(player.volume).toBe(30);
+      expect(player.mute).toBe(true);
+      expect(second.setVolumes).toEqual([30, 30]);
+      expect(second.setMutes).toEqual([true, true]);
+      player.destroy();
+    });
+
+    it("adopts a report after the settle window as the listener's own action", async () => {
+      const api = fakeApi();
+      const player = new VideoPlayer([api.service], host);
+      player.volume = 30;
+      player.mute = true;
+      player.url = 'https://fake/abc';
+      await settle();
+      await jest.advanceTimersByTimeAsync(VideoPlayer.SETTLE_MS);
+      const events: (number | boolean)[] = [];
+      player.on('volumeChange', (v) => events.push(v));
+      player.on('muteChange', (m) => events.push(m));
+
+      api.adapters[0].onVolumeChange(70);
+      api.adapters[0].onMuteChange(false);
+      await settle();
+
+      expect(events).toEqual([70, false]);
+      expect(player.volume).toBe(70);
+      expect(player.mute).toBe(false);
+      expect(api.setVolumes).toEqual([30]);
+      player.destroy();
+    });
+
+    it('does not emit a report that matches the stored settings', async () => {
+      const api = fakeApi();
+      const player = new VideoPlayer([api.service], host);
+      player.volume = 30;
+      player.url = 'https://fake/abc';
+      await settle();
+      await jest.advanceTimersByTimeAsync(VideoPlayer.SETTLE_MS);
+      const events: number[] = [];
+      player.on('volumeChange', (v) => events.push(v));
+
+      // An echo, with Vimeo's float rounding.
+      api.adapters[0].onVolumeChange(0.3 * 100);
+      await settle();
+
+      expect(events).toEqual([]);
+      player.destroy();
+    });
+
+    it('drops the junk platforms report while loading', async () => {
+      const api = fakeApi();
+      const player = new VideoPlayer([api.service], host);
+      player.url = 'https://fake/abc';
+      await settle();
+      const events: unknown[] = [];
+      player.on('volumeChange', (v) => events.push(v));
+      player.on('muteChange', (m) => events.push(m));
+
+      api.adapters[0].onVolumeChange(undefined as unknown as number);
+      api.adapters[0].onMuteChange(null as unknown as boolean);
+      await settle();
+
+      expect(events).toEqual([]);
+      player.destroy();
+    });
+
+    it("only calls the setters the adapter's capabilities list", async () => {
+      const api = fakeApi('fake', {}, [ECapability.volume]);
+      const player = new VideoPlayer([api.service], host);
+      player.volume = 30;
+      player.mute = true;
+      player.url = 'https://fake/abc';
+      await settle();
+      player.mute = false;
+
+      expect(api.setVolumes).toEqual([30]);
+      expect(api.setMutes).toEqual([]);
+      // The listener's choice is kept for the next platform that can mute.
+      expect(player.mute).toBe(false);
+      player.destroy();
+    });
+
+    it('never throws out of a setter when the platform rejects the change', async () => {
+      const api = fakeApi();
+      const player = new VideoPlayer([api.service], host);
+      player.url = 'https://fake/abc';
+      await settle();
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+      api.adapters[0].setVolume = () => {
+        throw 'Spotify does not support volume';
+      };
+
+      expect(() => (player.volume = 20)).not.toThrow();
+      expect(player.volume).toBe(20);
+      expect(warn).toHaveBeenCalled();
+      warn.mockRestore();
+      player.destroy();
+    });
+  });
+
   describe('destroy', () => {
     it('destroys the adapter and stops emitting events', async () => {
       const api = fakeApi();

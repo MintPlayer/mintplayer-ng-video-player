@@ -43,9 +43,19 @@ export class SoundcloudApiService implements IApiService {
       // very first thing anyone does.
       let lastKnownVolume = 50;
       let volumeBeforeMute = 50;
+      // While muted, a volume change must not unmute (#105): it is stored and
+      // applied on unmute instead.
+      let muted = false;
+      let lastMuteSet = 0;
+      const startMute = () => {
+        if (!muted) {
+          volumeBeforeMute = lastKnownVolume;
+        }
+        muted = true;
+      };
 
       const adapter: PlayerAdapter = createPlayerAdapter({
-        capabilities: [ECapability.volume, ECapability.getTitle],
+        capabilities: [ECapability.volume, ECapability.mute, ECapability.getTitle],
         loadVideoById: (id: string) => player.load(id, { auto_play: options.autoplay }),
         setPlayerState: (state: EPlayerState) => {
           switch (state) {
@@ -64,16 +74,23 @@ export class SoundcloudApiService implements IApiService {
         // volume to 0 — but unmuting used to restore a hardcoded 50, throwing
         // away whatever the listener had actually set. Remember it instead.
         setMute: (mute) => {
+          lastMuteSet = Date.now();
           if (mute) {
-            volumeBeforeMute = lastKnownVolume;
+            startMute();
             player.setVolume(0);
           } else {
+            muted = false;
+            lastKnownVolume = volumeBeforeMute;
             player.setVolume(volumeBeforeMute);
           }
         },
         setVolume: (volume) => {
-          lastKnownVolume = volume;
-          player.setVolume(volume);
+          if (muted) {
+            volumeBeforeMute = volume;
+          } else {
+            lastKnownVolume = volume;
+            player.setVolume(volume);
+          }
         },
         setProgress: (time) => player.seekTo(time * 1000),
         setSize: (width, height) => {
@@ -111,12 +128,22 @@ export class SoundcloudApiService implements IApiService {
             .subscribe(() => {
               // Volume
               player.getVolume((currentVolume) => {
+                // Follow the listener's use of the widget's own slider, but not
+                // a read that predates our last setMute.
+                const followWidget = Date.now() - lastMuteSet > 150;
                 // Zero is the emulated mute, so it must not be remembered as
                 // the volume to unmute back to.
                 if (currentVolume > 0) {
                   lastKnownVolume = currentVolume;
+                  if (followWidget) {
+                    muted = false;
+                  }
+                } else if (followWidget) {
+                  startMute();
                 }
-                adapter.onVolumeChange(currentVolume);
+                // While muted, report the volume that unmuting will restore, not
+                // the emulated 0, so the listener's volume survives the mute.
+                adapter.onVolumeChange(muted ? volumeBeforeMute : currentVolume);
                 adapter.onMuteChange(currentVolume === 0 ? true : false);
               });
             });
