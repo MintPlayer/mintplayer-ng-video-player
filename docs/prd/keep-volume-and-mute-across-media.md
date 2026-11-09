@@ -74,24 +74,35 @@ and the Vue defaults must change with it (F5).
 - **F1. Desired state.** `VideoPlayer` holds `{ volume?, mute? }`. It is undefined until the consumer
   sets it or a platform reports it. The `volume` / `mute` getters keep returning `0` / `false` while
   unset.
-- **F2. Apply to every adapter.** After an adapter is created, and after each `loadVideoById` (new or
-  reused adapter), `VideoPlayer` applies the defined settings. Mute goes first when it is `true`, so
-  the medium never starts audible.
+- **F2. Apply to every adapter.** Right after each `loadVideoById`, on a new adapter (its first load)
+  or a reused one, `VideoPlayer` applies the defined settings. It also does this when the load throws,
+  since Streamable and Vidyard throw on a reload. Mute goes first when it is `true`, so the medium never
+  starts audible. Platform resets that arrive later, when the load completes, are caught by F4 and by
+  the adapter itself (F6, Vimeo).
 - **F3. Capability filter.** `VideoPlayer` calls `setVolume` only when the adapter lists
   `ECapability.volume`, and `setMute` only when it lists `ECapability.mute`.
-- **F4. Settle window.** After each apply, there is a short window (`SETTLE_MS`, sized by S3). A report
-  in that window that contradicts the desired state is taken as the platform's default or reset, not as
-  a listener action. `VideoPlayer` re-applies instead of adopting it, and emits no event. Outside the
+- **F4. Settle window.** The window (`VideoPlayer.SETTLE_MS` = 2000 ms, sized by S3) opens on each F2
+  apply and on each consumer `volume` / `mute` set that reaches an adapter. A report in that window
+  that contradicts the desired state is taken as the platform's default or reset, not as a listener
+  action. `VideoPlayer` re-applies instead of adopting it, and emits no event. Re-applies are throttled
+  to one per 250 ms and do not extend the window, so a platform that refuses can't loop. Outside the
   window, a contradicting report is a listener action in the platform's UI. It becomes the desired
-  state and goes out as an event. A report that matches the desired state emits nothing new.
+  state and goes out as an event. A report that matches the desired state emits nothing (volume within
+  ±0.5, which absorbs Vimeo's `0.3 * 100` float). Reports that aren't a finite number or a boolean are
+  dropped. While the desired state is unset, any valid report is adopted (D2).
 - **F5. Wrappers and demos.** Vue's `volume` / `mute` props default to `undefined` and are only pushed
   when defined. Demos start at volume 50, unmuted.
 - **F6. Adapters keep mute on `setVolume`.**
-  - Vimeo: `setVolume(v).then(() => muted && setMuted(true))`, tracking the desired mute in the adapter.
-    One mute poll per adapter, not one per `loaded`.
+  - Vimeo: the adapter tracks volume and mute. It updates them from `setVolume` / `setMute`, the
+    `volumechange` event, and the mute poll (except within 150 ms of its own `setMuted`, so a stale read
+    can't override it). `setVolume(v).then(() => muted && setMuted(true))`. `loadVideoById` snapshots
+    both and restores them once `loadVideo` resolves, because loading resets them (S1). One mute poll per
+    adapter, not one per `loaded`. `Vimeo.Player.setVolume` / `setMuted` are typed as returning promises.
   - SoundCloud: while muted, `setVolume` stores the volume and applies it on unmute. Advertise
-    `ECapability.mute`. While muted, report the remembered volume, not 0.
-  - The others: as S2 finds.
+    `ECapability.mute`. While muted, report the remembered volume, not 0. The poll follows the widget's own
+    slider (0 means muted, more than 0 means unmuted), except within 150 ms of our own `setMute`.
+  - The others: no change. YouTube, Wistia and Twitch keep the mute on `setVolume` (S2). Wistia's mute loss
+    on a new item, and the unmeasured Dailymotion and Facebook, are left to F4.
 - **F7. Specs.** Per affected adapter: mute, set a volume, expect it to stay muted. `VideoPlayer`:
   switch platform → the new adapter receives the stored settings; a contradicting report in the window
   is not adopted; one after it is; a missing capability skips the call.
@@ -140,7 +151,14 @@ read back through the SDK.
   platform's volume carried to the next platform, instead of each platform's own default.
 - D3. A listener action in the platform's UI inside the settle window is reverted. Accepted: the window
   is short and only opens when a medium loads or the consumer sets a value.
-- D4. No public API change. The versioning action makes it a patch release; no version file.
+- D4. The public API changes only by additions: `VideoPlayer.SETTLE_MS` (a public static, also used by
+  the specs), the Vue props `volume` / `mute` becoming optional, and SoundCloud's capabilities gaining
+  `ECapability.mute`. None of these is breaking. The versioning action derives each package's bump from
+  its `.d.ts`, so we add no version file and edit no `package.json`. Expect a minor bump for
+  `video-player` and `vue-video-player`, and a patch for the rest.
+- D5. Vue's `volume` / `mute` lose their `0` / `false` defaults. Because the value now carries over, a
+  default 0 would leave every Vue consumer that doesn't bind it at zero volume. The demos start at 50 for
+  the same reason.
 
 ## 7. Out of scope
 
@@ -159,10 +177,12 @@ read back through the SDK.
 
 ## 9. Acceptance
 
-- Mute, play YouTube, then Vimeo: Vimeo starts muted, and the app's `mute` stays `true`.
-- Volume 30 on YouTube, then SoundCloud: SoundCloud plays at 30.
-- Muted on Vimeo, move the volume slider: it stays muted.
-- Bind `[volume]` and play a Spotify URL: nothing throws.
+| Criterion | Unit-tested | In a running app |
+|---|---|---|
+| Mute, play YouTube, then Vimeo: Vimeo starts muted, and the app's `mute` stays `true` | ✓ (`VideoPlayer` platform switch + settle window; Vimeo restore after load) | pending |
+| Volume 30 on YouTube, then SoundCloud: SoundCloud plays at 30 | ✓ (`VideoPlayer` platform switch) | pending |
+| Muted on Vimeo, move the volume slider: it stays muted | ✓ (Vimeo and SoundCloud adapter specs) | pending |
+| Bind `[volume]` and play a Spotify URL: nothing throws | ✓ (capability filter, throwing adapter) | pending |
 
 ## 10. Status
 
@@ -170,3 +190,5 @@ read back through the SDK.
   `soundcloud-player`, `vue-video-player` and `player-provider` tests green)
 - M2 scope after S2: only Vimeo and SoundCloud needed adapter changes. Wistia's mute loss on a new item,
   and the unmeasured Dailymotion and Facebook, are handled by the `VideoPlayer` settle window.
+- PR: [#106](https://github.com/MintPlayer/mintplayer-ng-video-player/pull/106). Open: the §9 checks in a
+  running demo app.
